@@ -1,5 +1,7 @@
 # Draw.io Skill for Claude Code
 
+[Documentation](https://bahayonghang.github.io/drawio-skills/) | [中文文档](https://bahayonghang.github.io/drawio-skills/zh/)
+
 A Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview.
 
 ## Relationship with Upstream Project

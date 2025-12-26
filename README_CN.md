@@ -1,5 +1,7 @@
 # Draw.io Skill - Claude Code 图表绘制技能
 
+[Documentation](https://bahayonghang.github.io/drawio-skills/) | [中文文档](https://bahayonghang.github.io/drawio-skills/zh/)
+
 一个为 Claude Code 打造的技能，支持 AI 驱动的图表创建与编辑，并提供实时浏览器预览。
 
 ## 与上游项目的关系
