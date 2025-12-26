@@ -35,7 +35,7 @@ features:
 git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
 \`\`\`
 
-安装完成后，直���告诉 Claude：
+安装完成后，直接告诉 Claude：
 
 > "创建一个用户认证流程图"
 

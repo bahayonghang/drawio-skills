@@ -75,7 +75,7 @@ git diff diagrams/architecture.drawio
 
 1. 在 Draw.io 桌面应用中打开 .drawio 文件
 2. 文件 → 导出为 → PNG
-3. 根据需要调整质量和小大
+3. 根据需要调整质量和大小
 
 ### 导出为 PDF
 

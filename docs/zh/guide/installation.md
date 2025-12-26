@@ -43,7 +43,7 @@ git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/dra
 
 ### MCP 服务器配置
 
-技能包已包含预配置的 `.mcp.json` 文件，通常无��额外配置。
+技能包已包含预配置的 `.mcp.json` 文件，通常无需额外配置。
 
 如果你的 Draw.io 桌面应用安装在非标准位置，可以修改配置：
 
