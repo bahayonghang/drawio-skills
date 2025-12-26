@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:brainstorm)",
+      "Skill(skill-creator)"
+    ]
+  }
+}
