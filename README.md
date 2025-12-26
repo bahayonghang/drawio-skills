@@ -22,10 +22,10 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 
 ### Install from GitHub
 
-\`\`\`bash
+```bash
 # Clone this repository to your Claude Code skills directory
 git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
-\`\`\`
+```
 
 The skill will be available automatically in Claude Code.
 
@@ -38,17 +38,17 @@ The skill will be available automatically in Claude Code.
 | **Flowcharts** | Process flows, decision trees, workflows |
 | **Architecture Diagrams** | System architecture, microservices, deployment |
 | **Edit Existing Diagrams** | Modify diagrams using ID-based operations |
-| **Export** | Save diagrams as \`.drawio\` files |
+| **Export** | Save diagrams as `.drawio` files |
 
 ## Usage
 
 Once the skill is installed, simply ask Claude to create a diagram:
 
-\`\`\`
+```
 "Create a flowchart for user login process"
 "Draw a three-tier architecture diagram"
 "Generate a microservices architecture for an e-commerce system"
-\`\`\`
+```
 
 ## MCP Tools
 
@@ -64,7 +64,7 @@ This skill uses the following MCP tools from \`@next-ai-drawio/mcp-server\`:
 
 ## Project Structure
 
-\`\`\`
+```
 drawio-skills/
 ├── drawio/
 │   ├── .mcp.json                 # MCP server configuration
@@ -74,7 +74,7 @@ drawio-skills/
 │       └── diagram-patterns.md   # Flowchart & architecture patterns
 ├── README.md                     # English documentation
 └── README_CN.md                  # Chinese documentation
-\`\`\`
+```
 
 ## Credits
 

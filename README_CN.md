@@ -22,10 +22,10 @@
 
 ### 从 GitHub 安装
 
-\`\`\`bash
+```bash
 # 将本仓库克隆到 Claude Code 技能目录
 git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
-\`\`\`
+```
 
 安装完成后，技能将在 Claude Code 中自动可用。
 
@@ -44,11 +44,11 @@ git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/dra
 
 安装技能后，直接向 Claude 描述你的需求即可：
 
-\`\`\`
+```
 "创建一个用户登录流程图"
 "绘制一个三层架构图"
 "生成一个电商系统的微服务架构图"
-\`\`\`
+```
 
 ## MCP 工具
 
@@ -64,7 +64,7 @@ git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/dra
 
 ## 项目结构
 
-\`\`\`
+```
 drawio-skills/
 ├── drawio/
 │   ├── .mcp.json                 # MCP server 配置
@@ -74,7 +74,7 @@ drawio-skills/
 │       └── diagram-patterns.md   # 流程图与架构图模式
 ├── README.md                     # 英文文档
 └── README_CN.md                  # 中文文档
-\`\`\`
+```
 
 ## 致谢
 
