@@ -1,0 +1,25 @@
+{
+  "name": "drawio-skills",
+  "version": "1.0.0",
+  "description": "A Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview.",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bahayonghang/drawio-skills.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bahayonghang/drawio-skills/issues"
+  },
+  "homepage": "https://github.com/bahayonghang/drawio-skills#readme",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
