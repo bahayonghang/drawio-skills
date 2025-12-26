@@ -9,7 +9,7 @@
 | 项目 | 作用 |
 |------|------|
 | [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | 提供 draw.io 图表工具的 MCP Server |
-| **本项目 (drawio-skill)** | Claude Code 技能，封装 MCP server 并提供工作流指导、XML 格式参考和图表模式 |
+| **本项目 (drawio-skills)** | Claude Code 技能，封装 MCP server 并提供工作流指导、XML 格式参考和图表模式 |
 
 ### 本技能的增强内容
 
@@ -20,17 +20,14 @@
 
 ## 安装方法
 
-### 方法一：通过 .skill 文件安装
+### 从 GitHub 安装
 
-```bash
-# 将 drawio.skill 复制到 Claude Code 技能目录
-cp drawio.skill ~/.claude/skills/
-```
+\`\`\`bash
+# 将本仓库克隆到 Claude Code 技能目录
+git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
+\`\`\`
 
-### 方法二：手动安装
-
-1. 克隆本仓库
-2. 将 `drawio/` 文件夹复制到 Claude Code 技能目录
+安装完成后，技能将在 Claude Code 中自动可用。
 
 ## 功能特性
 
@@ -47,27 +44,27 @@ cp drawio.skill ~/.claude/skills/
 
 安装技能后，直接向 Claude 描述你的需求即可：
 
-```
+\`\`\`
 "创建一个用户登录流程图"
 "绘制一个三层架构图"
 "生成一个电商系统的微服务架构图"
-```
+\`\`\`
 
 ## MCP 工具
 
-本技能使用 `@next-ai-drawio/mcp-server` 提供的以下 MCP 工具：
+本技能使用 \`@next-ai-drawio/mcp-server\` 提供的以下 MCP 工具：
 
 | 工具 | 用途 |
 |------|------|
-| `start_session` | 打开浏览器实时预览 |
-| `display_diagram` | 从 XML 创建新图表 |
-| `get_diagram` | 获取当前图表 XML |
-| `edit_diagram` | 通过 cell ID 修改图表 |
-| `export_diagram` | 保存为 .drawio 文件 |
+| \`start_session\` | 打开浏览器实时预览 |
+| \`display_diagram\` | 从 XML 创建新图表 |
+| \`get_diagram\` | 获取当前图表 XML |
+| \`edit_diagram\` | 通过 cell ID 修改图表 |
+| \`export_diagram\` | 保存为 .drawio 文件 |
 
 ## 项目结构
 
-```
+\`\`\`
 drawio-skills/
 ├── drawio/
 │   ├── .mcp.json                 # MCP server 配置
@@ -75,10 +72,9 @@ drawio-skills/
 │   └── references/
 │       ├── xml-format.md         # Draw.io XML 格式参考
 │       └── diagram-patterns.md   # 流程图与架构图模式
-├── drawio.skill                  # 打包后的技能文件
 ├── README.md                     # 英文文档
 └── README_CN.md                  # 中文文档
-```
+\`\`\`
 
 ## 致谢
 

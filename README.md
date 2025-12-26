@@ -9,7 +9,7 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 | Project | Purpose |
 |---------|---------|
 | [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | MCP Server that provides draw.io diagram tools |
-| **This Project (drawio-skill)** | Claude Code skill that wraps the MCP server with workflow guidance, XML format references, and diagram patterns |
+| **This Project (drawio-skills)** | Claude Code skill that wraps the MCP server with workflow guidance, XML format references, and diagram patterns |
 
 ### What This Skill Adds
 
@@ -20,17 +20,14 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 
 ## Installation
 
-### Method 1: Install from .skill file
+### Install from GitHub
 
-```bash
-# Copy drawio.skill to your Claude Code skills directory
-cp drawio.skill ~/.claude/skills/
-```
+\`\`\`bash
+# Clone this repository to your Claude Code skills directory
+git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
+\`\`\`
 
-### Method 2: Manual setup
-
-1. Clone this repository
-2. Copy the `drawio/` folder to your Claude Code skills directory
+The skill will be available automatically in Claude Code.
 
 ## Features
 
@@ -41,33 +38,33 @@ cp drawio.skill ~/.claude/skills/
 | **Flowcharts** | Process flows, decision trees, workflows |
 | **Architecture Diagrams** | System architecture, microservices, deployment |
 | **Edit Existing Diagrams** | Modify diagrams using ID-based operations |
-| **Export** | Save diagrams as `.drawio` files |
+| **Export** | Save diagrams as \`.drawio\` files |
 
 ## Usage
 
 Once the skill is installed, simply ask Claude to create a diagram:
 
-```
+\`\`\`
 "Create a flowchart for user login process"
 "Draw a three-tier architecture diagram"
 "Generate a microservices architecture for an e-commerce system"
-```
+\`\`\`
 
 ## MCP Tools
 
-This skill uses the following MCP tools from `@next-ai-drawio/mcp-server`:
+This skill uses the following MCP tools from \`@next-ai-drawio/mcp-server\`:
 
 | Tool | Purpose |
 |------|---------|
-| `start_session` | Open browser with real-time preview |
-| `display_diagram` | Create new diagram from XML |
-| `get_diagram` | Retrieve current diagram XML |
-| `edit_diagram` | Modify diagram by cell ID |
-| `export_diagram` | Save as .drawio file |
+| \`start_session\` | Open browser with real-time preview |
+| \`display_diagram\` | Create new diagram from XML |
+| \`get_diagram\` | Retrieve current diagram XML |
+| \`edit_diagram\` | Modify diagram by cell ID |
+| \`export_diagram\` | Save as .drawio file |
 
 ## Project Structure
 
-```
+\`\`\`
 drawio-skills/
 ├── drawio/
 │   ├── .mcp.json                 # MCP server configuration
@@ -75,10 +72,9 @@ drawio-skills/
 │   └── references/
 │       ├── xml-format.md         # Draw.io XML format reference
 │       └── diagram-patterns.md   # Flowchart & architecture patterns
-├── drawio.skill                  # Packaged skill file
 ├── README.md                     # English documentation
 └── README_CN.md                  # Chinese documentation
-```
+\`\`\`
 
 ## Credits
 
