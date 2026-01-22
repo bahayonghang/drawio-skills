@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Skill(superpowers:brainstorm)",
-      "Skill(skill-creator)"
+      "Skill(skill-creator)",
+      "mcp__plugin_serena_serena__list_dir",
+      "Skill(skill-seekers)",
+      "Skill(skill-seekers:*)",
+      "Skill(mcp-to-skill)"
     ]
   }
 }
