@@ -2,6 +2,72 @@
 
 Architecture diagrams help visualize system design and component relationships.
 
+## E-Commerce Microservices Architecture
+
+![E-Commerce Microservices Architecture](../../imgs/电商示例.png)
+
+**Prompt:**
+```
+Design a microservices e-commerce system architecture diagram with the following components:
+
+API Gateway
+├── User Service (authentication, user profiles)
+├── Product Catalog Service (inventory management, product search, categories)
+├── Shopping Cart Service (cart management, session handling)
+├── Order Service (order processing, order history)
+├── Payment Service (payment gateway, transactions)
+└── Notification Service (emails, SMS, push notifications)
+
+Infrastructure:
+- API Gateway (entry point for all requests)
+- Service Mesh (service-to-service communication)
+- Message Queue (RabbitMQ/Kafka for async events)
+- Cache Layer (Redis for session and product caching)
+- Databases (PostgreSQL per service)
+- CDN/Load Balancer
+- Monitoring (Prometheus, Grafana)
+```
+
+**Example File:** [../../examples/ecommerce-microservices.drawio](../../examples/ecommerce-microservices.drawio)
+
+**Architecture Layers:**
+1. **Client Layer**: Web and mobile clients
+2. **CDN/Load Balancer**: Traffic distribution
+3. **API Gateway**: Authentication, routing, rate limiting
+4. **Microservices Layer**: 6 core services
+   - User Service (auth, profiles)
+   - Product Catalog Service (inventory, search)
+   - Shopping Cart Service (session management)
+   - Order Service (order processing, history)
+   - Payment Service (payment gateway, transactions)
+   - Notification Service (email, SMS, push)
+5. **Infrastructure Layer**:
+   - Service Mesh (inter-service communication)
+   - Message Queue (async events)
+   - Cache Layer (Redis)
+6. **Data Layer**: Independent databases per service
+7. **Monitoring**: Prometheus + Grafana
+
+**Key Design Principles:**
+- ✅ **KISS (Keep It Simple)**: Clear layered architecture
+- ✅ **SOLID**: Service independence with separate databases
+- ✅ **DRY**: Async message queue for reusable event handling
+- ✅ **Observability**: Comprehensive monitoring and logging
+
+**Connection Types:**
+- Solid lines (━━): Synchronous calls
+- Dashed lines (┄┄): Async/cache connections
+- Dotted lines (- - -): Service mesh connections
+
+**Use Cases:**
+- E-commerce platform architecture
+- Microservices system design
+- Cloud-native application planning
+- Service mesh implementation
+- Event-driven architecture
+
+---
+
 ## AWS Serverless Architecture
 
 **Prompt:**

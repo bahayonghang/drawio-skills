@@ -124,6 +124,41 @@ Once the skill is installed, simply ask Claude to create a diagram:
 "Generate a microservices architecture for an e-commerce system"
 ```
 
+### 🎯 Real Example: E-Commerce Microservices Architecture
+
+![E-Commerce Microservices Architecture](imgs/电商示例.png)
+
+**Prompt used:**
+```
+Design a microservices e-commerce system architecture diagram with the following components:
+
+API Gateway
+├── User Service (authentication, user profiles)
+├── Product Catalog Service (inventory management, product search, categories)
+├── Shopping Cart Service (cart management, session handling)
+├── Order Service (order processing, order history)
+├── Payment Service (payment gateway, transactions)
+└── Notification Service (emails, SMS, push notifications)
+
+Infrastructure:
+- API Gateway (entry point for all requests)
+- Service Mesh (service-to-service communication)
+- Message Queue (RabbitMQ/Kafka for async events)
+- Cache Layer (Redis for session and product caching)
+- Databases (PostgreSQL per service)
+- CDN/Load Balancer
+- Monitoring (Prometheus, Grafana)
+```
+
+**Result:** `examples/ecommerce-microservices.drawio`
+
+This example demonstrates:
+- ✅ **Clear layering** (KISS principle): Client → CDN → API Gateway → Microservices → Database
+- ✅ **Service independence** (SOLID): Each service has its own database
+- ✅ **Async communication**: Message queue for order/payment → notification events
+- ✅ **Observability**: Prometheus + Grafana monitoring
+- ✅ **Optimized routing**: Non-overlapping connection lines with Chinese labels
+
 ### Advanced Examples
 
 #### AWS Architecture
