@@ -48,10 +48,40 @@
 
 ### 从 GitHub 安装
 
+**方法 1：使用稀疏检出（推荐）**
+
 ```bash
-# 将本仓库克隆到 Claude Code 技能目录
-git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
+# 创建技能目录（如果不存在）
+mkdir -p ~/.claude/skills/drawio
+
+# 初始化 git 并配置稀疏检出
+cd ~/.claude/skills/drawio
+git init
+git remote add origin https://github.com/bahayonghang/drawio-skills.git
+git config core.sparseCheckout true
+
+# 只检出 skills/drawio 目录
+echo "skills/drawio/*" >> .git/info/sparse-checkout
+
+# 拉取文件
+git pull origin main
+
+# 移动文件到正确位置
+mv skills/drawio/* .
+rm -rf skills
 ```
+
+**方法 2：使用 SVN（更简单）**
+
+```bash
+# 使用 SVN 只导出 skills/drawio 目录
+svn export https://github.com/bahayonghang/drawio-skills/trunk/skills/drawio ~/.claude/skills/drawio
+```
+
+**方法 3：手动下载**
+
+1. 从 GitHub 下载 [skills/drawio 目录](https://github.com/bahayonghang/drawio-skills/tree/main/skills/drawio)
+2. 解压到 `~/.claude/skills/drawio`
 
 安装完成后，技能将在 Claude Code 中自动可用。
 

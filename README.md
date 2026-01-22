@@ -48,10 +48,40 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 
 ### Install from GitHub
 
+**Option 1: Using sparse checkout (Recommended)**
+
 ```bash
-# Clone this repository to your Claude Code skills directory
-git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
+# Create the skills directory if it doesn't exist
+mkdir -p ~/.claude/skills/drawio
+
+# Initialize git and configure sparse checkout
+cd ~/.claude/skills/drawio
+git init
+git remote add origin https://github.com/bahayonghang/drawio-skills.git
+git config core.sparseCheckout true
+
+# Only checkout the skills/drawio directory
+echo "skills/drawio/*" >> .git/info/sparse-checkout
+
+# Pull the files
+git pull origin main
+
+# Move files to the correct location
+mv skills/drawio/* .
+rm -rf skills
 ```
+
+**Option 2: Using SVN (Simpler)**
+
+```bash
+# Use SVN to export only the skills/drawio directory
+svn export https://github.com/bahayonghang/drawio-skills/trunk/skills/drawio ~/.claude/skills/drawio
+```
+
+**Option 3: Manual Download**
+
+1. Download the [skills/drawio directory](https://github.com/bahayonghang/drawio-skills/tree/main/skills/drawio) from GitHub
+2. Extract to `~/.claude/skills/drawio`
 
 The skill will be available automatically in Claude Code.
 
