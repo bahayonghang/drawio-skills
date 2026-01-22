@@ -1,9 +1,15 @@
 name: Deploy Documentation to GitHub Pages
 
 on:
-  # Trigger on release published
-  release:
-    types: [published]
+  # Trigger on push to main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-docs.yml'
 
   # Allow manual trigger
   workflow_dispatch:
