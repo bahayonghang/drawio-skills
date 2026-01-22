@@ -1,132 +1,266 @@
-# MCP 工具参考
+# MCP Tools Reference
 
-所有可用 MCP 工具的完整参考。
+This document describes the available MCP tools provided by the Next AI Draw.io MCP server.
 
-## 可用工具
+## start_session
 
-### start_session
+Opens a browser window with real-time diagram preview.
 
-打开 Draw.io 桌面应用并建立实时预览会话。
+### Description
 
-**用法**：创建新图表时自动调用
+This tool starts a new diagram editing session by:
+1. Starting an embedded HTTP server (default port: 6002)
+2. Opening the user's default browser with the draw.io editor
+3. Establishing a connection between the MCP server and the browser
 
-**参数**：无
+### Parameters
 
-**示例**：
-> "启动一个新的图表会话"
+None
 
----
+### Returns
 
-### display_diagram
+- `sessionId`: Unique identifier for the session
+- `url`: Browser URL with the draw.io editor
+- `port`: Port number of the embedded HTTP server
 
-从 XML 标记创建新图表。
+### Example
 
-**参数**：
-- `xml`（字符串）：Draw.io XML 格式的图表定义
+```
+Tool: start_session
+Result: Session started at http://localhost:6002?mcp=abc123
+```
 
-**示例**：
-> "创建一个包含开始、处理和结束节点的流程图"
+### Notes
 
-Claude 将生成适当的 XML 并调用此工具。
-
----
-
-### get_diagram
-
-检索当前图表 XML。
-
-**参数**：无
-
-**返回**：当前图表的完整 XML 表示
-
-**用例**：
-- 将图表保存到文件
-- 检查图表结构
-- 修改特定元素
+- Must be called before any diagram operations
+- Only one session can be active at a time
+- The browser window will show the draw.io editor with real-time updates
 
 ---
 
-### edit_diagram
+## create_new_diagram
 
-通过单元格 ID 修改现有图表。
+Create a new diagram from XML.
 
-**参数**：
-- `cellId`（字符串）：要修改的单元格的 ID
-- `xml`（字符串）：单元格的新 XML 内容
+### Description
 
-**示例**：
-> "将节点 J5 的文本更改为'新标签'"
-> "将单元格 J3 的填充颜色设置为 #FF6B6B"
+Creates a new diagram by sending draw.io XML to the browser. The diagram will appear immediately in the browser window.
+
+### Parameters
+
+- `xml` (required): Draw.io diagram XML string
+
+### Returns
+
+- `success`: Boolean indicating if the diagram was created
+- `message`: Status message
+
+### Example
+
+```
+Tool: create_new_diagram
+Parameters:
+  xml: <mxGraphModel>...</mxGraphModel>
+Result: Diagram created successfully
+```
+
+### Notes
+
+- Requires an active session (call `start_session` first)
+- The XML must be valid draw.io format
+- The browser will update immediately with the new diagram
 
 ---
 
-### export_diagram
+## edit_diagram
 
-将当前图表保存为 .drawio 文件。
+Edit diagram by ID-based operations.
 
-**参数**：
-- `filename`（字符串）：输出文件路径
+### Description
 
-**示例**：
-> "将图表导出为 ~/Documents/my-diagram.drawio"
+Modifies an existing diagram by performing operations on specific cells (nodes, edges, etc.) identified by their IDs.
 
-## 工作流程
+### Parameters
 
-### 创建图表
+- `operations` (required): Array of edit operations
 
-1. `start_session` - 初始化会话
-2. `display_diagram` - 渲染初始图表
-3. 浏览器预览自动打开
+Each operation has:
+- `type`: Operation type (`update`, `add`, `delete`)
+- `cellId`: ID of the cell to modify
+- `properties`: Properties to update (for `update` and `add` operations)
 
-### 编辑图表
+### Returns
 
-1. `get_diagram` - 检索当前状态（可选）
-2. `edit_diagram` - 进行定向更改
-3. 预览实时更新
+- `success`: Boolean indicating if the edit was successful
+- `message`: Status message
 
-### 保存图表
+### Example
 
-1. `export_diagram` - 保存到文件系统
-2. 文件以 .drawio XML 格式保存
+```
+Tool: edit_diagram
+Parameters:
+  operations: [
+    {
+      "type": "update",
+      "cellId": "2",
+      "properties": {
+        "value": "Updated Label",
+        "style": "rounded=1;fillColor=#dae8fc"
+      }
+    }
+  ]
+Result: Diagram updated successfully
+```
 
-## 最佳实践
+### Notes
 
-### 工具选择
+- Requires an active session with an existing diagram
+- Cell IDs can be obtained from `get_diagram`
+- Multiple operations can be performed in a single call
 
-- 使用 `display_diagram` 创建新图表
-- 使用 `edit_diagram` 进行修改
-- 需要检查结构时使用 `get_diagram`
+---
 
-### 高效编辑
+## get_diagram
 
-- 尽可能在单个 `edit_diagram` 调用中进行多次更改
-- 按单元格 ID 批量编辑以获得更好的性能
-- 在保存前使用浏览器预览验证更改
+Get the current diagram XML.
 
-### 错误处理
+### Description
 
-如果工具失败：
-1. 检查 Draw.io 桌面应用是否正在运行
-2. 验证 MCP 服务器是否已连接
-3. 确保单元格 ID 有效
+Retrieves the current diagram XML from the browser. Useful for:
+- Inspecting the diagram structure
+- Getting cell IDs for editing
+- Saving the current state
 
-## 技术细节
+### Parameters
 
-### XML 格式
+None
 
-Draw.io 使用基于 XML 的格式。详情请参阅 [XML 格式参考](./xml-format)。
+### Returns
 
-### 单元格 ID
+- `xml`: Current diagram XML string
 
-图表中的每个元素都有唯一的单元格 ID（例如 "J5"、"J12"）。
-创建图表时会自动生成 ID。
+### Example
 
-### 会话管理
+```
+Tool: get_diagram
+Result: <mxGraphModel>...</mxGraphModel>
+```
 
-一次只能有一个活动会话。
-启动新会话将关闭任何现有会话。
+### Notes
 
-## 下一步
+- Requires an active session with an existing diagram
+- Returns the complete diagram XML including all cells and styles
 
-- 了解 [XML 格式](./xml-format)
-- 浏览[示例](../examples/)
+---
+
+## export_diagram
+
+Save diagram to a `.drawio` file.
+
+### Description
+
+Exports the current diagram to a `.drawio` file on the local filesystem.
+
+### Parameters
+
+- `filename` (required): Output filename (with or without `.drawio` extension)
+- `path` (optional): Directory path (defaults to current directory)
+
+### Returns
+
+- `success`: Boolean indicating if the export was successful
+- `filepath`: Full path to the exported file
+- `message`: Status message
+
+### Example
+
+```
+Tool: export_diagram
+Parameters:
+  filename: "my-architecture.drawio"
+  path: "./diagrams"
+Result: Diagram exported to ./diagrams/my-architecture.drawio
+```
+
+### Notes
+
+- Requires an active session with an existing diagram
+- The `.drawio` extension is added automatically if not provided
+- The directory must exist or be creatable
+
+---
+
+## Workflow Example
+
+Here's a typical workflow using these tools:
+
+```
+1. start_session
+   → Opens browser with draw.io editor
+
+2. create_new_diagram
+   → Creates initial diagram from XML
+
+3. get_diagram (optional)
+   → Inspect current diagram structure
+
+4. edit_diagram (optional, multiple times)
+   → Make iterative changes to the diagram
+
+5. export_diagram
+   → Save the final diagram to a file
+```
+
+## Error Handling
+
+All tools return error messages if something goes wrong:
+
+- **"No active session"**: Call `start_session` first
+- **"Invalid XML"**: The provided XML is not valid draw.io format
+- **"Cell not found"**: The specified cell ID doesn't exist in the diagram
+- **"Port in use"**: The server port is already in use (will auto-increment)
+
+## Tips
+
+### Getting Cell IDs
+
+To edit specific elements, you need their cell IDs. Use `get_diagram` to get the XML, then parse it to find cell IDs:
+
+```xml
+<mxCell id="2" value="My Node" style="rounded=1" vertex="1" parent="1">
+  <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
+</mxCell>
+```
+
+The `id="2"` is the cell ID you can use in `edit_diagram`.
+
+### Batch Operations
+
+You can perform multiple edits in a single `edit_diagram` call for better performance:
+
+```json
+{
+  "operations": [
+    {"type": "update", "cellId": "2", "properties": {"value": "New Label"}},
+    {"type": "update", "cellId": "3", "properties": {"style": "fillColor=#f8cecc"}},
+    {"type": "delete", "cellId": "4"}
+  ]
+}
+```
+
+### Diagram Styles
+
+Draw.io uses a style string format for visual properties:
+
+```
+rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000
+```
+
+Common style properties:
+- `fillColor`: Background color (hex)
+- `strokeColor`: Border color (hex)
+- `fontColor`: Text color (hex)
+- `rounded`: Rounded corners (0 or 1)
+- `dashed`: Dashed border (0 or 1)
+- `fontSize`: Font size (number)
+- `fontStyle`: Font style (0=normal, 1=bold, 2=italic, 4=underline)

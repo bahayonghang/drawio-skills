@@ -1,0 +1,46 @@
+# Justfile for Draw.io Skills Documentation
+# Run `just` to see available commands
+
+# Default recipe (runs when you just type `just`)
+default:
+    @just --list
+
+# Start development server
+dev:
+    @echo "🚀 Starting documentation development server..."
+    npm run docs:dev
+
+# Build documentation for production
+build:
+    @echo "📦 Building documentation..."
+    npm run docs:build
+
+# Preview production build
+preview:
+    @echo "👀 Previewing production build..."
+    npm run docs:preview
+
+# Install dependencies
+install:
+    @echo "📥 Installing dependencies..."
+    npm install
+
+# Clean build artifacts
+clean:
+    @echo "🧹 Cleaning build artifacts..."
+    rm -rf docs/.vitepress/dist
+    rm -rf docs/.vitepress/cache
+
+# Check for broken links (requires installation of markdown-link-check)
+check-links:
+    @echo "🔗 Checking for broken links..."
+    find docs -name "*.md" -exec markdown-link-check {} \;
+
+# Serve documentation (alias for dev)
+serve: dev
+
+# Quick start (install + dev)
+start: install dev
+
+# Full rebuild (clean + build)
+rebuild: clean build

@@ -1,71 +1,71 @@
-# 流程图示例
+# Flowchart Examples
 
-使用 Draw.io 技能创建流程图的示例提示词。
+Flowcharts are perfect for visualizing processes, workflows, and decision trees.
 
-## 简单流程
+## Simple Process Flow
 
-> "创建一个包含 4 个步骤的简单流程：开始 → 初始化 → 处理 → 结束"
+**Prompt:**
+```
+Create a flowchart showing a user login process with username/password input,
+validation, and success/error paths
+```
 
-## 决策流程
+**Description:**
+- Start node
+- Input fields (username, password)
+- Validation decision
+- Success path → Dashboard
+- Error path → Error message → Back to login
 
-> "绘制用户登录流程图：
-> - 用户输入凭据
-> - 检查凭据是否有效
-> - 如果有效：登录成功
-> - 如果无效：显示错误并重试"
+**Use Cases:**
+- User authentication flows
+- Business process documentation
+- Algorithm visualization
 
-## 循环流程
+## CI/CD Pipeline
 
-> "创建一个数据处理循环流程图：
-> - 开始
-> - 读取数据
-> - 还有更多数据吗？（决策）
-> - 如果是：处理数据 → 返回读取
-> - 如果否：保存结果 → 结束"
+**Prompt:**
+```
+Create a flowchart showing the CI/CD pipeline: code commit -> build ->
+test -> staging deploy -> production deploy with approval gates
+```
 
-## 复杂业务流程
+**Description:**
+- Sequential process flow
+- Decision nodes for test results and approval
+- Parallel paths for different environments
+- Error handling and rollback paths
 
-> "绘制订单处理流程图：
-> - 客户下单
-> - 验证库存
-> - 如果缺货：通知客户 → 结束
-> - 如果有货：处理支付
-> - 如果支付失败：重试支付（最多 3 次）
-> - 如果支付成功：发货
-> - 发送确认 → 结束"
+**Use Cases:**
+- DevOps pipeline documentation
+- Deployment process visualization
+- Workflow automation
 
-## 错误处理流程
+## Tips for Flowcharts
 
-> "创建一个包含错误处理的流程图：
-> - 开始处理
-> - 尝试执行操作
-> - 如果发生错误：记录错误
-> - 检查错误是否可恢复
-> - 如果是：重试操作
-> - 如果否：警告管理员 → 结束
-> - 如果没有错误：继续下一步 → 结束"
+### Use Standard Shapes
 
-## 并行处理
+- **Oval**: Start/End nodes
+- **Rectangle**: Process steps
+- **Diamond**: Decision points
+- **Parallelogram**: Input/Output
 
-> "绘制一个显示并行任务的流程图：
-> - 开始
-> - 分为 3 个并行任务：任务 A、任务 B、任务 C
-> - 等待所有任务完成
-> - 合并结果
-> - 结束"
+### Color Coding
 
-## 流程图提示词技巧
+- **Green**: Success paths
+- **Red**: Error paths
+- **Blue**: Normal process flow
+- **Yellow**: Warning or conditional paths
 
-- **明确连接**：使用 "→" 或 "然后" 显示流程
-- **描述决策点**：使用 "如果/则/否则" 语言
-- **指定节点类型**：提及 "开始"、"结束"、"决策"、"处理"
-- **包含循环**：清楚地描述何时返回到之前的步骤
+### Keep It Simple
 
-## 自己试试
+- One main flow path
+- Clear decision points
+- Minimal crossing lines
+- Consistent spacing
 
-将任何这些提示词复制到 Claude Code 中，查看结果！
+## Next Steps
 
-## 相关示例
-
-- [架构图](./architecture)
-- [创建图表指南](../guide/creating-diagrams)
+- [Architecture Examples](./architecture.md)
+- [Creating Diagrams](/guide/creating-diagrams.md)
+- [Examples Overview](./index.md)

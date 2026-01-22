@@ -1,107 +1,291 @@
 # Export & Save
 
-Learn how to save your diagrams for future use.
+Learn how to save your diagrams as `.drawio` files for use in draw.io desktop or web applications.
 
-## Export Formats
+## Overview
 
-### Drawio Format (.drawio)
+Once you've created and refined your diagram, you can export it as a `.drawio` file. This file can be:
 
-The native format that preserves all editing capabilities:
+- Opened in [draw.io desktop application](https://github.com/jgraph/drawio-desktop)
+- Opened in [diagrams.net](https://www.diagrams.net/) web application
+- Shared with team members
+- Version controlled in your repository
 
-> "Export the diagram as user-login-flow.drawio"
+## Basic Export
 
-This saves the complete diagram in XML format, allowing you to:
-- Reopen in Draw.io desktop
-- Edit with Claude Code later
-- Share with others
+To export your current diagram:
 
-## Exporting with Claude
+```
+"Export this diagram as 'my-architecture.drawio'"
+```
 
-### Basic Export
+Claude will:
+1. Call `export_diagram` with the filename
+2. Save the file to your current directory
+3. Confirm the save location
 
-> "Save this diagram as my-diagram.drawio"
+## Specifying Save Location
 
-### Specify Location
+### Save to Current Directory
 
-> "Export the diagram to ~/Documents/diagrams/architecture.drawio"
+```
+"Export as 'flowchart.drawio'"
+```
 
-### Export Multiple Diagrams
+Saves to: `./flowchart.drawio`
 
-> "Save all open diagrams with the prefix 'project-'"
+### Save to Specific Directory
 
-## Managing Exported Files
+```
+"Export this diagram to './diagrams/architecture.drawio'"
+```
 
-### Organizing Diagrams
+Saves to: `./diagrams/architecture.drawio`
 
-Create a structured directory for your diagrams:
+::: tip
+The directory must exist before saving. Create it first if needed:
+```
+"Create a diagrams directory and save this as 'architecture.drawio'"
+```
+:::
 
-\`\`\`bash
-mkdir -p ~/Documents/diagrams/{flowcharts,architecture,ui}
-\`\`\`
+## File Naming
+
+### Automatic Extension
+
+The `.drawio` extension is added automatically if not provided:
+
+```
+"Export as 'my-diagram'"
+```
+
+Saves as: `my-diagram.drawio`
+
+### Custom Names
+
+Use descriptive names for better organization:
+
+```
+"Export as 'aws-serverless-api-architecture.drawio'"
+"Export as 'user-authentication-flow.drawio'"
+"Export as 'microservices-deployment-diagram.drawio'"
+```
+
+## Version History
+
+The draw.io skill maintains version history in the browser. You can restore previous versions before exporting.
+
+### Viewing History
+
+```
+"Show me the version history"
+```
+
+### Restoring a Version
+
+```
+"Restore the previous version"
+"Go back to version 3"
+```
+
+### Exporting Specific Versions
+
+```
+"Restore version 2 and export it as 'architecture-v2.drawio'"
+```
+
+## Opening Exported Files
+
+### In draw.io Desktop
+
+1. Download [draw.io desktop](https://github.com/jgraph/drawio-desktop/releases)
+2. Open the application
+3. File → Open → Select your `.drawio` file
+
+### In diagrams.net
+
+1. Go to [diagrams.net](https://www.diagrams.net/)
+2. Click "Open Existing Diagram"
+3. Select your `.drawio` file
+
+### In VS Code
+
+If you have the [Draw.io Integration extension](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio):
+
+1. Open VS Code
+2. Click on the `.drawio` file
+3. The diagram opens in the editor
+
+## Organizing Exported Files
+
+### Recommended Structure
+
+```
+project/
+├── docs/
+│   └── diagrams/
+│       ├── architecture/
+│       │   ├── system-overview.drawio
+│       │   ├── microservices.drawio
+│       │   └── deployment.drawio
+│       ├── flowcharts/
+│       │   ├── user-registration.drawio
+│       │   ├── payment-process.drawio
+│       │   └── order-fulfillment.drawio
+│       └── sequence/
+│           ├── oauth-flow.drawio
+│           └── api-calls.drawio
+```
 
 ### Naming Conventions
 
-Use descriptive names with dates:
+Use clear, descriptive names:
 
-- `user-auth-flow-2024-01-15.drawio`
-- `microservices-architecture-v2.drawio`
-- `order-processing-flow.drawio`
+- **Architecture**: `aws-serverless-api.drawio`, `gcp-microservices.drawio`
+- **Flowcharts**: `user-login-flow.drawio`, `ci-cd-pipeline.drawio`
+- **Sequence**: `oauth2-flow.drawio`, `payment-sequence.drawio`
+- **Network**: `vpc-architecture.drawio`, `network-topology.drawio`
 
 ## Version Control
 
 ### Git Integration
 
-Track your diagrams in Git:
+Add your diagrams to version control:
 
-\`\`\`bash
-# Add diagrams to your repository
-git add diagrams/*.drawio
-git commit -m "Add system architecture diagram"
-\`\`\`
+```bash
+git add docs/diagrams/*.drawio
+git commit -m "Add architecture diagrams"
+git push
+```
 
-### Diffing Changes
+### Versioning Strategy
 
-Drawio files are XML-based, making them diffable:
+1. **Semantic Versioning**: `architecture-v1.0.drawio`, `architecture-v1.1.drawio`
+2. **Date-based**: `architecture-2024-01-15.drawio`
+3. **Feature-based**: `architecture-with-cache.drawio`, `architecture-with-cdn.drawio`
 
-\`\`\`bash
-git diff diagrams/architecture.drawio
-\`\`\`
+### Git Diff
 
-## Sharing Diagrams
+`.drawio` files are XML-based, so you can see changes in git diff:
 
-### Export to PNG
+```bash
+git diff docs/diagrams/architecture.drawio
+```
 
-While the skill primarily exports to .drawio format, you can use Draw.io desktop to convert:
+## Exporting Multiple Diagrams
 
-1. Open the .drawio file in Draw.io desktop
-2. File → Export as → PNG
-3. Adjust quality and scale as needed
+### Batch Export
 
-### Export to PDF
+```
+"Export all diagrams in this session:
+- 'architecture.drawio'
+- 'flowchart.drawio'
+- 'sequence.drawio'"
+```
 
-For documents and presentations:
+### Organized Export
 
-1. Open in Draw.io desktop
-2. File → Export as → PDF
-3. Select page size and orientation
+```
+"Export the architecture diagram to './docs/diagrams/architecture.drawio'
+and the flowchart to './docs/diagrams/flowchart.drawio'"
+```
 
-## Backup Strategies
+## File Format
 
-### Local Backup
+The `.drawio` file format is:
 
-\`\`\`bash
-# Create regular backups
-cp -r ~/Documents/diagrams ~/Backups/diagrams-$(date +%Y%m%d)
-\`\`\`
+- **XML-based**: Human-readable and version-control friendly
+- **Compressed**: Optionally compressed for smaller file size
+- **Portable**: Works across all draw.io applications
+- **Editable**: Can be edited in any text editor
 
-### Cloud Storage
+### Viewing Raw XML
 
-Sync your diagrams directory with:
-- Google Drive
-- Dropbox
-- OneDrive
+```bash
+cat my-diagram.drawio
+```
+
+You'll see the XML structure:
+
+```xml
+<mxfile>
+  <diagram>
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Your diagram elements -->
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+```
+
+## Best Practices
+
+### Regular Exports
+
+Export your diagrams regularly during development:
+
+```
+1. Create initial diagram
+2. Export as 'architecture-draft.drawio'
+3. Make changes
+4. Export as 'architecture-v1.drawio'
+5. Final changes
+6. Export as 'architecture-final.drawio'
+```
+
+### Backup Strategy
+
+- Export to multiple locations
+- Commit to version control
+- Keep local backups
+
+### Documentation
+
+Include diagrams in your documentation:
+
+```markdown
+# System Architecture
+
+![Architecture Diagram](./diagrams/architecture.drawio.png)
+
+[View editable diagram](./diagrams/architecture.drawio)
+```
+
+## Troubleshooting
+
+### Export Failed
+
+**Problem**: Export operation fails.
+
+**Solution**:
+1. Check if the directory exists
+2. Verify write permissions
+3. Check disk space
+
+### File Not Found
+
+**Problem**: Exported file not found.
+
+**Solution**:
+1. Check the save location
+2. Verify the filename
+3. Look in the current working directory
+
+### Cannot Open File
+
+**Problem**: Exported file won't open in draw.io.
+
+**Solution**:
+1. Verify the file extension is `.drawio`
+2. Check if the file is corrupted
+3. Try exporting again
 
 ## Next Steps
 
-- Explore [Examples](../examples/) for inspiration
-- Learn about [XML Format](../api/xml-format)
+- [Creating Diagrams](./creating-diagrams.md) - Create more diagrams
+- [Editing Diagrams](./editing-diagrams.md) - Modify existing diagrams
+- [XML Format](/api/xml-format.md) - Understand the file format
+- [Examples](/examples/) - Browse example diagrams

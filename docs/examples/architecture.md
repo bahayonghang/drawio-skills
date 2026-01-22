@@ -1,71 +1,99 @@
 # Architecture Diagram Examples
 
-Example prompts for creating architecture diagrams.
+Architecture diagrams help visualize system design and component relationships.
 
-## Three-Tier Architecture
+## AWS Serverless Architecture
 
-> "Draw a three-tier web application architecture:
-> - Client Tier: Web browsers and mobile apps
-> - Application Tier: Load balancer, web servers, API servers
-> - Data Tier: Primary database, read replicas, cache"
+**Prompt:**
+```
+Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
+and S3 for a serverless REST API. Use AWS icons.
+```
 
-## Microservices Architecture
+**Components:**
+- API Gateway (entry point)
+- Lambda functions (business logic)
+- DynamoDB (database)
+- S3 (file storage)
+- CloudWatch (monitoring)
 
-> "Create a microservices architecture with:
-> - API Gateway at the top
-> - Auth Service, User Service, Order Service, Payment Service
-> - Each service has its own database
-> - All services connect through the API Gateway"
+**Use Cases:**
+- Serverless application design
+- API architecture documentation
+- Cloud migration planning
 
-## CI/CD Pipeline
+## GCP Microservices
 
-> "Draw a CI/CD pipeline architecture:
-> - Developer commits code
-> - Git repository
-> - Build server compiles code
-> - Automated tests run
-> - If tests pass: Deploy to staging
-> - Manual approval
-> - Deploy to production"
+**Prompt:**
+```
+Generate a GCP architecture diagram with Cloud Run, Cloud SQL, and
+Cloud Storage for a web application. Use GCP icons.
+```
 
-## Cloud Infrastructure
+**Components:**
+- Cloud Run (containerized services)
+- Cloud SQL (managed database)
+- Cloud Storage (object storage)
+- Cloud Load Balancing
+- Cloud Monitoring
 
-> "Create a cloud infrastructure diagram:
-> - Internet → Load Balancer
-> - Web Server (Auto-scaling group)
-> - Application Server (Auto-scaling group)
-> - Database (Primary + Standby)
-> - CDN for static content"
+**Use Cases:**
+- Microservices architecture
+- Container-based deployments
+- GCP infrastructure planning
 
-## Event-Driven Architecture
+## Azure Web Application
 
-> "Draw an event-driven architecture:
-> - Event producers: Web API, Scheduled Jobs
-> - Message Broker (Kafka/RabbitMQ)
-> - Event consumers: Email Service, Analytics Service, Notification Service
-> - Data Warehouse"
+**Prompt:**
+```
+Generate an Azure architecture diagram with App Service, SQL Database,
+and Blob Storage. Use Azure icons.
+```
 
-## Kubernetes Deployment
+**Components:**
+- App Service (web hosting)
+- SQL Database (relational data)
+- Blob Storage (files and media)
+- Application Insights (monitoring)
+- Azure CDN (content delivery)
 
-> "Create a Kubernetes deployment architecture:
-> - Ingress Controller
-> - Services: Frontend, Backend, Database
-> - Pods: Multiple instances of each service
-> - Persistent Volumes for data
-> - ConfigMaps and Secrets"
+**Use Cases:**
+- Web application architecture
+- Azure deployment planning
+- Enterprise application design
 
 ## Tips for Architecture Diagrams
 
-- **Use hierarchical structure**: Describe layers or tiers clearly
-- **Show data flow**: Indicate how data moves between components
-- **Label connections**: Describe what protocols or APIs are used
-- **Group related components**: Use containers or boundaries
+### Use Official Icons
 
-## Try It Yourself
+Always mention the cloud provider and request official icons:
+- "Use AWS icons"
+- "Use GCP icons"
+- "Use Azure icons"
 
-Copy any of these prompts into Claude Code and see the results!
+### Show Data Flow
 
-## Related Examples
+Indicate the direction of data flow with arrows and labels:
+- "User requests flow through API Gateway to Lambda"
+- "Data is stored in DynamoDB and cached in ElastiCache"
 
-- [Flowcharts](./flowchart)
-- [Creating Diagrams Guide](../guide/creating-diagrams)
+### Group Related Components
+
+Organize components into logical groups:
+- Frontend tier
+- Application tier
+- Data tier
+- Security layer
+
+### Include Monitoring
+
+Don't forget observability components:
+- CloudWatch (AWS)
+- Cloud Monitoring (GCP)
+- Application Insights (Azure)
+
+## Next Steps
+
+- [Flowchart Examples](./flowchart.md)
+- [Creating Diagrams](/guide/creating-diagrams.md)
+- [Examples Overview](./index.md)

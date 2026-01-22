@@ -1,79 +1,99 @@
 # Getting Started
 
-Welcome to Draw.io Skill for Claude Code! This guide will help you get started quickly.
+Welcome to Draw.io Skill for Claude Code! This guide will help you get started with creating diagrams using natural language.
+
+## What is Draw.io Skill?
+
+Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview. It allows you to:
+
+- Create diagrams using natural language descriptions
+- Edit existing diagrams with simple commands
+- Export diagrams as `.drawio` files
+- View diagrams in real-time in your browser
 
 ## Prerequisites
 
-- [Claude Code](https://claude.ai/code) installed
-- [Draw.io Desktop](https://www.diagrams.net/) installed (for real-time preview)
-- Git installed
+Before you begin, make sure you have:
+
+- [Claude Code CLI](https://github.com/anthropics/claude-code) installed
+- [Node.js](https://nodejs.org/) (for npx command)
 
 ## Installation
 
-### Install from GitHub
-
-\`\`\`bash
-# Clone this repository to your Claude Code skills directory
-git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
-\`\`\`
-
-Restart Claude Code after installation. The skill will be loaded automatically.
-
-## Verify Installation
-
-In Claude Code, try the following conversation:
-
-> You: Help me draw a simple flowchart with three steps: start, process, and end
-
-If the skill is installed correctly, Claude will:
-1. Open Draw.io desktop and create a session
-2. Generate a flowchart with three nodes
-3. Display the result in your browser in real-time
+See the [Installation Guide](./installation.md) for detailed installation instructions.
 
 ## Your First Diagram
 
-Let's create a simple user login flowchart:
+Once installed, creating a diagram is as simple as asking Claude:
 
-### Step 1: Describe Your Requirements
-
-In Claude Code, type:
-
-> "Create a user login flowchart with the following steps:
-> - Enter username and password
-> - Validate credentials
-> - Login success or failure"
-
-### Step 2: View Results
+```
+"Create a flowchart for user login process"
+```
 
 Claude will:
-1. Analyze your requirements
-2. Generate diagram in Draw.io XML format
-3. Open browser preview
-4. Display the generated flowchart
+1. Call `start_session` to open a browser window
+2. Generate the diagram XML
+3. Display the diagram in your browser
+4. Allow you to make changes with natural language
 
-### Step 3: Iterate and Refine
+## Basic Concepts
 
-You can continue telling Claude:
+### MCP Tools
 
-> "Add a red background to the login failure node"
-> "Add a decision node to check if the account exists before validation"
+The skill uses the following MCP tools:
+
+- **start_session**: Opens browser with real-time preview
+- **create_new_diagram**: Creates a new diagram from XML
+- **get_diagram**: Retrieves current diagram XML
+- **edit_diagram**: Modifies diagram by cell ID
+- **export_diagram**: Saves as .drawio file
+
+### Diagram Types
+
+You can create various types of diagrams:
+
+- **Flowcharts**: Process flows, decision trees, workflows
+- **Architecture Diagrams**: System architecture, microservices, deployment
+- **Sequence Diagrams**: Interaction flows, API calls, message sequences
+- **Network Diagrams**: Network topology, VPC architecture, security zones
+- **Data Flow Diagrams**: Data pipelines, ETL processes, analytics workflows
+- **UML Diagrams**: Class diagrams, state diagrams, component diagrams
+- **Cloud Architecture**: AWS, GCP, Azure with official icons
+
+## Example Prompts
+
+### Simple Flowchart
+
+```
+"Create a flowchart showing a user registration process with email verification"
+```
+
+### AWS Architecture
+
+```
+"Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
+and S3 for a serverless REST API. Use AWS icons."
+```
+
+### Sequence Diagram
+
+```
+"Create a sequence diagram showing OAuth 2.0 authorization code flow
+between user, client app, auth server, and resource server"
+```
 
 ## Next Steps
 
-- Read [Creating Diagrams](./creating-diagrams) to learn about more diagram types
-- Check [API Reference](../api/mcp-tools) for available MCP tools
-- Browse [Examples](../examples/) for more inspiration
+- [Installation Guide](./installation.md) - Detailed installation instructions
+- [Creating Diagrams](./creating-diagrams.md) - Learn how to create different types of diagrams
+- [Editing Diagrams](./editing-diagrams.md) - Learn how to modify existing diagrams
+- [Export & Save](./export.md) - Learn how to save your diagrams
 
-## FAQ
+## Getting Help
 
-### Q: Draw.io desktop didn't open automatically?
+If you encounter any issues:
 
-A: Make sure Draw.io desktop is properly installed and can be launched from the command line.
-
-### Q: The diagram is not showing in the browser?
-
-A: Check the browser console for error messages and ensure the MCP server is running.
-
-### Q: How do I save my diagram?
-
-A: Read the [Export & Save](./export) section to learn how to save as `.drawio` files.
+1. Check the [Troubleshooting](./installation.md#troubleshooting) section
+2. Review the [API Reference](/api/mcp-tools.md)
+3. Check the [Examples](/examples/) for inspiration
+4. Open an issue on [GitHub](https://github.com/bahayonghang/drawio-skills/issues)

@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: Draw.io Skill
-  text: AI-powered diagram creation for Claude Code
-  tagline: Create professional diagrams with natural language and real-time browser preview
+  name: "Draw.io Skill"
+  text: "for Claude Code"
+  tagline: AI-powered diagram creation and editing with real-time browser preview
   actions:
     - theme: brand
       text: Get Started
@@ -14,51 +14,78 @@ hero:
       link: https://github.com/bahayonghang/drawio-skills
 
 features:
-  - title: Natural Language → Diagram
-    details: Describe what you need in plain English, and get professional diagrams instantly.
-  - title: Real-time Preview
-    details: See your changes instantly in your browser as you iterate on your designs.
-  - title: Multiple Diagram Types
-    details: Support for flowcharts, architecture diagrams, sequence diagrams, and more.
-  - title: Edit Existing Diagrams
-    details: Modify diagrams with precision using ID-based operations.
-  - title: Export & Save
-    details: Save your work as .drawio files for future editing.
-  - title: MCP Integration
-    details: Seamless integration with Claude Code through Model Context Protocol.
+  - icon: 🎨
+    title: Natural Language → Diagram
+    details: Describe what you need in plain text, and get a professional diagram instantly.
+
+  - icon: 🔄
+    title: Real-time Preview
+    details: See your diagrams appear and update in your browser as Claude creates them.
+
+  - icon: 📊
+    title: Multiple Diagram Types
+    details: Flowcharts, architecture diagrams, sequence diagrams, network diagrams, and more.
+
+  - icon: ☁️
+    title: Cloud Architecture Support
+    details: Specialized support for AWS, GCP, and Azure with official icons.
+
+  - icon: ✏️
+    title: Edit Existing Diagrams
+    details: Modify diagrams using ID-based operations with natural language instructions.
+
+  - icon: 💾
+    title: Export & Save
+    details: Save your diagrams as .drawio files for use in draw.io desktop or web.
+
+  - icon: 🎬
+    title: Animated Connectors
+    details: Create dynamic and animated connectors between diagram elements.
+
+  - icon: 📚
+    title: Version History
+    details: Restore previous diagram versions with visual thumbnails.
+
+  - icon: 🚀
+    title: Self-contained
+    details: Embedded server with no external dependencies required.
 ---
 
-## Quick Start
+## Quick Example
 
-\`\`\`bash
-# Install the skill
-git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
-\`\`\`
+```
+"Create a flowchart for user login process with username/password input,
+validation, and success/error paths"
+```
 
-Once installed, simply ask Claude:
+Claude will:
+1. Open a browser window with the draw.io editor
+2. Generate the diagram XML based on your description
+3. Display the diagram in real-time
+4. Allow you to make iterative changes with natural language
 
-> "Create a flowchart for user authentication"
+## What is Draw.io Skill?
 
-## What This Skill Adds
+Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation and editing. It wraps the [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server and provides:
 
-This skill extends the powerful [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server with:
+- **Comprehensive Documentation**: Detailed guides for creating various diagram types
+- **XML Format Reference**: Complete documentation of draw.io XML format and style properties
+- **Diagram Examples**: Ready-to-use examples for flowcharts, architecture diagrams, and more
+- **MCP Tools Reference**: Detailed documentation of all available MCP tools
 
-- **Workflow guidance** for creating and editing diagrams
-- **XML format reference** with style properties and common shapes
-- **Diagram patterns** for flowcharts and architecture diagrams
-- **Automatic MCP configuration** via `.mcp.json`
+## How It Works
 
-## Example Diagrams
+```
+Claude Code <--stdio--> MCP Server <--http--> Browser (draw.io)
+```
 
-### Flowchart
-
-Ask Claude: *"Create a flowchart showing the order processing workflow"*
-
-### Architecture Diagram
-
-Ask Claude: *"Draw a three-tier web application architecture"*
+1. Ask Claude to create a diagram
+2. Claude calls `start_session` to open a browser window
+3. Claude generates diagram XML and sends it to the browser
+4. You see the diagram update in real-time!
 
 ## Credits
 
 - **MCP Server**: [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) by [@DayuanJiang](https://github.com/DayuanJiang)
+- **Skill Conversion**: [skill-seekers](https://github.com/modelcontextprotocol/skill-seekers)
 - **Draw.io**: [diagrams.net](https://www.diagrams.net/)

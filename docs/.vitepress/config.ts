@@ -4,8 +4,22 @@ export default defineConfig({
   title: 'Draw.io Skill for Claude Code',
   description: 'AI-powered diagram creation and editing with real-time browser preview',
 
+  // GitHub Pages base URL (uncomment if deploying to a subdirectory)
+  // base: '/drawio-skills/',
+
   lastUpdated: true,
   cleanUrls: true,
+
+  // Head tags for better SEO and social sharing
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+    ['meta', { name: 'theme-color', content: '#5f67ee' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:locale', content: 'en' }],
+    ['meta', { property: 'og:title', content: 'Draw.io Skill for Claude Code' }],
+    ['meta', { property: 'og:site_name', content: 'Draw.io Skill' }],
+    ['meta', { property: 'og:url', content: 'https://bahayonghang.github.io/drawio-skills/' }],
+  ],
 
   locales: {
     root: {
@@ -23,8 +37,8 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/guide/' },
-      { text: 'API', link: '/api/' },
+      { text: 'Guide', link: '/guide/getting-started' },
+      { text: 'API', link: '/api/mcp-tools' },
       { text: 'Examples', link: '/examples/' },
       {
         text: 'GitHub',
@@ -60,6 +74,7 @@ export default defineConfig({
         {
           text: 'Examples',
           items: [
+            { text: 'Overview', link: '/examples/' },
             { text: 'Flowchart', link: '/examples/flowchart' },
             { text: 'Architecture Diagram', link: '/examples/architecture' }
           ]
@@ -92,6 +107,7 @@ export default defineConfig({
         {
           text: '示例',
           items: [
+            { text: '概览', link: '/zh/examples/' },
             { text: '流程图', link: '/zh/examples/flowchart' },
             { text: '架构图', link: '/zh/examples/architecture' }
           ]
@@ -102,10 +118,6 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/bahayonghang/drawio-skills' }
     ],
-
-    search: {
-      provider: 'local'
-    },
 
     footer: {
       message: 'Released under the Apache-2.0 License.',

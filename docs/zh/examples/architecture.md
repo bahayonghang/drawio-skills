@@ -1,71 +1,99 @@
-# 架构图示例
+# Architecture Diagram Examples
 
-创建架构图的示例提示词。
+Architecture diagrams help visualize system design and component relationships.
 
-## 三层架构
+## AWS Serverless Architecture
 
-> "绘制一个三层 Web 应用架构：
-> - 客户端层：Web 浏览器和移动应用
-> - 应用层：负载均衡器、Web 服务器、API 服务器
-> - 数据层：主数据库、只读副本、缓存"
+**Prompt:**
+```
+Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
+and S3 for a serverless REST API. Use AWS icons.
+```
 
-## 微服务架构
+**Components:**
+- API Gateway (entry point)
+- Lambda functions (business logic)
+- DynamoDB (database)
+- S3 (file storage)
+- CloudWatch (monitoring)
 
-> "创建一个微服务架构，包含：
-> - 顶部的 API 网关
-> - 认证服务、用户服务、订单服务、支付服务
-> - 每个服务都有自己的数据库
-> - 所有服务通过 API 网关连接"
+**Use Cases:**
+- Serverless application design
+- API architecture documentation
+- Cloud migration planning
 
-## CI/CD 流水线
+## GCP Microservices
 
-> "绘制 CI/CD 流水线架构：
-> - 开发者提交代码
-> - Git 仓库
-> - 构建服务器编译代码
-> - 运行自动化测试
-> - 如果测试通过：部署到预发布环境
-> - 手动批准
-> - 部署到生产环境"
+**Prompt:**
+```
+Generate a GCP architecture diagram with Cloud Run, Cloud SQL, and
+Cloud Storage for a web application. Use GCP icons.
+```
 
-## 云基础设施
+**Components:**
+- Cloud Run (containerized services)
+- Cloud SQL (managed database)
+- Cloud Storage (object storage)
+- Cloud Load Balancing
+- Cloud Monitoring
 
-> "创建云基础设施数据：
-> - 互联网 → 负载均衡器
-> - Web 服务器（自动扩缩容组）
-> - 应用服务器（自动扩缩容组）
-> - 数据库（主库 + 备库）
-> - 用于静态内容的 CDN"
+**Use Cases:**
+- Microservices architecture
+- Container-based deployments
+- GCP infrastructure planning
 
-## 事件驱动架构
+## Azure Web Application
 
-> "绘制事件驱动架构：
-> - 事件生产者：Web API、定时任务
-> - 消息代理（Kafka/RabbitMQ）
-> - 事件消费者：邮件服务、分析服务、通知服务
-> - 数据仓库"
+**Prompt:**
+```
+Generate an Azure architecture diagram with App Service, SQL Database,
+and Blob Storage. Use Azure icons.
+```
 
-## Kubernetes 部署
+**Components:**
+- App Service (web hosting)
+- SQL Database (relational data)
+- Blob Storage (files and media)
+- Application Insights (monitoring)
+- Azure CDN (content delivery)
 
-> "创建 Kubernetes 部署架构：
-> - Ingress 控制器
-> - 服务：前端、后端、数据库
-> - Pod：每个服务的多个实例
-> - 用于数据的持久卷
-> - ConfigMaps 和 Secrets"
+**Use Cases:**
+- Web application architecture
+- Azure deployment planning
+- Enterprise application design
 
-## 架构图技巧
+## Tips for Architecture Diagrams
 
-- **使用分层结构**：清楚地描述层或级
-- **显示数据流**：指示数据如何在组件之间移动
-- **标记连接**：描述使用什么协议或 API
-- **分组相关组件**：使用容器或边界
+### Use Official Icons
 
-## 自己试试
+Always mention the cloud provider and request official icons:
+- "Use AWS icons"
+- "Use GCP icons"
+- "Use Azure icons"
 
-将任何这些提示词复制到 Claude Code 中，查看结果！
+### Show Data Flow
 
-## 相关示例
+Indicate the direction of data flow with arrows and labels:
+- "User requests flow through API Gateway to Lambda"
+- "Data is stored in DynamoDB and cached in ElastiCache"
 
-- [流程图](./flowchart)
-- [创建图表指南](../guide/creating-diagrams)
+### Group Related Components
+
+Organize components into logical groups:
+- Frontend tier
+- Application tier
+- Data tier
+- Security layer
+
+### Include Monitoring
+
+Don't forget observability components:
+- CloudWatch (AWS)
+- Cloud Monitoring (GCP)
+- Application Insights (Azure)
+
+## Next Steps
+
+- [Flowchart Examples](./flowchart.md)
+- [Creating Diagrams](/guide/creating-diagrams.md)
+- [Examples Overview](./index.md)

@@ -1,132 +1,266 @@
 # MCP Tools Reference
 
-Complete reference for all available MCP tools.
+This document describes the available MCP tools provided by the Next AI Draw.io MCP server.
 
-## Available Tools
+## start_session
 
-### start_session
+Opens a browser window with real-time diagram preview.
 
-Opens Draw.io desktop and establishes a session for real-time preview.
+### Description
 
-**Usage**: Automatically called when creating a new diagram
+This tool starts a new diagram editing session by:
+1. Starting an embedded HTTP server (default port: 6002)
+2. Opening the user's default browser with the draw.io editor
+3. Establishing a connection between the MCP server and the browser
 
-**Parameters**: None
+### Parameters
 
-**Example**:
-> "Start a new diagram session"
+None
 
----
+### Returns
 
-### display_diagram
+- `sessionId`: Unique identifier for the session
+- `url`: Browser URL with the draw.io editor
+- `port`: Port number of the embedded HTTP server
 
-Creates a new diagram from XML markup.
+### Example
 
-**Parameters**:
-- `xml` (string): Draw.io XML format diagram definition
+```
+Tool: start_session
+Result: Session started at http://localhost:6002?mcp=abc123
+```
 
-**Example**:
-> "Create a flowchart with start, process, and end nodes"
+### Notes
 
-Claude will generate the appropriate XML and call this tool.
-
----
-
-### get_diagram
-
-Retrieves the current diagram XML.
-
-**Parameters**: None
-
-**Returns**: Complete XML representation of the current diagram
-
-**Use Cases**:
-- Save diagram to file
-- Inspect diagram structure
-- Modify specific elements
+- Must be called before any diagram operations
+- Only one session can be active at a time
+- The browser window will show the draw.io editor with real-time updates
 
 ---
 
-### edit_diagram
+## create_new_diagram
 
-Modifies an existing diagram by cell ID.
+Create a new diagram from XML.
 
-**Parameters**:
-- `cellId` (string): ID of the cell to modify
-- `xml` (string): New XML content for the cell
+### Description
 
-**Example**:
-> "Change the text of node J5 to 'New Label'"
-> "Set the fill color of cell J3 to #FF6B6B"
+Creates a new diagram by sending draw.io XML to the browser. The diagram will appear immediately in the browser window.
+
+### Parameters
+
+- `xml` (required): Draw.io diagram XML string
+
+### Returns
+
+- `success`: Boolean indicating if the diagram was created
+- `message`: Status message
+
+### Example
+
+```
+Tool: create_new_diagram
+Parameters:
+  xml: <mxGraphModel>...</mxGraphModel>
+Result: Diagram created successfully
+```
+
+### Notes
+
+- Requires an active session (call `start_session` first)
+- The XML must be valid draw.io format
+- The browser will update immediately with the new diagram
 
 ---
 
-### export_diagram
+## edit_diagram
 
-Saves the current diagram as a .drawio file.
+Edit diagram by ID-based operations.
 
-**Parameters**:
-- `filename` (string): Output file path
+### Description
 
-**Example**:
-> "Export the diagram as ~/Documents/my-diagram.drawio"
+Modifies an existing diagram by performing operations on specific cells (nodes, edges, etc.) identified by their IDs.
 
-## Tool Workflow
+### Parameters
 
-### Creating a Diagram
+- `operations` (required): Array of edit operations
 
-1. `start_session` - Initialize session
-2. `display_diagram` - Render initial diagram
-3. Browser preview opens automatically
+Each operation has:
+- `type`: Operation type (`update`, `add`, `delete`)
+- `cellId`: ID of the cell to modify
+- `properties`: Properties to update (for `update` and `add` operations)
 
-### Editing a Diagram
+### Returns
 
-1. `get_diagram` - Retrieve current state (optional)
-2. `edit_diagram` - Make targeted changes
-3. Preview updates in real-time
+- `success`: Boolean indicating if the edit was successful
+- `message`: Status message
 
-### Saving a Diagram
+### Example
 
-1. `export_diagram` - Save to file system
-2. File saved in .drawio XML format
+```
+Tool: edit_diagram
+Parameters:
+  operations: [
+    {
+      "type": "update",
+      "cellId": "2",
+      "properties": {
+        "value": "Updated Label",
+        "style": "rounded=1;fillColor=#dae8fc"
+      }
+    }
+  ]
+Result: Diagram updated successfully
+```
 
-## Best Practices
+### Notes
 
-### Tool Selection
+- Requires an active session with an existing diagram
+- Cell IDs can be obtained from `get_diagram`
+- Multiple operations can be performed in a single call
 
-- Use `display_diagram` for new diagrams
-- Use `edit_diagram` for modifications
-- Use `get_diagram` when you need to inspect structure
+---
 
-### Efficient Editing
+## get_diagram
 
-- Make multiple changes in a single `edit_diagram` call when possible
-- Batch edits by cell ID for better performance
-- Use browser preview to verify changes before saving
+Get the current diagram XML.
 
-### Error Handling
+### Description
 
-If a tool fails:
-1. Check that Draw.io desktop is running
-2. Verify MCP server is connected
-3. Ensure cell IDs are valid
+Retrieves the current diagram XML from the browser. Useful for:
+- Inspecting the diagram structure
+- Getting cell IDs for editing
+- Saving the current state
 
-## Technical Details
+### Parameters
 
-### XML Format
+None
 
-Draw.io uses an XML-based format. See [XML Format Reference](./xml-format) for details.
+### Returns
 
-### Cell IDs
+- `xml`: Current diagram XML string
 
-Each element in a diagram has a unique cell ID (e.g., "J5", "J12").
-IDs are generated automatically when creating diagrams.
+### Example
 
-### Session Management
+```
+Tool: get_diagram
+Result: <mxGraphModel>...</mxGraphModel>
+```
 
-Only one session can be active at a time.
-Starting a new session will close any existing session.
+### Notes
 
-## Next Steps
+- Requires an active session with an existing diagram
+- Returns the complete diagram XML including all cells and styles
 
-- Learn about [XML Format](./xml-format)
-- Browse [Examples](../examples/)
+---
+
+## export_diagram
+
+Save diagram to a `.drawio` file.
+
+### Description
+
+Exports the current diagram to a `.drawio` file on the local filesystem.
+
+### Parameters
+
+- `filename` (required): Output filename (with or without `.drawio` extension)
+- `path` (optional): Directory path (defaults to current directory)
+
+### Returns
+
+- `success`: Boolean indicating if the export was successful
+- `filepath`: Full path to the exported file
+- `message`: Status message
+
+### Example
+
+```
+Tool: export_diagram
+Parameters:
+  filename: "my-architecture.drawio"
+  path: "./diagrams"
+Result: Diagram exported to ./diagrams/my-architecture.drawio
+```
+
+### Notes
+
+- Requires an active session with an existing diagram
+- The `.drawio` extension is added automatically if not provided
+- The directory must exist or be creatable
+
+---
+
+## Workflow Example
+
+Here's a typical workflow using these tools:
+
+```
+1. start_session
+   → Opens browser with draw.io editor
+
+2. create_new_diagram
+   → Creates initial diagram from XML
+
+3. get_diagram (optional)
+   → Inspect current diagram structure
+
+4. edit_diagram (optional, multiple times)
+   → Make iterative changes to the diagram
+
+5. export_diagram
+   → Save the final diagram to a file
+```
+
+## Error Handling
+
+All tools return error messages if something goes wrong:
+
+- **"No active session"**: Call `start_session` first
+- **"Invalid XML"**: The provided XML is not valid draw.io format
+- **"Cell not found"**: The specified cell ID doesn't exist in the diagram
+- **"Port in use"**: The server port is already in use (will auto-increment)
+
+## Tips
+
+### Getting Cell IDs
+
+To edit specific elements, you need their cell IDs. Use `get_diagram` to get the XML, then parse it to find cell IDs:
+
+```xml
+<mxCell id="2" value="My Node" style="rounded=1" vertex="1" parent="1">
+  <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
+</mxCell>
+```
+
+The `id="2"` is the cell ID you can use in `edit_diagram`.
+
+### Batch Operations
+
+You can perform multiple edits in a single `edit_diagram` call for better performance:
+
+```json
+{
+  "operations": [
+    {"type": "update", "cellId": "2", "properties": {"value": "New Label"}},
+    {"type": "update", "cellId": "3", "properties": {"style": "fillColor=#f8cecc"}},
+    {"type": "delete", "cellId": "4"}
+  ]
+}
+```
+
+### Diagram Styles
+
+Draw.io uses a style string format for visual properties:
+
+```
+rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000
+```
+
+Common style properties:
+- `fillColor`: Background color (hex)
+- `strokeColor`: Border color (hex)
+- `fontColor`: Text color (hex)
+- `rounded`: Rounded corners (0 or 1)
+- `dashed`: Dashed border (0 or 1)
+- `fontSize`: Font size (number)
+- `fontStyle`: Font style (0=normal, 1=bold, 2=italic, 4=underline)

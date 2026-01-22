@@ -1,71 +1,71 @@
 # Flowchart Examples
 
-Example prompts for creating flowcharts with Draw.io Skill.
+Flowcharts are perfect for visualizing processes, workflows, and decision trees.
 
 ## Simple Process Flow
 
-> "Create a simple process flow with 4 steps: Start → Initialize → Process → End"
+**Prompt:**
+```
+Create a flowchart showing a user login process with username/password input,
+validation, and success/error paths
+```
 
-## Decision Flow
+**Description:**
+- Start node
+- Input fields (username, password)
+- Validation decision
+- Success path → Dashboard
+- Error path → Error message → Back to login
 
-> "Draw a flowchart for user login:
-> - User enters credentials
-> - Check if credentials are valid
-> - If valid: Login successful
-> - If invalid: Show error and retry"
+**Use Cases:**
+- User authentication flows
+- Business process documentation
+- Algorithm visualization
 
-## Loop Process
+## CI/CD Pipeline
 
-> "Create a flowchart showing a data processing loop:
-> - Start
-> - Read data
-> - Is there more data? (decision)
-> - If yes: Process data → Go back to read
-> - If no: Save results → End"
+**Prompt:**
+```
+Create a flowchart showing the CI/CD pipeline: code commit -> build ->
+test -> staging deploy -> production deploy with approval gates
+```
 
-## Complex Business Process
+**Description:**
+- Sequential process flow
+- Decision nodes for test results and approval
+- Parallel paths for different environments
+- Error handling and rollback paths
 
-> "Draw an order processing flowchart:
-> - Customer places order
-> - Validate inventory
-> - If out of stock: Notify customer → End
-> - If in stock: Process payment
-> - If payment fails: Retry payment (max 3 times)
-> - If payment successful: Ship order
-> - Send confirmation → End"
+**Use Cases:**
+- DevOps pipeline documentation
+- Deployment process visualization
+- Workflow automation
 
-## Error Handling Flow
+## Tips for Flowcharts
 
-> "Create a flowchart with error handling:
-> - Start process
-> - Try to execute operation
-> - If error occurs: Log error
-> - Check if error is recoverable
-> - If yes: Retry operation
-> - If no: Alert administrator → End
-> - If no error: Continue to next step → End"
+### Use Standard Shapes
 
-## Parallel Processing
+- **Oval**: Start/End nodes
+- **Rectangle**: Process steps
+- **Diamond**: Decision points
+- **Parallelogram**: Input/Output
 
-> "Draw a flowchart showing parallel tasks:
-> - Start
-> - Split into 3 parallel tasks: Task A, Task B, Task C
-> - Wait for all tasks to complete
-> - Merge results
-> - End"
+### Color Coding
 
-## Tips for Flowchart Prompts
+- **Green**: Success paths
+- **Red**: Error paths
+- **Blue**: Normal process flow
+- **Yellow**: Warning or conditional paths
 
-- **Be explicit about connections**: Use "→" or "then" to show flow
-- **Describe decision points**: Use "if/then/else" language
-- **Specify node types**: Mention "start", "end", "decision", "process"
-- **Include loops**: Clearly describe when to go back to previous steps
+### Keep It Simple
 
-## Try It Yourself
+- One main flow path
+- Clear decision points
+- Minimal crossing lines
+- Consistent spacing
 
-Copy any of these prompts into Claude Code and see the results!
+## Next Steps
 
-## Related Examples
-
-- [Architecture Diagrams](./architecture)
-- [Creating Diagrams Guide](../guide/creating-diagrams)
+- [Architecture Examples](./architecture.md)
+- [Creating Diagrams](/guide/creating-diagrams.md)
+- [Examples Overview](./index.md)

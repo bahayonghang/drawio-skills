@@ -1,86 +1,264 @@
 # Editing Diagrams
 
-Learn how to modify and refine existing diagrams.
+Learn how to modify existing diagrams using natural language and ID-based operations.
 
-## Editing Operations
+## Overview
 
-### Modifying Node Properties
+Once you've created a diagram, you can edit it in two ways:
 
-Change the appearance or content of specific nodes:
+1. **Natural Language**: Describe the changes you want
+2. **ID-based Operations**: Directly modify specific elements using their cell IDs
 
-> "Change the background color of the 'Process Data' node to light blue"
+## Natural Language Editing
 
-> "Add a bold border to all decision nodes"
+The simplest way to edit a diagram is to describe what you want to change.
 
-### Adding Nodes
+### Example: Modify a Node
 
-Insert new elements into your diagram:
+```
+"Change the label of the 'Process' node to 'Validate Input'"
+```
 
-> "Add a 'Log Error' node after the 'Payment Failed' node"
+### Example: Add a New Element
 
-> "Insert a decision node between 'Validate Input' and 'Process Data' to check if input is valid"
+```
+"Add a new decision node after the validation step asking 'Is data valid?'"
+```
 
-### Connecting Nodes
+### Example: Change Colors
 
-Create edges between nodes:
+```
+"Make all error paths red and success paths green"
+```
 
-> "Connect the 'Start' node to the 'Validate Input' node with an arrow"
+### Example: Rearrange Layout
 
-> "Add a curved connection from 'Database' to 'Cache' labeled 'sync'"
+```
+"Move the database node to the right side of the diagram"
+```
 
-### Deleting Elements
+## Understanding Cell IDs
 
-Remove nodes or connections:
+Every element in a draw.io diagram has a unique cell ID. To perform precise edits, you need to know these IDs.
 
-> "Remove the 'Temporary Storage' node and its connections"
+### Getting Cell IDs
 
-## Advanced Editing
+First, get the current diagram XML:
 
-### Batch Operations
+```
+"Show me the current diagram XML"
+```
 
-Apply changes to multiple elements:
+Claude will call `get_diagram` and show you the XML structure. Look for `id` attributes:
 
-> "Make all process nodes have a light gray background"
+```xml
+<mxCell id="2" value="My Node" style="rounded=1" vertex="1" parent="1">
+  <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
+</mxCell>
+```
 
-> "Add rounded corners to all rectangle nodes"
+In this example, the cell ID is `"2"`.
 
-### Layout Adjustments
+::: tip
+Cell IDs "0" and "1" are reserved for the root and default layer. Your diagram elements start from ID "2".
+:::
 
-Reorganize your diagram:
+## ID-based Operations
 
-> "Arrange the nodes in a horizontal layout"
+### Update Operation
 
-> "Create a grid layout for the service nodes with 3 columns"
+Modify an existing element's properties:
 
-### Style Refinement
+```
+"Update cell 2: change the label to 'New Label' and make it blue"
+```
 
-Fine-tune visual appearance:
+This translates to:
 
-> "Make the connection lines thicker and use a dark gray color"
+```json
+{
+  "type": "update",
+  "cellId": "2",
+  "properties": {
+    "value": "New Label",
+    "style": "rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf"
+  }
+}
+```
 
-> "Add drop shadows to all nodes"
+### Add Operation
 
-## Working with Cell IDs
+Add a new element to the diagram:
 
-For precise editing, you can reference specific cells by their IDs:
+```
+"Add a new rectangle at position (200, 200) with label 'New Node'"
+```
 
-1. Ask Claude to show cell IDs:
-   > "Show me the cell IDs in this diagram"
+### Delete Operation
 
-2. Edit using IDs:
-   > "Change the text of cell J5 to 'New Process Name'"
+Remove an element from the diagram:
 
-3. Modify properties by ID:
-   > "Set the fill color of cell J3 to #FF6B6B"
+```
+"Delete cell 5"
+```
+
+## Batch Operations
+
+You can perform multiple edits in a single operation for better efficiency:
+
+```
+"Update cells 2, 3, and 4: make them all blue with rounded corners"
+```
+
+This performs three updates in one call:
+
+```json
+{
+  "operations": [
+    {"type": "update", "cellId": "2", "properties": {...}},
+    {"type": "update", "cellId": "3", "properties": {...}},
+    {"type": "update", "cellId": "4", "properties": {...}}
+  ]
+}
+```
+
+## Common Editing Tasks
+
+### Change Node Labels
+
+```
+"Change the label of cell 3 to 'Authentication Service'"
+```
+
+### Change Colors
+
+```
+"Make cell 2 green (success state)"
+```
+
+Common colors:
+- Green: `#d5e8d4` (success)
+- Blue: `#dae8fc` (process)
+- Yellow: `#fff2cc` (warning)
+- Red: `#f8cecc` (error)
+
+### Change Shapes
+
+```
+"Change cell 4 to a diamond shape (decision node)"
+```
+
+Common shapes:
+- Rectangle: `shape=rectangle`
+- Ellipse: `shape=ellipse`
+- Diamond: `shape=rhombus`
+- Cylinder: `shape=cylinder`
+
+### Modify Connections
+
+```
+"Change the arrow from cell 2 to cell 3 to be dashed"
+```
+
+### Add Annotations
+
+```
+"Add a text note next to cell 5 saying 'This is the main process'"
+```
+
+## Style Properties
+
+When editing, you can modify various style properties:
+
+### Shape Properties
+
+- `fillColor`: Background color (hex)
+- `strokeColor`: Border color (hex)
+- `strokeWidth`: Border width (number)
+- `rounded`: Rounded corners (0 or 1)
+- `dashed`: Dashed border (0 or 1)
+
+### Text Properties
+
+- `fontColor`: Text color (hex)
+- `fontSize`: Font size (number)
+- `fontStyle`: Font style (0=normal, 1=bold, 2=italic, 4=underline)
+- `align`: Horizontal alignment (left, center, right)
+- `verticalAlign`: Vertical alignment (top, middle, bottom)
+
+### Edge Properties
+
+- `edgeStyle`: Edge routing (orthogonalEdgeStyle, elbowEdgeStyle)
+- `curved`: Curved edge (0 or 1)
+- `startArrow`: Start arrow type (classic, block, diamond)
+- `endArrow`: End arrow type (classic, block, diamond)
+
+## Example: Complete Edit Workflow
+
+1. **View current diagram**:
+   ```
+   "Show me the current diagram structure"
+   ```
+
+2. **Identify elements to edit**:
+   ```
+   "What are the cell IDs in this diagram?"
+   ```
+
+3. **Make changes**:
+   ```
+   "Update cell 2: change label to 'API Gateway' and make it blue"
+   "Update cell 3: change label to 'Lambda Function' and make it orange"
+   "Add a connection from cell 2 to cell 3 with label 'invokes'"
+   ```
+
+4. **Verify changes**:
+   ```
+   "Show me the updated diagram"
+   ```
 
 ## Tips for Effective Editing
 
-1. **Be Descriptive**: Clearly describe what you want to change
-2. **Reference Context**: Use nearby nodes as reference points
-3. **Iterate**: Make small changes and review the results
-4. **Use Preview**: Check the browser preview after each change
+### Use Natural Language First
+
+Start with natural language descriptions. Claude will handle the cell IDs for you:
+
+```
+"Make all database nodes green"
+```
+
+### Be Specific
+
+Instead of:
+```
+"Change the color"
+```
+
+Use:
+```
+"Change cell 3's background color to light blue (#dae8fc)"
+```
+
+### Incremental Changes
+
+Make small, incremental changes rather than trying to do everything at once:
+
+```
+1. "Change the layout to horizontal"
+2. "Add spacing between nodes"
+3. "Align all nodes to the center"
+```
+
+### Verify After Each Change
+
+After making changes, verify the result:
+
+```
+"Show me the current diagram"
+```
 
 ## Next Steps
 
-- Learn how to [Export & Save](./export)
-- Check [XML Format Reference](../api/xml-format) for technical details
+- [Export & Save](./export.md) - Learn how to save your diagrams
+- [XML Format](/api/xml-format.md) - Understand the XML structure
+- [MCP Tools](/api/mcp-tools.md) - Learn about the edit_diagram tool
