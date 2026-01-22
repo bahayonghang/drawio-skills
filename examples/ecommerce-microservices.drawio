@@ -1,0 +1,320 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <!-- Title -->
+    <mxCell id="title" value="电商系统微服务架构" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1" vertex="1" parent="1">
+      <mxGeometry x="600" y="20" width="400" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- Client Layer -->
+    <mxCell id="client_web" value="Web客户端" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="200" y="100" width="160" height="70" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="client_mobile" value="移动端客户端" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="420" y="100" width="160" height="70" as="geometry"/>
+    </mxCell>
+
+    <!-- CDN/Load Balancer -->
+    <mxCell id="cdn" value="CDN / 负载均衡" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="660" y="100" width="180" height="70" as="geometry"/>
+    </mxCell>
+
+    <!-- API Gateway -->
+    <mxCell id="api_gateway" value="API 网关&#xa;(认证、路由、限流)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=14" vertex="1" parent="1">
+      <mxGeometry x="450" y="230" width="340" height="90" as="geometry"/>
+    </mxCell>
+
+    <!-- Service Mesh -->
+    <mxCell id="service_mesh" value="服务网格&#xa;(服务间通信管理)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="60" y="390" width="180" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- Message Queue -->
+    <mxCell id="message_queue" value="消息队列&#xa;(RabbitMQ/Kafka)" style="shape=cylinder3;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;size=15" vertex="1" parent="1">
+      <mxGeometry x="1100" y="380" width="160" height="100" as="geometry"/>
+    </mxCell>
+
+    <!-- Cache Layer -->
+    <mxCell id="cache" value="缓存层&#xa;(Redis)" style="shape=cylinder3;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;size=15" vertex="1" parent="1">
+      <mxGeometry x="1100" y="240" width="140" height="90" as="geometry"/>
+    </mxCell>
+
+    <!-- Microservices Layer -->
+    <mxCell id="user_service" value="用户服务&#xa;(认证、用户管理)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="100" y="540" width="180" height="90" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="product_service" value="商品服务&#xa;(库存、搜索、分类)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="320" y="540" width="180" height="90" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="cart_service" value="购物车服务&#xa;(会话管理)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="540" y="540" width="180" height="90" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="order_service" value="订单服务&#xa;(订单处理、历史)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="760" y="540" width="180" height="90" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="payment_service" value="支付服务&#xa;(支付网关、交易)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="980" y="540" width="180" height="90" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="notification_service" value="通知服务&#xa;(邮件、短信、推送)" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13" vertex="1" parent="1">
+      <mxGeometry x="1200" y="540" width="180" height="90" as="geometry"/>
+    </mxCell>
+
+    <!-- Database Layer -->
+    <mxCell id="user_db" value="PostgreSQL" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=12;size=12" vertex="1" parent="1">
+      <mxGeometry x="140" y="720" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="product_db" value="PostgreSQL" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=12;size=12" vertex="1" parent="1">
+      <mxGeometry x="360" y="720" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="cart_db" value="Redis" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=12;size=12" vertex="1" parent="1">
+      <mxGeometry x="580" y="720" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="order_db" value="PostgreSQL" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=12;size=12" vertex="1" parent="1">
+      <mxGeometry x="800" y="720" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="payment_db" value="PostgreSQL" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=12;size=12" vertex="1" parent="1">
+      <mxGeometry x="1020" y="720" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="notification_db" value="MongoDB" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontStyle=1;fontSize=12;size=12" vertex="1" parent="1">
+      <mxGeometry x="1240" y="720" width="100" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- Monitoring -->
+    <mxCell id="monitoring" value="监控系统&#xa;&#xa;Prometheus&#xa;Grafana" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;align=center;" vertex="1" parent="1">
+      <mxGeometry x="60" y="850" width="140" height="110" as="geometry"/>
+    </mxCell>
+
+    <!-- Connections from Clients to CDN -->
+    <mxCell id="conn1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="client_web" target="cdn">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="client_mobile" target="cdn">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Connection from CDN to API Gateway -->
+    <mxCell id="conn3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="cdn" target="api_gateway">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Connection from API Gateway to Services -->
+    <mxCell id="conn4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;exitX=0.25;exitY=1;exitDx=0;exitDy=0" edge="1" parent="1" source="api_gateway" target="user_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="535" y="380"/>
+          <mxPoint x="190" y="380"/>
+          <mxPoint x="190" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;exitX=0.375;exitY=1;exitDx=0;exitDy=0" edge="1" parent="1" source="api_gateway" target="product_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="577" y="400"/>
+          <mxPoint x="410" y="400"/>
+          <mxPoint x="410" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0" edge="1" parent="1" source="api_gateway" target="cart_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="620" y="420"/>
+          <mxPoint x="630" y="420"/>
+          <mxPoint x="630" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;exitX=0.625;exitY=1;exitDx=0;exitDy=0" edge="1" parent="1" source="api_gateway" target="order_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="662" y="420"/>
+          <mxPoint x="850" y="420"/>
+          <mxPoint x="850" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;exitX=0.75;exitY=1;exitDx=0;exitDy=0" edge="1" parent="1" source="api_gateway" target="payment_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="705" y="400"/>
+          <mxPoint x="1070" y="400"/>
+          <mxPoint x="1070" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2;exitX=0.875;exitY=1;exitDx=0;exitDy=0" edge="1" parent="1" source="api_gateway" target="notification_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="747" y="380"/>
+          <mxPoint x="1290" y="380"/>
+          <mxPoint x="1290" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Cache connections -->
+    <mxCell id="conn_cache1" value="缓存" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="product_service" target="cache">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_cache2" value="缓存" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="cart_service" target="cache">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_cache3" value="会话" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="user_service" target="cache">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="190" y="630"/>
+          <mxPoint x="190" y="285"/>
+          <mxPoint x="1090" y="285"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Message Queue connections -->
+    <mxCell id="conn_mq1" value="异步消息" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="order_service" target="message_queue">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_mq2" value="异步消息" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="payment_service" target="message_queue">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_mq3" value="消费消息" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="message_queue" target="notification_service">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Service Mesh connections -->
+    <mxCell id="conn_sm1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;dashPattern=3 3;strokeWidth=2" edge="1" parent="1" source="service_mesh" target="user_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="150" y="490"/>
+          <mxPoint x="150" y="520"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn_sm2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;dashPattern=3 3;strokeWidth=2" edge="1" parent="1" source="service_mesh" target="product_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="240" y="500"/>
+          <mxPoint x="240" y="490"/>
+          <mxPoint x="410" y="490"/>
+          <mxPoint x="410" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <mxCell id="conn_sm3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;dashPattern=3 3;strokeWidth=2" edge="1" parent="1" source="service_mesh" target="order_service">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="240" y="520"/>
+          <mxPoint x="850" y="520"/>
+          <mxPoint x="850" y="530"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Database connections -->
+    <mxCell id="conn_db1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="user_service" target="user_db">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_db2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="product_service" target="product_db">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_db3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="cart_service" target="cart_db">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_db4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="order_service" target="order_db">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_db5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="payment_service" target="payment_db">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="conn_db6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;strokeWidth=2" edge="1" parent="1" source="notification_service" target="notification_db">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Monitoring connections -->
+    <mxCell id="conn_mon1" value="监控指标" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;dashed=1;fontSize=11;strokeWidth=2" edge="1" parent="1" source="api_gateway" target="monitoring">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="450" y="320"/>
+          <mxPoint x="130" y="320"/>
+          <mxPoint x="130" y="840"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Legend -->
+    <mxCell id="legend_box" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=#666666;dashPattern=3 3;dashed=1" vertex="1" parent="1">
+      <mxGeometry x="60" y="1000" width="200" height="240" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend_title" value="图例说明" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+      <mxGeometry x="80" y="1010" width="160" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend1" value="━━  同步调用" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12" vertex="1" parent="1">
+      <mxGeometry x="80" y="1045" width="160" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend2" value="┄┄  异步/缓存连接" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12" vertex="1" parent="1">
+      <mxGeometry x="80" y="1075" width="160" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend3" value="- - -  服务网格" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12" vertex="1" parent="1">
+      <mxGeometry x="80" y="1105" width="160" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend4" value="" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+      <mxGeometry x="80" y="1135" width="30" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend4_text" value="微服务" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12" vertex="1" parent="1">
+      <mxGeometry x="120" y="1135" width="120" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend5" value="" style="shape=cylinder3;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=11;size=12" vertex="1" parent="1">
+      <mxGeometry x="80" y="1170" width="30" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend5_text" value="数据库" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12" vertex="1" parent="1">
+      <mxGeometry x="120" y="1170" width="120" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend6" value="" style="shape=cylinder3;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=12;size=15" vertex="1" parent="1">
+      <mxGeometry x="80" y="1205" width="30" height="25" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="legend6_text" value="缓存/消息队列" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12" vertex="1" parent="1">
+      <mxGeometry x="120" y="1205" width="120" height="25" as="geometry"/>
+    </mxCell>
+
+  </root>
+</mxGraphModel>
