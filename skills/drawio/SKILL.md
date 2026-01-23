@@ -1,3 +1,8 @@
+---
+name: drawio
+description: AI-powered Draw.io diagram generation with real-time browser preview. Create flowcharts, architecture diagrams, sequence diagrams, and cloud infrastructure diagrams (AWS/GCP/Azure) using natural language. Supports animated connectors and real-time editing.
+---
+
 # Next AI Draw.io Skill
 
 AI-powered Draw.io diagram generation with real-time browser preview for Claude Code.
