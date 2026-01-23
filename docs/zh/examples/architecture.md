@@ -28,7 +28,7 @@ API 网关
 - 监控（Prometheus、Grafana）
 ```
 
-**示例文件：** [../../examples/ecommerce-microservices.drawio](../../examples/ecommerce-microservices.drawio)
+**示例文件：** https://github.com/bahayonghang/drawio-skills/blob/main/examples/ecommerce-microservices.drawio
 
 **架构层次：**
 1. **客户端层**：Web 和移动端客户端

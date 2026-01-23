@@ -28,7 +28,7 @@ Infrastructure:
 - Monitoring (Prometheus, Grafana)
 ```
 
-**Example File:** [../../examples/ecommerce-microservices.drawio](../../examples/ecommerce-microservices.drawio)
+**Example File:** https://github.com/bahayonghang/drawio-skills/blob/main/examples/ecommerce-microservices.drawio
 
 **Architecture Layers:**
 1. **Client Layer**: Web and mobile clients

@@ -2,6 +2,10 @@
 
 This document provides example prompts and their corresponding diagram types.
 
+For structured A–H format diagram extraction (from text or images), see:
+- `structured-diagram-prompts.md` - Universal template with domain configurations
+- `structured-diagram-quality.md` - Validation rules and regression examples
+
 ## Flowcharts
 
 ### Simple Process Flow

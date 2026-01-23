@@ -1,6 +1,7 @@
 ---
 name: drawio
-description: AI-powered Draw.io diagram generation with real-time browser preview. Create flowcharts, architecture diagrams, sequence diagrams, and cloud infrastructure diagrams (AWS/GCP/Azure) using natural language. Supports animated connectors and real-time editing.
+version: 1.0.0
+description: AI-powered Draw.io diagram generation with real-time browser preview. Create flowcharts, architecture diagrams, sequence diagrams, and cloud infrastructure diagrams (AWS/GCP/Azure) using natural language. Supports animated connectors, real-time editing, and structured A–H format extraction from text or images.
 ---
 
 # Next AI Draw.io Skill
@@ -21,6 +22,7 @@ This skill enables Claude Code to create, edit, and manage draw.io diagrams thro
 - **Self-contained**: Embedded server, no external dependencies required
 - **Cloud Architecture Support**: Specialized support for AWS, GCP, and Azure architecture diagrams with official icons
 - **Animated Connectors**: Create dynamic and animated connectors between diagram elements
+- **Structured Diagram Extraction**: Extract structured diagrams from text or images using the A–H format with domain-specific configurations (software, business, industrial, research, etc.)
 
 ## Installation
 
@@ -93,6 +95,26 @@ between user, client app, auth server, and resource server
 Give me an animated connector diagram of transformer's architecture
 ```
 
+### 7. Structured Diagram Extraction
+
+```
+【领域】科研流程
+Extract a workflow diagram from my research paper about
+continuous stirred tank reactors using the A–H format.
+```
+
+```
+【领域】软件架构
+Extract an architecture diagram from this technical spec document.
+Include API gateway, microservices, and databases.
+```
+
+```
+【领域】商业流程
+Recreate this expense approval flowchart image in A–H format
+for standardized documentation.
+```
+
 ## How It Works
 
 ```
@@ -135,6 +157,18 @@ When you ask Claude to create or edit a diagram:
 - Mention that you want official icons
 - Describe the services and their connections
 - Include security groups, VPCs, or other infrastructure elements
+
+### Structured Diagram Extraction
+
+- Specify domain using 【领域】parameter (软件架构/商业流程/工业流程/项目管理/教学设计/科研流程/通用)
+- Specify input type: text only, image only, or image + text
+- Specify language preference (中文/English/auto-detect)
+- Labels should be short phrases (≤14 characters) without symbols, numbers, or brackets
+- All content must come from input source - never add inferred content
+- Keep modules ≤4 and nodes 3–5 per module
+- Mark missing information as "未提及" instead of inferring
+- Use `references/structured-diagram-prompts.md` for complete template
+- Validate with `references/structured-diagram-quality.md` before finalizing
 
 ## Troubleshooting
 

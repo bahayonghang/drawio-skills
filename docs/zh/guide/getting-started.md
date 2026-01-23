@@ -21,4 +21,5 @@ Draw.io 技能是一个 Claude Code 技能，支持 AI 驱动的图表创建和�
 
 - [安装指南](./installation.md)
 - [创建图表](./creating-diagrams.md)
+- [科研工作流](./scientific-workflows.md)
 - [示例](/zh/examples/)

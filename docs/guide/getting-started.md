@@ -88,6 +88,7 @@ between user, client app, auth server, and resource server"
 - [Creating Diagrams](./creating-diagrams.md) - Learn how to create different types of diagrams
 - [Editing Diagrams](./editing-diagrams.md) - Learn how to modify existing diagrams
 - [Export & Save](./export.md) - Learn how to save your diagrams
+- [Scientific Workflows](./scientific-workflows.md) - Generate strict A–H prompts for Nano Banana Pro
 
 ## Getting Help
 

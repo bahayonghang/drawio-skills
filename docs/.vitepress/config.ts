@@ -61,7 +61,8 @@ export default defineConfig({
           items: [
             { text: 'Creating Diagrams', link: '/guide/creating-diagrams' },
             { text: 'Editing Diagrams', link: '/guide/editing-diagrams' },
-            { text: 'Export & Save', link: '/guide/export' }
+            { text: 'Export & Save', link: '/guide/export' },
+            { text: 'Scientific Workflows', link: '/guide/scientific-workflows' }
           ]
         },
         {
@@ -94,7 +95,8 @@ export default defineConfig({
           items: [
             { text: '创建图表', link: '/zh/guide/creating-diagrams' },
             { text: '编辑图表', link: '/zh/guide/editing-diagrams' },
-            { text: '导出与保存', link: '/zh/guide/export' }
+            { text: '导出与保存', link: '/zh/guide/export' },
+            { text: '科研工作流', link: '/zh/guide/scientific-workflows' }
           ]
         },
         {
