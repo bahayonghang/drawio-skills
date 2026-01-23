@@ -1,3 +1,17 @@
+# Dependencies
 node_modules/
+
+# Build output
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# Local AI agent configs
+.agent/
 .claude/settings.local.json
+.claude/commands/
+.gemini/
 .kiro/
+
+# OS files
+.DS_Store
+Thumbs.db
