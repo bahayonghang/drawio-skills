@@ -1,4 +1,4 @@
-# Draw.io Skill for Claude Code
+# Draw.io Skill for Claude, Gemini & Codex
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
@@ -8,7 +8,7 @@
 
 [English](./README.md) | [中文文档](./README_CN.md) | [📚 Documentation](https://bahayonghang.github.io/drawio-skills/)
 
-A Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview.
+An MCP skill that enables AI-powered diagram creation and editing with real-time browser preview. Works with Claude Desktop, Gemini CLI, and Codex.
 
 ## ✨ Features
 
@@ -28,7 +28,7 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 | Project | Purpose |
 |---------|---------|
 | [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | MCP Server that provides draw.io diagram tools |
-| **This Project (drawio-skills)** | Claude Code skill that wraps the MCP server with workflow guidance, XML format references, and diagram examples |
+| **This Project (drawio-skills)** | MCP skill that wraps the MCP server with workflow guidance, XML format references, and diagram examples. Compatible with Claude Desktop, Gemini CLI, and Codex |
 
 ### What This Skill Adds
 
@@ -43,68 +43,98 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 
 ### Prerequisites
 
-- [Claude Code CLI](https://github.com/anthropics/claude-code) installed
 - [Node.js](https://nodejs.org/) (for npx command)
+- One of the following AI platforms:
+  - [Claude Desktop](https://claude.ai/download)
+  - [Gemini CLI](https://ai.google.dev/gemini-api/docs/cli)
+  - [Codex CLI](https://github.com/openai/codex-cli)
 
-### Install from GitHub
+### Quick Install
 
-**Option 1: Using sparse checkout (Recommended)**
-
-```bash
-# Create the skills directory if it doesn't exist
-mkdir -p ~/.claude/skills/drawio
-
-# Initialize git and configure sparse checkout
-cd ~/.claude/skills/drawio
-git init
-git remote add origin https://github.com/bahayonghang/drawio-skills.git
-git config core.sparseCheckout true
-
-# Only checkout the skills/drawio directory
-echo "skills/drawio/*" >> .git/info/sparse-checkout
-
-# Pull the files
-git pull origin main
-
-# Move files to the correct location
-mv skills/drawio/* .
-rm -rf skills
-```
-
-**Option 2: Using SVN (Simpler)**
+**Step 1: Clone the repository**
 
 ```bash
-# Use SVN to export only the skills/drawio directory
-svn export https://github.com/bahayonghang/drawio-skills/trunk/skills/drawio ~/.claude/skills/drawio
+git clone https://github.com/bahayonghang/drawio-skills.git
+cd drawio-skills
 ```
 
-**Option 3: Manual Download**
+**Step 2: Copy to your AI platform's config directory**
 
-1. Download the [skills/drawio directory](https://github.com/bahayonghang/drawio-skills/tree/main/skills/drawio) from GitHub
-2. Extract to `~/.claude/skills/drawio`
+Choose your platform and run the corresponding command:
 
-The skill will be available automatically in Claude Code.
+#### For Claude Desktop
 
-### Verify Installation
-
+**macOS:**
 ```bash
-# Check if the skill is installed
-ls ~/.claude/skills/drawio
+cp -r skills/drawio ~/Library/Application\ Support/Claude/skills/
 ```
 
-You should see the following structure:
+**Windows (PowerShell):**
+```powershell
+Copy-Item -Recurse skills/drawio "$env:APPDATA\Claude\skills\"
 ```
-drawio/
-├── .mcp.json
-├── SKILL.md
-├── scripts/
-│   ├── install.sh
-│   └── install.bat
-└── references/
-    ├── mcp-tools.md
-    ├── xml-format.md
-    └── examples.md
+
+**Linux:**
+```bash
+cp -r skills/drawio ~/.config/Claude/skills/
 ```
+
+Then add to `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+#### For Gemini CLI
+
+**macOS:**
+```bash
+cp -r skills/drawio ~/Library/Application\ Support/gemini/skills/
+```
+
+**Windows (PowerShell):**
+```powershell
+Copy-Item -Recurse skills/drawio "$env:APPDATA\gemini\skills\"
+```
+
+**Linux:**
+```bash
+cp -r skills/drawio ~/.gemini/skills/
+```
+
+Then add to `settings.json`:
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+#### For Codex
+
+**All platforms:**
+```bash
+cp -r skills/drawio ~/.codex/skills/
+```
+
+Then add to `~/.codex/config.toml`:
+```toml
+[mcp_servers.drawio]
+command = "npx"
+args = ["@next-ai-drawio/mcp-server@latest"]
+```
+
+The skill will be available automatically after restarting your AI client.
 
 ## 🚀 Usage
 
@@ -126,7 +156,9 @@ Once the skill is installed, simply ask Claude to create a diagram:
 
 ### 🎯 Real Example: E-Commerce Microservices Architecture
 
-![E-Commerce Microservices Architecture](imgs/ecommerce-example.png)
+> **⚠️ Note**: This example is for reference only. The current workflow may have some issues (e.g., element overlapping). We are actively optimizing the workflow to improve diagram generation quality.
+
+![E-Commerce Microservices Architecture](docs/public/imgs/ecommerce-example.png)
 
 **Prompt used:**
 ```

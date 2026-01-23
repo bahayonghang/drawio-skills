@@ -1,4 +1,4 @@
-# Draw.io Skill - Claude Code 图表绘制技能
+# Draw.io Skill - 支持 Claude、Gemini 和 Codex 的图表绘制技能
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
@@ -8,7 +8,7 @@
 
 [English](./README.md) | [中文文档](./README_CN.md) | [📚 在线文档](https://bahayonghang.github.io/drawio-skills/zh/)
 
-一个为 Claude Code 打造的技能，支持 AI 驱动的图表创建与编辑，并提供实时浏览器预览。
+一个 MCP 技能，支持 AI 驱动的图表创建与编辑，并提供实时浏览器预览。兼容 Claude Desktop、Gemini CLI 和 Codex。
 
 ## ✨ 功能特性
 
@@ -28,7 +28,7 @@
 | 项目 | 作用 |
 |------|------|
 | [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | 提供 draw.io 图表工具的 MCP Server |
-| **本项目 (drawio-skills)** | Claude Code 技能，封装 MCP server 并提供工作流指导、XML 格式参考和图表示例 |
+| **本项目 (drawio-skills)** | MCP 技能，封装 MCP server 并提供工作流指导、XML 格式参考和图表示例。兼容 Claude Desktop、Gemini CLI 和 Codex |
 
 ### 本技能的增强内容
 
@@ -43,68 +43,98 @@
 
 ### 前置要求
 
-- 已安装 [Claude Code CLI](https://github.com/anthropics/claude-code)
 - 已安装 [Node.js](https://nodejs.org/)（用于 npx 命令）
+- 以下 AI 平台之一：
+  - [Claude Desktop](https://claude.ai/download)
+  - [Gemini CLI](https://ai.google.dev/gemini-api/docs/cli)
+  - [Codex CLI](https://github.com/openai/codex-cli)
 
-### 从 GitHub 安装
+### 快速安装
 
-**方法 1：使用稀疏检出（推荐）**
-
-```bash
-# 创建技能目录（如果不存在）
-mkdir -p ~/.claude/skills/drawio
-
-# 初始化 git 并配置稀疏检出
-cd ~/.claude/skills/drawio
-git init
-git remote add origin https://github.com/bahayonghang/drawio-skills.git
-git config core.sparseCheckout true
-
-# 只检出 skills/drawio 目录
-echo "skills/drawio/*" >> .git/info/sparse-checkout
-
-# 拉取文件
-git pull origin main
-
-# 移动文件到正确位置
-mv skills/drawio/* .
-rm -rf skills
-```
-
-**方法 2：使用 SVN（更简单）**
+**步骤 1：克隆仓库**
 
 ```bash
-# 使用 SVN 只导出 skills/drawio 目录
-svn export https://github.com/bahayonghang/drawio-skills/trunk/skills/drawio ~/.claude/skills/drawio
+git clone https://github.com/bahayonghang/drawio-skills.git
+cd drawio-skills
 ```
 
-**方法 3：手动下载**
+**步骤 2：复制到你的 AI 平台配置目录**
 
-1. 从 GitHub 下载 [skills/drawio 目录](https://github.com/bahayonghang/drawio-skills/tree/main/skills/drawio)
-2. 解压到 `~/.claude/skills/drawio`
+根据你使用的平台选择对应的命令：
 
-安装完成后，技能将在 Claude Code 中自动可用。
+#### Claude Desktop
 
-### 验证安装
-
+**macOS:**
 ```bash
-# 检查技能是否已安装
-ls ~/.claude/skills/drawio
+cp -r skills/drawio ~/Library/Application\ Support/Claude/skills/
 ```
 
-你应该看到以下结构：
+**Windows (PowerShell):**
+```powershell
+Copy-Item -Recurse skills/drawio "$env:APPDATA\Claude\skills\"
 ```
-drawio/
-├── .mcp.json
-├── SKILL.md
-├── scripts/
-│   ├── install.sh
-│   └── install.bat
-└── references/
-    ├── mcp-tools.md
-    ├── xml-format.md
-    └── examples.md
+
+**Linux:**
+```bash
+cp -r skills/drawio ~/.config/Claude/skills/
 ```
+
+然后在 `claude_desktop_config.json` 中添加：
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+#### Gemini CLI
+
+**macOS:**
+```bash
+cp -r skills/drawio ~/Library/Application\ Support/gemini/skills/
+```
+
+**Windows (PowerShell):**
+```powershell
+Copy-Item -Recurse skills/drawio "$env:APPDATA\gemini\skills\"
+```
+
+**Linux:**
+```bash
+cp -r skills/drawio ~/.gemini/skills/
+```
+
+然后在 `settings.json` 中添加：
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+#### Codex
+
+**所有平台:**
+```bash
+cp -r skills/drawio ~/.codex/skills/
+```
+
+然后在 `~/.codex/config.toml` 中添加：
+```toml
+[mcp_servers.drawio]
+command = "npx"
+args = ["@next-ai-drawio/mcp-server@latest"]
+```
+
+重启你的 AI 客户端后，技能将自动可用。
 
 ## 🚀 使用方法
 
@@ -126,7 +156,9 @@ drawio/
 
 ### 🎯 实战示例：电商微服务架构
 
-![电商微服务架构](imgs/ecommerce-example.png)
+> **⚠️ 注意**：此示例仅供参考。当前工作流可能存在一些问题（如元素覆盖等），我们正在积极优化工作流以提升图表生成质量。
+
+![电商微服务架构](docs/public/imgs/ecommerce-example.png)
 
 **使用的提示词：**
 ```

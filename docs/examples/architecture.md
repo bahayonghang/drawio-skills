@@ -4,7 +4,7 @@ Architecture diagrams help visualize system design and component relationships.
 
 ## E-Commerce Microservices Architecture
 
-![E-Commerce Microservices Architecture](../../imgs/ecommerce-example.png)
+![E-Commerce Microservices Architecture](/imgs/ecommerce-example.png)
 
 **Prompt:**
 ```

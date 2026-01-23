@@ -4,7 +4,7 @@
 
 ## 电商微服务架构
 
-![电商微服务架构](../../imgs/ecommerce-example.png)
+![电商微服务架构](/imgs/ecommerce-example.png)
 
 **提示词：**
 ```
