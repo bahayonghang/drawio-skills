@@ -126,7 +126,7 @@ drawio/
 
 ### 🎯 实战示例：电商微服务架构
 
-![电商微服务架构](imgs/电商示例.png)
+![电商微服务架构](imgs/ecommerce-example.png)
 
 **使用的提示词：**
 ```

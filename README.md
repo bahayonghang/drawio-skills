@@ -126,7 +126,7 @@ Once the skill is installed, simply ask Claude to create a diagram:
 
 ### 🎯 Real Example: E-Commerce Microservices Architecture
 
-![E-Commerce Microservices Architecture](imgs/电商示例.png)
+![E-Commerce Microservices Architecture](imgs/ecommerce-example.png)
 
 **Prompt used:**
 ```
