@@ -11,9 +11,14 @@ if ! command -v npx &> /dev/null; then
     exit 1
 fi
 
-# Test the MCP server
-echo "Testing MCP server installation..."
-npx @next-ai-drawio/mcp-server@latest --version 2>/dev/null || echo "MCP server will be installed on first use"
+# Test the MCP server (non-interactive; do not start the stdio server here)
+echo "Testing MCP server availability..."
+MCP_VER="$(npm view @next-ai-drawio/mcp-server version 2>/dev/null || true)"
+if [ -n "$MCP_VER" ]; then
+  echo "✓ @next-ai-drawio/mcp-server version: $MCP_VER"
+else
+  echo "Warning: Unable to query @next-ai-drawio/mcp-server version. It will be installed on first use."
+fi
 
 echo "✓ Next AI Draw.io Skill installed successfully!"
 echo ""

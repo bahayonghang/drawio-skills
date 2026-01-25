@@ -6,6 +6,100 @@ For structured A–H format diagram extraction (from text or images), see:
 - `structured-diagram-prompts.md` - Universal template with domain configurations
 - `structured-diagram-quality.md` - Validation rules and regression examples
 
+For math equations in labels (LaTeX/AsciiMath), see:
+- `math-typesetting.md`
+
+For consistent visual styling, see:
+- `style-presets.md`
+
+For converting structured A–H specs into starter draw.io XML, see:
+- `ah-to-xml.md`
+
+## Math Typesetting
+
+### Scientific Diagram with Equations
+
+**Prompt:**
+```
+Create a diagram for linear regression with three nodes:
+1) "Input" with label: \(x \in \mathbb{R}^d\)
+2) "Model" with label: \(y = Wx + b\)
+3) "Loss" with label: $$\mathcal{L}=\sum_i (y_i-\hat y_i)^2$$
+Use readable sizes and ensure the math renders.
+```
+
+**Notes:**
+- Enable `Extras > Mathematical Typesetting` in draw.io if equations are not rendered.
+- If the text looks clipped, set Text Overflow to `Block` or `Width` and resize the shape.
+
+### IEEE Paper: Neural Network Architecture
+
+**Prompt:**
+```
+Create an IEEE-style block diagram for a convolutional neural network:
+1) Input layer: \(x \in \mathbb{R}^{H \times W \times C}\)
+2) Conv layers: \(f_i = \sigma(W_i * f_{i-1} + b_i)\)
+3) Pooling: \(\text{MaxPool}_{2 \times 2}\)
+4) FC layer: \(y = \text{softmax}(W_{fc} \cdot h + b_{fc})\)
+Use grayscale-compatible styling. Add caption: "Fig. 1. Architecture of the proposed CNN model."
+```
+
+**Notes:**
+- Use solid black borders with white fill for B&W compatibility
+- Export as PDF for vector quality in LaTeX documents
+
+### IEEE Paper: Signal Processing Pipeline
+
+**Prompt:**
+```
+Create a signal processing block diagram for IEEE publication:
+1) "ADC" with label: \(x[n]\)
+2) "FFT" with label: \(X[k] = \sum_{n=0}^{N-1} x[n] e^{-j2\pi kn/N}\)
+3) "Filter" with label: \(H(z) = \frac{b_0 + b_1 z^{-1}}{1 + a_1 z^{-1}}\)
+4) "IFFT" with label: \(y[n]\)
+Use orthogonal connectors with arrows. Black and white style.
+```
+
+### IEEE Paper: Control System Block Diagram
+
+**Prompt:**
+```
+Create a feedback control system diagram for IEEE paper:
+- Reference input: \(r(t)\)
+- Error signal: \(e(t) = r(t) - y(t)\)
+- PID Controller: \(u(t) = K_p e + K_i \int e \, dt + K_d \frac{de}{dt}\)
+- Plant: \(G(s) = \frac{K}{s(Ts+1)}\)
+- Output: \(y(t)\)
+Include feedback loop with negative sign at summing junction.
+Add caption: "Fig. 2. Closed-loop control system with PID controller."
+```
+
+### IEEE Paper: Communication System
+
+**Prompt:**
+```
+Create an IEEE-style communication system block diagram:
+1) Source: \(m(t)\)
+2) Modulator: \(s(t) = A_c \cos(2\pi f_c t + \phi(t))\)
+3) Channel: \(r(t) = s(t) + n(t)\), where \(n(t) \sim \mathcal{N}(0, \sigma^2)\)
+4) Demodulator with matched filter
+5) Detector: \(\hat{m}\)
+Show noise entering at channel. Use dashed lines for optional paths.
+```
+
+### IEEE Paper: Machine Learning Pipeline
+
+**Prompt:**
+```
+Create an IEEE academic diagram for ML training pipeline:
+1) Dataset: \(\mathcal{D} = \{(x_i, y_i)\}_{i=1}^N\)
+2) Model: \(f_\theta(x)\)
+3) Loss: \(\mathcal{L} = \frac{1}{N}\sum_{i=1}^{N} \ell(f_\theta(x_i), y_i)\)
+4) Optimizer: \(\theta \leftarrow \theta - \eta \nabla_\theta \mathcal{L}\)
+Show iteration loop from optimizer back to model.
+Grayscale compatible. Caption: "Fig. 3. Training procedure of the proposed method."
+```
+
 ## Flowcharts
 
 ### Simple Process Flow

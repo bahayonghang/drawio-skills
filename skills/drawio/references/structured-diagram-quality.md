@@ -51,6 +51,18 @@ This reference defines deterministic validation rules and regression examples fo
 | No inference | If unsure, mark "未提及" |
 | Domain alignment | Icons/flow match specified domain |
 
+### 6. Aesthetic Quality (Post-Generation Checklist)
+
+Use this checklist after the diagram is rendered (browser preview) to ensure the output is publication-ready:
+
+- Alignment: nodes within the same layer aligned; consistent widths/heights
+- Spacing: even distribution; enough whitespace around containers and labels
+- Palette: 3–4 semantic colors maximum; high contrast; B&W-friendly where needed
+- Connectors: prefer orthogonal routing; avoid crossings; dashed only for “虚线箭头” semantics
+- Labels: short and readable; left-aligned for formulas; no clipping or overflow
+- Legend: include a small legend when using multiple line types / zones
+- Export: enable crop; prefer SVG/PDF for papers; verify no extra whitespace around formulas
+
 ---
 
 ## Regression Examples

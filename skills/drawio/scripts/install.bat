@@ -10,9 +10,15 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-REM Test the MCP server
-echo Testing MCP server installation...
-npx @next-ai-drawio/mcp-server@latest --version 2>nul || echo MCP server will be installed on first use
+REM Test the MCP server (non-interactive; do not start the stdio server here)
+echo Testing MCP server availability...
+set MCP_VER=
+for /f %%v in ('npm view @next-ai-drawio/mcp-server version 2^>nul') do set MCP_VER=%%v
+if "%MCP_VER%"=="" (
+    echo Warning: Unable to query @next-ai-drawio/mcp-server version. It will be installed on first use.
+) else (
+    echo ✓ @next-ai-drawio/mcp-server version: %MCP_VER%
+)
 
 echo.
 echo ✓ Next AI Draw.io Skill installed successfully!
