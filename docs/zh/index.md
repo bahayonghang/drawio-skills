@@ -49,6 +49,14 @@ features:
   - icon: 🚀
     title: 自包含
     details: 嵌入式服务器，无需外部依赖。
+
+  - icon: ∑
+    title: 数学公式排版
+    details: 支持 LaTeX/AsciiMath 公式（MathJax 渲染），符合 IEEE 等学术期刊发表规范，支持灰度兼容导出。
+
+  - icon: 🧩
+    title: A–H 结构化工作流
+    details: 抽取严格 A–H 规格，并可转换为基础 draw.io XML 以便稳定渲染。
 ---
 
 ## 快速示例

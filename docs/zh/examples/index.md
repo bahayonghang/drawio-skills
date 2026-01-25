@@ -18,6 +18,7 @@ This section provides ready-to-use examples for various diagram types. Each exam
 - [Network Diagrams](#network-diagrams) - Network topology, VPC architecture
 - [UML Diagrams](#uml-diagrams) - Class diagrams, state diagrams
 - [Data Flow Diagrams](#data-flow-diagrams) - Data pipelines, ETL processes
+- [学术与科研图表](#学术与科研图表) - IEEE 论文、数学公式
 
 ## Flowcharts
 
@@ -216,6 +217,80 @@ and visualization dashboard
 - Real-time data processing
 - Analytics system design
 
+## 学术与科研图表
+
+创建符合 IEEE、ACM 等学术期刊标准的专业图表，支持数学公式。
+
+### 神经网络架构图
+
+**Prompt:**
+```
+创建一个 IEEE 风格的神经网络架构图：
+1) 输入层：\(x \in \mathbb{R}^{H \times W \times C}\)
+2) 卷积层：\(f = \sigma(W * x + b)\)
+3) 全连接层：\(y = \text{softmax}(Wh + b)\)
+使用灰度兼容样式。添加标题：Fig. 1. CNN 架构。
+```
+
+**Use Cases:**
+- 深度学习论文配图
+- 模型架构文档
+- IEEE/ACM 论文投稿
+
+### 信号处理流水线
+
+**Prompt:**
+```
+创建一个信号处理流水线图：
+1) 输入信号：\(x(t)\)
+2) FFT：\(X(f) = \mathcal{F}\{x(t)\}\)
+3) 滤波器：\(H(f)\)
+4) 输出：\(Y(f) = X(f) \cdot H(f)\)
+使用 IEEE 图表风格，采用灰度配色。
+```
+
+**Use Cases:**
+- 数字信号处理论文配图
+- 通信系统文档
+- 信号分析工作流
+
+### 控制系统框图
+
+**Prompt:**
+```
+创建一个控制系统框图：
+- 参考输入：\(r(t)\)
+- 误差：\(e(t) = r(t) - y(t)\)
+- 控制器：\(G_c(s) = K_p + \frac{K_i}{s}\)
+- 被控对象：\(G_p(s)\)
+- 带传感器 \(H(s)\) 的反馈回路
+使用 IEEE 规范样式。
+```
+
+**Use Cases:**
+- 控制理论论文
+- 自动化系统文档
+- 学位论文配图
+
+### 机器学习流水线
+
+**Prompt:**
+```
+创建一个 IEEE 论文用的机器学习流水线图：
+1) 数据：\(\mathcal{D} = \{(x_i, y_i)\}_{i=1}^N\)
+2) 损失函数：\(\mathcal{L} = -\sum y \log \hat{y}\)
+3) 优化：\(\theta \leftarrow \theta - \eta \nabla \mathcal{L}\)
+4) 评估：Accuracy, F1, AUC
+使用灰度配色，添加标题"Fig. 2. 训练流水线。"
+```
+
+**Use Cases:**
+- 机器学习论文
+- 训练流程文档
+- 模型开发指南
+
+[了解更多数学公式排版 →](/zh/guide/math-typesetting.md)
+
 ## Tips for Using Examples
 
 ### Customize for Your Needs
@@ -249,5 +324,6 @@ but add CloudFront CDN and Route 53 DNS"
 
 - [Flowchart Examples](./flowchart.md) - Detailed flowchart examples
 - [Architecture Examples](./architecture.md) - Detailed architecture examples
-- [Creating Diagrams](/guide/creating-diagrams.md) - Learn how to create diagrams
-- [API Reference](/api/mcp-tools.md) - Explore available tools
+- [数学公式排版](/zh/guide/math-typesetting.md) - 学术论文 LaTeX/AsciiMath 公式
+- [Creating Diagrams](/zh/guide/creating-diagrams.md) - Learn how to create diagrams
+- [API Reference](/zh/api/mcp-tools.md) - Explore available tools

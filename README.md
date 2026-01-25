@@ -85,7 +85,7 @@ Then add to `claude_desktop_config.json`:
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }
@@ -114,7 +114,7 @@ Then add to `settings.json`:
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }
@@ -131,7 +131,7 @@ Then add to `~/.codex/config.toml`:
 ```toml
 [mcp_servers.drawio]
 command = "npx"
-args = ["@next-ai-drawio/mcp-server@latest"]
+args = ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
 ```
 
 The skill will be available automatically after restarting your AI client.
@@ -282,7 +282,7 @@ The skill uses the following default configuration:
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }

@@ -49,6 +49,14 @@ features:
   - icon: 🚀
     title: Self-contained
     details: Embedded server with no external dependencies required.
+
+  - icon: ∑
+    title: Math Typesetting
+    details: LaTeX/AsciiMath equations with MathJax rendering. IEEE/academic publication ready with grayscale support.
+
+  - icon: 🧩
+    title: Structured A–H Workflow
+    details: Extract strict A–H specs and convert them into starter draw.io XML.
 ---
 
 ## Quick Example

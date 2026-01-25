@@ -2,6 +2,12 @@
 
 This page provides two copy-paste-ready workflows for turning research text or an existing architecture diagram into a strict A–H drawing prompt for Nano Banana Pro.
 
+## After You Get an A–H Spec
+
+- Convert A–H specs into a starter draw.io XML: see [A–H to XML](./ah-to-xml.md)
+- Apply consistent styling quickly: see [Style Presets](./style-presets.md)
+- **For IEEE/Academic papers with equations**: see [Math Typesetting](./math-typesetting.md) for LaTeX formatting guidelines, IEEE domain formulas, and submission checklist
+
 ## Workflow 1: Build From Scratch (from paper/grant text)
 
 ### When to use

@@ -62,7 +62,10 @@ export default defineConfig({
             { text: 'Creating Diagrams', link: '/guide/creating-diagrams' },
             { text: 'Editing Diagrams', link: '/guide/editing-diagrams' },
             { text: 'Export & Save', link: '/guide/export' },
-            { text: 'Scientific Workflows', link: '/guide/scientific-workflows' }
+            { text: 'Scientific Workflows', link: '/guide/scientific-workflows' },
+            { text: 'Math Typesetting', link: '/guide/math-typesetting' },
+            { text: 'Style Presets', link: '/guide/style-presets' },
+            { text: 'A–H to XML', link: '/guide/ah-to-xml' }
           ]
         },
         {
@@ -96,7 +99,10 @@ export default defineConfig({
             { text: '创建图表', link: '/zh/guide/creating-diagrams' },
             { text: '编辑图表', link: '/zh/guide/editing-diagrams' },
             { text: '导出与保存', link: '/zh/guide/export' },
-            { text: '科研工作流', link: '/zh/guide/scientific-workflows' }
+            { text: '科研工作流', link: '/zh/guide/scientific-workflows' },
+            { text: '数学公式排版', link: '/zh/guide/math-typesetting' },
+            { text: '样式预设', link: '/zh/guide/style-presets' },
+            { text: 'A–H 转 XML', link: '/zh/guide/ah-to-xml' }
           ]
         },
         {

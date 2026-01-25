@@ -18,6 +18,7 @@ This section provides ready-to-use examples for various diagram types. Each exam
 - [Network Diagrams](#network-diagrams) - Network topology, VPC architecture
 - [UML Diagrams](#uml-diagrams) - Class diagrams, state diagrams
 - [Data Flow Diagrams](#data-flow-diagrams) - Data pipelines, ETL processes
+- [Academic & Scientific Diagrams](#academic--scientific-diagrams) - IEEE papers, math equations
 
 ## Flowcharts
 
@@ -216,6 +217,80 @@ and visualization dashboard
 - Real-time data processing
 - Analytics system design
 
+## Academic & Scientific Diagrams
+
+Create publication-ready diagrams with mathematical equations for IEEE, ACM, and other academic journals.
+
+### Neural Network Architecture
+
+**Prompt:**
+```
+Create an IEEE-style neural network architecture diagram:
+1) Input layer: \(x \in \mathbb{R}^{H \times W \times C}\)
+2) Conv layer: \(f = \sigma(W * x + b)\)
+3) FC layer: \(y = \text{softmax}(Wh + b)\)
+Use grayscale-compatible styling. Add caption: Fig. 1. CNN architecture.
+```
+
+**Use Cases:**
+- Deep learning paper figures
+- Model architecture documentation
+- IEEE/ACM paper submissions
+
+### Signal Processing Pipeline
+
+**Prompt:**
+```
+Create a signal processing pipeline diagram:
+1) Input signal: \(x(t)\)
+2) FFT: \(X(f) = \mathcal{F}\{x(t)\}\)
+3) Filter: \(H(f)\)
+4) Output: \(Y(f) = X(f) \cdot H(f)\)
+Use IEEE figure style with grayscale colors.
+```
+
+**Use Cases:**
+- DSP paper illustrations
+- Communication systems documentation
+- Signal analysis workflows
+
+### Control System Block Diagram
+
+**Prompt:**
+```
+Create a control system block diagram:
+- Reference: \(r(t)\)
+- Error: \(e(t) = r(t) - y(t)\)
+- Controller: \(G_c(s) = K_p + \frac{K_i}{s}\)
+- Plant: \(G_p(s)\)
+- Feedback loop with sensor \(H(s)\)
+Use IEEE-compliant styling.
+```
+
+**Use Cases:**
+- Control theory papers
+- Automation system documentation
+- Academic thesis figures
+
+### Machine Learning Pipeline
+
+**Prompt:**
+```
+Create an ML pipeline diagram for IEEE paper:
+1) Data: \(\mathcal{D} = \{(x_i, y_i)\}_{i=1}^N\)
+2) Loss: \(\mathcal{L} = -\sum y \log \hat{y}\)
+3) Optimization: \(\theta \leftarrow \theta - \eta \nabla \mathcal{L}\)
+4) Evaluation: Accuracy, F1, AUC
+Use grayscale, add "Fig. 2. Training pipeline."
+```
+
+**Use Cases:**
+- Machine learning papers
+- Training workflow documentation
+- Model development guides
+
+[Learn more about math typesetting →](/guide/math-typesetting.md)
+
 ## Tips for Using Examples
 
 ### Customize for Your Needs
@@ -249,5 +324,6 @@ but add CloudFront CDN and Route 53 DNS"
 
 - [Flowchart Examples](./flowchart.md) - Detailed flowchart examples
 - [Architecture Examples](./architecture.md) - Detailed architecture examples
+- [Math Typesetting](/guide/math-typesetting.md) - LaTeX/AsciiMath equations for academic papers
 - [Creating Diagrams](/guide/creating-diagrams.md) - Learn how to create diagrams
 - [API Reference](/api/mcp-tools.md) - Explore available tools

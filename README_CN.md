@@ -85,7 +85,7 @@ cp -r skills/drawio ~/.config/Claude/skills/
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }
@@ -114,7 +114,7 @@ cp -r skills/drawio ~/.gemini/skills/
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }
@@ -131,7 +131,7 @@ cp -r skills/drawio ~/.codex/skills/
 ```toml
 [mcp_servers.drawio]
 command = "npx"
-args = ["@next-ai-drawio/mcp-server@latest"]
+args = ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
 ```
 
 重启你的 AI 客户端后，技能将自动可用。
@@ -282,7 +282,7 @@ drawio-skills/
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }

@@ -122,6 +122,12 @@ This performs three updates in one call:
 }
 ```
 
+## Performance Tips
+
+- Prefer fewer `get_diagram` calls on large diagrams; use it mainly to discover IDs.
+- Batch multiple updates into a single `edit_diagram` call when possible.
+- Iterate “coarse → fine”: get a clean layout first, then refine styles and labels.
+
 ## Common Editing Tasks
 
 ### Change Node Labels

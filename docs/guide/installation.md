@@ -68,7 +68,7 @@ The skill automatically configures the MCP server with:
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["@next-ai-drawio/mcp-server@latest"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
     }
   }
 }
@@ -166,7 +166,7 @@ export PORT=6003
    ```
 2. Try manually installing the MCP server:
    ```bash
-   npx @next-ai-drawio/mcp-server@latest --version
+   npm view @next-ai-drawio/mcp-server version
    ```
 3. Check your internet connection
 

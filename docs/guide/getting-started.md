@@ -82,13 +82,26 @@ and S3 for a serverless REST API. Use AWS icons."
 between user, client app, auth server, and resource server"
 ```
 
+### IEEE Paper with Math Equations
+
+```
+"Create an IEEE-style neural network architecture diagram:
+1) Input: \(x \in \mathbb{R}^{H \times W \times C}\)
+2) Conv: \(f = \sigma(W * x + b)\)
+3) FC: \(y = \text{softmax}(Wh + b)\)
+Use grayscale-compatible styling. Add caption: Fig. 1. CNN architecture."
+```
+
 ## Next Steps
 
 - [Installation Guide](./installation.md) - Detailed installation instructions
 - [Creating Diagrams](./creating-diagrams.md) - Learn how to create different types of diagrams
 - [Editing Diagrams](./editing-diagrams.md) - Learn how to modify existing diagrams
 - [Export & Save](./export.md) - Learn how to save your diagrams
+- [Math Typesetting](./math-typesetting.md) - LaTeX/AsciiMath equations and IEEE publication guidelines
 - [Scientific Workflows](./scientific-workflows.md) - Generate strict A–H prompts for Nano Banana Pro
+- [A–H to XML](./ah-to-xml.md) - Convert strict A–H specs into starter draw.io XML
+- [Style Presets](./style-presets.md) - Reuse consistent style strings for better-looking diagrams
 
 ## Getting Help
 

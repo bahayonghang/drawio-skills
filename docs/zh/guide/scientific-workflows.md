@@ -1,6 +1,12 @@
 # 科研正文与架构图工作流（Nano Banana Pro A–H Prompt）
 
-本页提供两个可直接复制粘贴的工作流：把“基金标书/论文正文”或“已有架构图”转换为 Nano Banana Pro 可用的【A–H 绘图 Prompt】。
+本页提供两个可直接复制粘贴的工作流：把"基金标书/论文正文"或"已有架构图"转换为 Nano Banana Pro 可用的【A–H 绘图 Prompt】。
+
+## 拿到 A–H 之后怎么做
+
+- 将 A–H 规格转换为基础 draw.io XML：见 [A–H 转 XML](./ah-to-xml.md)
+- 快速统一配色/线条/字体等视觉风格：见 [样式预设](./style-presets.md)
+- **IEEE/学术论文公式排版**：见 [数学公式排版](./math-typesetting.md)，包含 LaTeX 格式指南、IEEE 领域公式和投稿检查清单
 
 ## 工作流一：从零开始构建（基于正文）
 

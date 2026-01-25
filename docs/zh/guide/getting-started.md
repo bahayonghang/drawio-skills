@@ -17,9 +17,60 @@ Draw.io 技能是一个 Claude Code 技能，支持 AI 驱动的图表创建和�
 "创建一个用户登录流程图"
 ```
 
+Claude 将会：
+1. 调用 `start_session` 打开浏览器窗口
+2. 生成图表 XML
+3. 在浏览器中实时显示图表
+4. 允许你用自然语言进行修改
+
+## 示例 Prompt
+
+### 流程图
+
+```
+"创建一个用户注册流程图，包含邮箱验证步骤"
+```
+
+### AWS 架构图
+
+```
+"生成一个 AWS 架构图，包含 Lambda、API Gateway、DynamoDB 和 S3，
+用于无服务器 REST API。使用 AWS 官方图标。"
+```
+
+### 时序图
+
+```
+"创建一个 OAuth 2.0 授权码流程的时序图，
+包含用户、客户端应用、授权服务器和资源服务器"
+```
+
+### IEEE 论文数学公式图
+
+```
+"创建一个 IEEE 风格的神经网络架构图：
+1) 输入层：\(x \in \mathbb{R}^{H \times W \times C}\)
+2) 卷积层：\(f = \sigma(W * x + b)\)
+3) 全连接层：\(y = \text{softmax}(Wh + b)\)
+使用灰度兼容样式。添加标题：Fig. 1. CNN 架构。"
+```
+
 ## 下一步
 
-- [安装指南](./installation.md)
-- [创建图表](./creating-diagrams.md)
-- [科研工作流](./scientific-workflows.md)
-- [示例](/zh/examples/)
+- [安装指南](./installation.md) - 详细安装说明
+- [创建图表](./creating-diagrams.md) - 学习创建不同类型的图表
+- [编辑图表](./editing-diagrams.md) - 学习修改现有图表
+- [数学公式排版](./math-typesetting.md) - LaTeX/AsciiMath 公式与 IEEE 论文发表指南
+- [科研工作流](./scientific-workflows.md) - 生成 Nano Banana Pro 的 A–H 规格
+- [A–H 转 XML](./ah-to-xml.md) - 将 A–H 规格转换为 draw.io XML
+- [样式预设](./style-presets.md) - 使用一致的样式字符串
+- [示例](/zh/examples/) - 各类图表示例
+
+## 获取帮助
+
+如果遇到问题：
+
+1. 查看 [安装指南](./installation.md) 中的故障排除部分
+2. 参考 [API 文档](/zh/api/mcp-tools.md)
+3. 查看 [示例](/zh/examples/) 获取灵感
+4. 在 [GitHub](https://github.com/bahayonghang/drawio-skills/issues) 提交 issue
