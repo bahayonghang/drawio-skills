@@ -11,6 +11,7 @@ docs/.vitepress/cache/
 .claude/commands/
 .gemini/
 .kiro/
+.trae/
 
 # OS files
 .DS_Store

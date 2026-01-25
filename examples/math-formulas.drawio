@@ -1,0 +1,23 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="title" value="数学公式示例（启用 Extras &gt; Mathematical Typesetting）" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1" vertex="1" parent="1">
+      <mxGeometry x="140" y="30" width="820" height="40" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="model" value="线性模型：\(y = Wx + b\)" style="rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=16" vertex="1" parent="1">
+      <mxGeometry x="160" y="120" width="380" height="90" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="loss" value="$$\mathcal{L}=\sum_i (y_i-\hat y_i)^2$$" style="rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=16" vertex="1" parent="1">
+      <mxGeometry x="160" y="260" width="520" height="120" as="geometry"/>
+    </mxCell>
+
+    <mxCell id="note" value="混用：LaTeX \(\\sqrt{3×-1}+(1+x)^2\\) 与 AsciiMath `a^2+b^2=c^2`" style="rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14" vertex="1" parent="1">
+      <mxGeometry x="160" y="420" width="760" height="100" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>
+
