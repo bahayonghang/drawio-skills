@@ -113,12 +113,27 @@ cp -r skills/drawio ~/.config/Claude/skills/
 ```
 
 Then add to `claude_desktop_config.json`:
+
+**macOS/Linux:**
 ```json
 {
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
@@ -142,12 +157,27 @@ cp -r skills/drawio ~/.gemini/skills/
 ```
 
 Then add to `settings.json`:
+
+**macOS/Linux:**
 ```json
 {
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
@@ -155,16 +185,31 @@ Then add to `settings.json`:
 
 #### For Codex
 
-**All platforms:**
+**macOS/Linux:**
 ```bash
 cp -r skills/drawio ~/.codex/skills/
 ```
 
+**Windows (PowerShell):**
+```powershell
+Copy-Item -Recurse skills/drawio "$env:USERPROFILE\.codex\skills\"
+```
+
 Then add to `~/.codex/config.toml`:
+
+**macOS/Linux:**
 ```toml
 [mcp_servers.drawio]
 command = "npx"
-args = ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+**Windows:**
+```toml
+[mcp_servers.drawio]
+type = "stdio"
+command = "cmd"
+args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 ```
 
 The skill will be available automatically after restarting your AI client.
@@ -261,11 +306,29 @@ The skill uses the following default configuration:
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
 ```
+
+### Windows-Specific Configuration
+
+> ⚠️ **Windows Users**: On Windows, using `npx` directly as the command may cause issues. Use `cmd /c` to wrap the npx call:
+
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+This configuration applies to all AI platforms on Windows (Claude Desktop, Gemini CLI, Claude Code, etc.).
 
 ### Environment Variables
 

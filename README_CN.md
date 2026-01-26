@@ -113,12 +113,27 @@ cp -r skills/drawio ~/.config/Claude/skills/
 ```
 
 然后在 `claude_desktop_config.json` 中添加：
+
+**macOS/Linux:**
 ```json
 {
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
@@ -142,12 +157,27 @@ cp -r skills/drawio ~/.gemini/skills/
 ```
 
 然后在 `settings.json` 中添加：
+
+**macOS/Linux:**
 ```json
 {
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+**Windows:**
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
@@ -155,16 +185,31 @@ cp -r skills/drawio ~/.gemini/skills/
 
 #### Codex
 
-**所有平台:**
+**macOS/Linux:**
 ```bash
 cp -r skills/drawio ~/.codex/skills/
 ```
 
+**Windows (PowerShell):**
+```powershell
+Copy-Item -Recurse skills/drawio "$env:USERPROFILE\.codex\skills\"
+```
+
 然后在 `~/.codex/config.toml` 中添加：
+
+**macOS/Linux:**
 ```toml
 [mcp_servers.drawio]
 command = "npx"
-args = ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+**Windows:**
+```toml
+[mcp_servers.drawio]
+type = "stdio"
+command = "cmd"
+args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 ```
 
 重启你的 AI 客户端后，技能将自动可用。
@@ -261,11 +306,29 @@ drawio-skills/
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
 ```
+
+### Windows 特殊配置
+
+> ⚠️ **Windows 用户注意**：在 Windows 上，直接使用 `npx` 作为命令可能会导致问题。请使用 `cmd /c` 来包装 npx 调用：
+
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
+
+此配置适用于 Windows 上的所有 AI 平台（Claude Desktop、Gemini CLI、Claude Code 等）。
 
 ### 环境变量
 
