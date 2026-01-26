@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Draw.io Skill for Claude Code',
-  description: 'AI-powered diagram creation and editing with real-time browser preview',
+  description: 'AI-powered diagram creation with Design System and real-time browser preview',
 
   // GitHub Pages base URL (uncomment if deploying to a subdirectory)
   // base: '/drawio-skills/',
@@ -13,7 +13,7 @@ export default defineConfig({
   // Head tags for better SEO and social sharing
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
-    ['meta', { name: 'theme-color', content: '#5f67ee' }],
+    ['meta', { name: 'theme-color', content: '#2563EB' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Draw.io Skill for Claude Code' }],
@@ -31,13 +31,14 @@ export default defineConfig({
       lang: 'zh-CN',
       link: '/zh/',
       title: 'Draw.io 技能 - Claude Code',
-      description: 'AI 驱动的图表创建与编辑，提供实时浏览器预览'
+      description: 'AI 驱动的图表创建与编辑，内置设计系统，提供实时浏览器预览'
     }
   },
 
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/getting-started' },
+      { text: 'Workflows', link: '/guide/workflows' },
       { text: 'API', link: '/api/mcp-tools' },
       { text: 'Examples', link: '/examples/' },
       {
@@ -57,15 +58,21 @@ export default defineConfig({
           ]
         },
         {
-          text: 'Guide',
+          text: 'Workflows',
           items: [
-            { text: 'Creating Diagrams', link: '/guide/creating-diagrams' },
-            { text: 'Editing Diagrams', link: '/guide/editing-diagrams' },
-            { text: 'Export & Save', link: '/guide/export' },
-            { text: 'Scientific Workflows', link: '/guide/scientific-workflows' },
+            { text: 'Overview', link: '/guide/workflows' },
+            { text: '/drawio-create', link: '/guide/creating-diagrams' },
+            { text: '/drawio-replicate', link: '/guide/scientific-workflows' },
+            { text: '/drawio-edit', link: '/guide/editing-diagrams' }
+          ]
+        },
+        {
+          text: 'Design System',
+          items: [
+            { text: 'Overview', link: '/guide/design-system' },
+            { text: 'Specification Format', link: '/guide/specification' },
             { text: 'Math Typesetting', link: '/guide/math-typesetting' },
-            { text: 'Style Presets', link: '/guide/style-presets' },
-            { text: 'A–H to XML', link: '/guide/ah-to-xml' }
+            { text: 'Export & Save', link: '/guide/export' }
           ]
         },
         {
@@ -94,15 +101,21 @@ export default defineConfig({
           ]
         },
         {
-          text: '使用指南',
+          text: '工作流',
           items: [
-            { text: '创建图表', link: '/zh/guide/creating-diagrams' },
-            { text: '编辑图表', link: '/zh/guide/editing-diagrams' },
-            { text: '导出与保存', link: '/zh/guide/export' },
-            { text: '科研工作流', link: '/zh/guide/scientific-workflows' },
+            { text: '概览', link: '/zh/guide/workflows' },
+            { text: '/drawio-create', link: '/zh/guide/creating-diagrams' },
+            { text: '/drawio-replicate', link: '/zh/guide/scientific-workflows' },
+            { text: '/drawio-edit', link: '/zh/guide/editing-diagrams' }
+          ]
+        },
+        {
+          text: '设计系统',
+          items: [
+            { text: '概览', link: '/zh/guide/design-system' },
+            { text: '规格格式', link: '/zh/guide/specification' },
             { text: '数学公式排版', link: '/zh/guide/math-typesetting' },
-            { text: '样式预设', link: '/zh/guide/style-presets' },
-            { text: 'A–H 转 XML', link: '/zh/guide/ah-to-xml' }
+            { text: '导出与保存', link: '/zh/guide/export' }
           ]
         },
         {

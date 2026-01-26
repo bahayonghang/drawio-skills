@@ -1,15 +1,77 @@
-# Creating Diagrams
+# Creating Diagrams (`/drawio-create`)
 
-Learn how to create various types of diagrams using natural language with Draw.io Skill.
+Learn how to create various types of diagrams using natural language with the Design System 2.0.
+
+## Quick Start
+
+```
+/drawio-create
+A login flowchart with validation and error handling
+```
+
+With theme selection:
+
+```
+/drawio-create --theme tech-blue
+A microservices architecture with API Gateway, User Service, and PostgreSQL
+```
 
 ## Basic Workflow
 
-Creating a diagram follows this simple workflow:
+Creating a diagram follows this workflow:
 
-1. **Start a Session**: Claude calls `start_session` to open a browser window
-2. **Describe Your Diagram**: Tell Claude what you want in natural language
-3. **View in Real-time**: The diagram appears instantly in your browser
-4. **Iterate**: Make changes by describing what you want to modify
+1. **Trigger**: Use `/drawio-create` command or keywords like "create", "generate", "make"
+2. **Start Session**: Claude calls `start_session` to open browser
+3. **Generate Specification**: Claude creates YAML spec with Design System styling
+4. **Convert to XML**: Specification converted via `spec-to-drawio.js`
+5. **Real-time Preview**: Diagram appears in browser instantly
+6. **Iterate**: Use `/drawio-edit` for modifications
+
+## Design System Support
+
+### Theme Selection
+
+| Theme | Use Case | Command |
+|-------|----------|---------|
+| `tech-blue` (default) | Software architecture, DevOps | No flag needed |
+| `academic-color` ⭐ | Academic papers, research (color) | `--theme academic-color` |
+| `academic` | IEEE grayscale print only | `--theme academic` |
+| `nature` | Environmental, lifecycle | `--theme nature` |
+| `dark` | Presentations, slides | `--theme dark` |
+
+> ⭐ **Recommended for academic**: Use `academic-color` for digital documents. Use `academic` only for strict grayscale.
+
+### Semantic Node Types
+
+Shapes are auto-detected from labels or explicitly specified:
+
+| Type | Shape | Auto-detection Keywords |
+|------|-------|-------------------------|
+| `service` | Rounded rect | API, service, gateway, backend |
+| `database` | Cylinder | DB, SQL, storage, redis, mongo |
+| `decision` | Diamond | if, check, condition, or labels with `?` |
+| `terminal` | Stadium | start, end, begin, finish |
+| `queue` | Parallelogram | queue, buffer, kafka, stream |
+| `user` | Circle | user, actor, client, customer |
+| `document` | Wave rect | doc, file, report, document |
+| `formula` | White rect | equation, formula, `$$` |
+
+### Connector Types
+
+| Type | Style | Use Case |
+|------|-------|----------|
+| `primary` | Solid 2px, filled arrow | Main flow (default) |
+| `data` | Dashed 2px, filled arrow | Data/async flow |
+| `optional` | Dotted 1px, open arrow | Weak relations |
+| `dependency` | Solid 1px, diamond arrow | Dependencies |
+| `bidirectional` | Solid 1.5px, no arrow | Associations |
+
+### 8px Grid System
+
+All positions snap to 8px increments:
+- Node spacing: 32px (4 units)
+- Module padding: 24px (3 units)
+- Canvas padding: 32px (4 units)
 
 ## Flowcharts
 
@@ -307,9 +369,75 @@ Event Consumers
 Event Store
 ```
 
+## YAML Specification Format
+
+For complex diagrams, use explicit YAML specification with `--structured`:
+
+```yaml
+meta:
+  theme: tech-blue
+  layout: horizontal
+
+modules:
+  - id: frontend
+    label: Frontend Layer
+  - id: backend
+    label: Backend Services
+
+nodes:
+  - id: web
+    label: Web App
+    type: service
+    module: frontend
+  - id: api
+    label: API Gateway
+    type: service
+    module: backend
+  - id: db
+    label: PostgreSQL
+    type: database
+    module: backend
+
+edges:
+  - from: web
+    to: api
+    type: primary
+  - from: api
+    to: db
+    type: data
+    label: Query
+```
+
+Request structured format:
+```
+/drawio-create --structured
+Create a microservices architecture...
+```
+
+## Complexity Guardrails
+
+| Metric | Warning | Error |
+|--------|---------|-------|
+| Nodes | >20 | >30 |
+| Edges | >30 | >50 |
+| Modules | >5 | - |
+| Label length | >14 chars | - |
+
+When thresholds are exceeded, Claude will suggest splitting into sub-diagrams.
+
+## Best Practices
+
+1. **Content in Components** - Prefer embedding text and formulas in nodes (shapes) rather than standalone text boxes
+2. **Specify theme** - Use `--theme` for consistent styling across diagrams
+3. **Use semantic types** - Let the design system choose shapes automatically
+4. **Keep it simple** - Aim for ≤20 nodes per diagram
+5. **Use modules** - Group related components for better organization
+
 ## Next Steps
 
-- [Editing Diagrams](./editing-diagrams.md) - Learn how to modify existing diagrams
-- [Export & Save](./export.md) - Learn how to save your diagrams
+- [Replicate Diagrams](./scientific-workflows.md) - `/drawio-replicate` workflow
+- [Editing Diagrams](./editing-diagrams.md) - `/drawio-edit` workflow
+- [Design System](./design-system.md) - Themes, shapes, connectors reference
+- [Specification Format](./specification.md) - YAML spec reference
+- [Export & Save](./export.md) - Save your diagrams
 - [Examples](/examples/) - Browse more examples
-- [XML Format](/api/xml-format.md) - Understand the underlying format

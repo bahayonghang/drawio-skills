@@ -58,13 +58,14 @@ Claude 将会：
 ## 下一步
 
 - [安装指南](./installation.md) - 详细安装说明
-- [创建图表](./creating-diagrams.md) - 学习创建不同类型的图表
-- [编辑图表](./editing-diagrams.md) - 学习修改现有图表
-- [数学公式排版](./math-typesetting.md) - LaTeX/AsciiMath 公式与 IEEE 论文发表指南
-- [科研工作流](./scientific-workflows.md) - 生成 Nano Banana Pro 的 A–H 规格
-- [A–H 转 XML](./ah-to-xml.md) - 将 A–H 规格转换为 draw.io XML
-- [样式预设](./style-presets.md) - 使用一致的样式字符串
-- [示例](/zh/examples/) - 各类图表示例
+- [工作流概览](./workflows.md) - 3 个工作流概述
+- [创建图表](./creating-diagrams.md) - `/drawio-create` 工作流
+- [复刻图表](./scientific-workflows.md) - `/drawio-replicate` 工作流
+- [编辑图表](./editing-diagrams.md) - `/drawio-edit` 工作流
+- [设计系统](./design-system.md) - 主题、形状、连接器
+- [规格格式](./specification.md) - YAML 规格参考
+- [数学公式排版](./math-typesetting.md) - LaTeX/AsciiMath 公式
+- [导出与保存](./export.md) - 保存图表
 
 ## 获取帮助
 

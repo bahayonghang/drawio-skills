@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Draw.io Skill"
   text: "for Claude Code"
-  tagline: AI-powered diagram creation and editing with real-time browser preview
+  tagline: AI-powered diagram creation with built-in Design System and real-time browser preview
   actions:
     - theme: brand
       text: Get Started
@@ -15,71 +15,104 @@ hero:
 
 features:
   - icon: 🎨
-    title: Natural Language → Diagram
-    details: Describe what you need in plain text, and get a professional diagram instantly.
+    title: Design System 2.0
+    details: 4 built-in themes (tech-blue, academic, nature, dark), 8px grid system, semantic shapes, typed connectors.
+
+  - icon: 🚀
+    title: 3 Clear Workflows
+    details: "/drawio-create for new diagrams, /drawio-replicate for images, /drawio-edit for modifications"
+
+  - icon: 📝
+    title: YAML Specification
+    details: Simple, readable specification format with theme selection, semantic nodes, and typed edges.
 
   - icon: 🔄
     title: Real-time Preview
     details: See your diagrams appear and update in your browser as Claude creates them.
 
-  - icon: 📊
-    title: Multiple Diagram Types
-    details: Flowcharts, architecture diagrams, sequence diagrams, network diagrams, and more.
-
   - icon: ☁️
     title: Cloud Architecture Support
-    details: Specialized support for AWS, GCP, and Azure with official icons.
-
-  - icon: ✏️
-    title: Edit Existing Diagrams
-    details: Modify diagrams using ID-based operations with natural language instructions.
-
-  - icon: 💾
-    title: Export & Save
-    details: Save your diagrams as .drawio files for use in draw.io desktop or web.
-
-  - icon: 🎬
-    title: Animated Connectors
-    details: Create dynamic and animated connectors between diagram elements.
-
-  - icon: 📚
-    title: Version History
-    details: Restore previous diagram versions with visual thumbnails.
-
-  - icon: 🚀
-    title: Self-contained
-    details: Embedded server with no external dependencies required.
+    details: AWS, GCP, Azure icons with proper icon libraries (mxgraph.aws4.*, mxgraph.gcp2.*, mxgraph.azure.*).
 
   - icon: ∑
     title: Math Typesetting
-    details: LaTeX/AsciiMath equations with MathJax rendering. IEEE/academic publication ready with grayscale support.
+    details: LaTeX/AsciiMath equations with MathJax rendering. IEEE/academic publication ready.
 
-  - icon: 🧩
-    title: Structured A–H Workflow
-    details: Extract strict A–H specs and convert them into starter draw.io XML.
+  - icon: 🛡️
+    title: Complexity Guardrails
+    details: Auto-warnings for >20 nodes, >30 edges, >14 char labels. Keeps diagrams readable.
+
+  - icon: 💾
+    title: Export & Save
+    details: Save as .drawio, .png, .svg, .pdf with theme-appropriate settings.
 ---
 
-## Quick Example
+## Quick Start - 3 Workflows
+
+| Command | Description | Theme Support |
+|---------|-------------|---------------|
+| `/drawio-create` | Create diagrams from natural language | ✅ Auto theme |
+| `/drawio-replicate` | Replicate existing images | ✅ Domain themes |
+| `/drawio-edit` | Modify existing diagrams | ✅ Theme switch |
+
+### Example: Create with Design System
 
 ```
-"Create a flowchart for user login process with username/password input,
-validation, and success/error paths"
+/drawio-create --theme tech-blue
+A microservices architecture with:
+- API Gateway (service)
+- User Service (service)
+- Order Service (service)
+- PostgreSQL (database)
+- Redis Cache (database)
+All services connected via data flow arrows
 ```
 
-Claude will:
-1. Open a browser window with the draw.io editor
-2. Generate the diagram XML based on your description
-3. Display the diagram in real-time
-4. Allow you to make iterative changes with natural language
+### Example: Replicate with Theme
 
-## What is Draw.io Skill?
+```
+/drawio-replicate --theme academic
+[Upload architecture image]
+```
 
-Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation and editing. It wraps the [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server and provides:
+### Example: Edit with Theme Switch
 
-- **Comprehensive Documentation**: Detailed guides for creating various diagram types
-- **XML Format Reference**: Complete documentation of draw.io XML format and style properties
-- **Diagram Examples**: Ready-to-use examples for flowcharts, architecture diagrams, and more
-- **MCP Tools Reference**: Detailed documentation of all available MCP tools
+```
+/drawio-edit --theme dark
+Convert to presentation mode
+```
+
+## Design System Features
+
+### 4 Built-in Themes
+
+| Theme | Use Case | Colors |
+|-------|----------|--------|
+| `tech-blue` | Technical docs, dashboards | Blue primary, modern |
+| `academic` | IEEE papers, publications | Grayscale, high contrast |
+| `nature` | Environmental, lifecycle | Green palette |
+| `dark` | Presentations, dark mode | Dark background |
+
+### Semantic Shapes
+
+Shapes are auto-detected from labels or explicitly specified:
+
+- `service` → Rounded rectangle (API Gateway, User Service)
+- `database` → Cylinder (PostgreSQL, Redis, MongoDB)
+- `decision` → Diamond (conditions, branches)
+- `queue` → Parallelogram (Kafka, SQS, RabbitMQ)
+- `user` → Ellipse (actors, clients)
+- `formula` → White box with math support
+
+### Typed Connectors
+
+| Type | Style | Use Case |
+|------|-------|----------|
+| `primary` | Solid, block arrow | Main flow |
+| `data` | Dashed | Data transfer |
+| `optional` | Thin dashed | Optional paths |
+| `dependency` | Diamond arrow | Dependencies |
+| `bidirectional` | No arrows | Two-way |
 
 ## How It Works
 
@@ -87,10 +120,19 @@ Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation an
 Claude Code <--stdio--> MCP Server <--http--> Browser (draw.io)
 ```
 
-1. Ask Claude to create a diagram
-2. Claude calls `start_session` to open a browser window
-3. Claude generates diagram XML and sends it to the browser
-4. You see the diagram update in real-time!
+1. Ask Claude to create a diagram with a theme
+2. Claude generates YAML specification → draw.io XML
+3. XML sent to browser via MCP server
+4. Real-time preview with design system styling!
+
+## What is Draw.io Skill?
+
+Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation with a professional design system. It provides:
+
+- **Design System 2.0**: Unified theming, semantic shapes, typed connectors
+- **YAML Specification**: Simple, readable diagram definitions
+- **3 Clear Workflows**: Create, replicate, and edit diagrams
+- **Real-time Preview**: See changes instantly in your browser
 
 ## Credits
 

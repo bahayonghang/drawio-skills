@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Draw.io 技能"
   text: "Claude Code 专用"
-  tagline: AI 驱动的图表创建与编辑，提供实时浏览器预览
+  tagline: AI 驱动的图表创建，内置设计系统，提供实时浏览器预览
   actions:
     - theme: brand
       text: 快速开始
@@ -15,81 +15,124 @@ hero:
 
 features:
   - icon: 🎨
-    title: 自然语言 → 图表
-    details: 用自然语言描述需求，即刻获得专业图表。
+    title: 设计系统 2.0
+    details: 4 个内置主题（tech-blue、academic、nature、dark），8px 网格系统，语义形状，类型化连接器。
+
+  - icon: 🚀
+    title: 3 个清晰的工作流
+    details: /drawio-create 创建新图表，/drawio-replicate 复刻图片，/drawio-edit 修改图表
+
+  - icon: 📝
+    title: YAML 规格格式
+    details: 简单、可读的规格格式，支持主题选择、语义节点和类型化边。
 
   - icon: 🔄
     title: 实时预览
-    details: 在浏览器中即时查看 Claude 创建的图表更新。
-
-  - icon: 📊
-    title: 多种图表类型
-    details: 流程图、架构图、序列图、网络图等多种类型。
+    details: Claude 创建图表时，在浏览器中实时查看更新。
 
   - icon: ☁️
     title: 云架构支持
-    details: 专门支持 AWS、GCP 和 Azure 官方图标。
-
-  - icon: ✏️
-    title: 编辑现有图表
-    details: 使用自然语言指令通过 ID 操作修改图表。
-
-  - icon: 💾
-    title: 导出与保存
-    details: 将图表保存为 .drawio 文件，可在 draw.io 中使用。
-
-  - icon: 🎬
-    title: 动画连接器
-    details: 在图表元素之间创建动态和动画连接线。
-
-  - icon: 📚
-    title: 版本历史
-    details: 通过可视化缩略图恢复之前的图表版本。
-
-  - icon: 🚀
-    title: 自包含
-    details: 嵌入式服务器，无需外部依赖。
+    details: AWS、GCP、Azure 图标，使用官方图标库（mxgraph.aws4.*、mxgraph.gcp2.*、mxgraph.azure.*）。
 
   - icon: ∑
     title: 数学公式排版
-    details: 支持 LaTeX/AsciiMath 公式（MathJax 渲染），符合 IEEE 等学术期刊发表规范，支持灰度兼容导出。
+    details: LaTeX/AsciiMath 公式，MathJax 渲染。IEEE/学术出版就绪。
 
-  - icon: 🧩
-    title: A–H 结构化工作流
-    details: 抽取严格 A–H 规格，并可转换为基础 draw.io XML 以便稳定渲染。
+  - icon: 🛡️
+    title: 复杂度护栏
+    details: 超过 20 个节点、30 条边、14 字符标签时自动警告，保持图表可读性。
+
+  - icon: 💾
+    title: 导出与保存
+    details: 保存为 .drawio、.png、.svg、.pdf，支持主题适配设置。
 ---
 
-## 快速示例
+## 快速开始 - 3 个工作流
+
+| 命令 | 说明 | 主题支持 |
+|------|------|----------|
+| `/drawio-create` | 从自然语言创建图表 | ✅ 自动主题 |
+| `/drawio-replicate` | 复刻现有图片 | ✅ 领域主题 |
+| `/drawio-edit` | 修改现有图表 | ✅ 主题切换 |
+
+### 示例：使用设计系统创建
 
 ```
-"创建一个用户登录流程图，包含用户名/密码输入、验证和成功/错误路径"
+/drawio-create --theme tech-blue
+微服务架构：
+- API Gateway（service）
+- User Service（service）
+- Order Service（service）
+- PostgreSQL（database）
+- Redis Cache（database）
+所有服务通过数据流箭头连接
 ```
 
-Claude 将会：
-1. 打开一个带有 draw.io 编辑器的浏览器窗口
-2. 根据你的描述生成图表 XML
-3. 实时显示图表
-4. 允许你用自然语言进行迭代修改
+### 示例：带主题复刻
 
-## 什么是 Draw.io 技能？
+```
+/drawio-replicate --theme academic
+[上传架构图片]
+```
 
-Draw.io 技能是一个 Claude Code 技能，支持 AI 驱动的图表创建和编辑。它封装了 [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务器，并提供：
+### 示例：切换主题编辑
 
-- **完整文档**：详细的各类图表创建指南
-- **XML 格式参考**：完整的 draw.io XML 格式和样式属性文档
-- **图表示例**：流程图、架构图等即用示例
-- **MCP 工具参考**：所有可用 MCP 工具的详细文档
+```
+/drawio-edit --theme dark
+转换为演示模式
+```
+
+## 设计系统特性
+
+### 4 个内置主题
+
+| 主题 | 使用场景 | 颜色 |
+|------|----------|------|
+| `tech-blue` | 技术文档、仪表板 | 蓝色主色调，现代风格 |
+| `academic` | IEEE 论文、学术出版 | 灰度，高对比度 |
+| `nature` | 环境、生命周期 | 绿色调色板 |
+| `dark` | 演示、暗色模式 | 深色背景 |
+
+### 语义形状
+
+形状从标签自动检测或显式指定：
+
+- `service` → 圆角矩形（API Gateway、User Service）
+- `database` → 圆柱体（PostgreSQL、Redis、MongoDB）
+- `decision` → 菱形（条件、分支）
+- `queue` → 平行四边形（Kafka、SQS、RabbitMQ）
+- `user` → 椭圆（参与者、客户端）
+- `formula` → 白色框，支持数学公式
+
+### 类型化连接器
+
+| 类型 | 样式 | 使用场景 |
+|------|------|----------|
+| `primary` | 实线，块状箭头 | 主流程 |
+| `data` | 虚线 | 数据传输 |
+| `optional` | 细虚线 | 可选路径 |
+| `dependency` | 菱形箭头 | 依赖关系 |
+| `bidirectional` | 无箭头 | 双向 |
 
 ## 工作原理
 
 ```
-Claude Code <--stdio--> MCP Server <--http--> Browser (draw.io)
+Claude Code <--stdio--> MCP 服务器 <--http--> 浏览器 (draw.io)
 ```
 
-1. 向 Claude 请求创建图表
-2. Claude 调用 `start_session` 打开浏览器窗口
-3. Claude 生成图表 XML 并发送到浏览器
-4. 你可以实时看到图表更新！
+1. 请求 Claude 创建带主题的图表
+2. Claude 生成 YAML 规格 → draw.io XML
+3. XML 通过 MCP 服务器发送到浏览器
+4. 实时预览，带设计系统样式！
+
+## 什么是 Draw.io 技能？
+
+Draw.io 技能是一个 Claude Code 技能，支持 AI 驱动的图表创建，带有专业设计系统。它提供：
+
+- **设计系统 2.0**：统一主题、语义形状、类型化连接器
+- **YAML 规格**：简单、可读的图表定义
+- **3 个清晰的工作流**：创建、复刻和编辑图表
+- **实时预览**：在浏览器中即时查看变化
 
 ## 致谢
 

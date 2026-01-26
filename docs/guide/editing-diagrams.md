@@ -1,13 +1,77 @@
-# Editing Diagrams
+# Editing Diagrams (`/drawio-edit`)
 
-Learn how to modify existing diagrams using natural language and ID-based operations.
+Learn how to modify existing diagrams while preserving Design System consistency.
+
+## Quick Start
+
+```
+/drawio-edit
+Change "User Service" to "Auth Service"
+```
+
+With theme switching:
+
+```
+/drawio-edit --theme dark
+Convert to presentation mode
+```
 
 ## Overview
 
-Once you've created a diagram, you can edit it in two ways:
+The `/drawio-edit` workflow allows you to:
 
-1. **Natural Language**: Describe the changes you want
-2. **ID-based Operations**: Directly modify specific elements using their cell IDs
+1. **Natural Language**: Describe changes in plain text
+2. **Theme Switching**: Change the entire diagram's theme
+3. **Semantic Type Changes**: Update node types for different shapes
+4. **ID-based Operations**: Directly modify specific elements
+
+## Design System Preservation
+
+### Theme Consistency
+
+When editing, the design system is preserved:
+
+| Edit Type | Theme Behavior |
+|-----------|----------------|
+| Add node | Uses current theme's node style |
+| Add edge | Uses current theme's connector style |
+| Modify style | Suggests theme-compatible colors |
+| Switch theme | Re-applies all styles from new theme |
+| Move node | Snaps to 8px grid |
+
+### Theme Switching
+
+To change the entire diagram's theme:
+
+```
+/drawio-edit --theme academic
+Convert to IEEE style for paper submission
+```
+
+```
+/drawio-edit --theme dark
+Convert to presentation mode
+```
+
+### Semantic Type Changes
+
+Change a node's semantic type to update its shape:
+
+```
+/drawio-edit
+Change "API" node from service to database type
+→ Shape changes from rounded rect to cylinder
+→ Colors updated to match type
+```
+
+### Connector Type Changes
+
+```
+/drawio-edit
+Change the connection from API to DB to data flow
+→ Line becomes dashed
+→ Arrow style updates
+```
 
 ## Natural Language Editing
 
@@ -263,8 +327,62 @@ After making changes, verify the result:
 "Show me the current diagram"
 ```
 
+## Structural Reorganization
+
+For major changes, use specification format with `--restructure`:
+
+```
+/drawio-edit --restructure --theme academic
+
+meta:
+  theme: academic
+  layout: vertical
+
+modules:
+  - id: input
+    label: Input Layer
+  - id: process
+    label: Processing
+  - id: output
+    label: Output Layer
+```
+
+## Best Practices
+
+1. **Preserve theme** - Don't mix styles from different themes
+2. **Use semantic types** - Let design system choose shapes
+3. **Reference clearly** - Use exact labels or positions
+4. **Batch related changes** - More efficient than multiple calls
+5. **Use grid alignment** - Maintain professional 8px grid layout
+6. **Switch theme intentionally** - Theme switch re-styles everything
+
+## Troubleshooting
+
+### "Cell not found"
+- Label may have changed
+- Call `get_diagram` to see current state
+- Use exact label text
+
+### Style looks wrong after edit
+- Verify theme is consistent
+- Check if type was changed accidentally
+- Re-apply theme if mixed styles
+
+### New elements don't match existing
+- Specify semantic type for new nodes
+- Specify connector type for new edges
+- Consider theme switch if inconsistent
+
+### Grid alignment off
+- Use layout operations to re-align
+- Snap positions to 8px grid
+- Increase spacing if crowded
+
 ## Next Steps
 
-- [Export & Save](./export.md) - Learn how to save your diagrams
-- [XML Format](/api/xml-format.md) - Understand the XML structure
+- [Creating Diagrams](./creating-diagrams.md) - `/drawio-create` workflow
+- [Replicate Diagrams](./scientific-workflows.md) - `/drawio-replicate` workflow
+- [Design System](./design-system.md) - Themes, shapes, connectors reference
+- [Specification Format](./specification.md) - YAML spec reference
+- [Export & Save](./export.md) - Save your diagrams
 - [MCP Tools](/api/mcp-tools.md) - Learn about the edit_diagram tool

@@ -95,13 +95,14 @@ Use grayscale-compatible styling. Add caption: Fig. 1. CNN architecture."
 ## Next Steps
 
 - [Installation Guide](./installation.md) - Detailed installation instructions
-- [Creating Diagrams](./creating-diagrams.md) - Learn how to create different types of diagrams
-- [Editing Diagrams](./editing-diagrams.md) - Learn how to modify existing diagrams
-- [Export & Save](./export.md) - Learn how to save your diagrams
-- [Math Typesetting](./math-typesetting.md) - LaTeX/AsciiMath equations and IEEE publication guidelines
-- [Scientific Workflows](./scientific-workflows.md) - Generate strict A–H prompts for Nano Banana Pro
-- [A–H to XML](./ah-to-xml.md) - Convert strict A–H specs into starter draw.io XML
-- [Style Presets](./style-presets.md) - Reuse consistent style strings for better-looking diagrams
+- [Workflows](./workflows.md) - Overview of the 3 workflows
+- [Creating Diagrams](./creating-diagrams.md) - `/drawio-create` workflow
+- [Replicate Diagrams](./scientific-workflows.md) - `/drawio-replicate` workflow
+- [Editing Diagrams](./editing-diagrams.md) - `/drawio-edit` workflow
+- [Design System](./design-system.md) - Themes, shapes, connectors
+- [Specification Format](./specification.md) - YAML specification reference
+- [Math Typesetting](./math-typesetting.md) - LaTeX/AsciiMath equations
+- [Export & Save](./export.md) - Save your diagrams
 
 ## Getting Help
 
