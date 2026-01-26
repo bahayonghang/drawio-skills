@@ -25,7 +25,7 @@ ls ~/.claude/skills/drawio
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }

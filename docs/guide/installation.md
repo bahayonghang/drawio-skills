@@ -68,7 +68,7 @@ The skill automatically configures the MCP server with:
   "mcpServers": {
     "drawio": {
       "command": "npx",
-      "args": ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
     }
   }
 }
