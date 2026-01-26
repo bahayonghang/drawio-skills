@@ -20,6 +20,38 @@ An MCP skill that enables AI-powered diagram creation and editing with real-time
 - 💾 **Export**: Save diagrams as `.drawio` files
 - 🎬 **Animated Connectors**: Create dynamic and animated connectors between elements
 - 📚 **Version History**: Restore previous diagram versions with visual thumbnails
+- 🧮 **Math Typesetting**: LaTeX/AsciiMath equations with MathJax rendering
+- 📐 **A-H Format Extraction**: Structured diagram extraction from text or images
+
+## 🚀 Quick Start - 3 Workflows
+
+| Command | Description | A-H Format |
+|---------|-------------|------------|
+| `/drawio-create` | Create diagrams from natural language | Optional |
+| `/drawio-replicate` | Replicate existing images | Required |
+| `/drawio-edit` | Modify existing diagrams | Optional |
+
+### `/drawio-create` - Create from Scratch
+
+```
+/drawio-create a login flowchart with validation and error handling
+```
+
+### `/drawio-replicate` - Replicate Existing Image
+
+```
+/drawio-replicate
+【领域】软件架构
+[Upload image]
+```
+
+### `/drawio-edit` - Modify Diagram
+
+```
+/drawio-edit
+Change "User Service" to "Auth Service"
+Make database nodes green
+```
 
 ## 🔗 Relationship with Upstream Project
 
@@ -32,10 +64,11 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 
 ### What This Skill Adds
 
+- ✅ **3 Clear Workflows**: `/drawio-create`, `/drawio-replicate`, `/drawio-edit`
+- ✅ **A-H Format**: Structured diagram extraction from text/images
 - ✅ **Comprehensive Documentation**: Detailed guides for creating various diagram types
 - ✅ **XML Format Reference**: Complete documentation of draw.io XML format and style properties
 - ✅ **Diagram Examples**: Ready-to-use examples for flowcharts, architecture diagrams, and more
-- ✅ **MCP Tools Reference**: Detailed documentation of all available MCP tools
 - ✅ **Automatic MCP Configuration**: Pre-configured `.mcp.json` for seamless integration
 - ✅ **Installation Scripts**: Easy setup for Windows, Linux, and macOS
 
@@ -136,90 +169,6 @@ args = ["--yes", "@next-ai-drawio/mcp-server@0.1.15"]
 
 The skill will be available automatically after restarting your AI client.
 
-## 🚀 Usage
-
-Once the skill is installed, simply ask Claude to create a diagram:
-
-### Basic Examples
-
-```
-"Create a flowchart for user login process"
-```
-
-```
-"Draw a three-tier architecture diagram"
-```
-
-```
-"Generate a microservices architecture for an e-commerce system"
-```
-
-### 🎯 Real Example: E-Commerce Microservices Architecture
-
-> **⚠️ Note**: This example is for reference only. The current workflow may have some issues (e.g., element overlapping). We are actively optimizing the workflow to improve diagram generation quality.
-
-![E-Commerce Microservices Architecture](docs/public/imgs/ecommerce-example.png)
-
-**Prompt used:**
-```
-Design a microservices e-commerce system architecture diagram with the following components:
-
-API Gateway
-├── User Service (authentication, user profiles)
-├── Product Catalog Service (inventory management, product search, categories)
-├── Shopping Cart Service (cart management, session handling)
-├── Order Service (order processing, order history)
-├── Payment Service (payment gateway, transactions)
-└── Notification Service (emails, SMS, push notifications)
-
-Infrastructure:
-- API Gateway (entry point for all requests)
-- Service Mesh (service-to-service communication)
-- Message Queue (RabbitMQ/Kafka for async events)
-- Cache Layer (Redis for session and product caching)
-- Databases (PostgreSQL per service)
-- CDN/Load Balancer
-- Monitoring (Prometheus, Grafana)
-```
-
-**Result:** `examples/ecommerce-microservices.drawio`
-
-This example demonstrates:
-- ✅ **Clear layering** (KISS principle): Client → CDN → API Gateway → Microservices → Database
-- ✅ **Service independence** (SOLID): Each service has its own database
-- ✅ **Async communication**: Message queue for order/payment → notification events
-- ✅ **Observability**: Prometheus + Grafana monitoring
-- ✅ **Optimized routing**: Non-overlapping connection lines with Chinese labels
-
-### Advanced Examples
-
-#### AWS Architecture
-
-```
-"Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
-and S3 for a serverless REST API. Use AWS icons."
-```
-
-#### GCP Architecture
-
-```
-"Generate a GCP architecture diagram with Cloud Run, Cloud SQL, and
-Cloud Storage for a web application. Use GCP icons."
-```
-
-#### Sequence Diagram
-
-```
-"Create a sequence diagram showing OAuth 2.0 authorization code flow
-between user, client app, auth server, and resource server"
-```
-
-#### Animated Connectors
-
-```
-"Give me an animated connector diagram of transformer's architecture"
-```
-
 ## 🛠️ MCP Tools
 
 This skill uses the following MCP tools from `@next-ai-drawio/mcp-server`:
@@ -232,15 +181,26 @@ This skill uses the following MCP tools from `@next-ai-drawio/mcp-server`:
 | `edit_diagram` | Modify diagram by cell ID |
 | `export_diagram` | Save as .drawio file |
 
-For detailed documentation of each tool, see [references/mcp-tools.md](./skills/drawio/references/mcp-tools.md).
+For detailed documentation of each tool, see [docs/mcp-tools.md](./skills/drawio/docs/mcp-tools.md).
 
 ## 📖 Documentation
 
-### References
+### Skill Documentation
 
-- **[MCP Tools Reference](./skills/drawio/references/mcp-tools.md)**: Detailed documentation of all available MCP tools
-- **[XML Format Reference](./skills/drawio/references/xml-format.md)**: Complete guide to draw.io XML format and style properties
-- **[Diagram Examples](./skills/drawio/references/examples.md)**: Ready-to-use examples for various diagram types
+| Topic | File |
+|-------|------|
+| **Workflows** | |
+| Create from scratch | [workflows/create.md](./skills/drawio/workflows/create.md) |
+| Replicate existing | [workflows/replicate.md](./skills/drawio/workflows/replicate.md) |
+| Edit diagram | [workflows/edit.md](./skills/drawio/workflows/edit.md) |
+| **References** | |
+| A-H Format | [docs/ah-format.md](./skills/drawio/docs/ah-format.md) |
+| MCP Tools | [docs/mcp-tools.md](./skills/drawio/docs/mcp-tools.md) |
+| Style Presets | [docs/style-presets.md](./skills/drawio/docs/style-presets.md) |
+| Math Typesetting | [docs/math-typesetting.md](./skills/drawio/docs/math-typesetting.md) |
+| IEEE Diagrams | [docs/ieee-network-diagrams.md](./skills/drawio/docs/ieee-network-diagrams.md) |
+| XML Format | [docs/xml-format.md](./skills/drawio/docs/xml-format.md) |
+| Examples | [docs/examples.md](./skills/drawio/docs/examples.md) |
 
 ### Diagram Types
 
@@ -260,15 +220,34 @@ This skill supports creating the following diagram types:
 drawio-skills/
 ├── skills/
 │   └── drawio/
+│       ├── SKILL.md                  # Main skill navigation
 │       ├── .mcp.json                 # MCP server configuration
-│       ├── SKILL.md                  # Main skill documentation
-│       ├── scripts/
-│       │   ├── install.sh           # Linux/macOS installation script
-│       │   └── install.bat          # Windows installation script
-│       └── references/
-│           ├── mcp-tools.md         # MCP tools reference
-│           ├── xml-format.md        # Draw.io XML format reference
-│           └── examples.md          # Diagram examples
+│       │
+│       ├── workflows/                # Workflow definitions
+│       │   ├── create.md             # /drawio-create workflow
+│       │   ├── replicate.md          # /drawio-replicate workflow
+│       │   └── edit.md               # /drawio-edit workflow
+│       │
+│       ├── docs/                     # Reference documentation
+│       │   ├── ah-format.md          # A-H format reference
+│       │   ├── mcp-tools.md          # MCP tools reference
+│       │   ├── style-presets.md      # Visual style presets
+│       │   ├── math-typesetting.md   # LaTeX/AsciiMath guide
+│       │   ├── ieee-network-diagrams.md # IEEE academic diagrams
+│       │   ├── xml-format.md         # Draw.io XML format
+│       │   └── examples.md           # Usage examples
+│       │
+│       ├── scripts/                  # Installation scripts
+│       │   ├── install.sh            # Linux/macOS
+│       │   └── install.bat           # Windows
+│       │
+│       └── src/                      # Source code
+│           ├── dsl/                  # A-H → XML converter
+│           │   └── ah-to-drawio.js
+│           └── math/                 # Math utilities
+│               └── index.js
+│
+├── docs/                             # VitePress documentation site
 ├── README.md                         # English documentation
 └── README_CN.md                      # Chinese documentation
 ```
