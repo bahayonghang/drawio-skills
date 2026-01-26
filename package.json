@@ -1,6 +1,6 @@
 {
   "name": "drawio-skills",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview.",
   "type": "module",
   "scripts": {

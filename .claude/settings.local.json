@@ -6,7 +6,13 @@
       "mcp__plugin_serena_serena__list_dir",
       "Skill(skill-seekers)",
       "Skill(skill-seekers:*)",
-      "Skill(mcp-to-skill)"
+      "Skill(mcp-to-skill)",
+      "mcp__plugin_serena_serena__activate_project",
+      "mcp__plugin_serena_serena__create_text_file",
+      "mcp__plugin_serena_serena__find_symbol",
+      "mcp__plugin_serena_serena__replace_content",
+      "mcp__plugin_serena_serena__replace_symbol_body",
+      "mcp__plugin_serena_serena__think_about_whether_you_are_done"
     ]
   }
 }

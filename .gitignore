@@ -16,3 +16,10 @@ docs/.vitepress/cache/
 # OS files
 .DS_Store
 Thumbs.db
+
+.serena/
+
+# OpenSpec local proposals
+openspec/
+
+imgs/ref/
