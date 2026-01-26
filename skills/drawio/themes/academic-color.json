@@ -1,0 +1,298 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "academic-color",
+  "displayName": "Academic Color (IEEE Style)",
+  "description": "Colorful academic style optimized for IEEE deep learning papers, with semantic color coding for neural network components",
+  "colors": {
+    "primary": "#2196F3",
+    "primaryLight": "#E3F2FD",
+    "secondary": "#4CAF50",
+    "secondaryLight": "#E8F5E9",
+    "accent": "#9C27B0",
+    "accentLight": "#F3E5F5",
+    "background": "#FFFFFF",
+    "surface": "#FAFAFA",
+    "surfaceAlt": "#F5F5F5",
+    "text": "#212121",
+    "textMuted": "#616161",
+    "textInverse": "#FFFFFF",
+    "border": "#BDBDBD",
+    "borderStrong": "#757575",
+    "success": "#4CAF50",
+    "successLight": "#E8F5E9",
+    "warning": "#FF9800",
+    "warningLight": "#FFF3E0",
+    "error": "#F44336",
+    "errorLight": "#FFEBEE",
+    "info": "#2196F3",
+    "infoLight": "#E3F2FD",
+    "input": "#EF9A9A",
+    "inputLight": "#FFEBEE",
+    "feature": "#90CAF9",
+    "featureLight": "#E3F2FD",
+    "temporal": "#CE93D8",
+    "temporalLight": "#F3E5F5",
+    "attention": "#A5D6A7",
+    "attentionLight": "#E8F5E9",
+    "gate": "#FFCC80",
+    "gateLight": "#FFF3E0",
+    "graph": "#80DEEA",
+    "graphLight": "#E0F7FA",
+    "output": "#B0BEC5",
+    "outputLight": "#ECEFF1"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Arial, Helvetica, sans-serif",
+      "monospace": "Courier New, Courier, monospace",
+      "formula": "Times New Roman, STIX Two Math, serif"
+    },
+    "fontSize": {
+      "xs": 9,
+      "sm": 10,
+      "md": 11,
+      "lg": 12,
+      "xl": 14,
+      "2xl": 16
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 6,
+    "lg": 8,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "none",
+    "md": "none",
+    "lg": "none"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#E3F2FD",
+      "strokeColor": "#2196F3",
+      "strokeWidth": 1.5,
+      "fontColor": "#212121",
+      "fontSize": 11,
+      "fontFamily": "Arial, Helvetica, sans-serif",
+      "rounded": 6
+    },
+    "service": {
+      "fillColor": "#E3F2FD",
+      "strokeColor": "#2196F3",
+      "rounded": 6
+    },
+    "database": {
+      "fillColor": "#E8F5E9",
+      "strokeColor": "#4CAF50"
+    },
+    "decision": {
+      "fillColor": "#FFF3E0",
+      "strokeColor": "#FF9800"
+    },
+    "terminal": {
+      "fillColor": "#ECEFF1",
+      "strokeColor": "#607D8B"
+    },
+    "queue": {
+      "fillColor": "#F3E5F5",
+      "strokeColor": "#9C27B0"
+    },
+    "user": {
+      "fillColor": "#E3F2FD",
+      "strokeColor": "#1976D2"
+    },
+    "document": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#9E9E9E"
+    },
+    "formula": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#757575",
+      "strokeWidth": 1
+    },
+    "input": {
+      "fillColor": "#FFCDD2",
+      "strokeColor": "#E57373",
+      "rounded": 6
+    },
+    "feature": {
+      "fillColor": "#BBDEFB",
+      "strokeColor": "#42A5F5",
+      "rounded": 6
+    },
+    "temporal": {
+      "fillColor": "#E1BEE7",
+      "strokeColor": "#AB47BC",
+      "rounded": 6
+    },
+    "attention": {
+      "fillColor": "#C8E6C9",
+      "strokeColor": "#66BB6A",
+      "rounded": 6
+    },
+    "gate": {
+      "fillColor": "#FFE0B2",
+      "strokeColor": "#FFA726",
+      "rounded": 6
+    },
+    "graph": {
+      "fillColor": "#B2EBF2",
+      "strokeColor": "#26C6DA",
+      "rounded": 6
+    },
+    "output": {
+      "fillColor": "#CFD8DC",
+      "strokeColor": "#78909C",
+      "rounded": 6
+    },
+    "operator": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#424242",
+      "strokeWidth": 1.5,
+      "rounded": 0
+    },
+    "matrix": {
+      "fillColor": "#E8EAF6",
+      "strokeColor": "#7986CB",
+      "rounded": 4
+    },
+    "conv": {
+      "fillColor": "#BBDEFB",
+      "strokeColor": "#1E88E5",
+      "rounded": 6
+    },
+    "pool": {
+      "fillColor": "#B3E5FC",
+      "strokeColor": "#039BE5",
+      "rounded": 6
+    },
+    "norm": {
+      "fillColor": "#DCEDC8",
+      "strokeColor": "#8BC34A",
+      "rounded": 6
+    },
+    "loss": {
+      "fillColor": "#FFCCBC",
+      "strokeColor": "#FF7043",
+      "rounded": 6
+    },
+    "embed": {
+      "fillColor": "#D1C4E9",
+      "strokeColor": "#7E57C2",
+      "rounded": 6
+    },
+    "tensor3d": {
+      "fillColor": "#E3F2FD",
+      "strokeColor": "#1976D2",
+      "strokeWidth": 1.5
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#424242",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#424242",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "6 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#9E9E9E",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "3 3",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#424242",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#616161",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true,
+      "startArrow": "block",
+      "startFill": true
+    },
+    "skip": {
+      "strokeColor": "#4CAF50",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "8 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "residual": {
+      "strokeColor": "#9C27B0",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "attention": {
+      "strokeColor": "#FF5722",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    }
+  },
+  "module": {
+    "fillColor": "#FAFAFA",
+    "strokeColor": "#BDBDBD",
+    "strokeWidth": 1.5,
+    "rounded": 8,
+    "padding": 24,
+    "labelFontSize": 12,
+    "labelFontWeight": 700,
+    "labelFontColor": "#212121",
+    "dashed": true,
+    "dashPattern": "8 4"
+  },
+  "canvas": {
+    "background": "#FFFFFF",
+    "gridSize": 8,
+    "gridColor": "#E0E0E0"
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "dark",
+  "displayName": "Dark Mode",
+  "description": "Dark background with light text for presentations and terminal-style diagrams",
+  "colors": {
+    "primary": "#60A5FA",
+    "primaryLight": "#1E3A5F",
+    "secondary": "#34D399",
+    "secondaryLight": "#064E3B",
+    "accent": "#A78BFA",
+    "accentLight": "#3B2F63",
+    "background": "#0F172A",
+    "surface": "#1E293B",
+    "surfaceAlt": "#334155",
+    "text": "#F1F5F9",
+    "textMuted": "#94A3B8",
+    "textInverse": "#0F172A",
+    "border": "#334155",
+    "borderStrong": "#475569",
+    "success": "#34D399",
+    "successLight": "#064E3B",
+    "warning": "#FBBF24",
+    "warningLight": "#713F12",
+    "error": "#F87171",
+    "errorLight": "#7F1D1D",
+    "info": "#38BDF8",
+    "infoLight": "#0C4A6E"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Inter, Roboto, system-ui, -apple-system, sans-serif",
+      "monospace": "JetBrains Mono, Fira Code, Consolas, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 8,
+    "lg": 12,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0,0,0,0.3)",
+    "md": "0 4px 6px rgba(0,0,0,0.4)",
+    "lg": "0 10px 15px rgba(0,0,0,0.5)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#1E3A5F",
+      "strokeColor": "#60A5FA",
+      "strokeWidth": 1.5,
+      "fontColor": "#F1F5F9",
+      "fontSize": 13,
+      "fontFamily": "Inter, Roboto, system-ui, sans-serif",
+      "rounded": 8
+    },
+    "service": {
+      "fillColor": "#1E3A5F",
+      "strokeColor": "#60A5FA",
+      "rounded": 8
+    },
+    "database": {
+      "fillColor": "#064E3B",
+      "strokeColor": "#34D399"
+    },
+    "decision": {
+      "fillColor": "#713F12",
+      "strokeColor": "#FBBF24"
+    },
+    "terminal": {
+      "fillColor": "#334155",
+      "strokeColor": "#94A3B8"
+    },
+    "queue": {
+      "fillColor": "#3B2F63",
+      "strokeColor": "#A78BFA"
+    },
+    "user": {
+      "fillColor": "#0C4A6E",
+      "strokeColor": "#38BDF8"
+    },
+    "document": {
+      "fillColor": "#1E293B",
+      "strokeColor": "#475569"
+    },
+    "formula": {
+      "fillColor": "#1E293B",
+      "strokeColor": "#60A5FA",
+      "strokeWidth": 1
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#F1F5F9",
+      "strokeWidth": 2,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 2,
+      "dashed": true,
+      "dashPattern": "6 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "2 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    }
+  },
+  "module": {
+    "fillColor": "#1E293B",
+    "strokeColor": "#334155",
+    "strokeWidth": 1,
+    "rounded": 12,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 600,
+    "labelFontColor": "#F1F5F9"
+  },
+  "canvas": {
+    "background": "#0F172A",
+    "gridSize": 8,
+    "gridColor": "#1E293B"
+  }
+}

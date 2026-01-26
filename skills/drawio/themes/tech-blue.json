@@ -1,0 +1,180 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "tech-blue",
+  "displayName": "Tech Blue",
+  "description": "Modern professional style for technical architecture diagrams",
+  "colors": {
+    "primary": "#2563EB",
+    "primaryLight": "#DBEAFE",
+    "secondary": "#059669",
+    "secondaryLight": "#D1FAE5",
+    "accent": "#7C3AED",
+    "accentLight": "#EDE9FE",
+    "background": "#FFFFFF",
+    "surface": "#F8FAFC",
+    "surfaceAlt": "#F1F5F9",
+    "text": "#1E293B",
+    "textMuted": "#64748B",
+    "textInverse": "#FFFFFF",
+    "border": "#E2E8F0",
+    "borderStrong": "#CBD5E1",
+    "success": "#059669",
+    "successLight": "#D1FAE5",
+    "warning": "#D97706",
+    "warningLight": "#FEF3C7",
+    "error": "#DC2626",
+    "errorLight": "#FEE2E2",
+    "info": "#0284C7",
+    "infoLight": "#E0F2FE"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Inter, Roboto, system-ui, -apple-system, sans-serif",
+      "monospace": "JetBrains Mono, Fira Code, Consolas, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 8,
+    "lg": 12,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0,0,0,0.05)",
+    "md": "0 4px 6px rgba(0,0,0,0.07)",
+    "lg": "0 10px 15px rgba(0,0,0,0.1)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#DBEAFE",
+      "strokeColor": "#2563EB",
+      "strokeWidth": 1.5,
+      "fontColor": "#1E293B",
+      "fontSize": 13,
+      "fontFamily": "Inter, Roboto, system-ui, sans-serif",
+      "rounded": 8
+    },
+    "service": {
+      "fillColor": "#DBEAFE",
+      "strokeColor": "#2563EB",
+      "rounded": 8
+    },
+    "database": {
+      "fillColor": "#D1FAE5",
+      "strokeColor": "#059669"
+    },
+    "decision": {
+      "fillColor": "#FEF3C7",
+      "strokeColor": "#D97706"
+    },
+    "terminal": {
+      "fillColor": "#F1F5F9",
+      "strokeColor": "#64748B"
+    },
+    "queue": {
+      "fillColor": "#EDE9FE",
+      "strokeColor": "#7C3AED"
+    },
+    "user": {
+      "fillColor": "#E0F2FE",
+      "strokeColor": "#0284C7"
+    },
+    "document": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#CBD5E1"
+    },
+    "formula": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#2563EB",
+      "strokeWidth": 1
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#1E293B",
+      "strokeWidth": 2,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#1E293B",
+      "strokeWidth": 2,
+      "dashed": true,
+      "dashPattern": "6 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "2 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#1E293B",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    }
+  },
+  "module": {
+    "fillColor": "#F8FAFC",
+    "strokeColor": "#E2E8F0",
+    "strokeWidth": 1,
+    "rounded": 12,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 600,
+    "labelFontColor": "#1E293B"
+  },
+  "canvas": {
+    "background": "#FFFFFF",
+    "gridSize": 8,
+    "gridColor": "#E2E8F0"
+  }
+}
