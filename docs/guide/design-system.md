@@ -35,7 +35,7 @@ The Draw.io Skill Design System 2.0 provides unified theming, semantic shapes, a
 | Text | `#1E293B` |
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 ```
 
 ### academic
@@ -56,7 +56,7 @@ Features:
 - Serif font support
 
 ```
-/drawio-create --theme academic
+/drawio create with academic theme
 ```
 
 ### nature
@@ -72,7 +72,7 @@ Features:
 | Text | `#064E3B` |
 
 ```
-/drawio-create --theme nature
+/drawio create with nature theme
 ```
 
 ### dark
@@ -88,7 +88,7 @@ Features:
 | Text | `#F1F5F9` |
 
 ```
-/drawio-create --theme dark
+/drawio create with dark theme
 ```
 
 ## Semantic Shapes

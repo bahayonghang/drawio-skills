@@ -1,29 +1,29 @@
-# 创建图表 (`/drawio-create`)
+# 创建图表 (`/drawio create`)
 
 学习如何使用自然语言结合设计系统 2.0 创建各种类型的图表。
 
 ## 快速开始
 
 ```
-/drawio-create
+/drawio create
 创建一个带验证和错误处理的登录流程图
 ```
 
 指定主题：
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 微服务架构，包含 API Gateway、User Service 和 PostgreSQL
 ```
 
 ## 基本工作流
 
-1. **触发**：使用 `/drawio-create` 命令或关键词"创建"、"生成"、"画"
+1. **触发**：使用 `/drawio create` 命令或关键词"创建"、"生成"、"画"
 2. **启动会话**：Claude 调用 `start_session` 打开浏览器
 3. **生成规格**：Claude 创建带设计系统样式的 YAML 规格
 4. **转换为 XML**：通过 `spec-to-drawio.js` 转换规格
 5. **实时预览**：图表在浏览器中即时显示
-6. **迭代修改**：使用 `/drawio-edit` 进行调整
+6. **迭代修改**：使用 `/drawio edit` 进行调整
 
 ## 设计系统支持
 
@@ -32,10 +32,10 @@
 | 主题 | 使用场景 | 命令 |
 |------|----------|------|
 | `tech-blue`（默认） | 软件架构、DevOps | 无需标志 |
-| `academic-color` ⭐ | 学术论文、研究（彩色） | `--theme academic-color` |
-| `academic` | IEEE 灰度打印 | `--theme academic` |
-| `nature` | 环境、生命周期 | `--theme nature` |
-| `dark` | 演示、幻灯片 | `--theme dark` |
+| `academic-color` ⭐ | 学术论文、研究（彩色） | "with academic-color theme" |
+| `academic` | IEEE 灰度打印 | "with academic theme" |
+| `nature` | 环境、生命周期 | "with nature theme" |
+| `dark` | 演示、幻灯片 | "with dark theme" |
 
 > ⭐ **学术推荐**：数字文档使用 `academic-color`，仅在严格灰度要求时使用 `academic`。
 
@@ -76,7 +76,7 @@
 ### 流程图
 
 ```
-/drawio-create
+/drawio create
 创建用户登录流程：
 - 开始（terminal）
 - 输入凭据
@@ -88,7 +88,7 @@
 ### AWS 架构
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 AWS 无服务器架构：
 - API Gateway（service）入口
 - Lambda（service）业务逻辑
@@ -100,7 +100,7 @@ AWS 无服务器架构：
 ### 学术图表
 
 ```
-/drawio-create --theme academic
+/drawio create with academic theme
 神经网络训练流程：
 - 数据预处理
 - 模型训练（损失函数：$$L = -\sum y_i \log(\hat{y}_i)$$）
@@ -110,7 +110,7 @@ AWS 无服务器架构：
 
 ## YAML 规格格式
 
-对于复杂图表，使用 `--structured` 显式 YAML 规格：
+对于复杂图表，使用结构化格式显式 YAML 规格：
 
 ```yaml
 meta:
@@ -149,7 +149,7 @@ edges:
 
 请求结构化格式：
 ```
-/drawio-create --structured
+/drawio create with structured format
 创建微服务架构...
 ```
 
@@ -167,15 +167,15 @@ edges:
 ## 最佳实践
 
 1. **内容在组件中** - 优先将文字和公式嵌入节点（形状），而非独立文本框
-2. **指定主题** - 使用 `--theme` 保持图表样式一致
+2. **指定主题** - 使用 "with [theme] theme" 保持图表样式一致
 3. **使用语义类型** - 让设计系统自动选择形状
 4. **保持简单** - 每个图表目标 ≤20 个节点
 5. **使用模块** - 分组相关组件以便更好组织
 
 ## 下一步
 
-- [复刻图表](./scientific-workflows.md) - `/drawio-replicate` 工作流
-- [编辑图表](./editing-diagrams.md) - `/drawio-edit` 工作流
+- [复刻图表](./scientific-workflows.md) - `/drawio replicate` 工作流
+- [编辑图表](./editing-diagrams.md) - `/drawio edit` 工作流
 - [设计系统](./design-system.md) - 主题、形状、连接器参考
 - [规格格式](./specification.md) - YAML 规格参考
 - [导出与保存](./export.md) - 保存图表

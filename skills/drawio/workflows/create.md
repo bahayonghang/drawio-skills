@@ -1,10 +1,10 @@
-# Workflow: /drawio-create
+# Workflow: /drawio create
 
 Create diagrams from scratch using natural language descriptions with Design System support.
 
 ## Trigger
 
-- **Command**: `/drawio-create`
+- **Command**: `/drawio create ...`
 - **Keywords**: "create", "generate", "make", "draw", "生成", "创建"
 
 ## Procedure
@@ -40,7 +40,7 @@ Step 5: Create Diagram
 
 Step 6: Iterate
 ├── User can request modifications
-└── Use /drawio-edit for changes
+└── Use /drawio edit for changes
 ```
 
 ## Design System Options
@@ -50,10 +50,10 @@ Step 6: Iterate
 | Theme | Use Case | How to Request |
 |-------|----------|----------------|
 | **tech-blue** (default) | Software architecture, DevOps | No specification needed |
-| **academic-color** ⭐ | Academic papers, research (color) | `--theme academic-color` or "学术风格" |
-| **academic** | IEEE grayscale print only | `--theme academic` or "学术灰度" |
-| **nature** | Environmental, lifecycle | `--theme nature` or "自然风格" |
-| **dark** | Presentations, slides | `--theme dark` or "深色模式" |
+| **academic-color** ⭐ | Academic papers, research (color) | "academic-color theme" or "学术风格" |
+| **academic** | IEEE grayscale print only | "academic theme" or "学术灰度" |
+| **nature** | Environmental, lifecycle | "nature theme" or "自然风格" |
+| **dark** | Presentations, slides | "dark theme" or "深色模式" |
 
 > ⭐ **Recommended for academic**: Use `academic-color` for digital documents and color printing. Use `academic` only for strict grayscale requirements.
 
@@ -86,10 +86,10 @@ Specify node types for automatic shape selection:
 
 | Input | Example |
 |-------|---------|
-| Natural language | "Create a flowchart showing login process" |
-| With theme | "Create AWS architecture --theme tech-blue" |
-| With semantic types | "Create diagram with API (service), User DB (database)" |
-| With math | "Create a diagram with equation $$E = mc^2$$" |
+| Natural language | `/drawio create a flowchart showing login process` |
+| With theme | `/drawio create AWS architecture with tech-blue theme` |
+| With semantic types | `/drawio create diagram with API (service), User DB (database)` |
+| With math | `/drawio create a diagram with equation $$E = mc^2$$` |
 
 ## Specification Format (Optional)
 
@@ -126,7 +126,7 @@ modules:
 
 Request structured format:
 ```
-/drawio-create --structured
+/drawio create with structured format
 "使用规格格式创建..."
 "Create using specification format..."
 ```
@@ -136,7 +136,7 @@ Request structured format:
 ### Basic Flowchart
 
 ```
-/drawio-create a login flowchart with:
+/drawio create a login flowchart with:
 - Start (terminal)
 - Input credentials form
 - Validation check (decision)
@@ -147,8 +147,7 @@ Request structured format:
 ### AWS Architecture with Theme
 
 ```
-/drawio-create --theme tech-blue
-AWS serverless architecture:
+/drawio create AWS serverless architecture with tech-blue theme:
 - API Gateway (service) as entry point
 - Lambda (service) for business logic
 - DynamoDB (database) for storage
@@ -159,8 +158,7 @@ Use AWS icons and show data flow
 ### Academic Diagram
 
 ```
-/drawio-create --theme academic
-Neural network training pipeline:
+/drawio create neural network training pipeline with academic theme:
 - Data preprocessing
 - Model training (with loss: $$L = -\sum y_i \log(\hat{y}_i)$$)
 - Validation
@@ -170,7 +168,7 @@ Neural network training pipeline:
 ### With Explicit Specification
 
 ```
-/drawio-create --structured
+/drawio create with structured format:
 
 meta:
   theme: nature

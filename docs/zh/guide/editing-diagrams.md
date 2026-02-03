@@ -1,24 +1,24 @@
-# 编辑图表 (`/drawio-edit`)
+# 编辑图表 (`/drawio edit`)
 
 学习如何修改现有图表，同时保持设计系统一致性。
 
 ## 快速开始
 
 ```
-/drawio-edit
+/drawio edit
 将 "User Service" 改为 "Auth Service"
 ```
 
 切换主题：
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 转换为演示模式
 ```
 
 ## 概述
 
-`/drawio-edit` 工作流允许你：
+`/drawio edit` 工作流允许你：
 
 1. **自然语言**：用文字描述修改
 2. **主题切换**：更改整个图表的主题
@@ -44,12 +44,12 @@
 更改整个图表的主题：
 
 ```
-/drawio-edit --theme academic
+/drawio edit with academic theme
 转换为 IEEE 风格以便投稿
 ```
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 转换为演示模式
 ```
 
@@ -58,7 +58,7 @@
 更改节点的语义类型以更新其形状：
 
 ```
-/drawio-edit
+/drawio edit
 将 "API" 节点从 service 类型改为 database 类型
 → 形状从圆角矩形变为圆柱体
 → 颜色更新以匹配类型
@@ -67,7 +67,7 @@
 ### 连接器类型变更
 
 ```
-/drawio-edit
+/drawio edit
 将 API 到 DB 的连接改为数据流
 → 线条变为虚线
 → 箭头样式更新
@@ -78,21 +78,21 @@
 ### 自然语言编辑
 
 ```
-/drawio-edit
+/drawio edit
 将 "处理" 节点的标签改为 "验证输入"
 ```
 
 ### 基于 ID 的操作
 
 ```
-/drawio-edit
+/drawio edit
 更新 cell 2：标签改为 "新标签"，颜色改为蓝色
 ```
 
 ## 批量操作
 
 ```
-/drawio-edit
+/drawio edit
 1. 将 "Service A" 改为 "User Service"
 2. 将其类型改为 database
 3. 添加新的 "Cache" 节点（service 类型）
@@ -104,10 +104,10 @@ Claude 会将这些合并为高效的 `edit_diagram` 调用。
 
 ## 结构重组
 
-对于重大变更，使用 `--restructure` 配合规格格式：
+对于重大变更，使用 restructure 配合规格格式：
 
 ```
-/drawio-edit --restructure --theme academic
+/drawio edit with restructure and academic theme
 
 meta:
   theme: academic
@@ -155,8 +155,8 @@ modules:
 
 ## 下一步
 
-- [创建图表](./creating-diagrams.md) - `/drawio-create` 工作流
-- [复刻图表](./scientific-workflows.md) - `/drawio-replicate` 工作流
+- [创建图表](./creating-diagrams.md) - `/drawio create` 工作流
+- [复刻图表](./scientific-workflows.md) - `/drawio replicate` 工作流
 - [设计系统](./design-system.md) - 主题、形状、连接器参考
 - [规格格式](./specification.md) - YAML 规格参考
 - [导出与保存](./export.md) - 保存图表

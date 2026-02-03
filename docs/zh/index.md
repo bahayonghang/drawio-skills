@@ -20,7 +20,7 @@ features:
 
   - icon: 🚀
     title: 3 个清晰的工作流
-    details: /drawio-create 创建新图表，/drawio-replicate 复刻图片，/drawio-edit 修改图表
+    details: /drawio create 创建新图表，/drawio replicate 复刻图片，/drawio edit 修改图表
 
   - icon: 📝
     title: YAML 规格格式
@@ -51,14 +51,14 @@ features:
 
 | 命令 | 说明 | 主题支持 |
 |------|------|----------|
-| `/drawio-create` | 从自然语言创建图表 | ✅ 自动主题 |
-| `/drawio-replicate` | 复刻现有图片 | ✅ 领域主题 |
-| `/drawio-edit` | 修改现有图表 | ✅ 主题切换 |
+| `/drawio create` | 从自然语言创建图表 | ✅ 自动主题 |
+| `/drawio replicate` | 复刻现有图片 | ✅ 领域主题 |
+| `/drawio edit` | 修改现有图表 | ✅ 主题切换 |
 
 ### 示例：使用设计系统创建
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 微服务架构：
 - API Gateway（service）
 - User Service（service）
@@ -71,14 +71,14 @@ features:
 ### 示例：带主题复刻
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [上传架构图片]
 ```
 
 ### 示例：切换主题编辑
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 转换为演示模式
 ```
 

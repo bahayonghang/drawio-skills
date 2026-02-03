@@ -1,18 +1,18 @@
-# Creating Diagrams (`/drawio-create`)
+# Creating Diagrams (`/drawio create`)
 
 Learn how to create various types of diagrams using natural language with the Design System 2.0.
 
 ## Quick Start
 
 ```
-/drawio-create
+/drawio create
 A login flowchart with validation and error handling
 ```
 
 With theme selection:
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 A microservices architecture with API Gateway, User Service, and PostgreSQL
 ```
 
@@ -20,12 +20,12 @@ A microservices architecture with API Gateway, User Service, and PostgreSQL
 
 Creating a diagram follows this workflow:
 
-1. **Trigger**: Use `/drawio-create` command or keywords like "create", "generate", "make"
+1. **Trigger**: Use `/drawio create` command or keywords like "create", "generate", "make"
 2. **Start Session**: Claude calls `start_session` to open browser
 3. **Generate Specification**: Claude creates YAML spec with Design System styling
 4. **Convert to XML**: Specification converted via `spec-to-drawio.js`
 5. **Real-time Preview**: Diagram appears in browser instantly
-6. **Iterate**: Use `/drawio-edit` for modifications
+6. **Iterate**: Use `/drawio edit` for modifications
 
 ## Design System Support
 
@@ -34,10 +34,10 @@ Creating a diagram follows this workflow:
 | Theme | Use Case | Command |
 |-------|----------|---------|
 | `tech-blue` (default) | Software architecture, DevOps | No flag needed |
-| `academic-color` ⭐ | Academic papers, research (color) | `--theme academic-color` |
-| `academic` | IEEE grayscale print only | `--theme academic` |
-| `nature` | Environmental, lifecycle | `--theme nature` |
-| `dark` | Presentations, slides | `--theme dark` |
+| `academic-color` ⭐ | Academic papers, research (color) | "with academic-color theme" |
+| `academic` | IEEE grayscale print only | "with academic theme" |
+| `nature` | Environmental, lifecycle | "with nature theme" |
+| `dark` | Presentations, slides | "with dark theme" |
 
 > ⭐ **Recommended for academic**: Use `academic-color` for digital documents. Use `academic` only for strict grayscale.
 
@@ -410,7 +410,7 @@ edges:
 
 Request structured format:
 ```
-/drawio-create --structured
+/drawio create with structured format
 Create a microservices architecture...
 ```
 
@@ -428,15 +428,15 @@ When thresholds are exceeded, Claude will suggest splitting into sub-diagrams.
 ## Best Practices
 
 1. **Content in Components** - Prefer embedding text and formulas in nodes (shapes) rather than standalone text boxes
-2. **Specify theme** - Use `--theme` for consistent styling across diagrams
+2. **Specify theme** - Use "with [theme] theme" for consistent styling across diagrams
 3. **Use semantic types** - Let the design system choose shapes automatically
 4. **Keep it simple** - Aim for ≤20 nodes per diagram
 5. **Use modules** - Group related components for better organization
 
 ## Next Steps
 
-- [Replicate Diagrams](./scientific-workflows.md) - `/drawio-replicate` workflow
-- [Editing Diagrams](./editing-diagrams.md) - `/drawio-edit` workflow
+- [Replicate Diagrams](./scientific-workflows.md) - `/drawio replicate` workflow
+- [Editing Diagrams](./editing-diagrams.md) - `/drawio edit` workflow
 - [Design System](./design-system.md) - Themes, shapes, connectors reference
 - [Specification Format](./specification.md) - YAML spec reference
 - [Export & Save](./export.md) - Save your diagrams

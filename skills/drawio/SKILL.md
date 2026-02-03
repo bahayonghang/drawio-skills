@@ -14,11 +14,11 @@ AI-powered Draw.io diagram generation with real-time browser preview for Claude 
 
 | What you want to do | Command | Description |
 |---------------------|---------|-------------|
-| Create new diagram | `/drawio-create` | Natural language → diagram |
-| Replicate image | `/drawio-replicate` | Image → A-H → diagram |
-| Edit diagram | `/drawio-edit` | Modify existing diagram |
+| Create new diagram | `/drawio create ...` | Natural language → diagram |
+| Replicate image | `/drawio replicate ...` | Image → A-H → diagram |
+| Edit diagram | `/drawio edit ...` | Modify existing diagram |
 
-> **Tip**: You can also use natural language keywords like "create", "replicate", "edit" to trigger workflows.
+> **Tip**: Use `/drawio` followed by keywords like "create", "replicate", "edit" to trigger different workflows.
 
 ## Features
 
@@ -112,24 +112,24 @@ Details: [docs/mcp-tools.md](docs/mcp-tools.md)
 
 ## Workflows
 
-### `/drawio-create` - Create from Scratch
+### `/drawio create` - Create from Scratch
 
 Create diagrams from natural language descriptions.
 
 ```
-/drawio-create a login flowchart with validation and error handling
+/drawio create a login flowchart with validation and error handling
 ```
 
 **A-H format**: Optional (use `--structured` for complex diagrams)
 
 → [Full workflow](workflows/create.md)
 
-### `/drawio-replicate` - Replicate Existing
+### `/drawio replicate` - Replicate Existing
 
 Recreate images/screenshots using structured A-H extraction.
 
 ```
-/drawio-replicate
+/drawio replicate
 【领域】软件架构
 [Upload image]
 ```
@@ -138,12 +138,12 @@ Recreate images/screenshots using structured A-H extraction.
 
 → [Full workflow](workflows/replicate.md)
 
-### `/drawio-edit` - Modify Diagram
+### `/drawio edit` - Modify Diagram
 
 Edit existing diagrams with natural language instructions.
 
 ```
-/drawio-edit
+/drawio edit
 Change "User Service" to "Auth Service"
 Make database nodes green
 ```

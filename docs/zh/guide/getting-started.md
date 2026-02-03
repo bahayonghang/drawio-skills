@@ -59,9 +59,9 @@ Claude 将会：
 
 - [安装指南](./installation.md) - 详细安装说明
 - [工作流概览](./workflows.md) - 3 个工作流概述
-- [创建图表](./creating-diagrams.md) - `/drawio-create` 工作流
-- [复刻图表](./scientific-workflows.md) - `/drawio-replicate` 工作流
-- [编辑图表](./editing-diagrams.md) - `/drawio-edit` 工作流
+- [创建图表](./creating-diagrams.md) - `/drawio create` 工作流
+- [复刻图表](./scientific-workflows.md) - `/drawio replicate` 工作流
+- [编辑图表](./editing-diagrams.md) - `/drawio edit` 工作流
 - [设计系统](./design-system.md) - 主题、形状、连接器
 - [规格格式](./specification.md) - YAML 规格参考
 - [数学公式排版](./math-typesetting.md) - LaTeX/AsciiMath 公式

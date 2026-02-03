@@ -1,10 +1,10 @@
-# Workflow: /drawio-edit
+# Workflow: /drawio edit
 
 Edit existing diagrams with natural language modifications while preserving Design System consistency.
 
 ## Trigger
 
-- **Command**: `/drawio-edit`
+- **Command**: `/drawio edit ...`
 - **Keywords**: "edit", "modify", "update", "change", "编辑", "修改"
 
 ## Procedure
@@ -65,12 +65,12 @@ When editing, the design system is preserved:
 To change the entire diagram's theme:
 
 ```
-/drawio-edit
+/drawio edit
 Switch to academic theme for paper submission
 ```
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 Convert to presentation mode
 ```
 
@@ -79,7 +79,7 @@ Convert to presentation mode
 Change a node's semantic type to update its shape:
 
 ```
-/drawio-edit
+/drawio edit
 Change "User Service" from service to database type
 ```
 
@@ -88,7 +88,7 @@ Change "User Service" from service to database type
 ### Modify Labels
 
 ```
-/drawio-edit
+/drawio edit
 Change "User Service" to "Auth Service"
 Update the database label to include "PostgreSQL"
 ```
@@ -96,7 +96,7 @@ Update the database label to include "PostgreSQL"
 ### Modify Styles (Theme-Aware)
 
 ```
-/drawio-edit
+/drawio edit
 Make the API Gateway node use the accent color
 Change all service nodes to database type
 Use data flow style for async connections
@@ -105,7 +105,7 @@ Use data flow style for async connections
 ### Add Elements (With Semantic Types)
 
 ```
-/drawio-edit
+/drawio edit
 Add a new "Cache" node (type: service) between API and Database
 Add a data flow arrow from Order Service to Notification Service
 ```
@@ -113,7 +113,7 @@ Add a data flow arrow from Order Service to Notification Service
 ### Delete Elements
 
 ```
-/drawio-edit
+/drawio edit
 Remove the legacy system node
 Delete the connection between A and B
 ```
@@ -121,7 +121,7 @@ Delete the connection between A and B
 ### Layout Changes (8px Grid)
 
 ```
-/drawio-edit
+/drawio edit
 Move the database to the bottom (grid-aligned)
 Align all services horizontally with 32px spacing
 Increase spacing between modules
@@ -130,7 +130,7 @@ Increase spacing between modules
 ### Theme Switch
 
 ```
-/drawio-edit
+/drawio edit
 Switch to dark theme for presentation
 Convert to academic theme for paper
 Apply tech-blue theme
@@ -154,7 +154,7 @@ Apply tech-blue theme
 ### Change Node Type
 
 ```
-/drawio-edit
+/drawio edit
 Change "API" node from service to user type
 → Shape changes from rounded rect to circle
 → Colors updated to match type
@@ -163,7 +163,7 @@ Change "API" node from service to user type
 ### Change Connector Type
 
 ```
-/drawio-edit
+/drawio edit
 Change the connection from API to DB to data flow
 → Line becomes dashed
 → Arrow style updates
@@ -174,7 +174,7 @@ Change the connection from API to DB to data flow
 For efficiency, batch multiple changes:
 
 ```
-/drawio-edit
+/drawio edit
 1. Change "Service A" to "User Service"
 2. Change its type to database
 3. Add a new "Cache" node (service type)
@@ -198,7 +198,7 @@ Reference elements by:
 For major changes, use specification format:
 
 ```
-/drawio-edit --restructure
+/drawio edit with restructure
 Reorganize into 3 modules with academic theme:
 
 meta:
@@ -219,14 +219,14 @@ modules:
 ### Quick Label Update
 
 ```
-/drawio-edit
+/drawio edit
 Rename "User Auth" to "Authentication Service"
 ```
 
 ### Theme-Aware Style Update
 
 ```
-/drawio-edit
+/drawio edit
 Apply these changes:
 - All service nodes: use primary color
 - All database nodes: use secondary color
@@ -236,7 +236,7 @@ Apply these changes:
 ### Add Component with Design System
 
 ```
-/drawio-edit
+/drawio edit
 Add a "Redis Cache" node:
 - Type: service
 - Position: between API Gateway and User Service
@@ -246,14 +246,14 @@ Add a "Redis Cache" node:
 ### Theme Switch for Presentation
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 Convert this architecture diagram to dark mode for my presentation
 ```
 
 ### Academic Conversion
 
 ```
-/drawio-edit --theme academic
+/drawio edit with academic theme
 Convert to IEEE style:
 - Grayscale colors
 - Serif fonts
@@ -263,7 +263,7 @@ Convert to IEEE style:
 ### Complex Restructure with New Theme
 
 ```
-/drawio-edit --restructure --theme nature
+/drawio edit with restructure and nature theme
 
 Simplify to 3 modules:
 - Merge "Data Collection" and "Data Processing" into "Data Pipeline"

@@ -35,7 +35,7 @@ Draw.io 技能设计系统 2.0 提供统一的主题、语义形状和类型化�
 | 文字 | `#1E293B` |
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 ```
 
 ### academic
@@ -56,7 +56,7 @@ Draw.io 技能设计系统 2.0 提供统一的主题、语义形状和类型化�
 - 衬线字体支持
 
 ```
-/drawio-create --theme academic
+/drawio create with academic theme
 ```
 
 ### nature
@@ -72,7 +72,7 @@ Draw.io 技能设计系统 2.0 提供统一的主题、语义形状和类型化�
 | 文字 | `#064E3B` |
 
 ```
-/drawio-create --theme nature
+/drawio create with nature theme
 ```
 
 ### dark
@@ -88,7 +88,7 @@ Draw.io 技能设计系统 2.0 提供统一的主题、语义形状和类型化�
 | 文字 | `#F1F5F9` |
 
 ```
-/drawio-create --theme dark
+/drawio create with dark theme
 ```
 
 ## 语义形状

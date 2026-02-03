@@ -6,25 +6,25 @@ Draw.io Skill provides 3 clear workflows integrated with the Design System 2.0.
 
 | Command | Description | Theme | Semantic Types |
 |---------|-------------|-------|----------------|
-| `/drawio-create` | Create from natural language | ✅ Selectable | ✅ Auto-detect |
-| `/drawio-replicate` | Replicate existing images | ✅ Domain-based | ✅ Mapped |
-| `/drawio-edit` | Modify existing diagrams | ✅ Switchable | ✅ Preserved |
+| `/drawio create` | Create from natural language | ✅ Selectable | ✅ Auto-detect |
+| `/drawio replicate` | Replicate existing images | ✅ Domain-based | ✅ Mapped |
+| `/drawio edit` | Modify existing diagrams | ✅ Switchable | ✅ Preserved |
 
-## `/drawio-create` - Create from Scratch
+## `/drawio create` - Create from Scratch
 
 Create diagrams from natural language with full design system support.
 
 ### Basic Usage
 
 ```
-/drawio-create
+/drawio create
 A login flowchart with validation and error handling
 ```
 
 ### With Theme Selection
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 A microservices architecture:
 - API Gateway connects to User Service and Order Service
 - Both services use PostgreSQL database
@@ -34,7 +34,7 @@ A microservices architecture:
 ### With Explicit Types
 
 ```
-/drawio-create --theme academic
+/drawio create with academic theme
 Neural network architecture:
 - Input Layer (service)
 - Hidden Layer 1 (service)
@@ -47,11 +47,11 @@ Neural network architecture:
 
 | Feature | Behavior |
 |---------|----------|
-| Theme | Select with `--theme` or defaults to `tech-blue` |
+| Theme | Select with "with [theme] theme" or defaults to `tech-blue` |
 | Shapes | Auto-detected from labels (database, queue, etc.) |
 | Connectors | Inferred from context (data, optional, dependency) |
 | Grid | All positions snapped to 8px grid |
-| Layout | Horizontal by default, vertical with `--layout vertical` |
+| Layout | Horizontal by default, vertical with "vertical layout" |
 
 **Complexity Guardrails:**
 - Warning at >20 nodes (suggest splitting)
@@ -60,21 +60,21 @@ Neural network architecture:
 
 → [Full documentation](./creating-diagrams.md)
 
-## `/drawio-replicate` - Replicate Existing
+## `/drawio replicate` - Replicate Existing
 
 Recreate diagrams from images using structured extraction with theme mapping.
 
 ### Basic Usage
 
 ```
-/drawio-replicate
+/drawio replicate
 [Upload image]
 ```
 
 ### With Theme Override
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [Upload architecture screenshot]
 ```
 
@@ -109,28 +109,28 @@ Recreate diagrams from images using structured extraction with theme mapping.
 
 → [Full documentation](./scientific-workflows.md)
 
-## `/drawio-edit` - Modify Diagram
+## `/drawio edit` - Modify Diagram
 
 Edit existing diagrams while preserving design system consistency.
 
 ### Basic Usage
 
 ```
-/drawio-edit
+/drawio edit
 Change "User Service" to "Auth Service"
 ```
 
 ### Theme Switching
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 Convert to presentation mode
 ```
 
 ### Style Operations
 
 ```
-/drawio-edit
+/drawio edit
 - Change API Gateway to use accent color
 - Convert all service nodes to database type
 - Use data flow style for async connections
@@ -139,7 +139,7 @@ Convert to presentation mode
 ### Add Elements
 
 ```
-/drawio-edit
+/drawio edit
 Add a "Redis Cache" node (service type) between API and Database
 Connect with data flow arrow
 ```
@@ -147,7 +147,7 @@ Connect with data flow arrow
 ### Structural Changes
 
 ```
-/drawio-edit --restructure --theme academic
+/drawio edit with restructure and academic theme
 Reorganize into 3 modules:
 - Input Layer
 - Processing
@@ -242,9 +242,9 @@ edges:
 
 ## Next Steps
 
-- [Creating Diagrams](./creating-diagrams.md) - Full `/drawio-create` guide
-- [Scientific Workflows](./scientific-workflows.md) - Full `/drawio-replicate` guide
-- [Editing Diagrams](./editing-diagrams.md) - Full `/drawio-edit` guide
+- [Creating Diagrams](./creating-diagrams.md) - Full `/drawio create` guide
+- [Scientific Workflows](./scientific-workflows.md) - Full `/drawio replicate` guide
+- [Editing Diagrams](./editing-diagrams.md) - Full `/drawio edit` guide
 - [Design System](./design-system.md) - Themes, shapes, connectors
 - [Specification Format](./specification.md) - YAML spec reference
 - [Examples](/examples/) - Real diagram examples

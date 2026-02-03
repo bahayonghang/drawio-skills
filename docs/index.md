@@ -20,7 +20,7 @@ features:
 
   - icon: 🚀
     title: 3 Clear Workflows
-    details: "/drawio-create for new diagrams, /drawio-replicate for images, /drawio-edit for modifications"
+    details: "/drawio create for new diagrams, /drawio replicate for images, /drawio edit for modifications"
 
   - icon: 📝
     title: YAML Specification
@@ -51,14 +51,14 @@ features:
 
 | Command | Description | Theme Support |
 |---------|-------------|---------------|
-| `/drawio-create` | Create diagrams from natural language | ✅ Auto theme |
-| `/drawio-replicate` | Replicate existing images | ✅ Domain themes |
-| `/drawio-edit` | Modify existing diagrams | ✅ Theme switch |
+| `/drawio create` | Create diagrams from natural language | ✅ Auto theme |
+| `/drawio replicate` | Replicate existing images | ✅ Domain themes |
+| `/drawio edit` | Modify existing diagrams | ✅ Theme switch |
 
 ### Example: Create with Design System
 
 ```
-/drawio-create --theme tech-blue
+/drawio create with tech-blue theme
 A microservices architecture with:
 - API Gateway (service)
 - User Service (service)
@@ -71,14 +71,14 @@ All services connected via data flow arrows
 ### Example: Replicate with Theme
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [Upload architecture image]
 ```
 
 ### Example: Edit with Theme Switch
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 Convert to presentation mode
 ```
 

@@ -96,9 +96,9 @@ Use grayscale-compatible styling. Add caption: Fig. 1. CNN architecture."
 
 - [Installation Guide](./installation.md) - Detailed installation instructions
 - [Workflows](./workflows.md) - Overview of the 3 workflows
-- [Creating Diagrams](./creating-diagrams.md) - `/drawio-create` workflow
-- [Replicate Diagrams](./scientific-workflows.md) - `/drawio-replicate` workflow
-- [Editing Diagrams](./editing-diagrams.md) - `/drawio-edit` workflow
+- [Creating Diagrams](./creating-diagrams.md) - `/drawio create` workflow
+- [Replicate Diagrams](./scientific-workflows.md) - `/drawio replicate` workflow
+- [Editing Diagrams](./editing-diagrams.md) - `/drawio edit` workflow
 - [Design System](./design-system.md) - Themes, shapes, connectors
 - [Specification Format](./specification.md) - YAML specification reference
 - [Math Typesetting](./math-typesetting.md) - LaTeX/AsciiMath equations

@@ -1,24 +1,24 @@
-# Editing Diagrams (`/drawio-edit`)
+# Editing Diagrams (`/drawio edit`)
 
 Learn how to modify existing diagrams while preserving Design System consistency.
 
 ## Quick Start
 
 ```
-/drawio-edit
+/drawio edit
 Change "User Service" to "Auth Service"
 ```
 
 With theme switching:
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 Convert to presentation mode
 ```
 
 ## Overview
 
-The `/drawio-edit` workflow allows you to:
+The `/drawio edit` workflow allows you to:
 
 1. **Natural Language**: Describe changes in plain text
 2. **Theme Switching**: Change the entire diagram's theme
@@ -44,12 +44,12 @@ When editing, the design system is preserved:
 To change the entire diagram's theme:
 
 ```
-/drawio-edit --theme academic
+/drawio edit with academic theme
 Convert to IEEE style for paper submission
 ```
 
 ```
-/drawio-edit --theme dark
+/drawio edit with dark theme
 Convert to presentation mode
 ```
 
@@ -58,7 +58,7 @@ Convert to presentation mode
 Change a node's semantic type to update its shape:
 
 ```
-/drawio-edit
+/drawio edit
 Change "API" node from service to database type
 → Shape changes from rounded rect to cylinder
 → Colors updated to match type
@@ -67,7 +67,7 @@ Change "API" node from service to database type
 ### Connector Type Changes
 
 ```
-/drawio-edit
+/drawio edit
 Change the connection from API to DB to data flow
 → Line becomes dashed
 → Arrow style updates
@@ -329,10 +329,10 @@ After making changes, verify the result:
 
 ## Structural Reorganization
 
-For major changes, use specification format with `--restructure`:
+For major changes, use specification format with restructure:
 
 ```
-/drawio-edit --restructure --theme academic
+/drawio edit with restructure and academic theme
 
 meta:
   theme: academic
@@ -380,8 +380,8 @@ modules:
 
 ## Next Steps
 
-- [Creating Diagrams](./creating-diagrams.md) - `/drawio-create` workflow
-- [Replicate Diagrams](./scientific-workflows.md) - `/drawio-replicate` workflow
+- [Creating Diagrams](./creating-diagrams.md) - `/drawio create` workflow
+- [Replicate Diagrams](./scientific-workflows.md) - `/drawio replicate` workflow
 - [Design System](./design-system.md) - Themes, shapes, connectors reference
 - [Specification Format](./specification.md) - YAML spec reference
 - [Export & Save](./export.md) - Save your diagrams

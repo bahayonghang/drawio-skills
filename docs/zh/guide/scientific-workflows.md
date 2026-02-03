@@ -1,18 +1,18 @@
-# 复刻图表 (`/drawio-replicate`)
+# 复刻图表 (`/drawio replicate`)
 
 使用结构化抽取和设计系统样式复刻现有图片或图表。
 
 ## 快速开始
 
 ```
-/drawio-replicate
+/drawio replicate
 [上传图片]
 ```
 
 指定主题：
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [上传架构截图]
 ```
 
@@ -88,14 +88,14 @@
 ### 仅图片
 
 ```
-/drawio-replicate
+/drawio replicate
 [上传图片]
 ```
 
 ### 指定主题
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [上传论文图片]
 这是我们研究论文中的图片
 ```
@@ -103,7 +103,7 @@
 ### 带领域 + 主题
 
 ```
-/drawio-replicate
+/drawio replicate
 【领域】软件架构
 【主题】tech-blue
 【语言】中文
@@ -114,7 +114,7 @@
 ### 学术论文
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 【领域】科研流程
 [上传论文图片]
 这是论文中的实验流程图，需要 IEEE 标准化重绘
@@ -199,8 +199,8 @@ modules:
 
 ## 相关链接
 
-- [创建图表](./creating-diagrams.md) - `/drawio-create` 工作流
-- [编辑图表](./editing-diagrams.md) - `/drawio-edit` 工作流
+- [创建图表](./creating-diagrams.md) - `/drawio create` 工作流
+- [编辑图表](./editing-diagrams.md) - `/drawio edit` 工作流
 - [设计系统](./design-system.md) - 主题、形状、连接器
 - [规格格式](./specification.md) - YAML 规格参考
 - [数学公式排版](./math-typesetting.md) - LaTeX 支持

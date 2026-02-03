@@ -61,9 +61,9 @@ export default defineConfig({
           text: 'Workflows',
           items: [
             { text: 'Overview', link: '/guide/workflows' },
-            { text: '/drawio-create', link: '/guide/creating-diagrams' },
-            { text: '/drawio-replicate', link: '/guide/scientific-workflows' },
-            { text: '/drawio-edit', link: '/guide/editing-diagrams' }
+            { text: '/drawio create', link: '/guide/creating-diagrams' },
+            { text: '/drawio replicate', link: '/guide/scientific-workflows' },
+            { text: '/drawio edit', link: '/guide/editing-diagrams' }
           ]
         },
         {
@@ -104,9 +104,9 @@ export default defineConfig({
           text: '工作流',
           items: [
             { text: '概览', link: '/zh/guide/workflows' },
-            { text: '/drawio-create', link: '/zh/guide/creating-diagrams' },
-            { text: '/drawio-replicate', link: '/zh/guide/scientific-workflows' },
-            { text: '/drawio-edit', link: '/zh/guide/editing-diagrams' }
+            { text: '/drawio create', link: '/zh/guide/creating-diagrams' },
+            { text: '/drawio replicate', link: '/zh/guide/scientific-workflows' },
+            { text: '/drawio edit', link: '/zh/guide/editing-diagrams' }
           ]
         },
         {

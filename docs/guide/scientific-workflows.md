@@ -1,18 +1,18 @@
-# Replicate Diagrams (`/drawio-replicate`)
+# Replicate Diagrams (`/drawio replicate`)
 
 Replicate existing images or diagrams using structured extraction with Design System styling.
 
 ## Quick Start
 
 ```
-/drawio-replicate
+/drawio replicate
 [Upload image]
 ```
 
 With theme override:
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [Upload architecture screenshot]
 ```
 
@@ -88,14 +88,14 @@ During extraction, visual elements are mapped to semantic types:
 ### With Image Only
 
 ```
-/drawio-replicate
+/drawio replicate
 [Upload image]
 ```
 
 ### With Theme Selection
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [Upload paper figure]
 This is a figure from our research paper
 ```
@@ -103,7 +103,7 @@ This is a figure from our research paper
 ### With Domain + Theme
 
 ```
-/drawio-replicate
+/drawio replicate
 【领域】软件架构
 【主题】tech-blue
 【语言】中文
@@ -114,7 +114,7 @@ This is a figure from our research paper
 ### For Academic Papers
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 【领域】科研流程
 [Upload paper figure]
 这是论文中的实验流程图，需要IEEE标准化重绘
@@ -199,8 +199,8 @@ modules:
 
 ## Related
 
-- [Creating Diagrams](./creating-diagrams.md) - `/drawio-create` workflow
-- [Editing Diagrams](./editing-diagrams.md) - `/drawio-edit` workflow
+- [Creating Diagrams](./creating-diagrams.md) - `/drawio create` workflow
+- [Editing Diagrams](./editing-diagrams.md) - `/drawio edit` workflow
 - [Design System](./design-system.md) - Themes, shapes, connectors
 - [Specification Format](./specification.md) - YAML spec reference
 - [Math Typesetting](./math-typesetting.md) - LaTeX support

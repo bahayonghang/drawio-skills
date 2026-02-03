@@ -1,10 +1,10 @@
-# Workflow: /drawio-replicate
+# Workflow: /drawio replicate
 
 Replicate existing images or diagrams using structured extraction with Design System styling.
 
 ## Trigger
 
-- **Command**: `/drawio-replicate`
+- **Command**: `/drawio replicate ...`
 - **Keywords**: "replicate", "recreate", "复刻", "复现", "重绘"
 
 ## Procedure
@@ -44,7 +44,7 @@ Step 5: Convert to Diagram
 
 Step 6: Review and Refine
 ├── Compare with original image
-└── Use /drawio-edit for adjustments
+└── Use /drawio edit for adjustments
 ```
 
 ## Design System Integration
@@ -90,14 +90,14 @@ During extraction, map visual elements to semantic types:
 ### With Image Only
 
 ```
-/drawio-replicate
+/drawio replicate
 [Upload image]
 ```
 
 ### With Theme Selection
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 [Upload image]
 This is a figure from our research paper
 ```
@@ -105,7 +105,7 @@ This is a figure from our research paper
 ### With Domain + Theme
 
 ```
-/drawio-replicate
+/drawio replicate
 【领域】软件架构
 【主题】tech-blue
 【语言】中文
@@ -116,7 +116,7 @@ This is a figure from our research paper
 ### For Academic Papers
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 【领域】科研流程
 [Upload paper figure]
 这是论文中的实验流程图，需要IEEE标准化重绘
@@ -201,7 +201,7 @@ modules:
 ### From Flowchart Image
 
 ```
-/drawio-replicate
+/drawio replicate
 【领域】商业流程
 【主题】tech-blue
 [Upload expense approval flowchart]
@@ -211,7 +211,7 @@ modules:
 ### From Architecture Screenshot
 
 ```
-/drawio-replicate --theme tech-blue
+/drawio replicate with tech-blue theme
 【领域】软件架构
 【语言】English
 [Upload architecture diagram]
@@ -221,7 +221,7 @@ Recreate this microservices architecture with design system styling
 ### From Research Paper Figure
 
 ```
-/drawio-replicate --theme academic
+/drawio replicate with academic theme
 【领域】科研流程
 [Upload paper figure]
 这是论文中的实验流程图，需要学术风格重绘以便投稿
