@@ -27,28 +27,28 @@
 
 | 命令 | 说明 | A-H 格式 |
 |------|------|----------|
-| `/drawio-create` | 从自然语言创建图表 | 可选 |
-| `/drawio-replicate` | 复刻现有图片 | 必需 |
-| `/drawio-edit` | 修改现有图表 | 可选 |
+| `/drawio create` | 从自然语言创建图表 | 可选 |
+| `/drawio replicate` | 复刻现有图片 | 必需 |
+| `/drawio edit` | 修改现有图表 | 可选 |
 
-### `/drawio-create` - 从零开始创建
-
-```
-/drawio-create 创建一个带验证和错误处理的登录流程图
-```
-
-### `/drawio-replicate` - 复刻现有图片
+### `/drawio create` - 从零开始创建
 
 ```
-/drawio-replicate
+/drawio create 创建一个带验证和错误处理的登录流程图
+```
+
+### `/drawio replicate` - 复刻现有图片
+
+```
+/drawio replicate
 【领域】软件架构
 [上传图片]
 ```
 
-### `/drawio-edit` - 修改图表
+### `/drawio edit` - 修改图表
 
 ```
-/drawio-edit
+/drawio edit
 将 "用户服务" 改为 "认证服务"
 将数据库节点改为绿色
 ```
@@ -64,7 +64,7 @@
 
 ### 本技能的增强内容
 
-- ✅ **3 个清晰的工作流**：`/drawio-create`、`/drawio-replicate`、`/drawio-edit`
+- ✅ **3 个清晰的工作流**：`/drawio create`、`/drawio replicate`、`/drawio edit`
 - ✅ **A-H 格式**：从文本/图片中提取结构化图表
 - ✅ **完整文档**：详细的各类图表创建指南
 - ✅ **XML 格式参考**：完整的 draw.io XML 格式和样式属性文档
@@ -269,9 +269,9 @@ drawio-skills/
 │       ├── .mcp.json                 # MCP server 配置
 │       │
 │       ├── workflows/                # 工作流定义
-│       │   ├── create.md             # /drawio-create 工作流
-│       │   ├── replicate.md          # /drawio-replicate 工作流
-│       │   └── edit.md               # /drawio-edit 工作流
+│       │   ├── create.md             # /drawio create 工作流
+│       │   ├── replicate.md          # /drawio replicate 工作流
+│       │   └── edit.md               # /drawio edit 工作流
 │       │
 │       ├── docs/                     # 参考文档
 │       │   ├── ah-format.md          # A-H 格式参考

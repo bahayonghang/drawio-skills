@@ -27,28 +27,28 @@ An MCP skill that enables AI-powered diagram creation and editing with real-time
 
 | Command | Description | A-H Format |
 |---------|-------------|------------|
-| `/drawio-create` | Create diagrams from natural language | Optional |
-| `/drawio-replicate` | Replicate existing images | Required |
-| `/drawio-edit` | Modify existing diagrams | Optional |
+| `/drawio create` | Create diagrams from natural language | Optional |
+| `/drawio replicate` | Replicate existing images | Required |
+| `/drawio edit` | Modify existing diagrams | Optional |
 
-### `/drawio-create` - Create from Scratch
-
-```
-/drawio-create a login flowchart with validation and error handling
-```
-
-### `/drawio-replicate` - Replicate Existing Image
+### `/drawio create` - Create from Scratch
 
 ```
-/drawio-replicate
+/drawio create a login flowchart with validation and error handling
+```
+
+### `/drawio replicate` - Replicate Existing Image
+
+```
+/drawio replicate
 【领域】软件架构
 [Upload image]
 ```
 
-### `/drawio-edit` - Modify Diagram
+### `/drawio edit` - Modify Diagram
 
 ```
-/drawio-edit
+/drawio edit
 Change "User Service" to "Auth Service"
 Make database nodes green
 ```
@@ -64,7 +64,7 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
 
 ### What This Skill Adds
 
-- ✅ **3 Clear Workflows**: `/drawio-create`, `/drawio-replicate`, `/drawio-edit`
+- ✅ **3 Clear Workflows**: `/drawio create`, `/drawio replicate`, `/drawio edit`
 - ✅ **A-H Format**: Structured diagram extraction from text/images
 - ✅ **Comprehensive Documentation**: Detailed guides for creating various diagram types
 - ✅ **XML Format Reference**: Complete documentation of draw.io XML format and style properties
@@ -269,9 +269,9 @@ drawio-skills/
 │       ├── .mcp.json                 # MCP server configuration
 │       │
 │       ├── workflows/                # Workflow definitions
-│       │   ├── create.md             # /drawio-create workflow
-│       │   ├── replicate.md          # /drawio-replicate workflow
-│       │   └── edit.md               # /drawio-edit workflow
+│       │   ├── create.md             # /drawio create workflow
+│       │   ├── replicate.md          # /drawio replicate workflow
+│       │   └── edit.md               # /drawio edit workflow
 │       │
 │       ├── docs/                     # Reference documentation
 │       │   ├── ah-format.md          # A-H format reference

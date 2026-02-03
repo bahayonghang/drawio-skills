@@ -70,9 +70,9 @@ Claude Code <--stdio--> MCP Server <--http--> Browser (draw.io)
 
 | Workflow | Command | Purpose |
 |----------|---------|---------|
-| Create | `/drawio-create` | Natural language → diagram |
-| Replicate | `/drawio-replicate` | Image → structured extraction → diagram |
-| Edit | `/drawio-edit` | Modify existing diagram |
+| Create | `/drawio create` | Natural language → diagram |
+| Replicate | `/drawio replicate` | Image → structured extraction → diagram |
+| Edit | `/drawio edit` | Modify existing diagram |
 
 ### Design System 2.0
 
