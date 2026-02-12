@@ -4,6 +4,8 @@
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+> **重要说明**：本技能目前使用 [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务器（`@next-ai-drawio/mcp-server`），而非 draw.io 官方 MCP 服务器（`@drawio/mcp`）。由于官方服务器暂时不支持本技能所需的实时浏览器预览、自然语言图表编辑和图片复刻等核心功能，我们将在官方版本功能完善后考虑切换。
+
 > **说明**：本技能使用 [skill-seekers](https://github.com/modelcontextprotocol/skill-seekers) 将 [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) 项目转换为 Claude Code 技能格式。
 
 [English](./README.md) | [中文文档](./README_CN.md) | [📚 在线文档](https://bahayonghang.github.io/drawio-skills/zh/)

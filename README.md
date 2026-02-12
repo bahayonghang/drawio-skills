@@ -4,6 +4,8 @@
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+> **Important Note**: This skill currently uses the [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) instead of the official draw.io MCP server (`@drawio/mcp`). The official server currently lacks several key features required for this skill's workflow, such as real-time browser preview, natural language diagram editing, and image replication. We continue to monitor the official server and may switch once it achieves feature parity.
+
 > **Note**: This skill was created using [skill-seekers](https://github.com/modelcontextprotocol/skill-seekers) to convert the [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) project into a Claude Code skill format.
 
 [English](./README.md) | [中文文档](./README_CN.md) | [📚 Documentation](https://bahayonghang.github.io/drawio-skills/)
