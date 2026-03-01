@@ -36,6 +36,7 @@ A vertex represents a shape or node in the diagram:
 ```
 
 **Attributes:**
+
 - `id`: Unique identifier for the cell
 - `value`: Text label displayed on the node
 - `style`: Visual styling (see Style Properties below)
@@ -43,6 +44,7 @@ A vertex represents a shape or node in the diagram:
 - `parent`: ID of the parent cell (usually "1")
 
 **Geometry:**
+
 - `x`, `y`: Position coordinates
 - `width`, `height`: Size dimensions
 
@@ -57,6 +59,7 @@ An edge represents a connection between two vertices:
 ```
 
 **Attributes:**
+
 - `id`: Unique identifier for the cell
 - `value`: Text label on the edge
 - `style`: Visual styling
@@ -112,21 +115,25 @@ property1=value1;property2=value2;property3=value3
 ### Example Styles
 
 **Rounded Rectangle with Blue Fill:**
+
 ```
 rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000
 ```
 
 **Dashed Border:**
+
 ```
 dashed=1;dashPattern=3 3;strokeColor=#b85450
 ```
 
 **Bold Text:**
+
 ```
 fontStyle=1;fontSize=14;fontColor=#000000
 ```
 
 **Orthogonal Edge with Arrow:**
+
 ```
 edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic
 ```
@@ -144,6 +151,7 @@ AWS icons use the `shape=mxgraph.aws4.*` format:
 ```
 
 **Common AWS Icons:**
+
 - `mxgraph.aws4.lambda`: AWS Lambda
 - `mxgraph.aws4.api_gateway`: API Gateway
 - `mxgraph.aws4.dynamodb`: DynamoDB
@@ -162,6 +170,7 @@ GCP icons use the `shape=mxgraph.gcp2.*` format:
 ```
 
 **Common GCP Icons:**
+
 - `mxgraph.gcp2.cloud_run`: Cloud Run
 - `mxgraph.gcp2.cloud_sql`: Cloud SQL
 - `mxgraph.gcp2.cloud_storage`: Cloud Storage
@@ -179,6 +188,7 @@ Azure icons use the `shape=mxgraph.azure.*` format:
 ```
 
 **Common Azure Icons:**
+
 - `mxgraph.azure.azure_functions`: Azure Functions
 - `mxgraph.azure.sql_database`: SQL Database
 - `mxgraph.azure.storage`: Storage
@@ -196,6 +206,7 @@ To create animated connectors, use the `flowAnimation` style property:
 ```
 
 **Animation Properties:**
+
 - `flowAnimation=1`: Enable flow animation
 - `flowAnimationDirection`: Animation direction (`normal` or `reverse`)
 
@@ -262,6 +273,7 @@ Here's a complete example of a simple flowchart:
 ### Colors
 
 Use consistent color schemes:
+
 - **Green** (`#d5e8d4`): Start/success states
 - **Blue** (`#dae8fc`): Process/action states
 - **Yellow** (`#fff2cc`): Decision/warning states

@@ -2,7 +2,7 @@
 
 This reference explains how to place mathematical equations in draw.io labels and text shapes.
 
-> **Source**: https://www.drawio.com/doc/faq/math-typesetting
+> **Source**: <https://www.drawio.com/doc/faq/math-typesetting>
 
 ## ⚠️ MANDATORY: Delimiter Requirements
 
@@ -396,4 +396,3 @@ $$J = \int_0^\infty (x^T Q x + u^T R u) \, dt$$
 4. **Export** as PDF with `math-output=html` for selectable math
 5. **Check** grayscale compatibility
 6. **Add** proper figure caption in your LaTeX/Word document
-

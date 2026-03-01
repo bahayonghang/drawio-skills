@@ -159,6 +159,7 @@ meta:
 ```
 
 Features:
+
 - Horizontal/vertical segments only
 - Line jumps enabled for crossings
 - Clean, professional appearance
@@ -180,6 +181,7 @@ meta:
 ```
 
 Features:
+
 - Softer visual feel
 - 8px corner radius
 - Good for process flows
@@ -200,6 +202,7 @@ meta:
 ```
 
 Features:
+
 - Natural, flowing lines
 - Avoid sharp turns
 - Good for concept maps
@@ -238,6 +241,7 @@ edges:
 ### Styling
 
 Labels use the theme's edge label settings:
+
 - Font size: 10-11px
 - Font weight: 400
 - Color: Muted text
@@ -317,6 +321,7 @@ edges:
 ```
 
 Available arrow types:
+
 - `block`, `open`, `classic`, `oval`
 - `diamond`, `diamondThin`
 - `ERone`, `ERmany`, `ERoneToMany`

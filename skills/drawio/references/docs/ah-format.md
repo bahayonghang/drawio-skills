@@ -71,6 +71,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ## Domain Configurations
 
 ### 软件架构 (Software Architecture)
+
 ```
 【领域】软件架构
 【风格】专业
@@ -79,6 +80,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 ### 商业流程 (Business Process)
+
 ```
 【领域】商业流程
 【图标建议】用户/表单/审批/通知/存储/报表
@@ -86,6 +88,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 ### 工业流程 (Industrial Process)
+
 ```
 【领域】工业流程
 【图标建议】传感器/控制器/执行器/数据库/监控屏/报警
@@ -93,6 +96,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 ### 科研流程 (Research Workflow)
+
 ```
 【领域】科研流程
 【图标建议】样本/实验/数据/分析/模型/产出
@@ -101,6 +105,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 ### 项目管理 (Project Management)
+
 ```
 【领域】项目管理
 【图标建议】里程碑/任务/团队/交付物/风险/决策点
@@ -108,6 +113,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 ### 教学设计 (Teaching Design)
+
 ```
 【领域】教学设计
 【图标建议】学习目标/内容/活动/评估/反馈
@@ -115,6 +121,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 ### IEEE网络架构 (IEEE Network)
+
 ```
 【领域】网络架构
 【风格】IEEE标准
@@ -169,6 +176,7 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ### ✅ PASS: Minimal Input
 
 **Input:**
+
 ```
 【领域】通用
 【输入内容】
@@ -176,12 +184,14 @@ H 导出建议：推荐格式（PNG/SVG/drawio）；超限时的简化策略
 ```
 
 **Expected:**
+
 - 3 modules maximum (收集 → 处理 → 产出)
 - Simple labels: 反馈收集, 分类整理, 报告生成
 
 ### ❌ FAIL: Extra Text
 
 **Invalid:**
+
 ```
 好的，我来帮你生成A-H格式的图表规格：
 
@@ -197,6 +207,7 @@ H 导出建议：...
 ### ❌ FAIL: Labels with Prohibited Characters
 
 **Invalid:**
+
 ```
 C 节点清单：
   ID: N1
@@ -206,6 +217,7 @@ C 节点清单：
 **Violations:** ID prefix "N1-" and brackets "(传感器)"
 
 **Correct:**
+
 ```
   Label: 数据采集
 ```
@@ -213,12 +225,14 @@ C 节点清单：
 ### ❌ FAIL: Edges with Labels Instead of IDs
 
 **Invalid:**
+
 ```
 D 连线关系：
   数据采集→数据清洗；关系：因果
 ```
 
 **Correct:**
+
 ```
 D 连线关系：
   N1→N2；关系：因果；线型：实线箭头
@@ -230,10 +244,10 @@ D 连线关系：
 
 ### Implementation
 
-The converter is located at `src/dsl/ah-to-drawio.js`:
+The converter is located at `scripts/dsl/ah-to-drawio.js`:
 
 ```javascript
-import { ahToDrawioXml, parseAh } from './src/dsl/ah-to-drawio.js'
+import { ahToDrawioXml, parseAh } from './scripts/dsl/ah-to-drawio.js'
 
 // Parse A-H text to structured data
 const parsed = parseAh(ahText)
@@ -250,7 +264,7 @@ const xml = ahToDrawioXml(ahText, { page: { width: 1280, height: 720 } })
 - Reads edges from section D (`N1→N2 ...`)
 - Applies dashed style for `虚线` line type
 - Generates layout with module containers and stacked nodes
-- Validates and XML-escapes labels via `src/math` helpers
+- Validates and XML-escapes labels via `scripts/math` helpers
 - Emits numeric `mxCell id="..."` for draw.io compatibility
 
 ### Limitations (By Design)

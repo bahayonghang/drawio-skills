@@ -29,7 +29,7 @@ Step 3: Generate Diagram Specification
 └── Validate complexity (warn if >20 nodes or >30 edges)
 
 Step 4: Convert to Draw.io XML
-├── Parse specification via src/dsl/spec-to-drawio.js
+├── Parse specification via scripts/dsl/spec-to-drawio.js
 ├── Apply theme tokens (colors, typography, spacing)
 ├── Calculate 8px grid-aligned positions
 └── Generate mxCell elements with design system styles
@@ -41,6 +41,12 @@ Step 5: Create Diagram
 Step 6: Iterate
 ├── User can request modifications
 └── Use /drawio edit for changes
+
+Step 7: Validate (Optional)
+├── Check cell ID uniqueness
+├── Check edge source/target reference validity
+├── Check required root cells present
+└── Use --validate CLI flag or validateXml() from DSL converter
 ```
 
 ## Design System Options
@@ -125,6 +131,7 @@ modules:
 ```
 
 Request structured format:
+
 ```
 /drawio create with structured format
 "使用规格格式创建..."
@@ -215,9 +222,9 @@ edges:
 
 ## Related
 
-- [Design System Overview](../docs/design-system/README.md)
-- [Specification Format](../docs/design-system/specification.md)
-- [Themes Reference](../docs/design-system/themes.md)
-- [Semantic Shapes](../docs/design-system/shapes.md)
-- [Connectors](../docs/design-system/connectors.md)
-- [Math Typesetting](../docs/math-typesetting.md)
+- [Design System Overview](../references/docs/design-system/README.md)
+- [Specification Format](../references/docs/design-system/specification.md)
+- [Themes Reference](../references/docs/design-system/themes.md)
+- [Semantic Shapes](../references/docs/design-system/shapes.md)
+- [Connectors](../references/docs/design-system/connectors.md)
+- [Math Typesetting](../references/docs/math-typesetting.md)

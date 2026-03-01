@@ -3,16 +3,20 @@
 This document provides example prompts and their corresponding diagram types.
 
 For structured A–H format diagram extraction (from text or images), see:
+
 - `structured-diagram-prompts.md` - Universal template with domain configurations
 - `structured-diagram-quality.md` - Validation rules and regression examples
 
 For math equations in labels (LaTeX/AsciiMath), see:
+
 - `math-typesetting.md`
 
 For consistent visual styling, see:
+
 - `style-presets.md`
 
 For converting structured A–H specs into starter draw.io XML, see:
+
 - `ah-to-xml.md`
 
 ## Math Typesetting
@@ -20,6 +24,7 @@ For converting structured A–H specs into starter draw.io XML, see:
 ### Scientific Diagram with Equations
 
 **Prompt:**
+
 ```
 Create a diagram for linear regression with three nodes:
 1) "Input" with label: \(x \in \mathbb{R}^d\)
@@ -29,12 +34,14 @@ Use readable sizes and ensure the math renders.
 ```
 
 **Notes:**
+
 - Enable `Extras > Mathematical Typesetting` in draw.io if equations are not rendered.
 - If the text looks clipped, set Text Overflow to `Block` or `Width` and resize the shape.
 
 ### IEEE Paper: Neural Network Architecture
 
 **Prompt:**
+
 ```
 Create an IEEE-style block diagram for a convolutional neural network:
 1) Input layer: \(x \in \mathbb{R}^{H \times W \times C}\)
@@ -45,12 +52,14 @@ Use grayscale-compatible styling. Add caption: "Fig. 1. Architecture of the prop
 ```
 
 **Notes:**
+
 - Use solid black borders with white fill for B&W compatibility
 - Export as PDF for vector quality in LaTeX documents
 
 ### IEEE Paper: Signal Processing Pipeline
 
 **Prompt:**
+
 ```
 Create a signal processing block diagram for IEEE publication:
 1) "ADC" with label: \(x[n]\)
@@ -63,6 +72,7 @@ Use orthogonal connectors with arrows. Black and white style.
 ### IEEE Paper: Control System Block Diagram
 
 **Prompt:**
+
 ```
 Create a feedback control system diagram for IEEE paper:
 - Reference input: \(r(t)\)
@@ -77,6 +87,7 @@ Add caption: "Fig. 2. Closed-loop control system with PID controller."
 ### IEEE Paper: Communication System
 
 **Prompt:**
+
 ```
 Create an IEEE-style communication system block diagram:
 1) Source: \(m(t)\)
@@ -90,6 +101,7 @@ Show noise entering at channel. Use dashed lines for optional paths.
 ### IEEE Paper: Machine Learning Pipeline
 
 **Prompt:**
+
 ```
 Create an IEEE academic diagram for ML training pipeline:
 1) Dataset: \(\mathcal{D} = \{(x_i, y_i)\}_{i=1}^N\)
@@ -105,12 +117,14 @@ Grayscale compatible. Caption: "Fig. 3. Training procedure of the proposed metho
 ### Simple Process Flow
 
 **Prompt:**
+
 ```
 Create a flowchart showing a user login process with username/password input,
 validation, and success/error paths
 ```
 
 **Description:**
+
 - Start node
 - Input fields (username, password)
 - Validation decision
@@ -120,12 +134,14 @@ validation, and success/error paths
 ### CI/CD Pipeline
 
 **Prompt:**
+
 ```
 Create a flowchart showing the CI/CD pipeline: code commit -> build ->
 test -> staging deploy -> production deploy with approval gates
 ```
 
 **Description:**
+
 - Sequential process flow
 - Decision nodes for test results and approval
 - Parallel paths for different environments
@@ -136,12 +152,14 @@ test -> staging deploy -> production deploy with approval gates
 ### AWS Serverless Architecture
 
 **Prompt:**
+
 ```
 Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
 and S3 for a serverless REST API. Use AWS icons.
 ```
 
 **Components:**
+
 - API Gateway (entry point)
 - Lambda functions (business logic)
 - DynamoDB (database)
@@ -151,12 +169,14 @@ and S3 for a serverless REST API. Use AWS icons.
 ### GCP Microservices
 
 **Prompt:**
+
 ```
 Generate a GCP architecture diagram with Cloud Run, Cloud SQL, and
 Cloud Storage for a web application. Use GCP icons.
 ```
 
 **Components:**
+
 - Cloud Run (containerized services)
 - Cloud SQL (managed database)
 - Cloud Storage (object storage)
@@ -166,12 +186,14 @@ Cloud Storage for a web application. Use GCP icons.
 ### Azure Web Application
 
 **Prompt:**
+
 ```
 Generate an Azure architecture diagram with App Service, SQL Database,
 and Blob Storage. Use Azure icons.
 ```
 
 **Components:**
+
 - App Service (web hosting)
 - SQL Database (relational data)
 - Blob Storage (files and media)
@@ -183,18 +205,21 @@ and Blob Storage. Use Azure icons.
 ### OAuth 2.0 Flow
 
 **Prompt:**
+
 ```
 Create a sequence diagram showing OAuth 2.0 authorization code flow
 between user, client app, auth server, and resource server
 ```
 
 **Participants:**
+
 - User (browser)
 - Client Application
 - Authorization Server
 - Resource Server
 
 **Flow:**
+
 1. User requests protected resource
 2. Client redirects to auth server
 3. User authenticates
@@ -205,12 +230,14 @@ between user, client app, auth server, and resource server
 ### Payment Processing
 
 **Prompt:**
+
 ```
 Create a sequence diagram for an e-commerce payment flow with customer,
 frontend, backend, payment gateway, and database
 ```
 
 **Participants:**
+
 - Customer
 - Frontend (web/mobile)
 - Backend API
@@ -218,6 +245,7 @@ frontend, backend, payment gateway, and database
 - Database
 
 **Flow:**
+
 1. Customer initiates checkout
 2. Frontend sends order to backend
 3. Backend validates order
@@ -231,12 +259,14 @@ frontend, backend, payment gateway, and database
 ### Microservices E-commerce
 
 **Prompt:**
+
 ```
 Design a microservices e-commerce system with user service, product catalog,
 shopping cart, order processing, and payment gateway
 ```
 
 **Services:**
+
 - User Service (authentication, profiles)
 - Product Catalog (inventory, search)
 - Shopping Cart (session management)
@@ -245,6 +275,7 @@ shopping cart, order processing, and payment gateway
 - Notification Service (emails, SMS)
 
 **Infrastructure:**
+
 - API Gateway
 - Service mesh
 - Message queue (async communication)
@@ -254,12 +285,14 @@ shopping cart, order processing, and payment gateway
 ### Event-Driven Architecture
 
 **Prompt:**
+
 ```
 Create an event-driven architecture diagram with event producers,
 event bus, event consumers, and data stores
 ```
 
 **Components:**
+
 - Event Producers (services generating events)
 - Event Bus (message broker)
 - Event Consumers (services processing events)
@@ -271,18 +304,21 @@ event bus, event consumers, and data stores
 ### Corporate Network
 
 **Prompt:**
+
 ```
 Create a network diagram showing corporate network with DMZ, internal network,
 firewalls, and VPN access
 ```
 
 **Zones:**
+
 - Internet
 - DMZ (web servers, mail servers)
 - Internal Network (workstations, file servers)
 - Database Zone (database servers)
 
 **Security:**
+
 - Firewalls between zones
 - VPN gateway for remote access
 - IDS/IPS systems
@@ -290,12 +326,14 @@ firewalls, and VPN access
 ### Cloud VPC Architecture
 
 **Prompt:**
+
 ```
 Create an AWS VPC diagram with public and private subnets, NAT gateway,
 and internet gateway
 ```
 
 **Components:**
+
 - VPC (virtual private cloud)
 - Public Subnets (web tier)
 - Private Subnets (app tier, database tier)
@@ -309,12 +347,14 @@ and internet gateway
 ### Data Pipeline
 
 **Prompt:**
+
 ```
 Create a data pipeline diagram showing data ingestion, processing,
 storage, and analytics
 ```
 
 **Stages:**
+
 1. Data Sources (APIs, databases, files)
 2. Ingestion Layer (streaming, batch)
 3. Processing Layer (ETL, transformation)
@@ -324,12 +364,14 @@ storage, and analytics
 ### Real-time Analytics
 
 **Prompt:**
+
 ```
 Create a real-time analytics architecture with Kafka, Spark Streaming,
 and visualization dashboard
 ```
 
 **Components:**
+
 - Data Sources (IoT devices, applications)
 - Kafka (message streaming)
 - Spark Streaming (real-time processing)
@@ -341,30 +383,35 @@ and visualization dashboard
 ### Class Diagram
 
 **Prompt:**
+
 ```
 Create a class diagram for a library management system with Book, Member,
 Loan, and Librarian classes
 ```
 
 **Classes:**
+
 - Book (title, author, ISBN)
 - Member (name, memberID, email)
 - Loan (loanDate, returnDate, status)
 - Librarian (employeeID, name)
 
 **Relationships:**
+
 - Member borrows Book (many-to-many via Loan)
 - Librarian manages Loan (one-to-many)
 
 ### State Diagram
 
 **Prompt:**
+
 ```
 Create a state diagram for an order lifecycle: pending, confirmed,
 shipped, delivered, cancelled
 ```
 
 **States:**
+
 - Pending (initial state)
 - Confirmed (payment received)
 - Shipped (in transit)
@@ -372,6 +419,7 @@ shipped, delivered, cancelled
 - Cancelled (terminal state)
 
 **Transitions:**
+
 - Pending → Confirmed (payment)
 - Confirmed → Shipped (dispatch)
 - Shipped → Delivered (arrival)
@@ -382,12 +430,14 @@ shipped, delivered, cancelled
 ### Transformer Architecture
 
 **Prompt:**
+
 ```
 Give me an animated connector diagram of transformer's architecture
 with encoder and decoder stacks
 ```
 
 **Components:**
+
 - Input Embedding
 - Positional Encoding
 - Encoder Stack (multi-head attention, feed-forward)
@@ -395,6 +445,7 @@ with encoder and decoder stacks
 - Output Layer
 
 **Features:**
+
 - Animated connectors showing data flow
 - Layer normalization
 - Residual connections
@@ -402,12 +453,14 @@ with encoder and decoder stacks
 ### Database Schema
 
 **Prompt:**
+
 ```
 Create a database schema diagram for a blog platform with users, posts,
 comments, and tags
 ```
 
 **Tables:**
+
 - Users (id, username, email, password)
 - Posts (id, title, content, authorId, createdAt)
 - Comments (id, content, postId, authorId, createdAt)
@@ -415,6 +468,7 @@ comments, and tags
 - PostTags (postId, tagId) - junction table
 
 **Relationships:**
+
 - Users → Posts (one-to-many)
 - Users → Comments (one-to-many)
 - Posts → Comments (one-to-many)
@@ -425,11 +479,13 @@ comments, and tags
 ### Be Specific
 
 Instead of:
+
 ```
 Create an architecture diagram
 ```
 
 Use:
+
 ```
 Create an AWS architecture diagram with Lambda, API Gateway, and DynamoDB
 for a serverless REST API. Use AWS icons.
@@ -450,6 +506,7 @@ for a serverless REST API. Use AWS icons.
 ### Iterate
 
 Start with a basic diagram and refine:
+
 ```
 1. "Create a basic microservices architecture"
 2. "Add a message queue between services"

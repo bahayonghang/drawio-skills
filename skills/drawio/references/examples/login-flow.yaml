@@ -1,0 +1,58 @@
+meta:
+  theme: nature
+  layout: vertical
+
+nodes:
+  - id: start
+    label: Start
+    type: terminal
+  - id: input
+    label: Enter Credentials
+    type: service
+  - id: check
+    label: Valid?
+    type: decision
+  - id: mfa
+    label: MFA Required?
+    type: decision
+  - id: verify
+    label: Verify MFA
+    type: service
+  - id: success
+    label: Login Success
+    type: terminal
+  - id: fail
+    label: Login Failed
+    type: terminal
+
+edges:
+  - from: start
+    to: input
+    type: primary
+  - from: input
+    to: check
+    type: primary
+  - from: check
+    to: mfa
+    type: primary
+    label: "Yes"
+  - from: check
+    to: fail
+    type: optional
+    label: "No"
+  - from: mfa
+    to: verify
+    type: primary
+    label: "Yes"
+  - from: mfa
+    to: success
+    type: primary
+    label: "No"
+  - from: verify
+    to: success
+    type: primary
+    label: Verified
+  - from: verify
+    to: fail
+    type: optional
+    label: Failed

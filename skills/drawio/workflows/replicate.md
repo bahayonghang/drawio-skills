@@ -36,7 +36,7 @@ Step 4: Quality Validation
 └── If fails: suggest splitting
 
 Step 5: Convert to Diagram
-├── Parse specification via src/dsl/spec-to-drawio.js
+├── Parse specification via scripts/dsl/spec-to-drawio.js
 ├── Apply selected theme
 ├── Calculate 8px grid positions
 ├── Call MCP: start_session
@@ -45,6 +45,12 @@ Step 5: Convert to Diagram
 Step 6: Review and Refine
 ├── Compare with original image
 └── Use /drawio edit for adjustments
+
+Step 7: Validate (Optional)
+├── Check cell ID uniqueness
+├── Check edge source/target reference validity
+├── Check required root cells present
+└── Use --validate CLI flag or validateXml() from DSL converter
 ```
 
 ## Design System Integration
@@ -230,29 +236,33 @@ Recreate this microservices architecture with design system styling
 ## Troubleshooting
 
 ### Image too complex?
+
 - Split into multiple diagrams (max 20-30 nodes each)
 - Focus on one module at a time
 - Use hierarchical layout for large structures
 
 ### Colors don't match original?
+
 - Design system applies consistent theme colors
 - Original colors are mapped to semantic types
 - Use `--preserve-colors` to keep original palette (advanced)
 
 ### Shapes different from original?
+
 - Design system maps to semantic shapes
 - Explicit `type:` override available in spec
 - Check semantic shape documentation
 
 ### Text labels truncated?
+
 - Keep labels ≤ 14 characters
 - Use abbreviations
 - Move details to tooltips or annotations
 
 ## Related
 
-- [Design System Overview](../docs/design-system/README.md)
-- [Specification Format](../docs/design-system/specification.md)
-- [Semantic Shapes](../docs/design-system/shapes.md)
-- [Themes Reference](../docs/design-system/themes.md)
-- [Academic Theme Guide](../docs/ieee-diagrams.md)
+- [Design System Overview](../references/docs/design-system/README.md)
+- [Specification Format](../references/docs/design-system/specification.md)
+- [Semantic Shapes](../references/docs/design-system/shapes.md)
+- [Themes Reference](../references/docs/design-system/themes.md)
+- [Academic Theme Guide](../references/docs/ieee-diagrams.md)

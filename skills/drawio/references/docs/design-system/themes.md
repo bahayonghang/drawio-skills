@@ -13,6 +13,7 @@ Modern professional style for technical architecture diagrams.
 **Best for**: Software architecture, system design, DevOps, cloud infrastructure
 
 **Characteristics**:
+
 - Blue primary color with green/purple accents
 - Rounded corners (8px)
 - Clean sans-serif typography
@@ -39,6 +40,7 @@ Colorful academic style with semantic colors, optimized for digital viewing and 
 **Best for**: Research papers, academic publications, presentations, digital documents
 
 **Characteristics**:
+
 - Semantic colorful palette (blue, green, amber, purple)
 - No rounded corners (sharp edges)
 - Serif typography (Times New Roman)
@@ -68,6 +70,7 @@ High-contrast black/white/gray for IEEE-style publications, optimized for graysc
 **Best for**: Grayscale printing, strict IEEE format requirements
 
 **Characteristics**:
+
 - Pure black/white/gray palette
 - No rounded corners (sharp edges)
 - Serif typography (Times New Roman)
@@ -95,6 +98,7 @@ Green-focused palette for lifecycle, sustainability, and environmental diagrams.
 **Best for**: Environmental systems, lifecycle diagrams, sustainability reports, biology
 
 **Characteristics**:
+
 - Green/teal primary colors
 - Natural, organic feel
 - Light green tints
@@ -121,6 +125,7 @@ Dark background with light text for presentations and terminal-style diagrams.
 **Best for**: Presentations, slides, terminal/console themes, night mode
 
 **Characteristics**:
+
 - Dark slate background (#0F172A)
 - Light text and bright accent colors
 - High contrast for projection

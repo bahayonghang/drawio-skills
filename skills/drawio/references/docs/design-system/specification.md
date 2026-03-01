@@ -7,6 +7,7 @@ The Design System uses a YAML-based specification format for defining diagrams. 
 ## Overview
 
 The specification format provides:
+
 - **Theme integration**: Direct theme selection
 - **Semantic types**: Auto-shape mapping
 - **Typed connectors**: Visual hierarchy
@@ -426,6 +427,7 @@ npx drawio-skills validate spec.yaml
 ```
 
 Validation checks:
+
 - Required fields present
 - Valid theme reference
 - Unique node/module IDs

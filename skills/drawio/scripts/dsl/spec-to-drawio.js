@@ -4,101 +4,122 @@
  */
 
 import { prepareMathLabel } from '../math/index.js'
+import yaml from 'js-yaml'
+import { readFileSync } from 'node:fs'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 // ============================================================================
 // Theme Loading
 // ============================================================================
 
-const DEFAULT_THEME = {
-  name: 'tech-blue',
-  colors: {
-    primary: '#2563EB',
-    primaryLight: '#DBEAFE',
-    secondary: '#059669',
-    secondaryLight: '#D1FAE5',
-    accent: '#7C3AED',
-    accentLight: '#EDE9FE',
-    background: '#FFFFFF',
-    surface: '#F8FAFC',
-    text: '#1E293B',
-    textMuted: '#64748B',
-    border: '#E2E8F0'
-  },
-  spacing: { unit: 8 },
-  typography: {
-    fontFamily: {
-      primary: 'Inter, Roboto, system-ui, sans-serif',
-      monospace: 'JetBrains Mono, Fira Code, Consolas, monospace'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const THEMES_DIR = resolve(__dirname, '../../assets/themes')
+
+let DEFAULT_THEME
+try {
+  DEFAULT_THEME = JSON.parse(readFileSync(resolve(THEMES_DIR, 'tech-blue.json'), 'utf-8'))
+} catch {
+  DEFAULT_THEME = {
+    name: 'tech-blue',
+    colors: {
+      primary: '#2563EB',
+      primaryLight: '#DBEAFE',
+      secondary: '#059669',
+      secondaryLight: '#D1FAE5',
+      accent: '#7C3AED',
+      accentLight: '#EDE9FE',
+      background: '#FFFFFF',
+      surface: '#F8FAFC',
+      text: '#1E293B',
+      textMuted: '#64748B',
+      border: '#E2E8F0'
     },
-    fontSize: { md: 13, sm: 11 }
-  },
-  borderRadius: { md: 8, lg: 12 },
-  node: {
-    default: {
-      fillColor: '#DBEAFE',
-      strokeColor: '#2563EB',
-      strokeWidth: 1.5,
-      fontColor: '#1E293B',
-      fontSize: 13,
-      rounded: 8
+    spacing: { unit: 8 },
+    typography: {
+      fontFamily: {
+        primary: 'Inter, Roboto, system-ui, sans-serif',
+        monospace: 'JetBrains Mono, Fira Code, Consolas, monospace'
+      },
+      fontSize: { md: 13, sm: 11 }
     },
-    // Traditional types
-    service: { fillColor: '#DBEAFE', strokeColor: '#2563EB' },
-    database: { fillColor: '#D1FAE5', strokeColor: '#059669' },
-    decision: { fillColor: '#FEF3C7', strokeColor: '#D97706' },
-    terminal: { fillColor: '#F1F5F9', strokeColor: '#64748B' },
-    queue: { fillColor: '#EDE9FE', strokeColor: '#7C3AED' },
-    user: { fillColor: '#E0F2FE', strokeColor: '#0284C7' },
-    document: { fillColor: '#FFFFFF', strokeColor: '#CBD5E1' },
-    formula: { fillColor: '#FFFFFF', strokeColor: '#2563EB', strokeWidth: 1 },
-    // Deep learning types
-    input: { fillColor: '#FFCDD2', strokeColor: '#E57373' },
-    output: { fillColor: '#CFD8DC', strokeColor: '#78909C' },
-    loss: { fillColor: '#FFCCBC', strokeColor: '#FF7043' },
-    feature: { fillColor: '#BBDEFB', strokeColor: '#42A5F5' },
-    conv: { fillColor: '#BBDEFB', strokeColor: '#1E88E5' },
-    pool: { fillColor: '#B3E5FC', strokeColor: '#039BE5' },
-    embed: { fillColor: '#D1C4E9', strokeColor: '#7E57C2' },
-    temporal: { fillColor: '#E1BEE7', strokeColor: '#AB47BC' },
-    attention: { fillColor: '#C8E6C9', strokeColor: '#66BB6A' },
-    gate: { fillColor: '#FFE0B2', strokeColor: '#FFA726' },
-    norm: { fillColor: '#DCEDC8', strokeColor: '#8BC34A' },
-    graph: { fillColor: '#B2EBF2', strokeColor: '#26C6DA' },
-    matrix: { fillColor: '#E8EAF6', strokeColor: '#7986CB' },
-    operator: { fillColor: '#FFFFFF', strokeColor: '#424242' }
-  },
-  connector: {
-    primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
-    data: { strokeColor: '#1E293B', strokeWidth: 2, dashed: true, dashPattern: '6 4', endArrow: 'block', endFill: true },
-    optional: { strokeColor: '#64748B', strokeWidth: 1, dashed: true, dashPattern: '2 2', endArrow: 'open', endFill: false },
-    dependency: { strokeColor: '#1E293B', strokeWidth: 1, dashed: false, endArrow: 'diamond', endFill: true },
-    bidirectional: { strokeColor: '#64748B', strokeWidth: 1.5, dashed: false, endArrow: 'none', endFill: false }
-  },
-  module: {
-    fillColor: '#F8FAFC',
-    strokeColor: '#E2E8F0',
-    strokeWidth: 1,
-    rounded: 12,
-    padding: 24,
-    labelFontSize: 14,
-    labelFontWeight: 600,
-    labelFontColor: '#1E293B',
-    dashed: false,
-    dashPattern: '8 4'
-  },
-  canvas: {
-    background: '#FFFFFF',
-    gridSize: 8
+    borderRadius: { md: 8, lg: 12 },
+    node: {
+      default: {
+        fillColor: '#DBEAFE',
+        strokeColor: '#2563EB',
+        strokeWidth: 1.5,
+        fontColor: '#1E293B',
+        fontSize: 13,
+        rounded: 8
+      },
+      service: { fillColor: '#DBEAFE', strokeColor: '#2563EB' },
+      database: { fillColor: '#D1FAE5', strokeColor: '#059669' },
+      decision: { fillColor: '#FEF3C7', strokeColor: '#D97706' },
+      terminal: { fillColor: '#F1F5F9', strokeColor: '#64748B' },
+      queue: { fillColor: '#EDE9FE', strokeColor: '#7C3AED' },
+      user: { fillColor: '#E0F2FE', strokeColor: '#0284C7' },
+      document: { fillColor: '#FFFFFF', strokeColor: '#CBD5E1' },
+      formula: { fillColor: '#FFFFFF', strokeColor: '#2563EB', strokeWidth: 1 },
+      input: { fillColor: '#FFCDD2', strokeColor: '#E57373' },
+      output: { fillColor: '#CFD8DC', strokeColor: '#78909C' },
+      loss: { fillColor: '#FFCCBC', strokeColor: '#FF7043' },
+      feature: { fillColor: '#BBDEFB', strokeColor: '#42A5F5' },
+      conv: { fillColor: '#BBDEFB', strokeColor: '#1E88E5' },
+      pool: { fillColor: '#B3E5FC', strokeColor: '#039BE5' },
+      embed: { fillColor: '#D1C4E9', strokeColor: '#7E57C2' },
+      temporal: { fillColor: '#E1BEE7', strokeColor: '#AB47BC' },
+      attention: { fillColor: '#C8E6C9', strokeColor: '#66BB6A' },
+      gate: { fillColor: '#FFE0B2', strokeColor: '#FFA726' },
+      norm: { fillColor: '#DCEDC8', strokeColor: '#8BC34A' },
+      graph: { fillColor: '#B2EBF2', strokeColor: '#26C6DA' },
+      matrix: { fillColor: '#E8EAF6', strokeColor: '#7986CB' },
+      operator: { fillColor: '#FFFFFF', strokeColor: '#424242' }
+    },
+    connector: {
+      primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
+      data: { strokeColor: '#1E293B', strokeWidth: 2, dashed: true, dashPattern: '6 4', endArrow: 'block', endFill: true },
+      optional: { strokeColor: '#64748B', strokeWidth: 1, dashed: true, dashPattern: '2 2', endArrow: 'open', endFill: false },
+      dependency: { strokeColor: '#1E293B', strokeWidth: 1, dashed: false, endArrow: 'diamond', endFill: true },
+      bidirectional: { strokeColor: '#64748B', strokeWidth: 1.5, dashed: false, endArrow: 'none', endFill: false }
+    },
+    module: {
+      fillColor: '#F8FAFC',
+      strokeColor: '#E2E8F0',
+      strokeWidth: 1,
+      rounded: 12,
+      padding: 24,
+      labelFontSize: 14,
+      labelFontWeight: 600,
+      labelFontColor: '#1E293B',
+      dashed: false,
+      dashPattern: '8 4'
+    },
+    canvas: {
+      background: '#FFFFFF',
+      gridSize: 8
+    }
   }
 }
+
+const _themeCache = new Map()
 
 /**
  * Load theme by name (returns default if not found)
  */
 export function loadTheme(themeName) {
-  // In a real implementation, this would load from JSON files
-  // For now, return default theme
-  return DEFAULT_THEME
+  if (!themeName || themeName === 'tech-blue') return DEFAULT_THEME
+  if (_themeCache.has(themeName)) return _themeCache.get(themeName)
+  try {
+    const raw = readFileSync(`${THEMES_DIR}/${themeName}.json`, 'utf8')
+    const theme = JSON.parse(raw)
+    _themeCache.set(themeName, theme)
+    return theme
+  } catch (err) {
+    console.warn(`[loadTheme] Could not load theme '${themeName}': ${err.message}. Falling back to default.`)
+    return DEFAULT_THEME
+  }
 }
 
 // ============================================================================
@@ -286,14 +307,30 @@ export function calculateLayout(spec, theme) {
   const modules = spec.modules || []
   const positions = new Map()
 
+  // Handle manually positioned nodes first
+  const manuallyPositioned = new Set()
+  for (const node of nodes) {
+    if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
+      const semanticType = detectSemanticType(node.label, node.type)
+      const size = getNodeSize(node.size, semanticType)
+      positions.set(node.id, {
+        x: snapToGrid(node.position.x, gridSize),
+        y: snapToGrid(node.position.y, gridSize),
+        width: size.width,
+        height: size.height
+      })
+      manuallyPositioned.add(node.id)
+    }
+  }
+
   // Group nodes by module
   const moduleGroups = new Map()
   moduleGroups.set('__default__', [])
-  
+
   for (const mod of modules) {
     moduleGroups.set(mod.id, [])
   }
-  
+
   for (const node of nodes) {
     const moduleId = node.module || '__default__'
     if (!moduleGroups.has(moduleId)) {
@@ -317,6 +354,7 @@ export function calculateLayout(spec, theme) {
       let nodeY = moduleY + containerPadding + 40 // Header space
 
       for (const node of moduleNodes) {
+        if (manuallyPositioned.has(node.id)) continue
         const semanticType = detectSemanticType(node.label, node.type)
         const size = getNodeSize(node.size, semanticType)
         const nodeX = snapToGrid(moduleX + containerPadding, gridSize)
@@ -332,7 +370,7 @@ export function calculateLayout(spec, theme) {
 
       const moduleWidth = maxWidth + containerPadding * 2
       const moduleHeight = nodeY - moduleY + containerPadding
-      
+
       modulePositions.set(moduleId, {
         x: moduleX,
         y: moduleY,
@@ -353,6 +391,7 @@ export function calculateLayout(spec, theme) {
       let maxHeight = 0
 
       for (const node of moduleNodes) {
+        if (manuallyPositioned.has(node.id)) continue
         const semanticType = detectSemanticType(node.label, node.type)
         const size = getNodeSize(node.size, semanticType)
         positions.set(node.id, {
@@ -367,7 +406,7 @@ export function calculateLayout(spec, theme) {
 
       const moduleWidth = nodeX - moduleX + containerPadding
       const moduleHeight = maxHeight + containerPadding * 2 + 40
-      
+
       modulePositions.set(moduleId, {
         x: moduleX,
         y: moduleY,
@@ -384,6 +423,7 @@ export function calculateLayout(spec, theme) {
     const maxCols = 4
 
     for (const node of nodes) {
+      if (manuallyPositioned.has(node.id)) continue
       const semanticType = detectSemanticType(node.label, node.type)
       const size = getNodeSize(node.size, semanticType)
       positions.set(node.id, {
@@ -404,6 +444,32 @@ export function calculateLayout(spec, theme) {
 }
 
 // ============================================================================
+// Icon Support
+// ============================================================================
+
+const ICON_PREFIXES = {
+  'aws.': 'mxgraph.aws4.',
+  'gcp.': 'mxgraph.gcp2.',
+  'azure.': 'mxgraph.azure.',
+  'k8s.': 'mxgraph.kubernetes.',
+  'mxgraph.': 'mxgraph.'  // pass-through for direct mxgraph references
+}
+
+/**
+ * Resolve icon name to draw.io shape identifier
+ */
+export function resolveIconShape(icon) {
+  if (!icon) return null
+  for (const [prefix, mxPrefix] of Object.entries(ICON_PREFIXES)) {
+    if (icon.startsWith(prefix)) {
+      return mxPrefix + icon.slice(prefix.length)
+    }
+  }
+  // If no prefix matches, treat as direct shape reference
+  return icon
+}
+
+// ============================================================================
 // Style Generation
 // ============================================================================
 
@@ -413,11 +479,11 @@ export function calculateLayout(spec, theme) {
 export function generateNodeStyle(node, theme) {
   const semanticType = detectSemanticType(node.label, node.type)
   const shapeStyle = SHAPE_STYLES[semanticType] || SHAPE_STYLES.service
-  
+
   // Get colors from theme
   const nodeTheme = theme.node?.[semanticType] || theme.node?.default || {}
   const defaultTheme = theme.node?.default || {}
-  
+
   const fillColor = node.style?.fillColor || nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE'
   const strokeColor = node.style?.strokeColor || nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB'
   const strokeWidth = node.style?.strokeWidth || nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5
@@ -425,19 +491,39 @@ export function generateNodeStyle(node, theme) {
   const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
   const fontFamily = theme.typography?.fontFamily?.primary || 'Inter, sans-serif'
 
-  const parts = [
-    shapeStyle,
-    'html=1',
-    'whiteSpace=wrap',
-    `fillColor=${fillColor}`,
-    `strokeColor=${strokeColor}`,
-    `strokeWidth=${strokeWidth}`,
-    `fontColor=${fontColor}`,
-    `fontSize=${fontSize}`,
-    `fontFamily=${fontFamily}`,
-    'verticalAlign=middle',
-    'align=center'
-  ]
+  // If node has an icon, override shape to use the icon
+  const iconShape = resolveIconShape(node.icon)
+  let effectiveShapeStyle = shapeStyle
+  const parts = []
+  if (iconShape) {
+    effectiveShapeStyle = `shape=${iconShape}`
+    parts.push(effectiveShapeStyle)
+    parts.push('html=1')
+    parts.push('whiteSpace=wrap')
+    parts.push(`fillColor=${fillColor}`)
+    parts.push(`strokeColor=${strokeColor}`)
+    parts.push(`strokeWidth=${strokeWidth}`)
+    parts.push(`fontColor=${fontColor}`)
+    parts.push(`fontSize=${fontSize}`)
+    parts.push(`fontFamily=${fontFamily}`)
+    parts.push('verticalLabelPosition=bottom')
+    parts.push('labelBackgroundColor=none')
+    parts.push('align=center')
+  } else {
+    parts.push(
+      effectiveShapeStyle,
+      'html=1',
+      'whiteSpace=wrap',
+      `fillColor=${fillColor}`,
+      `strokeColor=${strokeColor}`,
+      `strokeWidth=${strokeWidth}`,
+      `fontColor=${fontColor}`,
+      `fontSize=${fontSize}`,
+      `fontFamily=${fontFamily}`,
+      'verticalAlign=middle',
+      'align=center'
+    )
+  }
 
   return parts.join(';')
 }
@@ -448,13 +534,15 @@ export function generateNodeStyle(node, theme) {
 export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
   const connectorType = edge.type || 'primary'
   const connectorTheme = theme.connector?.[connectorType] || theme.connector?.primary || {}
-  
+
   const strokeColor = edge.style?.strokeColor || connectorTheme.strokeColor || '#1E293B'
   const strokeWidth = edge.style?.strokeWidth || connectorTheme.strokeWidth || 2
   const dashed = edge.style?.dashed ?? connectorTheme.dashed ?? false
   const dashPattern = edge.style?.dashPattern || connectorTheme.dashPattern || '6 4'
   const endArrow = edge.style?.endArrow || connectorTheme.endArrow || 'block'
   const endFill = edge.style?.endFill ?? connectorTheme.endFill ?? true
+  const startArrow = edge.style?.startArrow || connectorTheme.startArrow
+  const startFill = edge.style?.startFill ?? connectorTheme.startFill
 
   const parts = [
     'edgeStyle=orthogonalEdgeStyle',
@@ -467,6 +555,11 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
     `endArrow=${endArrow}`,
     `endFill=${endFill ? 1 : 0}`
   ]
+
+  if (startArrow) {
+    parts.push(`startArrow=${startArrow}`)
+    parts.push(`startFill=${startFill ? 1 : 0}`)
+  }
 
   if (dashed) {
     parts.push('dashed=1')
@@ -530,7 +623,7 @@ export function generateModuleStyle(module, theme) {
 export function buildXml(spec, theme, layout) {
   const { positions, modulePositions } = layout
   const routing = spec.meta?.routing || 'orthogonal'
-  
+
   const cells = []
   let nextId = 2
   const allocId = () => String(nextId++)
@@ -547,7 +640,7 @@ export function buildXml(spec, theme, layout) {
     maxX = Math.max(maxX, pos.x + pos.width)
     maxY = Math.max(maxY, pos.y + pos.height)
   }
-  
+
   const canvasWidth = snapToGrid(maxX + 80, 8)
   const canvasHeight = snapToGrid(maxY + 80, 8)
 
@@ -555,16 +648,16 @@ export function buildXml(spec, theme, layout) {
   const moduleIdMap = new Map()
   for (const [moduleId, pos] of modulePositions) {
     if (moduleId === '__default__') continue
-    
+
     const module = spec.modules?.find(m => m.id === moduleId)
     if (!module) continue
 
     const cellId = allocId()
     moduleIdMap.set(moduleId, cellId)
-    
+
     const style = generateModuleStyle(module, theme)
     const label = prepareMathLabel(module.label || moduleId)
-    
+
     cells.push(
       `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="1">` +
       `<mxGeometry x="${pos.x}" y="${pos.y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
@@ -579,11 +672,11 @@ export function buildXml(spec, theme, layout) {
 
     const cellId = allocId()
     nodeIdMap.set(node.id, cellId)
-    
+
     const style = generateNodeStyle(node, theme)
     const label = prepareMathLabel(node.label)
-    const parentId = node.module && moduleIdMap.has(node.module) 
-      ? moduleIdMap.get(node.module) 
+    const parentId = node.module && moduleIdMap.has(node.module)
+      ? moduleIdMap.get(node.module)
       : '1'
 
     // Adjust position relative to parent if in module
@@ -612,21 +705,24 @@ export function buildXml(spec, theme, layout) {
 
     const cellId = allocId()
     const style = generateConnectorStyle(edge, theme, routing)
-    
+
     let edgeXml = `<mxCell id="${cellId}" style="${style}" edge="1" parent="1" source="${sourceId}" target="${targetId}">`
     edgeXml += `<mxGeometry relative="1" as="geometry"/>`
-    
+
     // Add label if present
     if (edge.label) {
       const labelId = allocId()
+      const labelX = edge.labelPosition === 'start' ? '0.2'
+        : edge.labelPosition === 'end' ? '0.8'
+          : '0.5'  // center (default)
       edgeXml += `</mxCell>`
       edgeXml += `<mxCell id="${labelId}" value="${prepareMathLabel(edge.label)}" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=${theme.colors?.textMuted || '#64748B'};" vertex="1" connectable="0" parent="${cellId}">`
-      edgeXml += `<mxGeometry x="0.5" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>`
+      edgeXml += `<mxGeometry x="${labelX}" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>`
       edgeXml += `</mxCell>`
     } else {
       edgeXml += `</mxCell>`
     }
-    
+
     cells.push(edgeXml)
   }
 
@@ -662,6 +758,17 @@ export function specToDrawioXml(spec, options = {}) {
     throw new Error('Specification must contain at least one node')
   }
 
+  // Check complexity
+  const warnings = checkComplexity(spec)
+
+  // Strict mode: throw on error-level warnings
+  if (options.strict) {
+    const errors = warnings.filter(w => w.level === 'error')
+    if (errors.length > 0) {
+      throw new Error('Complexity check failed: ' + errors.map(e => e.message).join('; '))
+    }
+  }
+
   // Load theme
   const themeName = spec.meta?.theme || 'tech-blue'
   const theme = options.theme || loadTheme(themeName)
@@ -670,63 +777,127 @@ export function specToDrawioXml(spec, options = {}) {
   const layout = calculateLayout(spec, theme)
 
   // Build XML
-  return buildXml(spec, theme, layout)
+  const xml = buildXml(spec, theme, layout)
+
+  // Return with warnings if requested
+  if (options.returnWarnings) {
+    return { xml, warnings }
+  }
+
+  return xml
 }
 
 /**
  * Parse YAML string to specification object
- * Note: Requires external YAML parser (e.g., js-yaml)
  * @param {string} yamlText - YAML specification text
  * @returns {Object} Parsed specification
  */
 export function parseSpecYaml(yamlText) {
-  // Simple YAML-like parser for basic cases
-  // In production, use a proper YAML library
-  const lines = yamlText.split('\n')
-  const spec = { meta: {}, nodes: [], edges: [], modules: [] }
-  
-  let currentSection = null
-  let currentItem = null
-  
-  for (const line of lines) {
-    const trimmed = line.trim()
-    if (!trimmed || trimmed.startsWith('#')) continue
-    
-    // Detect section
-    if (trimmed === 'meta:') { currentSection = 'meta'; continue }
-    if (trimmed === 'nodes:') { currentSection = 'nodes'; continue }
-    if (trimmed === 'edges:') { currentSection = 'edges'; continue }
-    if (trimmed === 'modules:') { currentSection = 'modules'; continue }
-    
-    // Parse key-value in meta
-    if (currentSection === 'meta' && trimmed.includes(':')) {
-      const [key, ...valueParts] = trimmed.split(':')
-      spec.meta[key.trim()] = valueParts.join(':').trim()
-      continue
+  if (yamlText == null) {
+    throw new TypeError('yamlText must be a string')
+  }
+  if (yamlText.trim() === '') {
+    return { meta: {}, nodes: [], edges: [], modules: [] }
+  }
+  let parsed
+  try {
+    parsed = yaml.load(yamlText)
+  } catch (err) {
+    throw new Error(`Failed to parse YAML specification: ${err.message}`)
+  }
+  const spec = parsed || {}
+  spec.meta = spec.meta || {}
+  spec.nodes = spec.nodes || []
+  spec.edges = spec.edges || []
+  spec.modules = spec.modules || []
+  return spec
+}
+
+/**
+ * Validate draw.io XML structure
+ * @param {string} xml - draw.io XML string
+ * @returns {{ valid: boolean, errors: string[] }}
+ */
+export function validateXml(xml) {
+  const errors = []
+
+  if (typeof xml !== 'string' || xml.trim() === '') {
+    return { valid: false, errors: ['XML must be a non-empty string'] }
+  }
+
+  // Check root structure
+  if (!xml.includes('<mxGraphModel')) {
+    errors.push('Missing <mxGraphModel element')
+  }
+  if (!xml.includes('<root>')) {
+    errors.push('Missing <root> element')
+  }
+  if (!xml.includes('</root>')) {
+    errors.push('Missing </root> closing tag')
+  }
+  if (!xml.includes('</mxGraphModel>')) {
+    errors.push('Missing </mxGraphModel> closing tag')
+  }
+
+  // Check required root cells
+  if (!xml.includes('<mxCell id="0"/>')) {
+    errors.push('Missing required <mxCell id="0"/>')
+  }
+  if (!xml.includes('<mxCell id="1" parent="0"/>')) {
+    errors.push('Missing required <mxCell id="1" parent="0"/>')
+  }
+
+  // Extract all mxCell id values
+  const idPattern = /<mxCell\s[^>]*\bid="([^"]+)"/g
+  const allIds = []
+  let match
+  while ((match = idPattern.exec(xml)) !== null) {
+    allIds.push(match[1])
+  }
+
+  // Check ID uniqueness
+  const seen = new Set()
+  const duplicates = new Set()
+  for (const id of allIds) {
+    if (seen.has(id)) {
+      duplicates.add(id)
     }
-    
-    // Parse list item start
-    if (trimmed.startsWith('- ')) {
-      if (currentSection === 'nodes' || currentSection === 'edges' || currentSection === 'modules') {
-        currentItem = {}
-        spec[currentSection].push(currentItem)
-        const rest = trimmed.slice(2)
-        if (rest.includes(':')) {
-          const [key, ...valueParts] = rest.split(':')
-          currentItem[key.trim()] = valueParts.join(':').trim()
-        }
-      }
-      continue
+    seen.add(id)
+  }
+  for (const dup of duplicates) {
+    errors.push(`Duplicate cell ID: "${dup}"`)
+  }
+
+  // Collect vertex cell IDs (cells with vertex="1")
+  const vertexPattern = /<mxCell\s[^>]*\bid="([^"]+)"[^>]*\bvertex="1"/g
+  const vertexIds = new Set()
+  while ((match = vertexPattern.exec(xml)) !== null) {
+    vertexIds.add(match[1])
+  }
+  // Also check alternate attribute order
+  const vertexPattern2 = /<mxCell\s[^>]*\bvertex="1"[^>]*\bid="([^"]+)"/g
+  while ((match = vertexPattern2.exec(xml)) !== null) {
+    vertexIds.add(match[1])
+  }
+
+  // Check edge source/target references
+  const edgePattern = /<mxCell\s[^>]*\bedge="1"[^>]*/g
+  while ((match = edgePattern.exec(xml)) !== null) {
+    const edgeAttr = match[0]
+    const srcMatch = /\bsource="([^"]+)"/.exec(edgeAttr)
+    const tgtMatch = /\btarget="([^"]+)"/.exec(edgeAttr)
+    const idMatch = /\bid="([^"]+)"/.exec(edgeAttr)
+    const edgeId = idMatch ? idMatch[1] : '(unknown)'
+
+    if (srcMatch && !vertexIds.has(srcMatch[1])) {
+      errors.push(`Edge "${edgeId}" references nonexistent source ID: "${srcMatch[1]}"`)
     }
-    
-    // Parse item properties
-    if (currentItem && trimmed.includes(':')) {
-      const [key, ...valueParts] = trimmed.split(':')
-      currentItem[key.trim()] = valueParts.join(':').trim()
+    if (tgtMatch && !vertexIds.has(tgtMatch[1])) {
+      errors.push(`Edge "${edgeId}" references nonexistent target ID: "${tgtMatch[1]}"`)
     }
   }
-  
-  return spec
+
+  return { valid: errors.length === 0, errors }
 }
 
 /**
@@ -734,36 +905,36 @@ export function parseSpecYaml(yamlText) {
  */
 export function checkComplexity(spec) {
   const warnings = []
-  
+
   const nodeCount = spec.nodes?.length || 0
   const edgeCount = spec.edges?.length || 0
   const moduleCount = spec.modules?.length || 0
-  
+
   if (nodeCount > 30) {
     warnings.push({ level: 'error', message: `Too many nodes (${nodeCount}). Consider splitting into sub-diagrams.` })
   } else if (nodeCount > 20) {
     warnings.push({ level: 'warning', message: `Many nodes (${nodeCount}). Consider splitting for clarity.` })
   }
-  
+
   if (edgeCount > 50) {
     warnings.push({ level: 'error', message: `Too many edges (${edgeCount}). Consider hierarchical layout.` })
   } else if (edgeCount > 30) {
     warnings.push({ level: 'warning', message: `Many edges (${edgeCount}). Consider simplifying.` })
   }
-  
+
   if (moduleCount > 5) {
     warnings.push({ level: 'warning', message: `Many modules (${moduleCount}). Consider zoom layers.` })
   }
-  
+
   // Check label lengths
   for (const node of spec.nodes || []) {
     if (node.label && node.label.length > 14) {
-      warnings.push({ 
-        level: 'info', 
-        message: `Node "${node.id}" label is long (${node.label.length} chars). Consider abbreviation.` 
+      warnings.push({
+        level: 'info',
+        message: `Node "${node.id}" label is long (${node.label.length} chars). Consider abbreviation.`
       })
     }
   }
-  
+
   return warnings
 }

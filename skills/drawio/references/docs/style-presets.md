@@ -1,6 +1,7 @@
 # Style Presets (Draw.io Style Strings)
 
 > ⚠️ **DEPRECATED**: This file is deprecated. Please use the new **Design System** documentation instead:
+>
 > - [Design System Overview](design-system/README.md)
 > - [Design Tokens](design-system/tokens.md)
 > - [Themes](design-system/themes.md)
@@ -114,4 +115,3 @@ endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=1;html=1
 - Keep 40–80px spacing between nodes.
 - Avoid edge crossings; prefer routing around containers.
 - When exporting, enable crop to remove whitespace.
-

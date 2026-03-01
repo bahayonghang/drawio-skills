@@ -1,0 +1,53 @@
+meta:
+  theme: tech-blue
+  layout: horizontal
+
+modules:
+  - id: gateway
+    label: Gateway
+  - id: services
+    label: Services
+  - id: data
+    label: Data Layer
+
+nodes:
+  - id: api
+    label: API Gateway
+    type: service
+    module: gateway
+  - id: users
+    label: User Service
+    type: service
+    module: services
+  - id: orders
+    label: Order Service
+    type: service
+    module: services
+  - id: userDb
+    label: User DB
+    type: database
+    module: data
+  - id: orderDb
+    label: Order DB
+    type: database
+    module: data
+
+edges:
+  - from: api
+    to: users
+    type: primary
+  - from: api
+    to: orders
+    type: primary
+  - from: users
+    to: userDb
+    type: data
+    label: CRUD
+  - from: orders
+    to: orderDb
+    type: data
+    label: CRUD
+  - from: orders
+    to: users
+    type: optional
+    label: Auth Check

@@ -283,30 +283,34 @@ Simplify to 3 modules:
 ## Troubleshooting
 
 ### "Cell not found"
+
 - Label may have changed
 - Call `get_diagram` to see current state
 - Use exact label text
 
 ### Style looks wrong after edit
+
 - Verify theme is consistent
 - Check if type was changed accidentally
 - Re-apply theme if mixed styles
 
 ### New elements don't match existing
+
 - Specify semantic type for new nodes
 - Specify connector type for new edges
 - Consider theme switch if inconsistent
 
 ### Grid alignment off
+
 - Use layout operations to re-align
 - Snap positions to 8px grid
 - Increase spacing if crowded
 
 ## Related
 
-- [MCP Tools Reference](../docs/mcp-tools.md)
-- [Design System Overview](../docs/design-system/README.md)
-- [Themes Reference](../docs/design-system/themes.md)
-- [Semantic Shapes](../docs/design-system/shapes.md)
-- [Connectors](../docs/design-system/connectors.md)
-- [Specification Format](../docs/design-system/specification.md)
+- [MCP Tools Reference](../references/docs/mcp-tools.md)
+- [Design System Overview](../references/docs/design-system/README.md)
+- [Themes Reference](../references/docs/design-system/themes.md)
+- [Semantic Shapes](../references/docs/design-system/shapes.md)
+- [Connectors](../references/docs/design-system/connectors.md)
+- [Specification Format](../references/docs/design-system/specification.md)

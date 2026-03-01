@@ -1,211 +1,35 @@
 ---
 name: drawio
-version: 2.0.0
-description: AI-powered Draw.io diagram generation with Design System, 3 workflows, and real-time browser preview
-category: visual-design
-tags: [diagram, flowchart, architecture, drawio, design-system]
+description: "AI-powered Draw.io diagram creation with Design System 2.0. Use when creating architecture diagrams, flowcharts, neural network visualizations, ER diagrams, or any technical diagram with real-time browser preview."
+metadata:
+  category: visual-design
+  tags:
+    - diagram
+    - flowchart
+    - architecture
+    - drawio
+    - design-system
+argument-hint: [diagram-description-or-instruction]
+allowed-tools: Read, Write, RunCommand, Browser
 ---
 
 # Draw.io Skill
 
-AI-powered Draw.io diagram generation with real-time browser preview for Claude Code.
+Create, edit, and export architecture, flowchart, and technical diagrams using Draw.io XML and Design System 2.0.
 
-## Quick Start
+## Steps
 
-| What you want to do | Command | Description |
-|---------------------|---------|-------------|
-| Create new diagram | `/drawio create ...` | Natural language → diagram |
-| Replicate image | `/drawio replicate ...` | Image → A-H → diagram |
-| Edit diagram | `/drawio edit ...` | Modify existing diagram |
+1. Parse the user's diagram request.
+2. Read `$SKILL_DIR/references/docs/design-system/README.md` to understand the available themes, semantic shapes, and connector types.
+3. Read `$SKILL_DIR/references/docs/design-system/specification.md` to understand the standard YAML specification format for this skill.
+4. For reference, review pattern examples in `$SKILL_DIR/references/examples/` if unsure about the syntax.
+5. Generate the diagram YAML strictly following the specification.
+6. Validate and compile the YAML into `.drawio` XML or `.svg` using the CLI tool:
+   - `node $SKILL_DIR/scripts/cli.js input.yaml output.drawio`
+   - `node $SKILL_DIR/scripts/cli.js input.yaml --validate`
+7. Explain to the user how to use MCP tools (e.g., `drawio:start_session`) if they want real-time preview (refer to `$SKILL_DIR/references/docs/mcp-tools.md` for tool usage).
 
-> **Tip**: Use `/drawio` followed by keywords like "create", "replicate", "edit" to trigger different workflows.
+## Resources Distribution
 
-## Features
-
-- **Design System** - Unified visual language with themes, tokens, and semantic shapes
-- **Real-time Preview** - Diagrams update in browser as Claude creates them
-- **Version History** - Restore previous diagram versions
-- **Natural Language** - Describe diagrams in plain text
-- **Cloud Architecture** - AWS, GCP, Azure with official icons
-- **Animated Connectors** - Dynamic connector animations
-- **Semantic Shapes** - Auto-select shapes based on node type
-- **Math Typesetting** - LaTeX/AsciiMath equations in labels
-- **IEEE Academic Style** - Publication-ready diagrams
-
-## Design System
-
-The skill includes a unified design system providing consistent visual language:
-
-### Themes
-
-| Theme | Use Case |
-|-------|----------|
-| **Tech Blue** | Software architecture, DevOps (default) |
-| **Academic Color** ⭐ | Academic papers, research (recommended) |
-| **Academic** | IEEE grayscale print only |
-| **Nature** | Environmental, lifecycle diagrams |
-| **Dark Mode** | Presentations, slides |
-
-### Semantic Shapes
-
-Automatic shape selection based on node type:
-
-```yaml
-nodes:
-  - id: api
-    label: API Gateway
-    type: service     # → Rounded rectangle
-
-  - id: db
-    label: User Database
-    type: database    # → Cylinder
-
-  - id: check
-    label: Valid?
-    type: decision    # → Diamond
-```
-
-### Typed Connectors
-
-| Type | Style | Usage |
-|------|-------|-------|
-| `primary` | Solid 2px, filled arrow | Main flow |
-| `data` | Dashed 2px, filled arrow | Data/async flow |
-| `optional` | Dotted 1px, open arrow | Weak relation |
-| `dependency` | Solid 1px, diamond | Dependencies |
-
-### 8px Grid System
-
-All spacing and positions align to 8px grid for professional results:
-- Node margin: 32px minimum
-- Container padding: 24px
-- Canvas padding: 32px
-
-→ [Full Design System Documentation](docs/design-system/README.md)
-
-## Installation
-
-MCP server auto-configures on first use:
-
-```json
-{
-  "command": "npx",
-  "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
-}
-```
-
-Default port: `6002` (auto-increments if in use)
-
-For manual setup, see [scripts/](scripts/).
-
-## MCP Tools
-
-| Tool | Description |
-|------|-------------|
-| `start_session` | Opens browser with real-time preview |
-| `create_new_diagram` | Create diagram from XML |
-| `edit_diagram` | Edit by ID-based operations |
-| `get_diagram` | Get current diagram XML |
-| `export_diagram` | Save to `.drawio` file |
-
-Details: [docs/mcp-tools.md](docs/mcp-tools.md)
-
-## Workflows
-
-### `/drawio create` - Create from Scratch
-
-Create diagrams from natural language descriptions.
-
-```
-/drawio create a login flowchart with validation and error handling
-```
-
-**A-H format**: Optional (use `--structured` for complex diagrams)
-
-→ [Full workflow](workflows/create.md)
-
-### `/drawio replicate` - Replicate Existing
-
-Recreate images/screenshots using structured A-H extraction.
-
-```
-/drawio replicate
-【领域】软件架构
-[Upload image]
-```
-
-**A-H format**: Required
-
-→ [Full workflow](workflows/replicate.md)
-
-### `/drawio edit` - Modify Diagram
-
-Edit existing diagrams with natural language instructions.
-
-```
-/drawio edit
-Change "User Service" to "Auth Service"
-Make database nodes green
-```
-
-**A-H format**: Optional (use for structural changes)
-
-→ [Full workflow](workflows/edit.md)
-
-## Documentation
-
-### Design System
-
-| Topic | File |
-|-------|------|
-| Design System Overview | [docs/design-system/README.md](docs/design-system/README.md) |
-| Design Tokens | [docs/design-system/tokens.md](docs/design-system/tokens.md) |
-| Themes | [docs/design-system/themes.md](docs/design-system/themes.md) |
-| Semantic Shapes | [docs/design-system/shapes.md](docs/design-system/shapes.md) |
-| Connectors | [docs/design-system/connectors.md](docs/design-system/connectors.md) |
-| Icons | [docs/design-system/icons.md](docs/design-system/icons.md) |
-| Formulas | [docs/design-system/formulas.md](docs/design-system/formulas.md) |
-| Specification Format | [docs/design-system/specification.md](docs/design-system/specification.md) |
-
-### Reference
-
-| Topic | File |
-|-------|------|
-| Math Typesetting | [docs/math-typesetting.md](docs/math-typesetting.md) |
-| IEEE Diagrams | [docs/ieee-diagrams.md](docs/ieee-diagrams.md) |
-| Usage Examples | [docs/examples.md](docs/examples.md) |
-| XML Format | [docs/xml-format.md](docs/xml-format.md) |
-| MCP Tools | [docs/mcp-tools.md](docs/mcp-tools.md) |
-
-## Architecture
-
-```
-Claude Code <--stdio--> MCP Server <--http--> Browser (draw.io)
-```
-
-1. Ask Claude to create a diagram
-2. Claude calls `start_session` to open browser
-3. Claude generates diagram XML
-4. Diagram appears in real-time!
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| "d.setId is not a function" | Use numeric `mxCell` IDs only |
-| Port already in use | Server auto-tries ports 6002-6020 |
-| "No active session" | Call `start_session` first |
-| Browser not updating | Check URL has `?mcp=` parameter |
-| Math not rendered | Enable `Extras > Mathematical Typesetting` |
-
-## Links
-
-- [Homepage](https://next-ai-drawio.jiang.jp)
-- [GitHub Repository](https://github.com/DayuanJiang/next-ai-draw-io)
-- [MCP Server Documentation](https://github.com/DayuanJiang/next-ai-draw-io/tree/main/packages/mcp-server)
-
-## License & Author
-
-- **License**: Apache-2.0
-- **Author**: DayuanJiang
-- **Skill Version**: 1.1.0
+- **Knowledge & Docs**: `$SKILL_DIR/references/`
+- **Static Graphics & Assets**: `$SKILL_DIR/assets/`

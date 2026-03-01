@@ -198,6 +198,7 @@ nodes:
 ```
 
 Key properties:
+
 - `shape`: Icon shape reference
 - `verticalLabelPosition`: Label below icon (`bottom`)
 - `fillColor`: Icon fill (AWS orange for Lambda)

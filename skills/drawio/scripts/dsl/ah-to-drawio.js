@@ -1,4 +1,5 @@
 import { prepareMathLabel } from '../math/index.js'
+import { loadTheme } from './spec-to-drawio.js'
 
 function parseSections(text) {
   if (typeof text !== 'string' || text.trim().length === 0) {
@@ -115,15 +116,15 @@ function parseEdges(sectionD) {
     const rest = m[3] ?? ''
 
     const isDashed = /虚线/.test(rest)
-    const isT = /T形线/.test(rest)
+    // isT (T形线) was parsed here but never used in rendering — removed.
 
-    edges.push({ source, target, isDashed, isT })
+    edges.push({ source, target, isDashed })
   }
 
   return edges
 }
 
-function buildXml({ modules, nodes, edges, page }) {
+function buildXml({ modules, nodes, edges, page, theme }) {
   const {
     width = 1280,
     height = 720,
@@ -135,6 +136,38 @@ function buildXml({ modules, nodes, edges, page }) {
     nodeGapY = 30,
     containerPadding = 24
   } = page ?? {}
+
+  // Derive style values from theme
+  const nodeDefault = theme.node?.default ?? {}
+  const moduleCfg = theme.module ?? {}
+  const connectorPrimary = theme.connector?.primary ?? {}
+  const connectorData = theme.connector?.data ?? {}
+  const gridSize = theme.canvas?.gridSize ?? 8
+
+  const nodeFill = nodeDefault.fillColor ?? '#dae8fc'
+  const nodeStroke = nodeDefault.strokeColor ?? '#6c8ebf'
+  const nodeFontColor = nodeDefault.fontColor ?? '#000000'
+  const nodeFontSize = nodeDefault.fontSize ?? 14
+
+  const containerFill = moduleCfg.fillColor ?? '#f5f5f5'
+  const containerStroke = moduleCfg.strokeColor ?? '#999999'
+  const containerFontColor = moduleCfg.labelFontColor ?? '#333333'
+  const containerFontSize = moduleCfg.labelFontSize ?? 12
+
+  const edgeStroke = connectorPrimary.strokeColor ?? '#333333'
+  const edgeWidth = connectorPrimary.strokeWidth ?? 2
+  const dashedStroke = connectorData.strokeColor ?? '#333333'
+  const dashedWidth = connectorData.strokeWidth ?? 2
+  const dashedPattern = connectorData.dashPattern ?? '6 4'
+
+  const containerStyle =
+    `rounded=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fillColor=${containerFill};strokeColor=${containerStroke};fontSize=${containerFontSize};fontColor=${containerFontColor};spacingLeft=12;spacingRight=12;spacingTop=10;spacingBottom=10`
+  const nodeStyle =
+    `rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fillColor=${nodeFill};strokeColor=${nodeStroke};fontSize=${nodeFontSize};fontColor=${nodeFontColor};spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6`
+  const edgeStyle =
+    `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;endFill=1;strokeColor=${edgeStroke};strokeWidth=${edgeWidth};html=1`
+  const dashedEdgeStyle =
+    `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;endFill=1;strokeColor=${dashedStroke};strokeWidth=${dashedWidth};dashed=1;dashPattern=${dashedPattern};html=1`
 
   const moduleOrder = new Map()
   for (let i = 0; i < modules.length; i++) moduleOrder.set(modules[i].key, i)
@@ -157,15 +190,6 @@ function buildXml({ modules, nodes, edges, page }) {
     if (!moduleBuckets.has(k)) moduleBuckets.set(k, [])
     moduleBuckets.get(k).push(node)
   }
-
-  const containerStyle =
-    'rounded=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontColor=#333333;spacingLeft=12;spacingRight=12;spacingTop=10;spacingBottom=10'
-  const nodeStyle =
-    'rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontColor=#000000;spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6'
-  const edgeStyle =
-    'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=2;html=1'
-  const dashedEdgeStyle =
-    'edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=2;dashed=1;dashPattern=6 4;html=1'
 
   const cells = []
   const cellIdToGeom = new Map()
@@ -224,7 +248,7 @@ function buildXml({ modules, nodes, edges, page }) {
   }
 
   const xml =
-    `<mxGraphModel dx="1120" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${width}" pageHeight="${height}" math="1">` +
+    `<mxGraphModel dx="1120" dy="720" grid="1" gridSize="${gridSize}" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${width}" pageHeight="${height}" math="1">` +
     `<root>` +
     `<mxCell id="0"/>` +
     `<mxCell id="1" parent="0"/>` +
@@ -235,12 +259,14 @@ function buildXml({ modules, nodes, edges, page }) {
   return xml
 }
 
-export function ahToDrawioXml(ahText, { page } = {}) {
+export function ahToDrawioXml(ahText, options = {}) {
+  const { page, theme: themeOverride, themeName } = options
+  const theme = themeOverride || loadTheme(themeName || 'tech-blue')
   const sections = parseSections(ahText)
   const modules = parseModules(sections.B ?? '')
   const nodes = parseNodes(sections.C ?? '')
   const edges = parseEdges(sections.D ?? '')
-  return buildXml({ modules, nodes, edges, page })
+  return buildXml({ modules, nodes, edges, page, theme })
 }
 
 export function parseAh(text) {

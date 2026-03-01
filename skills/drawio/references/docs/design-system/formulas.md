@@ -9,6 +9,7 @@ The Design System provides best practices for integrating LaTeX and mathematical
 Draw.io supports MathJax rendering for LaTeX formulas. The Design System defines consistent styling and placement rules for formula nodes.
 
 **Requirements**:
+
 - Enable `Extras > Mathematical Typesetting` in draw.io
 - Use proper delimiters for formula content
 
@@ -66,6 +67,7 @@ Formula nodes use special styling for readability:
 ### Theme Styles
 
 **Tech Blue**:
+
 ```json
 {
   "fillColor": "#FFFFFF",
@@ -75,6 +77,7 @@ Formula nodes use special styling for readability:
 ```
 
 **Academic**:
+
 ```json
 {
   "fillColor": "#FFFFFF",
@@ -84,6 +87,7 @@ Formula nodes use special styling for readability:
 ```
 
 **Dark Mode**:
+
 ```json
 {
   "fillColor": "#1E293B",
@@ -155,6 +159,7 @@ Formula node sizes depend on content complexity:
 ### Auto-sizing
 
 The system estimates size based on formula length:
+
 - Characters < 10: Small
 - Characters 10-25: Medium
 - Characters 25-50: Large
@@ -314,6 +319,7 @@ Formula node in draw.io XML:
 ```
 
 Key style properties:
+
 - `html=1`: Enable HTML/MathJax rendering
 - `whiteSpace=wrap`: Allow text wrapping
 - `fillColor=#FFFFFF`: White background

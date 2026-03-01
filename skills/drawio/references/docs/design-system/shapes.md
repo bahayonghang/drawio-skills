@@ -50,6 +50,7 @@ nodes:
 ```
 
 Detection priority:
+
 1. Explicit `type` field (highest)
 2. Label keyword matching
 3. Default to `service` (rounded rectangle)
@@ -198,6 +199,7 @@ nodes:
 ```
 
 Available shapes in draw.io:
+
 - `rectangle`, `ellipse`, `rhombus`, `triangle`
 - `hexagon`, `parallelogram`, `trapezoid`
 - `cylinder3`, `cube`, `document`, `cloud`
@@ -233,6 +235,7 @@ nodes:
 ```
 
 Style characteristics:
+
 - White fill for readability
 - Thin blue border
 - Auto-sized based on formula complexity

@@ -7,60 +7,68 @@ This guide focuses on creating network diagrams that adhere to IEEE and academic
 ## 1. Symbol Standardization
 
 ### 1.1 Core Devices
-*   **Router**: Circle with four arrows pointing inward (X shape) or standard cylinder with arrows.
-*   **Switch**: Square/Box with diverging arrows.
-*   **Firewall**: Brick wall icon.
-*   **Server**: Tower or Rack icon.
-*   **Cloud/Internet**: Cloud shape.
+
+* **Router**: Circle with four arrows pointing inward (X shape) or standard cylinder with arrows.
+* **Switch**: Square/Box with diverging arrows.
+* **Firewall**: Brick wall icon.
+* **Server**: Tower or Rack icon.
+* **Cloud/Internet**: Cloud shape.
 
 ### 1.2 Link Representation
-*   **Solid Line**: Physical Ethernet/Fiber link.
-*   **Dashed Line**: Logical link (VLAN, VPN, Tunnel).
-*   **Lightning Bolt / Zigzag**: Wireless or WAN link.
-*   **Bus Line**: Thick straight line for Ethernet bus (older style) or Backbone.
+
+* **Solid Line**: Physical Ethernet/Fiber link.
+* **Dashed Line**: Logical link (VLAN, VPN, Tunnel).
+* **Lightning Bolt / Zigzag**: Wireless or WAN link.
+* **Bus Line**: Thick straight line for Ethernet bus (older style) or Backbone.
 
 ## 2. Information Hierarchy
 
 ### 2.1 Topology Layers
+
 Organize the diagram into logical tiers:
-1.  **Core Layer**: High-speed backbone switches/routers.
-2.  **Distribution Layer**: Aggregation switches.
-3.  **Access Layer**: End-user switches and APs.
+
+1. **Core Layer**: High-speed backbone switches/routers.
+2. **Distribution Layer**: Aggregation switches.
+3. **Access Layer**: End-user switches and APs.
 
 ### 2.2 Visual Cues
-*   **Size**: Core devices should appear slightly larger or more prominent.
-*   **Position**: Core at top or center; Access at bottom or periphery.
-*   **Grouping**: Use dashed rectangles to group devices by:
-    *   Physical Location (Building A, Floor 1)
-    *   Logical Segment (DMZ, Internal, Guest)
+
+* **Size**: Core devices should appear slightly larger or more prominent.
+* **Position**: Core at top or center; Access at bottom or periphery.
+* **Grouping**: Use dashed rectangles to group devices by:
+  * Physical Location (Building A, Floor 1)
+  * Logical Segment (DMZ, Internal, Guest)
 
 ## 3. Labeling & Annotations (IEEE Style)
 
-*   **Device Names**: Use standardized codes (e.g., `R1`, `SW-Core-01`).
-*   **Interfaces**: Label ports near the connection (e.g., `Gi0/1`, `eth0`).
-*   **IP Addresses**: Small font (8-9pt) below the device or interface.
-*   **Titles**: Figure Number and Title at the bottom (e.g., "Fig. 1. Proposed Network Architecture").
-*   **Legend**: **Mandatory** for academic papers. Explain all line types, colors, and non-standard icons.
+* **Device Names**: Use standardized codes (e.g., `R1`, `SW-Core-01`).
+* **Interfaces**: Label ports near the connection (e.g., `Gi0/1`, `eth0`).
+* **IP Addresses**: Small font (8-9pt) below the device or interface.
+* **Titles**: Figure Number and Title at the bottom (e.g., "Fig. 1. Proposed Network Architecture").
+* **Legend**: **Mandatory** for academic papers. Explain all line types, colors, and non-standard icons.
 
 ## 4. Black & White / Greyscale Optimization
+
 Academic papers often print in B&W.
-*   **Avoid Color-Only Coding**: Don't rely solely on Red vs. Green. Use Solid vs. Dashed lines.
-*   **Patterns**: Use fill patterns (dots, stripes) for zones instead of just solid colors.
-*   **Contrast**: Ensure text is black on white or white on black.
+
+* **Avoid Color-Only Coding**: Don't rely solely on Red vs. Green. Use Solid vs. Dashed lines.
+* **Patterns**: Use fill patterns (dots, stripes) for zones instead of just solid colors.
+* **Contrast**: Ensure text is black on white or white on black.
 
 ## 5. Draw.io Implementation Steps
 
-1.  **Load Libraries**: `More Shapes > Networking > Cisco / Azure / AWS` (or standard "General").
-2.  **Set Page Setup**: A4 or Letter, Portrait/Landscape.
-3.  **Draw Backbone**: Place Core devices first.
-4.  **Connect**: Use "Waypoints" to make orthogonal lines.
-5.  **Annotate**: Add text labels. Use LaTeX for math/formulas if needed (`Extras > Mathematical Typesetting`).
-6.  **Export**:
-    *   Format: **PDF** or **SVG** (Vector is best for papers).
-    *   "Crop": Select "Crop" to remove excess whitespace.
-    *   "Transparent Background": Check if embedding in a colored poster, otherwise uncheck for papers.
+1. **Load Libraries**: `More Shapes > Networking > Cisco / Azure / AWS` (or standard "General").
+2. **Set Page Setup**: A4 or Letter, Portrait/Landscape.
+3. **Draw Backbone**: Place Core devices first.
+4. **Connect**: Use "Waypoints" to make orthogonal lines.
+5. **Annotate**: Add text labels. Use LaTeX for math/formulas if needed (`Extras > Mathematical Typesetting`).
+6. **Export**:
+    * Format: **PDF** or **SVG** (Vector is best for papers).
+    * "Crop": Select "Crop" to remove excess whitespace.
+    * "Transparent Background": Check if embedding in a colored poster, otherwise uncheck for papers.
 
 ## 6. Example IEEE Prompt for AI
+
 When asking the AI to generate an IEEE-style diagram, specify:
 > "Create an IEEE-standard network diagram for a campus network. Use orthogonal lines. Include Core, Distribution, and Access layers. Use standard symbols. Output in black and white compatible style."
 
@@ -127,11 +135,11 @@ For IEEE network papers, maintain consistent notation:
 
 ## 8. Export Checklist for IEEE Submission
 
-- [ ] All mathematical expressions use LaTeX format
-- [ ] Figure has proper caption: "Fig. N. Description."
-- [ ] Legend explains all symbols and line types
-- [ ] Grayscale compatibility verified
-- [ ] Vector format (PDF/SVG) used
-- [ ] Excess whitespace cropped
-- [ ] Font size matches journal requirements (8-10pt)
-- [ ] Resolution ≥ 300 DPI for any rasterized elements
+* [ ] All mathematical expressions use LaTeX format
+* [ ] Figure has proper caption: "Fig. N. Description."
+* [ ] Legend explains all symbols and line types
+* [ ] Grayscale compatibility verified
+* [ ] Vector format (PDF/SVG) used
+* [ ] Excess whitespace cropped
+* [ ] Font size matches journal requirements (8-10pt)
+* [ ] Resolution ≥ 300 DPI for any rasterized elements
