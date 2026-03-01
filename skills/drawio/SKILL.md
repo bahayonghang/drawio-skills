@@ -1,6 +1,6 @@
 ---
 name: drawio
-description: "AI-powered Draw.io diagram creation with Design System 2.0. Use when creating architecture diagrams, flowcharts, neural network visualizations, ER diagrams, or any technical diagram with real-time browser preview."
+description: "AI-powered Draw.io diagram creation with Design System. Use when creating architecture diagrams, flowcharts, neural network visualizations, ER diagrams, or any technical diagram with real-time browser preview."
 metadata:
   category: visual-design
   tags:

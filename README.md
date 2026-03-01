@@ -10,7 +10,7 @@
 
 [English](./README.md) | [中文文档](./README_CN.md) | [📚 Documentation](https://bahayonghang.github.io/drawio-skills/)
 
-An MCP skill that enables AI-powered diagram creation and editing with real-time browser preview. Works with Claude Desktop, Gemini CLI, and Codex.
+An AI-native, iterative Draw.io skill designed for academic and technical flowcharts. Unlike the stateless official MCP that writes raw XML, it uses a semantic YAML DSL and a custom two-way sync server for real-time preview and interactive refinement.（专为学术与技术流程图设计的 AI 原生、可迭代的 Draw.io 技能。有别于官方基于原生 XML 的无状态 MCP，它采用语义化 YAML DSL 搭配双向同步服务器，实现了图表的实时预览与交互式精调。）
 
 ## ✨ Features
 
