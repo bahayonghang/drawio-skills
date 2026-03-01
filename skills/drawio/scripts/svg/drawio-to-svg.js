@@ -1,0 +1,527 @@
+/**
+ * drawio-to-svg.js
+ * Converts draw.io mxGraphModel XML to standalone SVG
+ * Zero external dependencies — Node.js built-ins only
+ */
+
+// ============================================================================
+// XML Parsing (regex-based, for machine-generated draw.io XML)
+// ============================================================================
+
+/**
+ * Parse semicolon-separated style string into a Map
+ * @param {string} styleStr - e.g. "rounded=1;fillColor=#FF0000;strokeColor=#333"
+ * @returns {Map<string, string>}
+ */
+function parseStyle(styleStr) {
+  const map = new Map()
+  if (!styleStr) return map
+  for (const part of styleStr.split(';')) {
+    const eq = part.indexOf('=')
+    if (eq > 0) {
+      map.set(part.slice(0, eq).trim(), part.slice(eq + 1).trim())
+    } else if (part.trim()) {
+      // Flag-style value like "rhombus" or "ellipse"
+      map.set(part.trim(), '1')
+    }
+  }
+  return map
+}
+
+/**
+ * Extract an attribute value from an XML tag string
+ * @param {string} tag - the raw XML tag text
+ * @param {string} attr - attribute name
+ * @returns {string|null}
+ */
+function attr(tag, name) {
+  // Match name="value" or name='value'
+  const re = new RegExp(`${name}\\s*=\\s*"([^"]*)"`)
+  const m = re.exec(tag)
+  if (m) return m[1]
+  const re2 = new RegExp(`${name}\\s*=\\s*'([^']*)'`)
+  const m2 = re2.exec(tag)
+  return m2 ? m2[1] : null
+}
+
+/**
+ * Build a cell object from raw attribute string and body content
+ * @param {string} cellAttrs - raw attribute string from the mxCell tag
+ * @param {string} cellBody - inner content (may contain mxGeometry)
+ * @returns {object}
+ */
+function buildCell(cellAttrs, cellBody) {
+  let geo = null
+  const geoMatch = /<mxGeometry([^>]*?)\/?>/.exec(cellBody)
+  if (geoMatch) {
+    const geoAttrs = geoMatch[1]
+    geo = {
+      x: Number(attr(geoAttrs, 'x')) || 0,
+      y: Number(attr(geoAttrs, 'y')) || 0,
+      width: Number(attr(geoAttrs, 'width')) || 0,
+      height: Number(attr(geoAttrs, 'height')) || 0,
+      relative: attr(geoAttrs, 'relative') === '1'
+    }
+  }
+
+  return {
+    id: attr(cellAttrs, 'id'),
+    value: attr(cellAttrs, 'value'),
+    style: attr(cellAttrs, 'style'),
+    vertex: attr(cellAttrs, 'vertex') === '1',
+    edge: attr(cellAttrs, 'edge') === '1',
+    source: attr(cellAttrs, 'source'),
+    target: attr(cellAttrs, 'target'),
+    parent: attr(cellAttrs, 'parent'),
+    geometry: geo
+  }
+}
+
+/**
+ * Parse mxGraphModel XML into a structured object
+ * @param {string} xml
+ * @returns {{ graph: object, cells: object[] }}
+ */
+function parseDrawioXml(xml) {
+  // Extract graph-level attributes from <mxGraphModel ...>
+  const graphMatch = /<mxGraphModel([^>]*)>/i.exec(xml)
+  const graphAttrs = graphMatch ? graphMatch[1] : ''
+  const graph = {
+    dx: Number(attr(graphAttrs, 'dx')) || 0,
+    dy: Number(attr(graphAttrs, 'dy')) || 0,
+    pageWidth: Number(attr(graphAttrs, 'pageWidth')) || 800,
+    pageHeight: Number(attr(graphAttrs, 'pageHeight')) || 600,
+    background: attr(graphAttrs, 'background') || 'none'
+  }
+
+  // Extract all mxCell elements (may span multiple lines with child mxGeometry)
+  const cells = []
+
+  // Two-pass approach: first match <mxCell ...>...</mxCell>, then self-closing <mxCell .../>
+  // Pass 1: open-close pairs (these contain mxGeometry children)
+  const pairRegex = /<mxCell\b([^>]*[^/])>([\s\S]*?)<\/mxCell>/gi
+  let match
+  const matchedRanges = []
+  while ((match = pairRegex.exec(xml)) !== null) {
+    matchedRanges.push({ start: match.index, end: match.index + match[0].length })
+    const cellAttrs = match[1]
+    const cellBody = match[2] || ''
+    cells.push(buildCell(cellAttrs, cellBody))
+  }
+
+  // Pass 2: self-closing <mxCell ... /> not already captured
+  const selfRegex = /<mxCell\b([^>]*?)\/>/gi
+  while ((match = selfRegex.exec(xml)) !== null) {
+    const pos = match.index
+    // Skip if this position was inside a pair match
+    const overlaps = matchedRanges.some(r => pos >= r.start && pos < r.end)
+    if (overlaps) continue
+    cells.push(buildCell(match[1], ''))
+  }
+
+  return { graph, cells }
+}
+
+// ============================================================================
+// HTML Entity Decoding
+// ============================================================================
+
+const HTML_ENTITIES = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&apos;': "'"
+}
+
+/**
+ * Decode common HTML entities in a string
+ * @param {string} str
+ * @returns {string}
+ */
+function decodeEntities(str) {
+  if (!str) return ''
+  return str.replace(/&(?:amp|lt|gt|quot|#39|apos);/g, (m) => HTML_ENTITIES[m] || m)
+}
+
+/**
+ * Escape text for safe SVG embedding
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeXml(str) {
+  if (!str) return ''
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+// ============================================================================
+// Shape Classification
+// ============================================================================
+
+/**
+ * Determine the shape type from a parsed style map
+ * @param {Map<string, string>} style
+ * @returns {string}
+ */
+function classifyShape(style) {
+  const shape = style.get('shape')
+  if (shape === 'cylinder3' || shape === 'cylinder') return 'cylinder'
+  if (shape === 'parallelogram') return 'parallelogram'
+  if (shape === 'document') return 'document'
+  if (shape === 'cloud') return 'cloud'
+  if (style.has('rhombus')) return 'rhombus'
+  if (style.has('ellipse')) return 'ellipse'
+  const rounded = style.get('rounded')
+  const arcSize = Number(style.get('arcSize')) || 0
+  if (rounded === '1' && arcSize >= 50) return 'stadium'
+  if (rounded === '1') return 'roundedRect'
+  return 'rect'
+}
+
+// ============================================================================
+// Arrow Marker Definitions
+// ============================================================================
+
+const ARROW_TYPES = ['block', 'open', 'classic', 'diamond']
+
+/**
+ * Build SVG <defs> with arrow markers
+ * @returns {string}
+ */
+function buildMarkerDefs() {
+  const markers = []
+
+  // block arrow (filled triangle)
+  markers.push(
+    '<marker id="arrow-block" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">',
+    '  <path d="M 0 0 L 10 5 L 0 10 Z" fill="currentColor"/>',
+    '</marker>'
+  )
+
+  // open arrow (chevron)
+  markers.push(
+    '<marker id="arrow-open" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">',
+    '  <path d="M 0 0 L 10 5 L 0 10" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    '</marker>'
+  )
+
+  // classic arrow (filled arrow)
+  markers.push(
+    '<marker id="arrow-classic" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">',
+    '  <path d="M 0 0 L 10 5 L 0 10 L 3 5 Z" fill="currentColor"/>',
+    '</marker>'
+  )
+
+  // diamond
+  markers.push(
+    '<marker id="arrow-diamond" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">',
+    '  <path d="M 0 6 L 6 0 L 12 6 L 6 12 Z" fill="currentColor"/>',
+    '</marker>'
+  )
+
+  return `<defs>\n${markers.join('\n')}\n</defs>`
+}
+
+/**
+ * Resolve an arrow type name to a marker URL reference
+ * @param {string} arrowType
+ * @param {'start'|'end'} position
+ * @returns {string} marker-start or marker-end attribute, or empty string
+ */
+function markerRef(arrowType, position) {
+  if (!arrowType || arrowType === 'none') return ''
+  const id = ARROW_TYPES.includes(arrowType) ? `arrow-${arrowType}` : 'arrow-block'
+  const attrName = position === 'start' ? 'marker-start' : 'marker-end'
+  return ` ${attrName}="url(#${id})"`
+}
+
+// ============================================================================
+// Shape SVG Renderers
+// ============================================================================
+
+/**
+ * Render a vertex cell to SVG elements
+ * @param {object} cell - parsed cell
+ * @param {Map<string, string>} style - parsed style
+ * @returns {string} SVG markup
+ */
+function renderVertex(cell, style) {
+  const geo = cell.geometry || { x: 0, y: 0, width: 120, height: 60 }
+  const { x, y, width, height } = geo
+
+  const fillColor = style.get('fillColor') || '#FFFFFF'
+  const strokeColor = style.get('strokeColor') || '#000000'
+  const strokeWidth = Number(style.get('strokeWidth')) || 1
+  const fontColor = style.get('fontColor') || '#000000'
+  const fontSize = Number(style.get('fontSize')) || 12
+  const fontFamily = style.get('fontFamily') || 'sans-serif'
+
+  let dashAttr = ''
+  if (style.get('dashed') === '1') {
+    const pattern = style.get('dashPattern') || '3 3'
+    dashAttr = ` stroke-dasharray="${pattern}"`
+  }
+
+  const shapeType = classifyShape(style)
+  const parts = []
+  const baseAttrs = `fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}`
+
+  switch (shapeType) {
+    case 'roundedRect': {
+      const rx = Number(style.get('arcSize')) || 8
+      parts.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${rx}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'stadium': {
+      const rx = height / 2
+      parts.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${rx}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'cylinder': {
+      const ellipseRY = Math.min(12, height * 0.15)
+      // Body rectangle
+      parts.push(`<rect x="${x}" y="${y + ellipseRY}" width="${width}" height="${height - ellipseRY * 2}" ${baseAttrs}/>`)
+      // Bottom ellipse
+      parts.push(`<ellipse cx="${x + width / 2}" cy="${y + height - ellipseRY}" rx="${width / 2}" ry="${ellipseRY}" ${baseAttrs}/>`)
+      // Top ellipse (drawn last so it's on top)
+      parts.push(`<ellipse cx="${x + width / 2}" cy="${y + ellipseRY}" rx="${width / 2}" ry="${ellipseRY}" ${baseAttrs}/>`)
+      // Side lines connecting top and bottom ellipses
+      parts.push(`<line x1="${x}" y1="${y + ellipseRY}" x2="${x}" y2="${y + height - ellipseRY}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(`<line x1="${x + width}" y1="${y + ellipseRY}" x2="${x + width}" y2="${y + height - ellipseRY}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      break
+    }
+
+    case 'rhombus': {
+      const cx = x + width / 2
+      const cy = y + height / 2
+      const points = `${cx},${y} ${x + width},${cy} ${cx},${y + height} ${x},${cy}`
+      parts.push(`<polygon points="${points}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'ellipse': {
+      const cx = x + width / 2
+      const cy = y + height / 2
+      parts.push(`<ellipse cx="${cx}" cy="${cy}" rx="${width / 2}" ry="${height / 2}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'parallelogram': {
+      const skew = width * 0.2
+      const points = `${x + skew},${y} ${x + width},${y} ${x + width - skew},${y + height} ${x},${y + height}`
+      parts.push(`<polygon points="${points}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'document': {
+      const waveH = height * 0.1
+      const d = [
+        `M ${x} ${y}`,
+        `L ${x + width} ${y}`,
+        `L ${x + width} ${y + height - waveH}`,
+        `Q ${x + width * 0.75} ${y + height + waveH} ${x + width / 2} ${y + height - waveH}`,
+        `Q ${x + width * 0.25} ${y + height - waveH * 3} ${x} ${y + height - waveH}`,
+        'Z'
+      ].join(' ')
+      parts.push(`<path d="${d}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'cloud': {
+      // Simplified cloud: overlapping circles
+      const cx = x + width / 2
+      const cy = y + height / 2
+      const rx = width * 0.45
+      const ry = height * 0.35
+      const d = [
+        `M ${x + width * 0.25} ${cy + ry * 0.5}`,
+        `A ${rx * 0.5} ${ry * 0.6} 0 0 1 ${x + width * 0.15} ${cy - ry * 0.2}`,
+        `A ${rx * 0.5} ${ry * 0.6} 0 0 1 ${x + width * 0.35} ${cy - ry * 0.8}`,
+        `A ${rx * 0.5} ${ry * 0.5} 0 0 1 ${cx} ${y + height * 0.15}`,
+        `A ${rx * 0.5} ${ry * 0.5} 0 0 1 ${x + width * 0.7} ${cy - ry * 0.7}`,
+        `A ${rx * 0.6} ${ry * 0.7} 0 0 1 ${x + width * 0.85} ${cy}`,
+        `A ${rx * 0.5} ${ry * 0.6} 0 0 1 ${x + width * 0.75} ${cy + ry * 0.7}`,
+        `A ${rx * 0.6} ${ry * 0.4} 0 0 1 ${x + width * 0.5} ${cy + ry * 0.8}`,
+        `A ${rx * 0.5} ${ry * 0.4} 0 0 1 ${x + width * 0.25} ${cy + ry * 0.5}`,
+        'Z'
+      ].join(' ')
+      parts.push(`<path d="${d}" ${baseAttrs}/>`)
+      break
+    }
+
+    default: {
+      // Plain rectangle
+      parts.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}" ${baseAttrs}/>`)
+      break
+    }
+  }
+
+  // Text label
+  const label = decodeEntities(cell.value)
+  if (label) {
+    const textX = x + width / 2
+    const textY = y + height / 2
+    parts.push(
+      `<text x="${textX}" y="${textY}" text-anchor="middle" dominant-baseline="central" ` +
+      `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}">` +
+      `${escapeXml(label)}</text>`
+    )
+  }
+
+  return parts.join('\n')
+}
+
+// ============================================================================
+// Edge Rendering
+// ============================================================================
+
+/**
+ * Compute center point of a cell's geometry
+ * @param {object} cell
+ * @returns {{ x: number, y: number }}
+ */
+function cellCenter(cell) {
+  const geo = cell.geometry || { x: 0, y: 0, width: 120, height: 60 }
+  return {
+    x: geo.x + geo.width / 2,
+    y: geo.y + geo.height / 2
+  }
+}
+
+/**
+ * Render an edge cell to SVG elements
+ * @param {object} cell - parsed edge cell
+ * @param {Map<string, string>} style - parsed style
+ * @param {Map<string, object>} cellMap - id → cell lookup
+ * @returns {string} SVG markup
+ */
+function renderEdge(cell, style, cellMap) {
+  const strokeColor = style.get('strokeColor') || '#000000'
+  const strokeWidth = Number(style.get('strokeWidth')) || 1
+  const fontColor = style.get('fontColor') || '#000000'
+  const fontSize = Number(style.get('fontSize')) || 11
+
+  let dashAttr = ''
+  if (style.get('dashed') === '1') {
+    const pattern = style.get('dashPattern') || '3 3'
+    dashAttr = ` stroke-dasharray="${pattern}"`
+  }
+
+  const sourceCell = cell.source ? cellMap.get(cell.source) : null
+  const targetCell = cell.target ? cellMap.get(cell.target) : null
+
+  let x1 = 0, y1 = 0, x2 = 100, y2 = 100
+  if (sourceCell) {
+    const c = cellCenter(sourceCell)
+    x1 = c.x
+    y1 = c.y
+  }
+  if (targetCell) {
+    const c = cellCenter(targetCell)
+    x2 = c.x
+    y2 = c.y
+  }
+
+  const parts = []
+
+  // Arrow markers
+  const endArrow = style.get('endArrow') || 'classic'
+  const startArrow = style.get('startArrow') || ''
+  const endRef = markerRef(endArrow, 'end')
+  const startRef = markerRef(startArrow, 'start')
+  const colorStyle = ` style="color: ${strokeColor}"`
+
+  parts.push(
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ` +
+    `stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}` +
+    `${endRef}${startRef}${colorStyle} fill="none"/>`
+  )
+
+  // Edge label
+  const label = decodeEntities(cell.value)
+  if (label) {
+    const midX = (x1 + x2) / 2
+    const midY = (y1 + y2) / 2
+    parts.push(
+      `<text x="${midX}" y="${midY - 6}" text-anchor="middle" dominant-baseline="auto" ` +
+      `font-size="${fontSize}" fill="${fontColor}">${escapeXml(label)}</text>`
+    )
+  }
+
+  return parts.join('\n')
+}
+
+// ============================================================================
+// Main Converter
+// ============================================================================
+
+/**
+ * Convert draw.io mxGraphModel XML to standalone SVG
+ * @param {string} xmlString - draw.io XML content
+ * @returns {string} SVG markup
+ * @throws {Error} if input is empty or not a string
+ */
+export function drawioToSvg(xmlString) {
+  if (!xmlString || typeof xmlString !== 'string' || xmlString.trim().length === 0) {
+    throw new Error('Input XML string must be non-empty')
+  }
+
+  const { graph, cells } = parseDrawioXml(xmlString)
+
+  // Build cell lookup map
+  const cellMap = new Map()
+  for (const cell of cells) {
+    if (cell.id) cellMap.set(cell.id, cell)
+  }
+
+  // Separate vertices and edges
+  const vertices = cells.filter(c => c.vertex && c.parent !== '0')
+  const edges = cells.filter(c => c.edge)
+
+  // Calculate viewBox dimensions from content if default
+  let svgWidth = graph.pageWidth
+  let svgHeight = graph.pageHeight
+
+  // Expand viewBox if any shape extends beyond page bounds
+  for (const v of vertices) {
+    if (v.geometry) {
+      svgWidth = Math.max(svgWidth, v.geometry.x + v.geometry.width + 20)
+      svgHeight = Math.max(svgHeight, v.geometry.y + v.geometry.height + 20)
+    }
+  }
+
+  // Encode original XML as base64 for round-trip editing
+  const base64Xml = Buffer.from(xmlString, 'utf-8').toString('base64')
+
+  // Build SVG
+  const svgParts = []
+  svgParts.push(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" ` +
+    `viewBox="0 0 ${svgWidth} ${svgHeight}" data-drawio="${base64Xml}">`
+  )
+
+  // Defs (arrow markers)
+  svgParts.push(buildMarkerDefs())
+
+  // Background
+  if (graph.background && graph.background !== 'none') {
+    svgParts.push(`<rect width="100%" height="100%" fill="${graph.background}"/>`)
+  }
+
+  // Render vertices first, then edges on top
+  for (const v of vertices) {
+    const style = parseStyle(v.style)
+    svgParts.push(renderVertex(v, style))
+  }
+
+  for (const e of edges) {
+    const style = parseStyle(e.style)
+    svgParts.push(renderEdge(e, style, cellMap))
+  }
+
+  svgParts.push('</svg>')
+  return svgParts.join('\n')
+}
