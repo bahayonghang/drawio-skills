@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 
-import { ahToDrawioXml } from '../skills/drawio/src/dsl/ah-to-drawio.js'
+import { ahToDrawioXml } from '../skills/drawio/scripts/dsl/ah-to-drawio.js'
 
 test('ahToDrawioXml generates draw.io XML with nodes, edges, and math enabled', () => {
   const ah = `

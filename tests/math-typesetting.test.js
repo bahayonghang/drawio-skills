@@ -11,7 +11,7 @@ import {
   detectUnwrappedMath,
   ensureLatexDelimiters,
   prepareMathLabel
-} from '../skills/drawio/src/math/index.js'
+} from '../skills/drawio/scripts/math/index.js'
 
 test('wrapLatexInline wraps \\( ... \\) and forbids nested delimiters', () => {
   assert.equal(wrapLatexInline('y=Wx+b'), '\\(y=Wx+b\\)')
