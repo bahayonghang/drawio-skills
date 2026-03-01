@@ -72,14 +72,16 @@ export default defineConfig({
             { text: 'Overview', link: '/guide/design-system' },
             { text: 'Specification Format', link: '/guide/specification' },
             { text: 'Math Typesetting', link: '/guide/math-typesetting' },
-            { text: 'Export & Save', link: '/guide/export' }
+            { text: 'Export & Save', link: '/guide/export' },
+            { text: 'CLI Tool', link: '/guide/cli' }
           ]
         },
         {
           text: 'API Reference',
           items: [
             { text: 'MCP Tools', link: '/api/mcp-tools' },
-            { text: 'XML Format', link: '/api/xml-format' }
+            { text: 'XML Format', link: '/api/xml-format' },
+            { text: 'SVG Converter', link: '/api/svg-converter' }
           ]
         },
         {
@@ -87,7 +89,8 @@ export default defineConfig({
           items: [
             { text: 'Overview', link: '/examples/' },
             { text: 'Flowchart', link: '/examples/flowchart' },
-            { text: 'Architecture Diagram', link: '/examples/architecture' }
+            { text: 'Architecture Diagram', link: '/examples/architecture' },
+            { text: 'YAML Examples', link: '/examples/yaml-examples' }
           ]
         }
       ],
@@ -115,14 +118,16 @@ export default defineConfig({
             { text: '概览', link: '/zh/guide/design-system' },
             { text: '规格格式', link: '/zh/guide/specification' },
             { text: '数学公式排版', link: '/zh/guide/math-typesetting' },
-            { text: '导出与保存', link: '/zh/guide/export' }
+            { text: '导出与保存', link: '/zh/guide/export' },
+            { text: 'CLI 工具', link: '/zh/guide/cli' }
           ]
         },
         {
           text: 'API 参考',
           items: [
             { text: 'MCP 工具', link: '/zh/api/mcp-tools' },
-            { text: 'XML 格式', link: '/zh/api/xml-format' }
+            { text: 'XML 格式', link: '/zh/api/xml-format' },
+            { text: 'SVG 转换器', link: '/zh/api/svg-converter' }
           ]
         },
         {
@@ -130,7 +135,8 @@ export default defineConfig({
           items: [
             { text: '概览', link: '/zh/examples/' },
             { text: '流程图', link: '/zh/examples/flowchart' },
-            { text: '架构图', link: '/zh/examples/architecture' }
+            { text: '架构图', link: '/zh/examples/architecture' },
+            { text: 'YAML 示例', link: '/zh/examples/yaml-examples' }
           ]
         }
       ]

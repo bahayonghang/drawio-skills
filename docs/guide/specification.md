@@ -44,7 +44,7 @@ meta:
   title: My Diagram     # Diagram title (optional)
 ```
 
-**Theme options:** `tech-blue`, `academic`, `nature`, `dark`
+**Theme options:** `tech-blue`, `academic`, `academic-color`, `nature`, `dark`
 
 **Layout options:** `horizontal`, `vertical`, `hierarchical`
 
@@ -72,6 +72,10 @@ nodes:
     type: service       # Semantic type (optional, auto-detected)
     module: backend     # Parent module (optional)
     size: medium        # Size preset (optional, default: medium)
+    position:           # Manual position (optional, overrides auto-layout)
+      x: 100
+      y: 200
+    icon: aws.api_gateway  # Cloud icon (optional)
     style:              # Style overrides (optional)
       fillColor: "#custom"
 ```
@@ -90,6 +94,7 @@ edges:
     to: db              # Target node id (required)
     type: data          # Connector type (optional, default: primary)
     label: Query        # Edge label (optional)
+    labelPosition: center  # Label position: start | center | end (optional, default: center)
     style:              # Style overrides (optional)
       strokeColor: "#custom"
 ```
@@ -279,6 +284,11 @@ edges:
    - Warning at >20 nodes
    - Error at >30 nodes
    - Warning at >30 edges
+
+5. **XML Validation** (via CLI `--validate` or `validateXml()` API):
+   - mxCell ID uniqueness across all elements
+   - Edge source/target reference integrity
+   - Root cells (id=0, id=1) presence verification
 
 ## Related
 

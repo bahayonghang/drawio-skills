@@ -2,7 +2,7 @@
 
 Draw.io can render mathematical equations inside shape labels and text using MathJax.
 
-> **Official Reference**: https://www.drawio.com/doc/faq/math-typesetting
+> **Official Reference**: <https://www.drawio.com/doc/faq/math-typesetting>
 
 ## Supported Input Syntax
 

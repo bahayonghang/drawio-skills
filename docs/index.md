@@ -16,7 +16,7 @@ hero:
 features:
   - icon: 🎨
     title: Design System 2.0
-    details: 4 built-in themes (tech-blue, academic, nature, dark), 8px grid system, semantic shapes, typed connectors.
+    details: 5 built-in themes (tech-blue, academic, academic-color, nature, dark), 8px grid system, semantic shapes, typed connectors.
 
   - icon: 🚀
     title: 3 Clear Workflows
@@ -44,7 +44,19 @@ features:
 
   - icon: 💾
     title: Export & Save
-    details: Save as .drawio, .png, .svg, .pdf with theme-appropriate settings.
+    details: Save as .drawio files or convert to standalone SVG with embedded XML for round-trip editing. CLI tool support.
+
+  - icon: 🔧
+    title: CLI Tool
+    details: Convert YAML to draw.io XML or SVG from the command line. Supports theme selection, strict mode, and XML validation.
+
+  - icon: 🏷️
+    title: Cloud Icons
+    details: "AWS, GCP, Azure, Kubernetes icon support via node.icon field. Auto-maps to mxgraph icon libraries."
+
+  - icon: ✅
+    title: XML Validation
+    details: Structural validation for generated XML. Checks ID uniqueness, edge reference integrity, and root cell presence.
 ---
 
 ## Quick Start - 3 Workflows
@@ -84,12 +96,13 @@ Convert to presentation mode
 
 ## Design System Features
 
-### 4 Built-in Themes
+### 5 Built-in Themes
 
 | Theme | Use Case | Colors |
 |-------|----------|--------|
 | `tech-blue` | Technical docs, dashboards | Blue primary, modern |
 | `academic` | IEEE papers, publications | Grayscale, high contrast |
+| `academic-color` | Academic with color accents | Blue/green, Times New Roman |
 | `nature` | Environmental, lifecycle | Green palette |
 | `dark` | Presentations, dark mode | Dark background |
 

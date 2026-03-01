@@ -44,7 +44,7 @@ meta:
   title: 我的图表       # 图表标题（可选）
 ```
 
-**主题选项：** `tech-blue`、`academic`、`nature`、`dark`
+**主题选项：** `tech-blue`、`academic`、`academic-color`、`nature`、`dark`
 
 **布局选项：** `horizontal`、`vertical`、`hierarchical`
 
@@ -72,6 +72,10 @@ nodes:
     type: service       # 语义类型（可选，自动检测）
     module: backend     # 父模块（可选）
     size: medium        # 尺寸预设（可选，默认：medium）
+    position:           # 手动定位（可选，覆盖自动布局）
+      x: 100
+      y: 200
+    icon: aws.api_gateway  # 云图标（可选）
     style:              # 样式覆盖（可选）
       fillColor: "#custom"
 ```
@@ -89,7 +93,8 @@ edges:
   - from: api           # 源节点 id（必需）
     to: db              # 目标节点 id（必需）
     type: data          # 连接器类型（可选，默认：primary）
-    label: 查询         # 边标签（可选）
+    label: Query        # 边标签（可选）
+    labelPosition: center  # 标签位置：start | center | end（可选，默认：center）
     style:              # 样式覆盖（可选）
       strokeColor: "#custom"
 ```
@@ -279,6 +284,11 @@ edges:
    - 超过 20 个节点警告
    - 超过 30 个节点错误
    - 超过 30 条边警告
+
+5. **XML 验证**（通过 CLI `--validate` 或 `validateXml()` API）：
+   - 所有元素的 mxCell ID 唯一性
+   - 边的 source/target 引用完整性
+   - 根节点（id=0、id=1）存在性验证
 
 ## 相关
 

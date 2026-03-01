@@ -31,6 +31,7 @@ Once installed, creating a diagram is as simple as asking Claude:
 ```
 
 Claude will:
+
 1. Call `start_session` to open a browser window
 2. Generate the diagram XML
 3. Display the diagram in your browser

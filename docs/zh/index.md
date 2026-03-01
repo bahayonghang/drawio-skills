@@ -16,7 +16,7 @@ hero:
 features:
   - icon: 🎨
     title: 设计系统 2.0
-    details: 4 个内置主题（tech-blue、academic、nature、dark），8px 网格系统，语义形状，类型化连接器。
+    details: 5 个内置主题（tech-blue、academic、academic-color、nature、dark），8px 网格系统，语义形状，类型化连接器。
 
   - icon: 🚀
     title: 3 个清晰的工作流
@@ -44,7 +44,19 @@ features:
 
   - icon: 💾
     title: 导出与保存
-    details: 保存为 .drawio、.png、.svg、.pdf，支持主题适配设置。
+    details: 保存为 .drawio 文件或转换为独立 SVG（内嵌 XML 支持双向编辑）。支持 CLI 工具。
+
+  - icon: 🔧
+    title: CLI 工具
+    details: 通过命令行将 YAML 转换为 draw.io XML 或 SVG。支持主题选择、严格模式和 XML 验证。
+
+  - icon: 🏷️
+    title: 云图标
+    details: 通过 node.icon 字段支持 AWS、GCP、Azure、Kubernetes 图标。自动映射到 mxgraph 图标库。
+
+  - icon: ✅
+    title: XML 验证
+    details: 生成 XML 的结构验证。检查 ID 唯一性、边引用完整性和根节点存在性。
 ---
 
 ## 快速开始 - 3 个工作流
@@ -84,12 +96,13 @@ features:
 
 ## 设计系统特性
 
-### 4 个内置主题
+### 5 个内置主题
 
 | 主题 | 使用场景 | 颜色 |
 |------|----------|------|
 | `tech-blue` | 技术文档、仪表板 | 蓝色主色调，现代风格 |
 | `academic` | IEEE 论文、学术出版 | 灰度，高对比度 |
+| `academic-color` | 学术彩色版、会议海报 | 蓝绿色调，Times New Roman |
 | `nature` | 环境、生命周期 | 绿色调色板 |
 | `dark` | 演示、暗色模式 | 深色背景 |
 

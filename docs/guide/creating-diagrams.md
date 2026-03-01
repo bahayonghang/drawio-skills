@@ -69,6 +69,7 @@ Shapes are auto-detected from labels or explicitly specified:
 ### 8px Grid System
 
 All positions snap to 8px increments:
+
 - Node spacing: 32px (4 units)
 - Module padding: 24px (3 units)
 - Canvas padding: 32px (4 units)
@@ -80,12 +81,14 @@ Flowcharts are perfect for visualizing processes, workflows, and decision trees.
 ### Simple Process Flow
 
 **Prompt:**
+
 ```
 Create a flowchart showing a user login process with username/password input,
 validation, and success/error paths
 ```
 
 **What you get:**
+
 - Start node
 - Input fields (username, password)
 - Validation decision
@@ -95,12 +98,14 @@ validation, and success/error paths
 ### CI/CD Pipeline
 
 **Prompt:**
+
 ```
 Create a flowchart showing the CI/CD pipeline: code commit -> build ->
 test -> staging deploy -> production deploy with approval gates
 ```
 
 **What you get:**
+
 - Sequential process flow
 - Decision nodes for test results and approval
 - Parallel paths for different environments
@@ -113,12 +118,14 @@ Architecture diagrams help visualize system design and component relationships.
 ### AWS Serverless Architecture
 
 **Prompt:**
+
 ```
 Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
 and S3 for a serverless REST API. Use AWS icons.
 ```
 
 **Components:**
+
 - API Gateway (entry point)
 - Lambda functions (business logic)
 - DynamoDB (database)
@@ -132,12 +139,14 @@ Always mention "Use AWS icons" to get official AWS service icons in your diagram
 ### GCP Microservices
 
 **Prompt:**
+
 ```
 Generate a GCP architecture diagram with Cloud Run, Cloud SQL, and
 Cloud Storage for a web application. Use GCP icons.
 ```
 
 **Components:**
+
 - Cloud Run (containerized services)
 - Cloud SQL (managed database)
 - Cloud Storage (object storage)
@@ -147,12 +156,14 @@ Cloud Storage for a web application. Use GCP icons.
 ### Azure Web Application
 
 **Prompt:**
+
 ```
 Generate an Azure architecture diagram with App Service, SQL Database,
 and Blob Storage. Use Azure icons.
 ```
 
 **Components:**
+
 - App Service (web hosting)
 - SQL Database (relational data)
 - Blob Storage (files and media)
@@ -166,18 +177,21 @@ Sequence diagrams show interactions between different actors or components over 
 ### OAuth 2.0 Flow
 
 **Prompt:**
+
 ```
 Create a sequence diagram showing OAuth 2.0 authorization code flow
 between user, client app, auth server, and resource server
 ```
 
 **Participants:**
+
 - User (browser)
 - Client Application
 - Authorization Server
 - Resource Server
 
 **Flow:**
+
 1. User requests protected resource
 2. Client redirects to auth server
 3. User authenticates
@@ -188,12 +202,14 @@ between user, client app, auth server, and resource server
 ### Payment Processing
 
 **Prompt:**
+
 ```
 Create a sequence diagram for an e-commerce payment flow with customer,
 frontend, backend, payment gateway, and database
 ```
 
 **Participants:**
+
 - Customer
 - Frontend (web/mobile)
 - Backend API
@@ -207,18 +223,21 @@ Network diagrams visualize network topology and infrastructure.
 ### Corporate Network
 
 **Prompt:**
+
 ```
 Create a network diagram showing corporate network with DMZ, internal network,
 firewalls, and VPN access
 ```
 
 **Zones:**
+
 - Internet
 - DMZ (web servers, mail servers)
 - Internal Network (workstations, file servers)
 - Database Zone (database servers)
 
 **Security:**
+
 - Firewalls between zones
 - VPN gateway for remote access
 - IDS/IPS systems
@@ -226,12 +245,14 @@ firewalls, and VPN access
 ### Cloud VPC Architecture
 
 **Prompt:**
+
 ```
 Create an AWS VPC diagram with public and private subnets, NAT gateway,
 and internet gateway
 ```
 
 **Components:**
+
 - VPC (virtual private cloud)
 - Public Subnets (web tier)
 - Private Subnets (app tier, database tier)
@@ -247,30 +268,35 @@ UML diagrams help model software systems and their relationships.
 ### Class Diagram
 
 **Prompt:**
+
 ```
 Create a class diagram for a library management system with Book, Member,
 Loan, and Librarian classes
 ```
 
 **Classes:**
+
 - Book (title, author, ISBN)
 - Member (name, memberID, email)
 - Loan (loanDate, returnDate, status)
 - Librarian (employeeID, name)
 
 **Relationships:**
+
 - Member borrows Book (many-to-many via Loan)
 - Librarian manages Loan (one-to-many)
 
 ### State Diagram
 
 **Prompt:**
+
 ```
 Create a state diagram for an order lifecycle: pending, confirmed,
 shipped, delivered, cancelled
 ```
 
 **States:**
+
 - Pending (initial state)
 - Confirmed (payment received)
 - Shipped (in transit)
@@ -282,12 +308,14 @@ shipped, delivered, cancelled
 Add visual interest with animated connectors that show data flow.
 
 **Prompt:**
+
 ```
 Give me an animated connector diagram of transformer's architecture
 with encoder and decoder stacks
 ```
 
 **Features:**
+
 - Animated connectors showing data flow
 - Layer normalization
 - Residual connections
@@ -301,11 +329,13 @@ Mention "animated connectors" or "animated" in your prompt to enable flow animat
 ### Be Specific
 
 Instead of:
+
 ```
 Create an architecture diagram
 ```
 
 Use:
+
 ```
 Create an AWS architecture diagram with Lambda, API Gateway, and DynamoDB
 for a serverless REST API. Use AWS icons.
@@ -326,6 +356,7 @@ for a serverless REST API. Use AWS icons.
 ### Iterate
 
 Start with a basic diagram and refine:
+
 ```
 1. "Create a basic microservices architecture"
 2. "Add a message queue between services"
@@ -409,6 +440,7 @@ edges:
 ```
 
 Request structured format:
+
 ```
 /drawio create with structured format
 Create a microservices architecture...

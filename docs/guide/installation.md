@@ -110,6 +110,7 @@ Test the skill by asking Claude:
 ```
 
 If successful, you should see:
+
 1. A browser window opens automatically
 2. The draw.io editor loads
 3. Your diagram appears in real-time
@@ -141,6 +142,7 @@ export PORT=6003
 **Problem**: Browser window doesn't open automatically.
 
 **Solution**:
+
 1. Check if your default browser is set correctly
 2. Try manually opening the URL shown in the console
 3. Check firewall settings
@@ -150,6 +152,7 @@ export PORT=6003
 **Problem**: Diagram doesn't appear or update in the browser.
 
 **Solution**:
+
 1. Check that the browser URL has the `?mcp=` query parameter
 2. Refresh the browser page
 3. Restart the session
@@ -159,15 +162,20 @@ export PORT=6003
 **Problem**: Error message about MCP server not being found.
 
 **Solution**:
+
 1. Verify Node.js and npx are installed:
+
    ```bash
    node --version
    npx --version
    ```
+
 2. Try manually installing the MCP server:
+
    ```bash
    npm view @next-ai-drawio/mcp-server version
    ```
+
 3. Check your internet connection
 
 ### Permission Denied
@@ -175,11 +183,15 @@ export PORT=6003
 **Problem**: Permission denied when accessing the skills directory.
 
 **Solution**:
+
 1. Check directory permissions:
+
    ```bash
    ls -la ~/.claude/skills/
    ```
+
 2. Fix permissions if needed:
+
    ```bash
    chmod -R 755 ~/.claude/skills/drawio
    ```

@@ -27,12 +27,14 @@ Perfect for visualizing processes, workflows, and decision trees.
 ### Simple Process Flow
 
 **Prompt:**
+
 ```
 Create a flowchart showing a user login process with username/password input,
 validation, and success/error paths
 ```
 
 **Use Cases:**
+
 - User authentication flows
 - Business process documentation
 - Algorithm visualization
@@ -42,12 +44,14 @@ validation, and success/error paths
 ### CI/CD Pipeline
 
 **Prompt:**
+
 ```
 Create a flowchart showing the CI/CD pipeline: code commit -> build ->
 test -> staging deploy -> production deploy with approval gates
 ```
 
 **Use Cases:**
+
 - DevOps pipeline documentation
 - Deployment process visualization
 - Workflow automation
@@ -59,12 +63,14 @@ Visualize system design and component relationships.
 ### AWS Serverless
 
 **Prompt:**
+
 ```
 Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
 and S3 for a serverless REST API. Use AWS icons.
 ```
 
 **Use Cases:**
+
 - Cloud architecture documentation
 - System design proposals
 - Technical presentations
@@ -74,12 +80,14 @@ and S3 for a serverless REST API. Use AWS icons.
 ### GCP Microservices
 
 **Prompt:**
+
 ```
 Generate a GCP architecture diagram with Cloud Run, Cloud SQL, and
 Cloud Storage for a web application. Use GCP icons.
 ```
 
 **Use Cases:**
+
 - Microservices architecture
 - Cloud migration planning
 - Infrastructure documentation
@@ -87,12 +95,14 @@ Cloud Storage for a web application. Use GCP icons.
 ### Azure Web Application
 
 **Prompt:**
+
 ```
 Generate an Azure architecture diagram with App Service, SQL Database,
 and Blob Storage. Use Azure icons.
 ```
 
 **Use Cases:**
+
 - Web application architecture
 - Azure deployment planning
 - System integration documentation
@@ -104,12 +114,14 @@ Show interactions between different actors or components over time.
 ### OAuth 2.0 Flow
 
 **Prompt:**
+
 ```
 Create a sequence diagram showing OAuth 2.0 authorization code flow
 between user, client app, auth server, and resource server
 ```
 
 **Use Cases:**
+
 - Authentication flow documentation
 - API integration guides
 - Security protocol visualization
@@ -117,12 +129,14 @@ between user, client app, auth server, and resource server
 ### Payment Processing
 
 **Prompt:**
+
 ```
 Create a sequence diagram for an e-commerce payment flow with customer,
 frontend, backend, payment gateway, and database
 ```
 
 **Use Cases:**
+
 - Payment flow documentation
 - E-commerce system design
 - Transaction process visualization
@@ -134,12 +148,14 @@ Visualize network topology and infrastructure.
 ### Corporate Network
 
 **Prompt:**
+
 ```
 Create a network diagram showing corporate network with DMZ, internal network,
 firewalls, and VPN access
 ```
 
 **Use Cases:**
+
 - Network infrastructure documentation
 - Security architecture planning
 - IT infrastructure visualization
@@ -147,12 +163,14 @@ firewalls, and VPN access
 ### Cloud VPC
 
 **Prompt:**
+
 ```
 Create an AWS VPC diagram with public and private subnets, NAT gateway,
 and internet gateway
 ```
 
 **Use Cases:**
+
 - Cloud network design
 - VPC architecture documentation
 - Security zone planning
@@ -164,12 +182,14 @@ Model software systems and their relationships.
 ### Class Diagram
 
 **Prompt:**
+
 ```
 Create a class diagram for a library management system with Book, Member,
 Loan, and Librarian classes
 ```
 
 **Use Cases:**
+
 - Object-oriented design
 - Database schema planning
 - Software architecture documentation
@@ -177,12 +197,14 @@ Loan, and Librarian classes
 ### State Diagram
 
 **Prompt:**
+
 ```
 Create a state diagram for an order lifecycle: pending, confirmed,
 shipped, delivered, cancelled
 ```
 
 **Use Cases:**
+
 - State machine documentation
 - Workflow modeling
 - Business process states
@@ -194,12 +216,14 @@ Visualize data movement and processing.
 ### Data Pipeline
 
 **Prompt:**
+
 ```
 Create a data pipeline diagram showing data ingestion, processing,
 storage, and analytics
 ```
 
 **Use Cases:**
+
 - Data architecture documentation
 - ETL process visualization
 - Analytics pipeline design
@@ -207,12 +231,14 @@ storage, and analytics
 ### Real-time Analytics
 
 **Prompt:**
+
 ```
 Create a real-time analytics architecture with Kafka, Spark Streaming,
 and visualization dashboard
 ```
 
 **Use Cases:**
+
 - Streaming architecture
 - Real-time data processing
 - Analytics system design
@@ -224,6 +250,7 @@ and visualization dashboard
 ### 神经网络架构图
 
 **Prompt:**
+
 ```
 创建一个 IEEE 风格的神经网络架构图：
 1) 输入层：\(x \in \mathbb{R}^{H \times W \times C}\)
@@ -233,6 +260,7 @@ and visualization dashboard
 ```
 
 **Use Cases:**
+
 - 深度学习论文配图
 - 模型架构文档
 - IEEE/ACM 论文投稿
@@ -240,6 +268,7 @@ and visualization dashboard
 ### 信号处理流水线
 
 **Prompt:**
+
 ```
 创建一个信号处理流水线图：
 1) 输入信号：\(x(t)\)
@@ -250,6 +279,7 @@ and visualization dashboard
 ```
 
 **Use Cases:**
+
 - 数字信号处理论文配图
 - 通信系统文档
 - 信号分析工作流
@@ -257,6 +287,7 @@ and visualization dashboard
 ### 控制系统框图
 
 **Prompt:**
+
 ```
 创建一个控制系统框图：
 - 参考输入：\(r(t)\)
@@ -268,6 +299,7 @@ and visualization dashboard
 ```
 
 **Use Cases:**
+
 - 控制理论论文
 - 自动化系统文档
 - 学位论文配图
@@ -275,6 +307,7 @@ and visualization dashboard
 ### 机器学习流水线
 
 **Prompt:**
+
 ```
 创建一个 IEEE 论文用的机器学习流水线图：
 1) 数据：\(\mathcal{D} = \{(x_i, y_i)\}_{i=1}^N\)
@@ -285,6 +318,7 @@ and visualization dashboard
 ```
 
 **Use Cases:**
+
 - 机器学习论文
 - 训练流程文档
 - 模型开发指南
@@ -319,6 +353,12 @@ Enhance examples with specific details:
 "Create an AWS architecture like the serverless example,
 but add CloudFront CDN and Route 53 DNS"
 ```
+
+### YAML 规格示例
+
+可与 CLI 工具配合使用的完整 YAML 规格：
+
+- [YAML 示例](./yaml-examples.md) - 微服务、登录流程和神经网络示例，附 CLI 转换命令
 
 ## Next Steps
 

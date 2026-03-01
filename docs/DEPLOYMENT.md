@@ -12,6 +12,7 @@ This guide explains how to set up and deploy the documentation to GitHub Pages.
 4. Save the settings
 
 That's it! The documentation will automatically deploy when:
+
 - A new release is published
 - Changes are pushed to the `main` branch (affecting docs)
 
@@ -36,6 +37,7 @@ export default defineConfig({
 If you want to use a custom domain:
 
 1. Create a file `docs/public/CNAME` with your domain:
+
    ```
    docs.yourdomain.com
    ```
@@ -91,11 +93,13 @@ You can manually trigger deployment:
 ### Build Fails
 
 **Check the workflow logs:**
+
 1. Go to **Actions** tab
 2. Click on the failed workflow run
 3. Check the logs for errors
 
 **Common issues:**
+
 - Missing dependencies in `package.json`
 - Broken links in markdown files
 - Invalid VitePress configuration
@@ -103,6 +107,7 @@ You can manually trigger deployment:
 ### Deployment Fails
 
 **Check permissions:**
+
 1. Go to **Settings** → **Actions** → **General**
 2. Under **Workflow permissions**, select **Read and write permissions**
 3. Check **Allow GitHub Actions to create and approve pull requests**
@@ -110,11 +115,13 @@ You can manually trigger deployment:
 ### Documentation Not Updating
 
 **Clear cache:**
+
 - Clear your browser cache
 - Try incognito/private mode
 - Wait a few minutes for GitHub Pages to propagate
 
 **Check deployment:**
+
 - Go to **Actions** tab
 - Verify the workflow completed successfully
 - Check **Settings** → **Pages** for deployment status
@@ -200,6 +207,7 @@ export default defineConfig({
 ### 4. Monitor Build Times
 
 Keep an eye on build times. If they get too long:
+
 - Optimize images
 - Reduce the number of pages
 - Use incremental builds
@@ -209,6 +217,7 @@ Keep an eye on build times. If they get too long:
 ### Permissions
 
 The workflows use minimal permissions:
+
 - `contents: read` - Read repository contents
 - `pages: write` - Write to GitHub Pages
 - `id-token: write` - Write ID tokens for deployment

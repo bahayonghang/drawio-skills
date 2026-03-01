@@ -54,6 +54,7 @@ Neural network architecture:
 | Layout | Horizontal by default, vertical with "vertical layout" |
 
 **Complexity Guardrails:**
+
 - Warning at >20 nodes (suggest splitting)
 - Error at >30 nodes (require confirmation)
 - Info for labels >14 characters
@@ -170,13 +171,14 @@ Reorganize into 3 modules:
 
 All three workflows share the same design system:
 
-### 4 Built-in Themes
+### 5 Built-in Themes
 
 ```
-tech-blue   # Default, professional blue
-academic    # IEEE-ready grayscale
-nature      # Green environmental
-dark        # Presentation mode
+tech-blue      # Default, professional blue
+academic       # IEEE-ready grayscale
+academic-color # Color-enhanced academic
+nature         # Green environmental
+dark           # Presentation mode
 ```
 
 ### 8 Semantic Node Types
@@ -205,6 +207,7 @@ bidirectional # No arrows
 ### 8px Grid System
 
 All positions are snapped to 8px increments:
+
 - Node spacing: 32px (4 units)
 - Module padding: 24px (3 units)
 - Minimum margin: 8px (1 unit)

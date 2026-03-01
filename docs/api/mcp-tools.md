@@ -9,6 +9,7 @@ Opens a browser window with real-time diagram preview.
 ### Description
 
 This tool starts a new diagram editing session by:
+
 1. Starting an embedded HTTP server (default port: 6002)
 2. Opening the user's default browser with the draw.io editor
 3. Establishing a connection between the MCP server and the browser
@@ -85,6 +86,7 @@ Modifies an existing diagram by performing operations on specific cells (nodes, 
 - `operations` (required): Array of edit operations
 
 Each operation has:
+
 - `type`: Operation type (`update`, `add`, `delete`)
 - `cellId`: ID of the cell to modify
 - `properties`: Properties to update (for `update` and `add` operations)
@@ -127,6 +129,7 @@ Get the current diagram XML.
 ### Description
 
 Retrieves the current diagram XML from the browser. Useful for:
+
 - Inspecting the diagram structure
 - Getting cell IDs for editing
 - Saving the current state
@@ -257,6 +260,7 @@ rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000
 ```
 
 Common style properties:
+
 - `fillColor`: Background color (hex)
 - `strokeColor`: Border color (hex)
 - `fontColor`: Text color (hex)

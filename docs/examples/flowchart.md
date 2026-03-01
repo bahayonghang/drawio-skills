@@ -5,12 +5,14 @@ Flowcharts are perfect for visualizing processes, workflows, and decision trees.
 ## Simple Process Flow
 
 **Prompt:**
+
 ```
 Create a flowchart showing a user login process with username/password input,
 validation, and success/error paths
 ```
 
 **Description:**
+
 - Start node
 - Input fields (username, password)
 - Validation decision
@@ -18,6 +20,7 @@ validation, and success/error paths
 - Error path → Error message → Back to login
 
 **Use Cases:**
+
 - User authentication flows
 - Business process documentation
 - Algorithm visualization
@@ -25,18 +28,21 @@ validation, and success/error paths
 ## CI/CD Pipeline
 
 **Prompt:**
+
 ```
 Create a flowchart showing the CI/CD pipeline: code commit -> build ->
 test -> staging deploy -> production deploy with approval gates
 ```
 
 **Description:**
+
 - Sequential process flow
 - Decision nodes for test results and approval
 - Parallel paths for different environments
 - Error handling and rollback paths
 
 **Use Cases:**
+
 - DevOps pipeline documentation
 - Deployment process visualization
 - Workflow automation

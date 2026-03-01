@@ -24,6 +24,11 @@
 - 📚 **版本历史**：通过可视化缩略图恢复之前的图表版本
 - 🧮 **数学公式**：支持 LaTeX/AsciiMath 公式的 MathJax 渲染
 - 📐 **A-H 格式提取**：从文本或图片中提取结构化图表
+- 🖼️ **SVG 导出**：将图表转换为独立 SVG，内嵌 XML 支持双向编辑
+- 🔧 **CLI 工具**：命令行 YAML → draw.io XML/SVG 转换，支持主题和验证
+- ✅ **XML 验证**：ID 唯一性、边引用完整性、根节点结构验证
+- 🏷️ **云图标**：通过 `node.icon` 字段支持 AWS、GCP、Azure、Kubernetes 图标
+- 🎨 **5 个设计主题**：tech-blue、academic、academic-color、nature、dark 完整令牌系统
 
 ## 🚀 快速开始 - 3 个工作流
 
@@ -73,6 +78,11 @@
 - ✅ **图表示例**：流程图、架构图等即用示例
 - ✅ **自动 MCP 配置**：预配置的 `.mcp.json` 实现无缝集成
 - ✅ **安装脚本**：支持 Windows、Linux 和 macOS 的简易安装
+- ✅ **SVG 导出**：JavaScript SVG 转换器（零外部依赖）
+- ✅ **CLI 工具**：`node cli.js input.yaml [output]` 支持 `--theme`、`--strict`、`--validate` 选项
+- ✅ **XML 验证**：生成 XML 的结构完整性检查
+- ✅ **云图标支持**：通过 `node.icon` 实现 AWS/GCP/Azure/K8s 图标映射
+- ✅ **5 个设计主题**：tech-blue、academic、academic-color、nature、dark
 
 ## 📦 安装方法
 
@@ -100,16 +110,19 @@ cd drawio-skills
 #### Claude Desktop
 
 **macOS:**
+
 ```bash
 cp -r skills/drawio ~/Library/Application\ Support/Claude/skills/
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item -Recurse skills/drawio "$env:APPDATA\Claude\skills\"
 ```
 
 **Linux:**
+
 ```bash
 cp -r skills/drawio ~/.config/Claude/skills/
 ```
@@ -117,6 +130,7 @@ cp -r skills/drawio ~/.config/Claude/skills/
 然后在 `claude_desktop_config.json` 中添加：
 
 **macOS/Linux:**
+
 ```json
 {
   "mcpServers": {
@@ -129,6 +143,7 @@ cp -r skills/drawio ~/.config/Claude/skills/
 ```
 
 **Windows:**
+
 ```json
 {
   "mcpServers": {
@@ -144,16 +159,19 @@ cp -r skills/drawio ~/.config/Claude/skills/
 #### Gemini CLI
 
 **macOS:**
+
 ```bash
 cp -r skills/drawio ~/Library/Application\ Support/gemini/skills/
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item -Recurse skills/drawio "$env:APPDATA\gemini\skills\"
 ```
 
 **Linux:**
+
 ```bash
 cp -r skills/drawio ~/.gemini/skills/
 ```
@@ -161,6 +179,7 @@ cp -r skills/drawio ~/.gemini/skills/
 然后在 `settings.json` 中添加：
 
 **macOS/Linux:**
+
 ```json
 {
   "mcpServers": {
@@ -173,6 +192,7 @@ cp -r skills/drawio ~/.gemini/skills/
 ```
 
 **Windows:**
+
 ```json
 {
   "mcpServers": {
@@ -188,11 +208,13 @@ cp -r skills/drawio ~/.gemini/skills/
 #### Codex
 
 **macOS/Linux:**
+
 ```bash
 cp -r skills/drawio ~/.codex/skills/
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 Copy-Item -Recurse skills/drawio "$env:USERPROFILE\.codex\skills\"
 ```
@@ -200,6 +222,7 @@ Copy-Item -Recurse skills/drawio "$env:USERPROFILE\.codex\skills\"
 然后在 `~/.codex/config.toml` 中添加：
 
 **macOS/Linux:**
+
 ```toml
 [mcp_servers.drawio]
 command = "npx"
@@ -207,6 +230,7 @@ args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
 ```
 
 **Windows:**
+
 ```toml
 [mcp_servers.drawio]
 type = "stdio"
@@ -228,7 +252,37 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 | `edit_diagram` | 通过 cell ID 修改图表 |
 | `export_diagram` | 保存为 .drawio 文件 |
 
-详细的工具文档请参见 [docs/mcp-tools.md](./skills/drawio/docs/mcp-tools.md)。
+详细的工具文档请参见 [docs/mcp-tools.md](./skills/drawio/references/docs/mcp-tools.md)。
+
+## 🔧 CLI 工具
+
+通过命令行将 YAML 规格转换为 draw.io XML 或 SVG：
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml                    # → 标准输出 XML
+node skills/drawio/scripts/cli.js input.yaml output.drawio       # → .drawio 文件
+node skills/drawio/scripts/cli.js input.yaml output.svg          # → .svg 文件
+node skills/drawio/scripts/cli.js input.yaml --theme academic    # 指定主题
+node skills/drawio/scripts/cli.js input.yaml --strict            # 超过30个节点时报错
+node skills/drawio/scripts/cli.js input.yaml --validate          # XML 验证
+```
+
+详细文档请参见 [CLI 工具指南](https://bahayonghang.github.io/drawio-skills/zh/guide/cli)。
+
+## 🖼️ SVG 导出
+
+以编程方式将 draw.io XML 转换为独立 SVG：
+
+```javascript
+import { drawioToSvg } from './skills/drawio/scripts/svg/drawio-to-svg.js'
+const svg = drawioToSvg(xmlString)
+```
+
+功能特性：
+
+- 8 种形状类型（圆角矩形、胶囊形、圆柱体、菱形、椭圆、平行四边形、文档形、云形）
+- 4 种箭头标记（block、open、classic、diamond），支持 startArrow + endArrow
+- 将原始 XML 以 `data-drawio` 属性嵌入，支持在 draw.io 中双向编辑
 
 ## 📖 文档
 
@@ -241,13 +295,13 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 | 复刻现有图片 | [workflows/replicate.md](./skills/drawio/workflows/replicate.md) |
 | 编辑图表 | [workflows/edit.md](./skills/drawio/workflows/edit.md) |
 | **参考文档** | |
-| A-H 格式 | [docs/ah-format.md](./skills/drawio/docs/ah-format.md) |
-| MCP 工具 | [docs/mcp-tools.md](./skills/drawio/docs/mcp-tools.md) |
-| 样式预设 | [docs/style-presets.md](./skills/drawio/docs/style-presets.md) |
-| 数学公式 | [docs/math-typesetting.md](./skills/drawio/docs/math-typesetting.md) |
-| IEEE 图表 | [docs/ieee-network-diagrams.md](./skills/drawio/docs/ieee-network-diagrams.md) |
-| XML 格式 | [docs/xml-format.md](./skills/drawio/docs/xml-format.md) |
-| 示例 | [docs/examples.md](./skills/drawio/docs/examples.md) |
+| A-H 格式 | [docs/ah-format.md](./skills/drawio/references/docs/ah-format.md) |
+| MCP 工具 | [docs/mcp-tools.md](./skills/drawio/references/docs/mcp-tools.md) |
+| 样式预设 | [docs/style-presets.md](./skills/drawio/references/docs/style-presets.md) |
+| 数学公式 | [docs/math-typesetting.md](./skills/drawio/references/docs/math-typesetting.md) |
+| IEEE 图表 | [docs/ieee-network-diagrams.md](./skills/drawio/references/docs/ieee-network-diagrams.md) |
+| XML 格式 | [docs/xml-format.md](./skills/drawio/references/docs/xml-format.md) |
+| 示例 | [docs/examples.md](./skills/drawio/references/docs/examples.md) |
 
 ### 支持的图表类型
 
@@ -267,32 +321,55 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 drawio-skills/
 ├── skills/
 │   └── drawio/
-│       ├── SKILL.md                  # 主技能导航
-│       ├── .mcp.json                 # MCP server 配置
+│       ├── SKILL.md                  # 主技能导航 (v3.0.0)
+│       ├── .mcp.json                 # MCP 服务器配置
 │       │
 │       ├── workflows/                # 工作流定义
 │       │   ├── create.md             # /drawio create 工作流
 │       │   ├── replicate.md          # /drawio replicate 工作流
 │       │   └── edit.md               # /drawio edit 工作流
 │       │
-│       ├── docs/                     # 参考文档
-│       │   ├── ah-format.md          # A-H 格式参考
-│       │   ├── mcp-tools.md          # MCP 工具参考
-│       │   ├── style-presets.md      # 视觉样式预设
-│       │   ├── math-typesetting.md   # LaTeX/AsciiMath 指南
-│       │   ├── ieee-network-diagrams.md # IEEE 学术图表
-│       │   ├── xml-format.md         # Draw.io XML 格式
-│       │   └── examples.md           # 使用示例
+│       ├── references/               # 知识与参考文档
+│       │   ├── docs/                 # 参考文档
+│       │   │   ├── ah-format.md          # A-H 格式参考
+│       │   │   ├── mcp-tools.md          # MCP 工具参考
+│       │   │   ├── style-presets.md      # 视觉样式预设
+│       │   │   ├── math-typesetting.md   # LaTeX/AsciiMath 指南
+│       │   │   ├── ieee-network-diagrams.md # IEEE 学术图表
+│       │   │   ├── xml-format.md         # Draw.io XML 格式
+│       │   │   └── examples.md           # 使用示例
+│       │   ├── examples/             # YAML 示例
+│       │   │   ├── microservices.yaml    # 微服务架构
+│       │   │   ├── login-flow.yaml       # 登录流程（含决策）
+│       │   │   └── neural-network.yaml   # 学术神经网络
+│       │   └── theme.schema.json     # JSON Schema 验证
 │       │
-│       ├── scripts/                  # 安装脚本
-│       │   ├── install.sh            # Linux/macOS
-│       │   └── install.bat           # Windows
+│       ├── assets/                   # 静态图形资源
+│       │   ├── themes/               # 设计系统主题
+│       │   │   ├── tech-blue.json        # 默认技术主题
+│       │   │   ├── academic.json         # IEEE 灰度主题
+│       │   │   ├── academic-color.json   # IEEE 彩色主题
+│       │   │   ├── nature.json           # 环境主题
+│       │   │   └── dark.json             # 深色模式主题
+│       │   └── examples/             # Draw.io 示例
+│       │       ├── microservices.drawio
+│       │       ├── login-flow.drawio
+│       │       └── neural-network.drawio
 │       │
-│       └── src/                      # 源代码
-│           ├── dsl/                  # A-H → XML 转换器
-│           │   └── ah-to-drawio.js
-│           └── math/                 # 数学工具
-│               └── index.js
+│       └── scripts/                  # 脚本和源码
+│           ├── install.sh            # Linux/macOS 安装脚本
+│           ├── install.bat           # Windows 安装脚本
+│           ├── dsl/                  # DSL 转换器
+│           │   ├── spec-to-drawio.js # YAML → draw.io XML（设计系统 2.0）
+│           │   ├── spec-to-drawio.test.js
+│           │   ├── ah-to-drawio.js   # 旧版 A-H → XML
+│           │   └── ah-to-drawio.test.js
+│           ├── svg/                  # SVG 导出
+│           │   ├── drawio-to-svg.js  # draw.io XML → SVG 转换器
+│           │   └── drawio-to-svg.test.js
+│           ├── math/                 # 数学工具
+│           │   └── index.js
+│           └── cli.js                # CLI 工具
 │
 ├── docs/                             # VitePress 文档站点
 ├── README.md                         # 英文文档

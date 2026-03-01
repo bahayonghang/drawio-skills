@@ -8,12 +8,12 @@ The Draw.io Skill Design System 2.0 provides unified theming, semantic shapes, a
 ┌─────────────────────────────────────────────────────────────┐
 │                    Design System 2.0                        │
 ├─────────────────┬─────────────────┬────────────────────────┤
-│  4 Themes       │  8 Shapes       │  5 Connectors          │
+│  5 Themes       │  8 Shapes       │  5 Connectors          │
 │  - tech-blue    │  - service      │  - primary             │
 │  - academic     │  - database     │  - data                │
-│  - nature       │  - decision     │  - optional            │
-│  - dark         │  - terminal     │  - dependency          │
-│                 │  - queue        │  - bidirectional       │
+│  - academic-col │  - decision     │  - optional            │
+│  - nature       │  - terminal     │  - dependency          │
+│  - dark         │  - queue        │  - bidirectional       │
 │                 │  - user         │                        │
 │                 │  - document     │  8px Grid System       │
 │                 │  - formula      │  Auto-snap alignment   │
@@ -51,12 +51,36 @@ The Draw.io Skill Design System 2.0 provides unified theming, semantic shapes, a
 | Text | `#111827` |
 
 Features:
+
 - High contrast for print
 - Grayscale-friendly
 - Serif font support
 
 ```
 /drawio create with academic theme
+```
+
+### academic-color
+
+**Use case:** Academic papers with color accents, conference posters, digital presentations
+
+| Token | Value |
+|-------|-------|
+| Primary | `#1B4F72` |
+| Primary Light | `#D6EAF8` |
+| Secondary | `#1E8449` |
+| Background | `#FFFFFF` |
+| Text | `#1C2833` |
+
+Features:
+
+- Times New Roman font family
+- Color-enhanced for digital viewing
+- Bidirectional arrows with startArrow support
+- Compatible with color printing
+
+```
+/drawio create with academic-color theme
 ```
 
 ### nature
@@ -199,6 +223,29 @@ nodes:
 
 **Auto-detection:** Labels containing `$$`, `\(`, or `\[`
 
+## Cloud Icons
+
+Use the `icon` field on nodes to display cloud provider icons:
+
+| Prefix | Provider | Example |
+|--------|----------|---------|
+| `aws.` | Amazon Web Services | `aws.lambda`, `aws.s3`, `aws.api_gateway` |
+| `gcp.` | Google Cloud Platform | `gcp.cloud_functions`, `gcp.bigquery` |
+| `azure.` | Microsoft Azure | `azure.function_apps`, `azure.sql_database` |
+| `k8s.` | Kubernetes | `k8s.pod`, `k8s.svc`, `k8s.deploy` |
+
+```yaml
+nodes:
+  - id: fn
+    label: Lambda Function
+    icon: aws.lambda
+  - id: storage
+    label: S3 Bucket
+    icon: aws.s3
+```
+
+When an icon is specified, the node uses the cloud provider's official shape with the label positioned below.
+
 ## Connectors
 
 ### primary
@@ -310,6 +357,7 @@ The design system includes automatic complexity checking:
 | Label length | >14 chars | - |
 
 When thresholds are exceeded:
+
 - **Warning:** Suggestion to simplify
 - **Error:** Confirmation required to proceed
 

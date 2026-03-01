@@ -73,6 +73,24 @@ Change the connection from API to DB to data flow
 → Arrow style updates
 ```
 
+### Position and Label Position
+
+Use the `position` field to manually place a node, overriding auto-layout:
+
+```
+/drawio edit
+Move the "API Gateway" node to position x=200, y=100
+```
+
+Use the `labelPosition` field to control where an edge label appears:
+
+```
+/drawio edit
+Set the label on the API→DB edge to appear at the start of the connector
+```
+
+`labelPosition` accepts `start`, `center` (default), or `end`.
+
 ## Natural Language Editing
 
 The simplest way to edit a diagram is to describe what you want to change.
@@ -207,6 +225,7 @@ This performs three updates in one call:
 ```
 
 Common colors:
+
 - Green: `#d5e8d4` (success)
 - Blue: `#dae8fc` (process)
 - Yellow: `#fff2cc` (warning)
@@ -219,6 +238,7 @@ Common colors:
 ```
 
 Common shapes:
+
 - Rectangle: `shape=rectangle`
 - Ellipse: `shape=ellipse`
 - Diamond: `shape=rhombus`
@@ -266,16 +286,19 @@ When editing, you can modify various style properties:
 ## Example: Complete Edit Workflow
 
 1. **View current diagram**:
+
    ```
    "Show me the current diagram structure"
    ```
 
 2. **Identify elements to edit**:
+
    ```
    "What are the cell IDs in this diagram?"
    ```
 
 3. **Make changes**:
+
    ```
    "Update cell 2: change label to 'API Gateway' and make it blue"
    "Update cell 3: change label to 'Lambda Function' and make it orange"
@@ -283,6 +306,7 @@ When editing, you can modify various style properties:
    ```
 
 4. **Verify changes**:
+
    ```
    "Show me the updated diagram"
    ```
@@ -300,11 +324,13 @@ Start with natural language descriptions. Claude will handle the cell IDs for yo
 ### Be Specific
 
 Instead of:
+
 ```
 "Change the color"
 ```
 
 Use:
+
 ```
 "Change cell 3's background color to light blue (#dae8fc)"
 ```
@@ -359,21 +385,25 @@ modules:
 ## Troubleshooting
 
 ### "Cell not found"
+
 - Label may have changed
 - Call `get_diagram` to see current state
 - Use exact label text
 
 ### Style looks wrong after edit
+
 - Verify theme is consistent
 - Check if type was changed accidentally
 - Re-apply theme if mixed styles
 
 ### New elements don't match existing
+
 - Specify semantic type for new nodes
 - Specify connector type for new edges
 - Consider theme switch if inconsistent
 
 ### Grid alignment off
+
 - Use layout operations to re-align
 - Snap positions to 8px grid
 - Increase spacing if crowded

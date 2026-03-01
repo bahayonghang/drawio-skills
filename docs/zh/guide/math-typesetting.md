@@ -2,7 +2,7 @@
 
 Draw.io 支持在图形的文字与标签中渲染数学公式，底层使用 MathJax。
 
-> **官方文档**: https://www.drawio.com/doc/faq/math-typesetting
+> **官方文档**: <https://www.drawio.com/doc/faq/math-typesetting>
 
 ## 支持的输入语法
 

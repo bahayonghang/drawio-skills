@@ -178,21 +178,25 @@ modules:
 ## Troubleshooting
 
 ### Image too complex?
+
 - Split into multiple diagrams (max 20-30 nodes each)
 - Focus on one module at a time
 - Use hierarchical layout for large structures
 
 ### Colors don't match original?
+
 - Design system applies consistent theme colors
 - Original colors are mapped to semantic types
 - Use explicit style overrides for custom colors
 
 ### Shapes different from original?
+
 - Design system maps to semantic shapes
 - Explicit `type:` override available in spec
 - Check semantic shape documentation
 
 ### Text labels truncated?
+
 - Keep labels ≤ 14 characters
 - Use abbreviations
 - Move details to tooltips or annotations
