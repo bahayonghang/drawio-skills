@@ -26,6 +26,8 @@ help:
     @echo "✨ 代码质量："
     @echo "  just lint           - 检查 Markdown 文件（需要 markdownlint-cli）"
     @echo "  just format         - 格式化 Markdown 文件（需要 prettier）"
+    @echo "  just test           - 运行测试用例"
+    @echo "  just ci             - 运行 CI 环境测试（相当于 lint + test）"
     @echo ""
     @echo "📁 实用工具："
     @echo "  just tree           - 显示项目目录结构"
@@ -76,9 +78,17 @@ tree:
 # 检查 Markdown 文件（需要 markdownlint-cli）
 lint:
     @echo "🔍 正在检查 Markdown 文件..."
-    markdownlint docs/**/*.md skills/**/*.md README*.md
+    npx markdownlint-cli docs/**/*.md skills/**/*.md README*.md
 
 # 格式化 Markdown 文件（需要 prettier）
 format:
     @echo "✨ 正在格式化 Markdown 文件..."
-    prettier --write "docs/**/*.md" "skills/**/*.md" "README*.md"
+    npx prettier --write "docs/**/*.md" "skills/**/*.md" "README*.md"
+
+# 运行测试用例
+test:
+    @echo "🧪 正在运行测试..."
+    npm test
+
+# 运行所有 CI 检查和测试
+ci: lint test
