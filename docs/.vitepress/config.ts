@@ -5,7 +5,7 @@ export default defineConfig({
   description: 'AI-powered diagram creation with Design System and real-time browser preview',
 
   // GitHub Pages base URL (uncomment if deploying to a subdirectory)
-  // base: '/drawio-skills/',
+  base: '/drawio-skills/',
 
   lastUpdated: true,
   cleanUrls: true,
