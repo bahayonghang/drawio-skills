@@ -1,36 +1,46 @@
 # Repository Guidelines
 
-## 项目结构与模块组织
-本仓库是 drawio 技能与文档集合，核心内容集中在文档与 skill 说明。主要目录：
-- `skills/drawio/`：技能本体（`SKILL.md`、`.mcp.json`、`references/`、`scripts/`）。
-- `docs/`：VitePress 文档站（中英文指南与 API 说明）。
-- `examples/`、`imgs/`：示例与配图资源。
-- `.github/workflows/`：文档构建与部署流水线。
+## Project Structure & Module Organization
+`skills/drawio/` is the core skill package:
+- `scripts/` contains conversion and CLI logic (`dsl/`, `math/`, `svg/`).
+- `references/` stores format specs and YAML examples used as source-of-truth docs.
+- `assets/` includes theme JSON files and sample `.drawio` diagrams.
+- `workflows/` defines create/edit/replicate operating guides.
 
-## 构建、测试与开发命令
-优先使用 npm 脚本或 justfile：
-- `npm run docs:dev`：启动 VitePress 开发服务器。
-- `npm run docs:build`：构建静态文档。
-- `npm run docs:preview`：预览构建产物。
-- `just docs` / `just docs-build` / `just docs-preview`：上述命令的快捷入口。
-- `just install`：安装依赖。
-- `just clean`：清理 `docs/.vitepress` 与 `node_modules`。
+`docs/` hosts the VitePress site (with `docs/zh/` for Chinese content).  
+`tests/` holds repo-level Node tests, while module-level tests also live next to source as `*.test.js`.  
+`examples/` and `imgs/` provide demo artifacts for docs and validation.
 
-## 编码风格与命名规范
-当前以文档为主，遵循简洁、结构清晰的 Markdown 风格：
-- 文档路径建议采用 `docs/guide/...`、`docs/api/...` 的分层方式。
-- 文件命名偏向短横线或小写英文（如 `getting-started.md`）。
-- 可选工具：`just lint`（markdownlint）与 `just format`（prettier）。
+## Build, Test, and Development Commands
+- `npm install` or `just install`: install dependencies.
+- `npm run docs:dev` or `just docs`: start local docs server with hot reload.
+- `npm run docs:build` or `just docs-build`: generate production documentation.
+- `npm run docs:preview` or `just docs-preview`: preview built docs locally.
+- `npm test` or `just test`: run the test suite via `node --test`.
+- `just lint`: lint Markdown (`markdownlint-cli`).
+- `just format`: format Markdown (`prettier`).
+- `just ci`: run lint + tests (closest local CI check).
 
-## 测试指南
-本仓库暂无自动化测试框架。变更文档后建议本地预览：
-- `npm run docs:dev` 或 `just docs`，手动检查链接与图像。
+GitHub Actions use Node 20; keep local Node aligned when possible.
 
-## 提交与 PR 规范
-Git 历史以 Conventional Commits 为主，常见格式：
-- `type: message`，如 `docs: 更新 README`、`feat(examples): 添加示例`。
-- 可包含 emoji 前缀（如 `✨ feat(...)`、`📝 docs:`、`🔧 chore:`）。
-PR 建议包含：变更说明、关联 issue（若有）、影响范围，以及文档截图或链接（若涉及展示）。
+## Coding Style & Naming Conventions
+Use ESM JavaScript with 2-space indentation, single quotes, and existing project style (minimal semicolons).  
+Prefer small, composable functions for parsing and transformation logic.  
+Do not hide failures with silent fallbacks; throw explicit errors for invalid input.  
+Use kebab-case filenames (for example, `spec-to-drawio.js`) and `*.test.js` for tests.
 
-## 额外说明
-若涉及方案、计划或规格变更，请先参考 `openspec/AGENTS.md` 的流程与模板要求，确保变更记录可追踪喵～
+## Testing Guidelines
+Use Node’s built-in testing stack: `node:test` and `node:assert/strict`.  
+Add or update tests for every behavior change in DSL parsing, math typesetting, and XML/SVG conversion paths.  
+Keep tests deterministic; store fixtures close to the related module or in `tests/`.
+
+## Commit & Pull Request Guidelines
+Follow Conventional Commits as seen in history: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`, with optional scope and emoji.  
+Examples: `feat(cli): ✨ add SVG export`, `fix(docs): restore base path`.
+
+PRs should include:
+- a concise summary of problem and solution,
+- linked issue (if applicable),
+- affected paths/modules,
+- verification commands and outputs (`just ci`, `npm run docs:build`),
+- screenshots for documentation UI changes.

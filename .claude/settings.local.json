@@ -12,7 +12,12 @@
       "mcp__plugin_serena_serena__find_symbol",
       "mcp__plugin_serena_serena__replace_content",
       "mcp__plugin_serena_serena__replace_symbol_body",
-      "mcp__plugin_serena_serena__think_about_whether_you_are_done"
+      "mcp__plugin_serena_serena__think_about_whether_you_are_done",
+      "mcp__drawio__start_session",
+      "mcp__plugin_oh-my-claudecode_t__state_list_active",
+      "mcp__plugin_oh-my-claudecode_t__state_clear",
+      "Skill(git-commit-cn)",
+      "Skill(git-commit-cn:*)"
     ]
   }
 }
