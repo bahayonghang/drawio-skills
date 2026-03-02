@@ -31,7 +31,13 @@ Step 3: Parse Edit Instructions
 ├── Layout operations (rearrange)
 └── Theme operations (switch theme)
 
-Step 4: Apply Design System
+Step 4: Draft Modification & Confirm (For restructure)
+├── If the edit involves major structural reorganization:
+│   ├── Present the modified logical flow as an ASCII text-art graph
+│   └── ⚠️ PAUSE and wait for user's confirmation before applying
+└── For minor edits (labels/colors/themes), proceed directly
+
+Step 5: Apply Design System
 ├── Preserve existing theme unless switching
 ├── New nodes use semantic types
 ├── New edges use typed connectors

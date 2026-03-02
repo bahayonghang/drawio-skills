@@ -291,9 +291,9 @@ Features:
 | Topic | File |
 |-------|------|
 | **Workflows** | |
-| Create from scratch | [workflows/create.md](./skills/drawio/workflows/create.md) |
-| Replicate existing | [workflows/replicate.md](./skills/drawio/workflows/replicate.md) |
-| Edit diagram | [workflows/edit.md](./skills/drawio/workflows/edit.md) |
+| Create from scratch | [workflows/create.md](./skills/drawio/references/workflows/create.md) |
+| Replicate existing | [workflows/replicate.md](./skills/drawio/references/workflows/replicate.md) |
+| Edit diagram | [workflows/edit.md](./skills/drawio/references/workflows/edit.md) |
 | **References** | |
 | A-H Format | [docs/ah-format.md](./skills/drawio/references/docs/ah-format.md) |
 | MCP Tools | [docs/mcp-tools.md](./skills/drawio/references/docs/mcp-tools.md) |

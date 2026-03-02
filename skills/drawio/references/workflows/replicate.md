@@ -28,7 +28,11 @@ Step 3: Structured Extraction
 ├── Apply semantic shape mapping
 └── Mark missing info as "未提及"
 
-Step 4: Quality Validation
+Step 4: Logic Verification (Mandatory)
+├── Translate structural analysis into a pure ASCII logical flow graph
+└── ⚠️ PAUSE and wait for user's confirmation to ensure no misinterpretation
+
+Step 5: Quality Validation
 ├── Check: modules ≤ 5
 ├── Check: nodes per module 3-7
 ├── Check: labels ≤ 14 characters

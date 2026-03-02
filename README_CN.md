@@ -291,9 +291,9 @@ const svg = drawioToSvg(xmlString)
 | 主题 | 文件 |
 |------|------|
 | **工作流** | |
-| 从零开始创建 | [workflows/create.md](./skills/drawio/workflows/create.md) |
-| 复刻现有图片 | [workflows/replicate.md](./skills/drawio/workflows/replicate.md) |
-| 编辑图表 | [workflows/edit.md](./skills/drawio/workflows/edit.md) |
+| 从零开始创建 | [workflows/create.md](./skills/drawio/references/workflows/create.md) |
+| 复刻现有图片 | [workflows/replicate.md](./skills/drawio/references/workflows/replicate.md) |
+| 编辑图表 | [workflows/edit.md](./skills/drawio/references/workflows/edit.md) |
 | **参考文档** | |
 | A-H 格式 | [docs/ah-format.md](./skills/drawio/references/docs/ah-format.md) |
 | MCP 工具 | [docs/mcp-tools.md](./skills/drawio/references/docs/mcp-tools.md) |
