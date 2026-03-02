@@ -314,8 +314,8 @@ export function calculateLayout(spec, theme) {
       const semanticType = detectSemanticType(node.label, node.type)
       const size = getNodeSize(node.size, semanticType)
       positions.set(node.id, {
-        x: snapToGrid(node.position.x, gridSize),
-        y: snapToGrid(node.position.y, gridSize),
+        x: snapToGrid(node.position.x - size.width / 2, gridSize),
+        y: snapToGrid(node.position.y - size.height / 2, gridSize),
         width: size.width,
         height: size.height
       })
@@ -484,8 +484,18 @@ export function generateNodeStyle(node, theme) {
   const nodeTheme = theme.node?.[semanticType] || theme.node?.default || {}
   const defaultTheme = theme.node?.default || {}
 
-  const fillColor = node.style?.fillColor || nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE'
-  const strokeColor = node.style?.strokeColor || nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB'
+  // Resolve theme token (e.g., $primary)
+  const resolveColor = (val, defaultVal) => {
+    if (!val) return defaultVal
+    if (typeof val === 'string' && val.startsWith('$')) {
+      const tokenName = val.substring(1)
+      return theme.colors?.[tokenName] || defaultVal
+    }
+    return val
+  }
+
+  const fillColor = resolveColor(node.style?.fillColor, nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
+  const strokeColor = resolveColor(node.style?.strokeColor, nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
   const strokeWidth = node.style?.strokeWidth || nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5
   const fontColor = node.style?.fontColor || nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
   const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
@@ -535,7 +545,16 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
   const connectorType = edge.type || 'primary'
   const connectorTheme = theme.connector?.[connectorType] || theme.connector?.primary || {}
 
-  const strokeColor = edge.style?.strokeColor || connectorTheme.strokeColor || '#1E293B'
+  const resolveColor = (val, defaultVal) => {
+    if (!val) return defaultVal
+    if (typeof val === 'string' && val.startsWith('$')) {
+      const tokenName = val.substring(1)
+      return theme.colors?.[tokenName] || defaultVal
+    }
+    return val
+  }
+
+  const strokeColor = resolveColor(edge.style?.strokeColor, connectorTheme.strokeColor || '#1E293B')
   const strokeWidth = edge.style?.strokeWidth || connectorTheme.strokeWidth || 2
   const dashed = edge.style?.dashed ?? connectorTheme.dashed ?? false
   const dashPattern = edge.style?.dashPattern || connectorTheme.dashPattern || '6 4'
@@ -560,6 +579,12 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
     parts.push(`startArrow=${startArrow}`)
     parts.push(`startFill=${startFill ? 1 : 0}`)
   }
+
+  // Edge entry/exit routing
+  if (edge.style?.exitX !== undefined) parts.push(`exitX=${edge.style.exitX}`)
+  if (edge.style?.exitY !== undefined) parts.push(`exitY=${edge.style.exitY}`)
+  if (edge.style?.entryX !== undefined) parts.push(`entryX=${edge.style.entryX}`)
+  if (edge.style?.entryY !== undefined) parts.push(`entryY=${edge.style.entryY}`)
 
   if (dashed) {
     parts.push('dashed=1')
@@ -740,6 +765,114 @@ export function buildXml(spec, theme, layout) {
 }
 
 // ============================================================================
+// Spec Validation Functions
+// ============================================================================
+
+/**
+ * Validate all color values in spec against theme tokens and hex format.
+ * Warns on invalid values; does not throw by default.
+ * @param {Object} spec - Parsed YAML spec
+ * @param {Object} theme - Loaded theme object
+ * @returns {Array<string>} Array of validation warning messages
+ */
+export function validateColorScheme(spec, theme) {
+  const warnings = []
+  const validTokens = new Set(Object.keys(theme.colors || {}).map(k => `$${k}`))
+  const hexRegex = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
+
+  const checkColor = (value, context) => {
+    if (!value) return
+    if (validTokens.has(value)) return      // valid theme token
+    if (hexRegex.test(value)) return        // valid hex color
+    const tokenSamples = [...validTokens].slice(0, 3).join(', ')
+    warnings.push(
+      `Invalid color "${value}" in ${context}. ` +
+      `Use a hex code (#RGB or #RRGGBB) or a theme token (${tokenSamples}...)`
+    )
+  }
+
+  // Validate node style overrides
+  spec.nodes?.forEach(node => {
+    const ctx = `node "${node.id}"`
+    checkColor(node.style?.fillColor,   `${ctx}.style.fillColor`)
+    checkColor(node.style?.strokeColor, `${ctx}.style.strokeColor`)
+    checkColor(node.style?.fontColor,   `${ctx}.style.fontColor`)
+  })
+
+  // Validate edge style overrides
+  spec.edges?.forEach(edge => {
+    const ctx = `edge "${edge.from}→${edge.to}"`
+    checkColor(edge.style?.strokeColor, `${ctx}.style.strokeColor`)
+  })
+
+  // Validate module style overrides
+  spec.modules?.forEach(mod => {
+    const ctx = `module "${mod.id}"`
+    checkColor(mod.style?.fillColor,   `${ctx}.style.fillColor`)
+    checkColor(mod.style?.strokeColor, `${ctx}.style.strokeColor`)
+  })
+
+  return warnings
+}
+
+/**
+ * Detect conflicts between the declared layout direction and manual node
+ * position coordinates. Also checks for node overlap.
+ * @param {Object} spec - Parsed YAML spec
+ * @returns {Array<string>} Array of layout consistency warning messages
+ */
+export function validateLayoutConsistency(spec) {
+  const warnings = []
+  const layout = spec.meta?.layout || 'horizontal'
+  const nodesWithPos = (spec.nodes || []).filter(
+    n => n.position && typeof n.position.x === 'number' && typeof n.position.y === 'number'
+  )
+
+  if (nodesWithPos.length < 2) return warnings // not enough data
+
+  const xs = nodesWithPos.map(n => n.position.x)
+  const ys = nodesWithPos.map(n => n.position.y)
+  const xRange = Math.max(...xs) - Math.min(...xs)
+  const yRange = Math.max(...ys) - Math.min(...ys)
+
+  if (layout === 'horizontal' && yRange > xRange * 1.5) {
+    warnings.push(
+      `Layout is "horizontal" but nodes span ${yRange}px vertically vs ${xRange}px horizontally. ` +
+      `Consider switching meta.layout to "vertical", or recalculate node positions.`
+    )
+  }
+
+  if (layout === 'vertical' && xRange > yRange * 1.5) {
+    warnings.push(
+      `Layout is "vertical" but nodes span ${xRange}px horizontally vs ${yRange}px vertically. ` +
+      `Consider switching meta.layout to "horizontal", or recalculate node positions.`
+    )
+  }
+
+  // Check for potential node overlap (skip if too many nodes — O(n²) cost)
+  const MIN_CLEARANCE = 20
+  if (nodesWithPos.length <= 30) {
+    for (let i = 0; i < nodesWithPos.length; i++) {
+      for (let j = i + 1; j < nodesWithPos.length; j++) {
+        const a = nodesWithPos[i]
+        const b = nodesWithPos[j]
+        const dx = Math.abs(a.position.x - b.position.x)
+        const dy = Math.abs(a.position.y - b.position.y)
+        if (dx < MIN_CLEARANCE && dy < MIN_CLEARANCE) {
+          const dist = Math.round(Math.hypot(dx, dy))
+          warnings.push(
+            `Nodes "${a.id}" and "${b.id}" may overlap ` +
+            `(center distance ${dist}px < ${MIN_CLEARANCE}px minimum clearance)`
+          )
+        }
+      }
+    }
+  }
+
+  return warnings
+}
+
+// ============================================================================
 // Main Export Functions
 // ============================================================================
 
@@ -772,6 +905,27 @@ export function specToDrawioXml(spec, options = {}) {
   // Load theme
   const themeName = spec.meta?.theme || 'tech-blue'
   const theme = options.theme || loadTheme(themeName)
+
+  // Run color scheme and layout consistency validation
+  const colorWarnings = validateColorScheme(spec, theme)
+  const layoutWarnings = validateLayoutConsistency(spec)
+  const allValidationWarnings = [...colorWarnings, ...layoutWarnings]
+
+  if (allValidationWarnings.length > 0) {
+    if (!options.silent) {
+      console.warn('\n⚠️  drawio spec validation warnings:')
+      allValidationWarnings.forEach(w => console.warn(`  • ${w}`))
+    }
+    if (options.strict) {
+      throw new Error(
+        `Spec validation failed with ${allValidationWarnings.length} warning(s):\n` +
+        allValidationWarnings.map(w => `  • ${w}`).join('\n')
+      )
+    }
+  }
+
+  // Merge all warnings for callers that requested them
+  warnings.push(...allValidationWarnings.map(msg => ({ level: 'warning', message: msg })))
 
   // Calculate layout
   const layout = calculateLayout(spec, theme)
