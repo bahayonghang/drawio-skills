@@ -19,7 +19,9 @@ import {
   checkComplexity,
   loadTheme,
   resolveIconShape,
-  validateXml
+  validateXml,
+  validateColorScheme,
+  validateLayoutConsistency
 } from './spec-to-drawio.js'
 
 // ============================================================================
@@ -735,8 +737,8 @@ describe('Phase 2.2: manual node positioning', () => {
 
     assert.ok(positions.has('n1'), 'should have position for n1')
     const pos = positions.get('n1')
-    assert.strictEqual(pos.x, 104, 'x should be snapped to 104 (nearest 8px grid)')
-    assert.strictEqual(pos.y, 200, 'y should be snapped to 200 (already on grid)')
+    assert.strictEqual(pos.x, 40, 'x should be snapped to 40 (center - width/2)')
+    assert.strictEqual(pos.y, 168, 'y should be snapped to 168 (center - height/2 snapped)')
   })
 
   it('mixed manual and auto-positioned nodes both get positions', () => {
@@ -753,8 +755,8 @@ describe('Phase 2.2: manual node positioning', () => {
     assert.ok(positions.has('n1'), 'should have position for manual n1')
     assert.ok(positions.has('n2'), 'should have position for auto n2')
     const pos1 = positions.get('n1')
-    assert.strictEqual(pos1.x, 304, 'manual n1 x should be snapped to 304')
-    assert.strictEqual(pos1.y, 400, 'manual n1 y should be 400')
+    assert.strictEqual(pos1.x, 240, 'manual n1 x should be snapped to 240 (center - width/2)')
+    assert.strictEqual(pos1.y, 368, 'manual n1 y should be snapped to 368 (center - height/2 snapped)')
   })
 
   it('node without position property is auto-laid out as usual', () => {
@@ -1149,5 +1151,256 @@ describe('edge label in XML', () => {
     }
     const xml = specToDrawioXml(spec)
     assert.ok(!xml.includes('edgeLabel'), 'XML should NOT contain edgeLabel when edge has no label')
+  })
+})
+
+// ============================================================================
+// validateColorScheme — color validation
+// ============================================================================
+
+describe('validateColorScheme', () => {
+  const theme = loadTheme('tech-blue')
+
+  it('returns no warnings for a spec with no style overrides', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'Node' }],
+      edges: [],
+      modules: []
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
+  it('returns no warnings for valid hex color overrides (#RGB)', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'Node', style: { fillColor: '#ABC', strokeColor: '#123456' } }],
+      edges: [],
+      modules: []
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
+  it('returns no warnings for valid hex color overrides (#RRGGBB)', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'Node', style: { fillColor: '#DBEAFE', strokeColor: '#2563EB' } }],
+      edges: [],
+      modules: []
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
+  it('returns no warnings for valid theme token overrides', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'Node', style: { fillColor: '$primaryLight', strokeColor: '$primary' } }],
+      edges: [],
+      modules: []
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
+  it('returns a warning for an invalid color value on a node', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'Node', style: { fillColor: 'blue' } }],
+      edges: [],
+      modules: []
+    }
+    const warnings = validateColorScheme(spec, theme)
+    assert.strictEqual(warnings.length, 1)
+    assert.ok(warnings[0].includes('node "n1"'), 'warning should identify the node')
+    assert.ok(warnings[0].includes('"blue"'), 'warning should quote the invalid value')
+  })
+
+  it('returns a warning for an invalid strokeColor on an edge', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'A' }, { id: 'n2', label: 'B' }],
+      edges: [{ from: 'n1', to: 'n2', style: { strokeColor: 'red' } }],
+      modules: []
+    }
+    const warnings = validateColorScheme(spec, theme)
+    assert.strictEqual(warnings.length, 1)
+    assert.ok(warnings[0].includes('n1→n2'), 'warning should identify the edge')
+  })
+
+  it('returns a warning for an invalid color on a module', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'A' }],
+      edges: [],
+      modules: [{ id: 'm1', label: 'Mod', style: { fillColor: 'not-a-color' } }]
+    }
+    const warnings = validateColorScheme(spec, theme)
+    assert.strictEqual(warnings.length, 1)
+    assert.ok(warnings[0].includes('module "m1"'), 'warning should identify the module')
+  })
+
+  it('returns multiple warnings for multiple invalid values', () => {
+    const spec = {
+      nodes: [
+        { id: 'n1', label: 'A', style: { fillColor: 'bad1', strokeColor: 'bad2' } }
+      ],
+      edges: [],
+      modules: []
+    }
+    const warnings = validateColorScheme(spec, theme)
+    assert.strictEqual(warnings.length, 2)
+  })
+
+  it('ignores undefined / null style color values without warning', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'Node', style: { fillColor: null, strokeColor: undefined } }],
+      edges: [],
+      modules: []
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+})
+
+// ============================================================================
+// validateLayoutConsistency — coordinate / layout direction checks
+// ============================================================================
+
+describe('validateLayoutConsistency', () => {
+  it('returns no warnings when fewer than 2 positioned nodes', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [{ id: 'n1', label: 'A', position: { x: 100, y: 100 } }]
+    }
+    assert.deepStrictEqual(validateLayoutConsistency(spec), [])
+  })
+
+  it('returns no warnings when layout and positions are consistent (horizontal)', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'n1', label: 'A', position: { x: 100, y: 100 } },
+        { id: 'n2', label: 'B', position: { x: 400, y: 120 } }
+      ]
+    }
+    // xRange=300, yRange=20 — clearly horizontal
+    assert.deepStrictEqual(validateLayoutConsistency(spec), [])
+  })
+
+  it('returns no warnings when layout and positions are consistent (vertical)', () => {
+    const spec = {
+      meta: { layout: 'vertical' },
+      nodes: [
+        { id: 'n1', label: 'A', position: { x: 100, y: 100 } },
+        { id: 'n2', label: 'B', position: { x: 110, y: 500 } }
+      ]
+    }
+    // xRange=10, yRange=400 — clearly vertical
+    assert.deepStrictEqual(validateLayoutConsistency(spec), [])
+  })
+
+  it('warns when horizontal layout has disproportionately large vertical span', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'n1', label: 'A', position: { x: 100, y: 100 } },
+        { id: 'n2', label: 'B', position: { x: 120, y: 800 } }
+      ]
+    }
+    // xRange=20, yRange=700 — vertical span >> horizontal
+    const warnings = validateLayoutConsistency(spec)
+    assert.strictEqual(warnings.length, 1)
+    assert.ok(warnings[0].includes('"horizontal"'), 'warning should mention layout direction')
+  })
+
+  it('warns when vertical layout has disproportionately large horizontal span', () => {
+    const spec = {
+      meta: { layout: 'vertical' },
+      nodes: [
+        { id: 'n1', label: 'A', position: { x: 100, y: 100 } },
+        { id: 'n2', label: 'B', position: { x: 900, y: 120 } }
+      ]
+    }
+    // xRange=800, yRange=20 — horizontal span >> vertical
+    const warnings = validateLayoutConsistency(spec)
+    assert.strictEqual(warnings.length, 1)
+    assert.ok(warnings[0].includes('"vertical"'), 'warning should mention layout direction')
+  })
+
+  it('warns when two positioned nodes are too close together (overlap)', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'n1', label: 'A', position: { x: 100, y: 100 } },
+        { id: 'n2', label: 'B', position: { x: 105, y: 105 } }
+      ]
+    }
+    const warnings = validateLayoutConsistency(spec)
+    const overlapWarning = warnings.find(w => w.includes('overlap'))
+    assert.ok(overlapWarning, 'should warn about node overlap')
+    assert.ok(overlapWarning.includes('"n1"') && overlapWarning.includes('"n2"'))
+  })
+
+  it('does not warn when nodes are sufficiently separated', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'n1', label: 'A', position: { x: 100, y: 100 } },
+        { id: 'n2', label: 'B', position: { x: 300, y: 100 } }
+      ]
+    }
+    // distance = 200px — well above MIN_CLEARANCE
+    const warnings = validateLayoutConsistency(spec).filter(w => w.includes('overlap'))
+    assert.deepStrictEqual(warnings, [])
+  })
+
+  it('skips overlap check when nodes exceed 30 (performance guard)', () => {
+    const nodes = Array.from({ length: 31 }, (_, i) => ({
+      id: `n${i}`, label: `N${i}`,
+      position: { x: i * 5, y: i * 5 }  // would overlap if checked
+    }))
+    const spec = { meta: { layout: 'horizontal' }, nodes }
+    const warnings = validateLayoutConsistency(spec).filter(w => w.includes('overlap'))
+    assert.deepStrictEqual(warnings, [], 'overlap check should be skipped for > 30 nodes')
+  })
+})
+
+// ============================================================================
+// specToDrawioXml validation integration
+// ============================================================================
+
+describe('specToDrawioXml validation integration', () => {
+  it('includes color warnings in returnWarnings output', () => {
+    const spec = {
+      meta: { theme: 'tech-blue' },
+      nodes: [
+        { id: 'n1', label: 'A', style: { fillColor: 'invalid-color' } },
+        { id: 'n2', label: 'B' }
+      ]
+    }
+    const result = specToDrawioXml(spec, { returnWarnings: true, silent: true })
+    assert.ok(result.xml, 'should still produce XML despite warnings')
+    const colorWarning = result.warnings.find(w => w.message?.includes('invalid-color'))
+    assert.ok(colorWarning, 'should include color warning in returned warnings')
+  })
+
+  it('throws in strict mode when color validation fails', () => {
+    const spec = {
+      meta: { theme: 'tech-blue' },
+      nodes: [
+        { id: 'n1', label: 'A', style: { fillColor: 'not-a-color' } },
+        { id: 'n2', label: 'B' }
+      ]
+    }
+    assert.throws(
+      () => specToDrawioXml(spec, { strict: true, silent: true }),
+      /Spec validation failed/,
+      'strict mode should throw on invalid color'
+    )
+  })
+
+  it('does not throw in non-strict mode with invalid colors', () => {
+    const spec = {
+      meta: { theme: 'tech-blue' },
+      nodes: [
+        { id: 'n1', label: 'A', style: { fillColor: 'not-a-color' } },
+        { id: 'n2', label: 'B' }
+      ]
+    }
+    assert.doesNotThrow(
+      () => specToDrawioXml(spec, { silent: true }),
+      'non-strict mode should not throw on invalid color'
+    )
   })
 })
