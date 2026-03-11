@@ -17,7 +17,9 @@
       "mcp__plugin_oh-my-claudecode_t__state_list_active",
       "mcp__plugin_oh-my-claudecode_t__state_clear",
       "Skill(git-commit-cn)",
-      "Skill(git-commit-cn:*)"
+      "Skill(git-commit-cn:*)",
+      "Bash(cd \"D:/Documents/Code/Agents/drawio-skills\" && node --test tests/ah-to-drawio.test.js tests/math-typesetting.test.js 2>&1)",
+      "Bash(cd \"D:/Documents/Code/Agents/drawio-skills\" && node skills/drawio/scripts/cli.js skills/drawio/references/examples/microservices.yaml --validate 2>&1)"
     ]
   }
 }
