@@ -1,298 +1,142 @@
 # Workflow: /drawio create
 
-Create diagrams from scratch using natural language descriptions with Design System support.
+Create diagrams from text, Mermaid, CSV, or explicit YAML spec using the Draw.io design system.
 
 ## Trigger
 
 - **Command**: `/drawio create ...`
-- **Keywords**: "create", "generate", "make", "draw", "生成", "创建"
+- **Keywords**: `create`, `generate`, `make`, `draw`, `生成`, `创建`
+
+## Route Selection
+
+Determine the route before asking questions:
+
+1. **Fast Path**
+   - Use when the request already specifies the diagram type and at least 3 of: audience/profile, theme, layout, complexity.
+   - Use when the estimated graph is small (`<= 12` nodes) and not stencil-heavy.
+2. **Full Path**
+   - Use for ambiguous, large, academic, replication-like, or routing-sensitive diagrams.
+3. **Academic Branch**
+   - Force-enable when prompt contains `paper`, `academic`, `IEEE`, `journal`, `thesis`, `figure`, `manuscript`, `research`.
+   - Default `meta.profile = academic-paper`.
+4. **Stencil Branch**
+   - Enable when the prompt mentions AWS, Azure, GCP, Cisco, Kubernetes, or vendor icons.
 
 ## Procedure
 
-```
-Step 1: Start Session
-├── Call MCP: start_session
-└── Browser opens with draw.io editor
+```text
+Step 1: Identify Input Mode
+├── Natural language
+├── YAML spec
+├── Mermaid (flowchart/sequence/class/state/ER/gantt)
+└── CSV hierarchy/org chart
 
-Step 2: Analyze User Request + Apply Design Intent
-├── Identify diagram type (flowchart, architecture, sequence, ER, etc.)
-├── Extract entities and relationships from the description
-├── Estimate node count and module grouping needs
-│   └── If estimated nodes > 20 → pre-warn user before consultation
-├── Check for explicit user specifications:
-│   ├── Theme already stated? → set designIntent.theme, skip Q2
-│   ├── Layout already stated? → set designIntent.layout, skip Q3
-│   └── Complexity already stated? → set designIntent.complexity, skip Q4
-└── Proceed to Step 2.5 for remaining unresolved dimensions
+Step 2: Determine profile and theme defaults
+├── academic-paper -> theme academic by default
+├── academic-paper + explicit color request -> academic-color
+├── engineering-review -> theme tech-blue by default
+└── otherwise -> theme from request or tech-blue
 
-Step 2.5: Design Consultation (AskUserQuestion)
-├── Call AskUserQuestion with up to 4 questions IN A SINGLE CALL:
-│
-│   Q1 — Target Audience & Use Case (single-select):
-│     • Academic paper / research report  → preset: academic-color
-│     • Engineering doc / system arch     → preset: tech-blue
-│     • Presentation / slides             → preset: dark
-│     • Developer reference / internal    → preset: tech-blue
-│
-│   Q2 — Visual Style / Theme (single-select, with markdown previews):
-│     • tech-blue     — Blue professional, for architecture
-│     • academic-color — Colorful academic, for papers/research
-│     • dark          — Dark background, for slides/presentations
-│     • nature        — Natural green, for lifecycle/process
-│     • academic      — Grayscale print, for IEEE submissions
-│
-│   Q3 — Layout Direction (single-select):
-│     • Horizontal (left→right)  — pipelines, data flows
-│     • Vertical (top→bottom)    — API stacks, call hierarchies
-│     • Hierarchical (tree)      — module orgs, decision trees
-│     • Auto                     — AI decides based on structure
-│
-│   Q4 — Expected Complexity (single-select):
-│     • Simple   (< 10 nodes, single page)
-│     • Medium   (10–20 nodes, may need modules)
-│     • Complex  (> 20 nodes → recommend splitting)
-│
-├── Store responses as `designIntent` object:
-│   designIntent = { theme, layout, complexity, audience }
-├── Apply designIntent to YAML meta pre-configuration
-└── ⚠️ Skip questions already answered in Step 2
+Step 3: Decide Fast Path vs Full Path
+├── Fast Path -> skip AskUserQuestion and skip ASCII confirmation
+└── Full Path -> continue to Step 4
 
-Step 3: Structured Text Draft & Confirm (Mandatory)
-├── Generate ASCII text-art graph with SEMANTIC ANNOTATIONS:
-│
-│   Format per node: [id: semantic-type | color-token]
-│   Format per edge: → edge-type →
-│
-│   Example output:
-│   ┌─────────────────────────────────────────────────────┐
-│   │  [START: terminal | $text]                          │
-│   │              ↓ primary                              │
-│   │  [Auth: service | $primaryLight/$primary]           │
-│   │     ↙ optional              ↘ primary              │
-│   │  [Err: terminal | $text]   [Dashboard: service]    │
-│   │                                ↓ data              │
-│   │                            [DB: database | $secondaryLight]
-│   └─────────────────────────────────────────────────────┘
-│
-├── Display DESIGN SUMMARY below the ASCII graph:
-│   ╔══════════════════════════════════════╗
-│   ║  Design Summary                      ║
-│   ║  Theme:    tech-blue                 ║
-│   ║            $primary=#2563EB          ║
-│   ║            $secondary=#059669        ║
-│   ║  Layout:   horizontal, dx=160 dy=120 ║
-│   ║  Nodes:    N  │  Modules: M          ║
-│   ║  Edges:    E                         ║
-│   ║  Status:   ✅ Normal / ⚠️ Near limit / ❌ Split recommended
-│   ╚══════════════════════════════════════╝
-│
-└── ⚠️ PAUSE — Wait for user to confirm BOTH the logic AND the design summary
-             before proceeding
+Step 4: Design Consultation (Full Path only)
+├── Ask only unresolved questions:
+│   • audience/profile
+│   • theme
+│   • layout
+│   • expected complexity
+└── Store decisions in designIntent and pre-fill YAML meta
 
-Step 4: Generate Diagram Specification + Explicit Coordinate Calculation
-├── Create YAML specification using designIntent values in meta:
-│   ├── meta: theme (from designIntent), layout, canvas size
-│   ├── nodes: id, label, type, module, icon, position: { x, y }
-│   └── edges: from, to, type, label
-│
-├── ⚠️ CRITICAL LAYOUT REQUIREMENT:
-│   The built-in layout engine only outputs nodes in a straight line.
-│   You MUST explicitly calculate 2D grid coordinates for ALL nodes.
-│   * Standard distance: dx=160 (horizontal), dy=120 (vertical)
-│   * For decision branches: True→x+160, False→x-160 (or y±120)
-│   * Use designIntent.layout to determine primary axis
-│
-├── Apply semantic shape mapping (auto-detected or explicit type field)
-└── Validate complexity limits:
-    • nodes > 20  → ⚠️ WARNING: suggest splitting
-    • nodes > 30  → ❌ ERROR: must split
-    • edges > 30  → ⚠️ WARNING: use hierarchical layout
-    • modules > 5 → ⚠️ WARNING: create separate diagrams
+Step 5: Academic / Stencil references
+├── academic-paper -> load IEEE + export checklist + math typesetting
+└── stencil-heavy -> load stencil guide + icon reference
 
-Step 4.5: Plan-to-Spec Adherence Verification
-├── Cross-check YAML spec against Step 3 ASCII draft and designIntent:
-│   □ Node count matches (ASCII node count == YAML nodes length)
-│   □ Edge types match (edge labels in ASCII == YAML edges[].type)
-│   □ Theme matches (designIntent.theme == spec.meta.theme)
-│   □ Layout direction matches (designIntent.layout == spec.meta.layout)
-│   □ Complexity within limits (nodes ≤ 20, modules ≤ 5)
-│   □ Color overrides use tokens or valid hex (validateColorScheme)
-│   □ Position coordinates consistent with layout direction (validateLayoutConsistency)
-│
-├── If discrepancies found:
-│   ├── Output a diff report showing what changed
-│   └── Correct the YAML before proceeding
-└── ✅ Only proceed to Step 5 after all checks pass
+Step 6: Build the YAML spec
+├── Normalize Mermaid/CSV inputs to YAML spec
+├── Ensure meta.theme, meta.layout, meta.profile are present
+├── Use semantic node types and typed connectors
+└── Add manual positions when branching or dense routing requires it
 
-Step 5: Convert to Draw.io XML
-├── Run: node $SKILL_DIR/scripts/cli.js input.yaml output.drawio [--validate]
-│   ├── validateColorScheme() — checks all color overrides are valid tokens/hex
-│   ├── validateLayoutConsistency() — detects coordinate/layout direction conflicts
-│   └── Any warnings are displayed; --strict flag promotes warnings to errors
-└── XML output is ready for MCP rendering
+Step 7: ASCII Draft (Full Path only)
+├── Render semantic ASCII draft
+├── Include Design Summary:
+│   • theme
+│   • profile
+│   • layout
+│   • node/edge/module counts
+│   • validation status
+└── Pause for confirmation only when logic or structure is still ambiguous
 
-Step 6: Create Diagram
-├── Call MCP: create_new_diagram with XML
-└── Diagram appears in browser
+Step 8: Validation
+├── validateColorScheme()
+├── validateLayoutConsistency()
+├── validateConnectionPointPolicy()
+├── validateEdgeQuality()
+├── validateAcademicProfile() when profile=academic-paper
+└── checkComplexity()
 
-Step 7: Clean Up (Mandatory)
-└── Delete the intermediate YAML file to keep the workspace clean
+Step 9: Edge Audit
+├── No corner connection points
+├── No shared face slots on the same corridor
+├── Last segment >= 30px
+├── Labels offset from edge lines
+├── No waypoint + explicit connection-point mixing
+└── Prefer straight arrows when alignment allows it
 
-Step 8: Iterate
-├── User can request modifications
-└── Use /drawio edit for changes
+Step 10: Render
+├── node $SKILL_DIR/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate
+└── For paper-quality diagrams prefer output.svg
 
-Step 9: Validate (Optional)
-├── Check cell ID uniqueness
-├── Check edge source/target reference validity
-├── Check required root cells present
-└── Use --validate CLI flag or validateXml() from DSL converter
+Step 11: Preview
+├── MCP available -> start_session / create_new_diagram
+└── Otherwise open output in draw.io desktop or diagrams.net
 ```
 
-## Design System Reference
+## Academic Branch Rules
 
-> See the main SKILL.md for theme, shape, and connector quick-reference tables,
-> or `references/docs/design-system/README.md` for the full design system documentation.
+When `meta.profile = academic-paper`:
 
-## Input Types
+- `meta.title` is required for figure captioning.
+- `meta.description` is recommended for figure context.
+- `meta.legend` is required when icons are used or connector types are mixed.
+- Prefer `academic` theme unless the request explicitly asks for a color paper figure.
+- Prefer `.svg` export over `.drawio` for paper-ready output.
+- Do not rely on color alone to distinguish semantics.
 
-| Input | Example |
-|-------|---------|
-| Natural language | `/drawio create a flowchart showing login process` |
-| With theme | `/drawio create AWS architecture with tech-blue theme` |
-| With semantic types | `/drawio create diagram with API (service), User DB (database)` |
-| With math | `/drawio create a diagram with equation $$E = mc^2$$` |
+## Fast Path Examples
 
-## Specification Format (Optional)
+### Small explicit flowchart
 
-For complex diagrams, use explicit YAML specification:
-
-```yaml
-meta:
-  theme: tech-blue
-  layout: horizontal
-
-nodes:
-  - id: api
-    label: API Gateway
-    type: service
-    module: frontend
-
-  - id: db
-    label: User Database
-    type: database
-    module: data
-
-edges:
-  - from: api
-    to: db
-    type: data
-    label: Query
-
-modules:
-  - id: frontend
-    label: Frontend Layer
-  - id: data
-    label: Data Layer
+```text
+/drawio create a horizontal tech-blue login flow with 5 nodes
 ```
 
-Request structured format:
+### Explicit academic pipeline
 
-```
-/drawio create with structured format
-"使用规格格式创建..."
-"Create using specification format..."
+```text
+/drawio create an academic-color research workflow figure with 8 nodes for a paper
 ```
 
-## Examples
+## Full Path Examples
 
-### Basic Flowchart
+### Dense architecture diagram
 
-```
-/drawio create a login flowchart with:
-- Start (terminal)
-- Input credentials form
-- Validation check (decision)
-- Success → Dashboard
-- Error → Back to login
+```text
+/drawio create a microservices architecture with shared infrastructure, event bus,
+two data stores, and cross-service async flows
 ```
 
-### AWS Architecture with Theme
+### IEEE figure
 
-```
-/drawio create AWS serverless architecture with tech-blue theme:
-- API Gateway (service) as entry point
-- Lambda (service) for business logic
-- DynamoDB (database) for storage
-- S3 (storage) for static files
-Use AWS icons and show data flow
+```text
+/drawio create an IEEE-style campus network figure for a paper with core,
+distribution, and access layers in grayscale
 ```
 
-### Academic Diagram
+## Notes
 
-```
-/drawio create neural network training pipeline with academic theme:
-- Data preprocessing
-- Model training (with loss: $$L = -\sum y_i \log(\hat{y}_i)$$)
-- Validation
-- Deployment
-```
-
-### With Explicit Specification
-
-```
-/drawio create with structured format:
-
-meta:
-  theme: nature
-  layout: vertical
-
-nodes:
-  - id: input
-    label: Raw Data
-    type: document
-  - id: process
-    label: ETL Pipeline
-    type: service
-  - id: output
-    label: Data Warehouse
-    type: database
-
-edges:
-  - from: input
-    to: process
-    type: data
-  - from: process
-    to: output
-    type: primary
-```
-
-## Best Practices
-
-1. **Content in Components** - Prefer embedding text and formulas in nodes (shapes) rather than standalone text boxes. Use standalone text only when no suitable shape exists. Exception: edge labels for connector annotations.
-   > 文字、公式等尽量写入形状组件中，而非独立文本框；仅当无合适形状时才使用独立文本框。例外：边标签用于箭头标注。
-2. **Specify theme** for consistent styling across diagrams
-3. **Use semantic types** for automatic shape selection
-4. **Describe relationships** with connector types (data, optional, etc.)
-5. **Keep it simple** - aim for ≤20 nodes per diagram
-6. **Use modules** for grouping related components
-7. **Use color tokens** (`$primaryLight`, `$text`, etc.) instead of hardcoded hex values for theme compatibility
-
-## Complexity Guardrails
-
-| Metric | Threshold | Suggestion |
-|--------|-----------|------------|
-| Nodes | > 20 | Split into sub-diagrams |
-| Edges | > 30 | Use hierarchical layout |
-| Modules | > 5 | Create separate diagrams |
-| Label length | > 14 chars | Abbreviate or use tooltip |
-
-## Related
-
-- [Design System Overview](../docs/design-system/README.md)
-- [Specification Format](../docs/design-system/specification.md)
-- [Themes Reference](../docs/design-system/themes.md)
-- [Color Scheme Guide](../docs/design-system/color-guide.md)
-- [Semantic Shapes](../docs/design-system/shapes.md)
-- [Connectors](../docs/design-system/connectors.md)
-- [Math Typesetting](../docs/math-typesetting.md)
+- YAML remains the canonical intermediate representation.
+- Mermaid and CSV inputs are convenience adapters, not separate rendering pipelines.
+- If validation warnings affect correctness or publication quality, switch to `--strict`.

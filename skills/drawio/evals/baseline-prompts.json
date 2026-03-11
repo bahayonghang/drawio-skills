@@ -1,0 +1,52 @@
+[
+  {
+    "id": "academic-campus-network",
+    "profile": "academic-paper",
+    "prompt": "Create an IEEE-style campus network figure with core, distribution, and access layers in grayscale."
+  },
+  {
+    "id": "academic-research-workflow",
+    "profile": "academic-paper",
+    "prompt": "Create a research workflow figure for a paper showing data collection, preprocessing, modeling, validation, and reporting."
+  },
+  {
+    "id": "academic-system-overview",
+    "profile": "academic-paper",
+    "prompt": "Create a paper-ready system architecture overview with client, API, worker, and storage layers."
+  },
+  {
+    "id": "academic-ablation-pipeline",
+    "profile": "academic-paper",
+    "prompt": "Create an ablation-study figure comparing baseline and two variants before a shared evaluation block."
+  },
+  {
+    "id": "engineering-cloud-reference",
+    "profile": "engineering-review",
+    "prompt": "Create a cloud reference architecture using gateway, compute, async queue, and object storage."
+  },
+  {
+    "id": "engineering-microservices",
+    "profile": "engineering-review",
+    "prompt": "Create a microservices architecture with API gateway, auth service, order service, event bus, and PostgreSQL."
+  },
+  {
+    "id": "engineering-network-topology",
+    "profile": "engineering-review",
+    "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs."
+  },
+  {
+    "id": "simple-login-fast-path",
+    "profile": "default",
+    "prompt": "Create a horizontal tech-blue login flowchart with Start, Login Form, Validate, Success, and Error."
+  },
+  {
+    "id": "dense-architecture-edge-audit",
+    "profile": "engineering-review",
+    "prompt": "Create a dense architecture diagram with shared event flows, two databases, and cross-service dependencies."
+  },
+  {
+    "id": "paper-figure-with-formula",
+    "profile": "academic-paper",
+    "prompt": "Create a paper figure for a training pipeline including the loss formula $$L = -\\sum y_i \\log(\\hat{y}_i)$$."
+  }
+]

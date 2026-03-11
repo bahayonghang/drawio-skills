@@ -31,6 +31,16 @@ edges:
 
 ## Core Concepts
 
+### Workflow Profiles
+
+Use profiles to choose the validation posture:
+
+| Profile | Best For |
+|---------|----------|
+| `default` | Standard diagrams |
+| `academic-paper` | IEEE figures, thesis diagrams, paper-ready exports |
+| `engineering-review` | Dense architecture and network diagrams |
+
 ### 8px Grid System
 
 All positions, sizes, and spacing are multiples of 8px for professional alignment.

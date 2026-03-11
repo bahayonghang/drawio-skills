@@ -1,0 +1,34 @@
+meta:
+  profile: engineering-review
+  theme: tech-blue
+  layout: horizontal
+  title: "Cloud Reference Architecture"
+  description: "Gateway, compute, async processing, and storage."
+
+nodes:
+  - id: gateway
+    label: API Gateway
+    type: service
+    icon: aws.api-gateway
+  - id: lambda
+    label: Lambda
+    type: service
+    icon: aws.lambda
+  - id: queue
+    label: Event Queue
+    type: queue
+  - id: store
+    label: Object Store
+    type: database
+    icon: aws.s3
+
+edges:
+  - from: gateway
+    to: lambda
+    type: primary
+  - from: lambda
+    to: queue
+    type: data
+  - from: queue
+    to: store
+    type: primary

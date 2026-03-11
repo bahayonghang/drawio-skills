@@ -9,6 +9,7 @@ The Design System uses a YAML-based specification format for defining diagrams. 
 The specification format provides:
 
 - **Theme integration**: Direct theme selection
+- **Workflow profiles**: Academic-paper and engineering-review validation modes
 - **Semantic types**: Auto-shape mapping
 - **Typed connectors**: Visual hierarchy
 - **Grid alignment**: 8px grid compliance
@@ -20,6 +21,7 @@ The specification format provides:
 
 ```yaml
 meta:
+  profile: default
   theme: tech-blue
   layout: horizontal
   canvas: auto
@@ -47,6 +49,9 @@ Diagram-level configuration.
 
 ```yaml
 meta:
+  # Workflow profile
+  profile: default  # default | academic-paper | engineering-review
+
   # Theme selection (required)
   theme: tech-blue  # tech-blue | academic | nature | dark | custom-name
   
@@ -67,6 +72,7 @@ meta:
   # Diagram metadata
   title: "System Architecture"
   description: "Overview of microservices"
+  legend: "Optional legend summary for paper-facing diagrams"
 ```
 
 ### Theme Options
@@ -75,8 +81,17 @@ meta:
 |-------|-------------|
 | `tech-blue` | Modern professional (default) |
 | `academic` | IEEE/print optimized |
+| `academic-color` | Color paper or research poster |
 | `nature` | Green/environmental |
 | `dark` | Dark mode presentations |
+
+### Profile Options
+
+| Profile | Description |
+|---------|-------------|
+| `default` | Standard diagram workflow |
+| `academic-paper` | Enables paper-facing validation and export checklist |
+| `engineering-review` | Enables stricter routing and readability review |
 
 ### Layout Options
 
@@ -173,6 +188,9 @@ edges:
       strokeColor: "#1E293B"
       strokeWidth: 2
       dashed: true
+    waypoints:              # Optional manual routing
+      - x: 420
+        y: 180
 ```
 
 ### Connector Types
@@ -184,6 +202,12 @@ edges:
 | `optional` | Dotted 1px | Open block | Weak relation |
 | `dependency` | Solid 1px | Diamond | Dependencies |
 | `bidirectional` | Solid 1.5px | None | Two-way |
+
+### Input Adapter Notes
+
+- Mermaid and CSV are supported as CLI input formats.
+- They are normalized into this YAML structure before rendering.
+- YAML remains the canonical intermediate representation.
 
 ---
 

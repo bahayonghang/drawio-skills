@@ -1,0 +1,44 @@
+meta:
+  profile: engineering-review
+  theme: tech-blue
+  layout: vertical
+  title: "Engineering Review Flow"
+  description: "Review and remediation swimlane sequence."
+
+modules:
+  - id: author
+    label: Author
+  - id: reviewer
+    label: Reviewer
+  - id: release
+    label: Release
+
+nodes:
+  - id: draft
+    label: Draft Design
+    type: document
+    module: author
+  - id: review
+    label: Review
+    type: decision
+    module: reviewer
+  - id: fix
+    label: Fix Issues
+    type: process
+    module: author
+  - id: approve
+    label: Approve
+    type: terminal
+    module: release
+
+edges:
+  - from: draft
+    to: review
+    type: primary
+  - from: review
+    to: fix
+    type: optional
+    label: Changes
+  - from: fix
+    to: approve
+    type: primary
