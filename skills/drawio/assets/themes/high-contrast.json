@@ -1,0 +1,180 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "high-contrast",
+  "displayName": "High Contrast",
+  "description": "WCAG AA compliant high-contrast theme with minimum 4.5:1 contrast ratios for accessibility",
+  "colors": {
+    "primary": "#0A0A0A",
+    "primaryLight": "#E5E5E5",
+    "secondary": "#004D00",
+    "secondaryLight": "#E5F5E5",
+    "accent": "#8B6914",
+    "accentLight": "#FFF3D4",
+    "background": "#FFFFFF",
+    "surface": "#F5F5F5",
+    "surfaceAlt": "#EBEBEB",
+    "text": "#000000",
+    "textMuted": "#333333",
+    "textInverse": "#FFFFFF",
+    "border": "#000000",
+    "borderStrong": "#000000",
+    "success": "#006600",
+    "successLight": "#E5F5E5",
+    "warning": "#7A4D00",
+    "warningLight": "#FFF3E0",
+    "error": "#B30000",
+    "errorLight": "#FFE5E5",
+    "info": "#00008B",
+    "infoLight": "#E5E5FF"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Arial, Helvetica, sans-serif",
+      "monospace": "Courier New, Courier, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 11,
+      "sm": 12,
+      "md": 14,
+      "lg": 15,
+      "xl": 17,
+      "2xl": 21
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 2,
+    "md": 4,
+    "lg": 8,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 3px rgba(0,0,0,0.15)",
+    "md": "0 4px 8px rgba(0,0,0,0.2)",
+    "lg": "0 10px 20px rgba(0,0,0,0.25)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#E5E5E5",
+      "strokeColor": "#000000",
+      "strokeWidth": 2,
+      "fontColor": "#000000",
+      "fontSize": 14,
+      "fontFamily": "Arial, Helvetica, sans-serif",
+      "rounded": 4
+    },
+    "service": {
+      "fillColor": "#E5E5E5",
+      "strokeColor": "#0A0A0A",
+      "rounded": 4
+    },
+    "database": {
+      "fillColor": "#E5F5E5",
+      "strokeColor": "#004D00"
+    },
+    "decision": {
+      "fillColor": "#FFF3D4",
+      "strokeColor": "#8B6914"
+    },
+    "terminal": {
+      "fillColor": "#F5F5F5",
+      "strokeColor": "#333333"
+    },
+    "queue": {
+      "fillColor": "#E5E5FF",
+      "strokeColor": "#00008B"
+    },
+    "user": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#000000"
+    },
+    "document": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#333333"
+    },
+    "formula": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#0A0A0A",
+      "strokeWidth": 2
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#000000",
+      "strokeWidth": 2.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#333333",
+      "strokeWidth": 2,
+      "dashed": true,
+      "dashPattern": "8 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#333333",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "3 3",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#000000",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#333333",
+      "strokeWidth": 2,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    }
+  },
+  "module": {
+    "fillColor": "#F5F5F5",
+    "strokeColor": "#000000",
+    "strokeWidth": 2,
+    "rounded": 8,
+    "padding": 24,
+    "labelFontSize": 15,
+    "labelFontWeight": 700,
+    "labelFontColor": "#000000"
+  },
+  "canvas": {
+    "background": "#FFFFFF",
+    "gridSize": 8,
+    "gridColor": "#CCCCCC"
+  }
+}

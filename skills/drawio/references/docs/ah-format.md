@@ -1,3 +1,7 @@
+> **DEPRECATED**: This A-H format is superseded by the YAML specification format.
+> See [specification.md](design-system/specification.md) for the current format.
+> Retained for historical reference only.
+
 # A-H Format Reference
 
 A structured diagram specification format for deterministic, reproducible diagram generation.

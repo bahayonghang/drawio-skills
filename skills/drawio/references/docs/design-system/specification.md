@@ -132,6 +132,9 @@ nodes:
 | `document` | Document | doc, file, report |
 | `formula` | Rectangle | $$, equation, formula |
 | `cloud` | Cloud | cloud, internet, external |
+| `process` | Rounded rectangle | process, transform, pipeline |
+
+> **Note**: Extended types for deep learning (`conv`, `pool`, `attention`, `embed`, `norm`, `gate`, `tensor3d`, etc.) are also supported by the converter.
 
 ### Size Presets
 

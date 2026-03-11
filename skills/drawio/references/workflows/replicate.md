@@ -265,8 +265,8 @@ Recreate this microservices architecture with design system styling
 
 ## Related
 
-- [Design System Overview](../references/docs/design-system/README.md)
-- [Specification Format](../references/docs/design-system/specification.md)
-- [Semantic Shapes](../references/docs/design-system/shapes.md)
-- [Themes Reference](../references/docs/design-system/themes.md)
-- [Academic Theme Guide](../references/docs/ieee-diagrams.md)
+- [Design System Overview](../docs/design-system/README.md)
+- [Specification Format](../docs/design-system/specification.md)
+- [Semantic Shapes](../docs/design-system/shapes.md)
+- [Themes Reference](../docs/design-system/themes.md)
+- [Academic Theme Guide](../docs/ieee-network-diagrams.md)

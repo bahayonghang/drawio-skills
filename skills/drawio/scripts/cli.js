@@ -8,6 +8,9 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, extname } from 'node:path'
 import { parseSpecYaml, specToDrawioXml, validateXml } from './dsl/spec-to-drawio.js'
 
+/** draw.io format compatibility version */
+const DRAWIO_COMPAT_VERSION = '21.0.0'
+
 // ---------------------------------------------------------------------------
 // Argument parsing
 // ---------------------------------------------------------------------------
@@ -22,7 +25,7 @@ Usage:
   node cli.js <input.yaml> [output.drawio|output.svg] [options]
 
 Arguments:
-  input.yaml          Path to YAML specification file (required)
+  input.yaml          Path to YAML specification file, or - for stdin
   output file         Optional output file. Extension determines format:
                         .drawio  → draw.io XML file format
                         .svg     → SVG (requires drawio-to-svg module)
@@ -37,8 +40,16 @@ Options:
   process.exit(0)
 }
 
-// Extract positional arguments (non-flag args)
-const positional = args.filter(a => !a.startsWith('--'))
+// Extract positional arguments (non-flag args, excluding values of --flags)
+const flagsWithValues = new Set(['--theme'])
+const positional = []
+for (let i = 0; i < args.length; i++) {
+  if (flagsWithValues.has(args[i])) {
+    i++ // skip the flag value
+  } else if (!args[i].startsWith('--')) {
+    positional.push(args[i])
+  }
+}
 const inputFile = positional[0]
 const outputFile = positional[1] || null
 
@@ -47,11 +58,6 @@ const themeIndex = args.indexOf('--theme')
 const themeName = themeIndex !== -1 ? args[themeIndex + 1] : null
 const strict = args.includes('--strict')
 const doValidate = args.includes('--validate')
-
-if (!inputFile) {
-  console.error('Error: input YAML file is required.')
-  process.exit(1)
-}
 
 // ---------------------------------------------------------------------------
 // SVG module (optional)
@@ -70,11 +76,20 @@ try {
 // ---------------------------------------------------------------------------
 
 let yamlText
-try {
-  yamlText = readFileSync(resolve(inputFile), 'utf-8')
-} catch (err) {
-  console.error(`Error: Could not read input file "${inputFile}": ${err.message}`)
+if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
+  const chunks = []
+  for await (const chunk of process.stdin) chunks.push(chunk)
+  yamlText = Buffer.concat(chunks).toString('utf-8')
+} else if (!inputFile) {
+  console.error('Error: input YAML file is required. Use - for stdin.')
   process.exit(1)
+} else {
+  try {
+    yamlText = readFileSync(resolve(inputFile), 'utf-8')
+  } catch (err) {
+    console.error(`Error: Could not read input file "${inputFile}": ${err.message}`)
+    process.exit(1)
+  }
 }
 
 let spec
@@ -152,7 +167,7 @@ if (ext === '.svg') {
   // Default: .drawio or any other extension → draw.io file format (XML wrapper)
   const drawioContent =
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<mxfile host="cli" modified="" agent="drawio-skill-cli" version="21.0.0">\n' +
+    `<mxfile host="cli" modified="" agent="drawio-skill-cli" version="${DRAWIO_COMPAT_VERSION}">\n` +
     '  <diagram name="Page-1">\n' +
     '    ' + xml + '\n' +
     '  </diagram>\n' +

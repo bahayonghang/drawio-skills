@@ -149,45 +149,10 @@ Step 9: Validate (Optional)
 └── Use --validate CLI flag or validateXml() from DSL converter
 ```
 
-## Design System Options
+## Design System Reference
 
-### Theme Selection
-
-| Theme | Use Case | How to Request |
-|-------|----------|----------------|
-| **tech-blue** (default) | Software architecture, DevOps | No specification needed |
-| **academic-color** ⭐ | Academic papers, research (color) | "academic-color theme" or "学术风格" |
-| **academic** | IEEE grayscale print only | "academic theme" or "学术灰度" |
-| **nature** | Environmental, lifecycle | "nature theme" or "自然风格" |
-| **dark** | Presentations, slides | "dark theme" or "深色模式" |
-
-> ⭐ **Recommended for academic**: Use `academic-color` for digital documents and color printing. Use `academic` only for strict grayscale requirements.
-> 📖 **Color selection guide**: See `references/docs/design-system/color-guide.md` for decision tree and token reference.
-
-### Semantic Node Types
-
-Specify node types for automatic shape selection:
-
-| Type | Shape | Keywords (auto-detected) |
-|------|-------|--------------------------|
-| `service` | Rounded rect | API, service, gateway, backend |
-| `database` | Cylinder | DB, SQL, storage, database |
-| `decision` | Diamond | if, check, condition, valid |
-| `terminal` | Stadium/Pill | start, end, begin, finish |
-| `queue` | Parallelogram | queue, buffer, kafka, stream |
-| `user` | Circle | user, actor, client, customer |
-| `document` | Wave rect | doc, file, report, document |
-| `formula` | White rect | equation, formula, $$ |
-
-### Connector Types
-
-| Type | Style | Use Case |
-|------|-------|----------|
-| `primary` | Solid 2px, filled arrow | Main flow (default) |
-| `data` | Dashed 2px, filled arrow | Data/async flow |
-| `optional` | Dotted 1px, open arrow | Weak relations |
-| `dependency` | Solid 1px, diamond arrow | Dependencies |
-| `bidirectional` | Solid 1.5px, no arrow | Associations |
+> See the main SKILL.md for theme, shape, and connector quick-reference tables,
+> or `references/docs/design-system/README.md` for the full design system documentation.
 
 ## Input Types
 

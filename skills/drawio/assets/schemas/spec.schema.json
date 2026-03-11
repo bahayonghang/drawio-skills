@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Draw.io YAML Specification",
+  "description": "Schema for the draw.io skill YAML specification format. Validates diagram structure including nodes, edges, modules, and meta configuration.",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Diagram-level configuration",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Theme name (e.g. tech-blue, academic, nature, dark, high-contrast)"
+        },
+        "layout": {
+          "type": "string",
+          "enum": ["horizontal", "vertical", "hierarchical"],
+          "description": "Layout direction for automatic positioning"
+        },
+        "routing": {
+          "type": "string",
+          "enum": ["orthogonal", "rounded"],
+          "description": "Connector routing style"
+        },
+        "canvas": {
+          "type": "string",
+          "description": "Canvas size (e.g. auto, 800x600, 1200x800)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Diagram title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Diagram description"
+        },
+        "grid": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "integer", "minimum": 1 },
+            "snap": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Diagram nodes/elements",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Unique node identifier"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Display label"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "service", "database", "decision", "terminal", "queue",
+              "user", "document", "formula", "cloud", "process",
+              "input", "output", "loss", "feature",
+              "conv", "pool", "embed", "temporal", "attention",
+              "gate", "norm", "graph", "matrix", "operator", "tensor3d"
+            ],
+            "description": "Semantic type for automatic shape selection"
+          },
+          "module": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Parent module ID"
+          },
+          "size": {
+            "type": "string",
+            "enum": ["small", "medium", "large", "xl"],
+            "description": "Size preset"
+          },
+          "icon": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9._-]*$",
+            "description": "Icon identifier (e.g. aws.lambda, gcp.compute)"
+          },
+          "position": {
+            "type": "object",
+            "description": "Manual position override",
+            "required": ["x", "y"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" }
+            },
+            "additionalProperties": false
+          },
+          "style": {
+            "type": "object",
+            "description": "Style overrides (fillColor, strokeColor, etc.)",
+            "properties": {
+              "fillColor": { "type": "string" },
+              "strokeColor": { "type": "string" },
+              "strokeWidth": { "type": "number", "minimum": 0 },
+              "fontColor": { "type": "string" },
+              "fontSize": { "type": "number", "minimum": 1 },
+              "fontWeight": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "description": "Connections between nodes",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "properties": {
+          "from": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Source node ID"
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Target node ID"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["primary", "data", "optional", "dependency", "bidirectional"],
+            "description": "Connector semantic type"
+          },
+          "label": {
+            "type": "string",
+            "description": "Edge label text"
+          },
+          "labelPosition": {
+            "type": "string",
+            "enum": ["start", "center", "end"],
+            "description": "Label position along edge"
+          },
+          "bidirectional": {
+            "type": "boolean",
+            "description": "Two-way connection flag"
+          },
+          "style": {
+            "type": "object",
+            "description": "Style overrides for this edge",
+            "properties": {
+              "strokeColor": { "type": "string" },
+              "strokeWidth": { "type": "number", "minimum": 0 },
+              "dashed": { "type": "boolean" },
+              "dashPattern": { "type": "string" },
+              "endArrow": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "description": "Container groups for organizing nodes",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Unique module identifier"
+          },
+          "label": {
+            "type": "string",
+            "description": "Module display name"
+          },
+          "color": {
+            "type": "string",
+            "description": "Fill color or theme token (e.g. $primary)"
+          },
+          "style": {
+            "type": "object",
+            "description": "Style overrides for this module"
+          }
+        }
+      }
+    }
+  }
+}

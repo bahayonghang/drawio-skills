@@ -43,7 +43,7 @@ All positions, sizes, and spacing are multiples of 8px for professional alignmen
 
 ### Themes
 
-4 built-in themes for different use cases:
+6 built-in themes for different use cases:
 
 | Theme | Use Case |
 |-------|----------|
@@ -51,6 +51,8 @@ All positions, sizes, and spacing are multiples of 8px for professional alignmen
 | **Academic** | IEEE papers, grayscale print |
 | **Nature** | Environmental, lifecycle |
 | **Dark Mode** | Presentations, slides |
+| **Academic Color** | Academic papers, research (color print/digital) |
+| **High Contrast** | WCAG AA accessible, maximum readability |
 
 ### Semantic Shapes
 
@@ -64,6 +66,8 @@ Automatic shape selection based on node type:
 | `terminal` | Stadium/Pill |
 | `queue` | Parallelogram |
 | `user` | Ellipse |
+| `document` | Document |
+| `formula` | Rectangle |
 
 ### Typed Connectors
 

@@ -111,8 +111,21 @@ const _themeCache = new Map()
 export function loadTheme(themeName) {
   if (!themeName || themeName === 'tech-blue') return DEFAULT_THEME
   if (_themeCache.has(themeName)) return _themeCache.get(themeName)
+
+  // Security: reject invalid theme names (path traversal prevention)
+  if (!/^[a-z][a-z0-9-]*$/.test(themeName)) {
+    console.warn(`[loadTheme] Invalid theme name '${themeName}'. Falling back to default.`)
+    return DEFAULT_THEME
+  }
+
   try {
-    const raw = readFileSync(`${THEMES_DIR}/${themeName}.json`, 'utf8')
+    const themePath = resolve(THEMES_DIR, `${themeName}.json`)
+    // Security: verify resolved path stays within THEMES_DIR
+    if (!themePath.startsWith(THEMES_DIR)) {
+      console.warn(`[loadTheme] Theme path escapes themes directory. Falling back to default.`)
+      return DEFAULT_THEME
+    }
+    const raw = readFileSync(themePath, 'utf8')
     const theme = JSON.parse(raw)
     _themeCache.set(themeName, theme)
     return theme
@@ -465,7 +478,11 @@ export function resolveIconShape(icon) {
       return mxPrefix + icon.slice(prefix.length)
     }
   }
-  // If no prefix matches, treat as direct shape reference
+  // Security: validate unprefixed icons to prevent style injection
+  if (!/^[a-zA-Z][a-zA-Z0-9._-]*$/.test(icon)) {
+    console.warn(`[resolveIconShape] Invalid icon name '${icon}'. Ignoring.`)
+    return null
+  }
   return icon
 }
 
@@ -894,6 +911,12 @@ export function specToDrawioXml(spec, options = {}) {
   // Check complexity
   const warnings = checkComplexity(spec)
 
+  // Security: always throw on fatal-level warnings regardless of strict mode
+  const fatals = warnings.filter(w => w.level === 'fatal')
+  if (fatals.length > 0) {
+    throw new Error('Safety limit exceeded: ' + fatals.map(e => e.message).join('; '))
+  }
+
   // Strict mode: throw on error-level warnings
   if (options.strict) {
     const errors = warnings.filter(w => w.level === 'error')
@@ -955,7 +978,7 @@ export function parseSpecYaml(yamlText) {
   }
   let parsed
   try {
-    parsed = yaml.load(yamlText)
+    parsed = yaml.load(yamlText, { schema: yaml.DEFAULT_SCHEMA })
   } catch (err) {
     throw new Error(`Failed to parse YAML specification: ${err.message}`)
   }
@@ -964,7 +987,92 @@ export function parseSpecYaml(yamlText) {
   spec.nodes = spec.nodes || []
   spec.edges = spec.edges || []
   spec.modules = spec.modules || []
+  validateSpec(spec)
   return spec
+}
+
+/**
+ * Validate spec structure and values for safety and correctness.
+ * Throws descriptive error on first validation failure.
+ * @param {Object} spec - Parsed specification object
+ */
+export function validateSpec(spec) {
+  const VALID_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
+  const VALID_THEME = /^[a-z][a-z0-9-]*$/
+  const VALID_ICON = /^[a-zA-Z][a-zA-Z0-9._-]*$/
+  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical']
+  const VALID_ROUTINGS = ['orthogonal', 'rounded']
+
+  // Hard limits
+  const MAX_NODES = 100
+  const MAX_EDGES = 200
+  const MAX_MODULES = 20
+
+  // meta validation
+  if (spec.meta?.theme != null && !VALID_THEME.test(spec.meta.theme)) {
+    throw new Error(`Invalid meta.theme "${spec.meta.theme}": must match /^[a-z][a-z0-9-]*$/`)
+  }
+  if (spec.meta?.layout != null && !VALID_LAYOUTS.includes(spec.meta.layout)) {
+    throw new Error(`Invalid meta.layout "${spec.meta.layout}": must be one of ${VALID_LAYOUTS.join(', ')}`)
+  }
+  if (spec.meta?.routing != null && !VALID_ROUTINGS.includes(spec.meta.routing)) {
+    throw new Error(`Invalid meta.routing "${spec.meta.routing}": must be one of ${VALID_ROUTINGS.join(', ')}`)
+  }
+
+  // Hard limit checks
+  if (spec.nodes.length > MAX_NODES) {
+    throw new Error(`Too many nodes (${spec.nodes.length}): maximum is ${MAX_NODES}`)
+  }
+  if (spec.edges.length > MAX_EDGES) {
+    throw new Error(`Too many edges (${spec.edges.length}): maximum is ${MAX_EDGES}`)
+  }
+  if (spec.modules.length > MAX_MODULES) {
+    throw new Error(`Too many modules (${spec.modules.length}): maximum is ${MAX_MODULES}`)
+  }
+
+  // Node validation
+  for (const node of spec.nodes) {
+    if (!node.id || !VALID_ID.test(node.id)) {
+      throw new Error(`Invalid node id "${node.id}": must match /^[A-Za-z][A-Za-z0-9_-]*$/`)
+    }
+    if (!node.label || typeof node.label !== 'string') {
+      throw new Error(`Node "${node.id}" is missing a required string label`)
+    }
+    if (node.type != null && !SHAPE_STYLES[node.type]) {
+      throw new Error(`Node "${node.id}" has unknown type "${node.type}": must be one of ${Object.keys(SHAPE_STYLES).join(', ')}`)
+    }
+    if (node.icon != null && !VALID_ICON.test(node.icon)) {
+      throw new Error(`Node "${node.id}" has invalid icon "${node.icon}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`)
+    }
+    if (node.position != null) {
+      if (typeof node.position.x !== 'number' || typeof node.position.y !== 'number') {
+        throw new Error(`Node "${node.id}" position must have numeric x and y`)
+      }
+    }
+  }
+
+  // Edge validation
+  for (const edge of spec.edges) {
+    if (!edge.from || !VALID_ID.test(edge.from)) {
+      throw new Error(`Invalid edge.from "${edge.from}": must match node ID pattern`)
+    }
+    if (!edge.to || !VALID_ID.test(edge.to)) {
+      throw new Error(`Invalid edge.to "${edge.to}": must match node ID pattern`)
+    }
+    if (edge.label != null && typeof edge.label !== 'string') {
+      throw new Error(`Edge "${edge.from}->${edge.to}" label must be a string`)
+    }
+  }
+
+  // Module validation
+  for (const mod of spec.modules) {
+    if (!mod.id || !VALID_ID.test(mod.id)) {
+      throw new Error(`Invalid module id "${mod.id}": must match /^[A-Za-z][A-Za-z0-9_-]*$/`)
+    }
+    if (!mod.label || typeof mod.label !== 'string') {
+      throw new Error(`Module "${mod.id}" is missing a required string label`)
+    }
+  }
 }
 
 /**
@@ -1064,25 +1172,37 @@ export function checkComplexity(spec) {
   const edgeCount = spec.edges?.length || 0
   const moduleCount = spec.modules?.length || 0
 
-  if (nodeCount > 30) {
+  // Fatal hard caps (security limits — always enforced)
+  if (nodeCount > 100) {
+    warnings.push({ level: 'fatal', message: `Node count (${nodeCount}) exceeds safety limit of 100` })
+  } else if (nodeCount > 30) {
     warnings.push({ level: 'error', message: `Too many nodes (${nodeCount}). Consider splitting into sub-diagrams.` })
   } else if (nodeCount > 20) {
     warnings.push({ level: 'warning', message: `Many nodes (${nodeCount}). Consider splitting for clarity.` })
   }
 
-  if (edgeCount > 50) {
+  if (edgeCount > 200) {
+    warnings.push({ level: 'fatal', message: `Edge count (${edgeCount}) exceeds safety limit of 200` })
+  } else if (edgeCount > 50) {
     warnings.push({ level: 'error', message: `Too many edges (${edgeCount}). Consider hierarchical layout.` })
   } else if (edgeCount > 30) {
     warnings.push({ level: 'warning', message: `Many edges (${edgeCount}). Consider simplifying.` })
   }
 
-  if (moduleCount > 5) {
+  if (moduleCount > 20) {
+    warnings.push({ level: 'fatal', message: `Module count (${moduleCount}) exceeds safety limit of 20` })
+  } else if (moduleCount > 5) {
     warnings.push({ level: 'warning', message: `Many modules (${moduleCount}). Consider zoom layers.` })
   }
 
   // Check label lengths
   for (const node of spec.nodes || []) {
-    if (node.label && node.label.length > 14) {
+    if (node.label && node.label.length > 200) {
+      warnings.push({
+        level: 'fatal',
+        message: `Node "${node.id}" label exceeds 200 characters (${node.label.length} chars)`
+      })
+    } else if (node.label && node.label.length > 14) {
       warnings.push({
         level: 'info',
         message: `Node "${node.id}" label is long (${node.label.length} chars). Consider abbreviation.`

@@ -6,24 +6,31 @@ nodes:
   - id: start
     label: Start
     type: terminal
+    position: { x: 200, y: 40 }
   - id: input
     label: Enter Credentials
     type: service
+    position: { x: 200, y: 160 }
   - id: check
     label: Valid?
     type: decision
+    position: { x: 200, y: 280 }
   - id: mfa
     label: MFA Required?
     type: decision
+    position: { x: 80, y: 400 }
   - id: verify
     label: Verify MFA
     type: service
+    position: { x: 200, y: 520 }
   - id: success
     label: Login Success
     type: terminal
+    position: { x: 200, y: 640 }
   - id: fail
     label: Login Failed
     type: terminal
+    position: { x: 360, y: 400 }
 
 edges:
   - from: start

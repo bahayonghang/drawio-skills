@@ -107,6 +107,97 @@ const EDGE_WITH_START_ARROW = `
   </root>
 </mxGraphModel>`
 
+const MULTI_EDGE_TRIANGLE = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="A" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="50" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="B" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="C" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="200" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="5" style="endArrow=block;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="6" style="endArrow=block;" edge="1" source="3" target="4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="7" style="endArrow=block;" edge="1" source="4" target="2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const MODULE_WITH_CHILD = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Module" style="rounded=1;fillColor=#F8FAFC;strokeColor=#E2E8F0;" vertex="1" parent="1">
+      <mxGeometry x="20" y="20" width="300" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="Child Node" style="rounded=1;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="2">
+      <mxGeometry x="40" y="60" width="120" height="60" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const EDGE_WITH_OPEN_ARROW = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="X" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="50" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="Y" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" style="endArrow=open;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const EDGE_WITH_NO_ARROW = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="P" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="50" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="Q" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" style="endArrow=none;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const EDGE_WITH_LABEL = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Src" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="50" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="Dst" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="50" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="connects" style="endArrow=block;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
 // ============================================================================
 // Tests
 // ============================================================================
@@ -175,5 +266,37 @@ describe('drawioToSvg', () => {
       svg.includes('marker-start'),
       'Output should contain marker-start attribute when startArrow is set'
     )
+  })
+
+  // --- Multi-edge and arrow type tests ---
+
+  it('should render multi-edge diagram with 3+ edges', () => {
+    const svg = drawioToSvg(MULTI_EDGE_TRIANGLE)
+    assert.ok(svg.startsWith('<svg'), 'Output should start with <svg')
+    const edgeMatches = svg.match(/<(line|path)\b/g) || []
+    assert.ok(edgeMatches.length >= 3, `Should have at least 3 edge elements, found ${edgeMatches.length}`)
+  })
+
+  it('should render module/container and child node', () => {
+    const svg = drawioToSvg(MODULE_WITH_CHILD)
+    assert.ok(svg.includes('Module'), 'Output should contain module label')
+    assert.ok(svg.includes('Child Node'), 'Output should contain child node label')
+  })
+
+  it('should handle open arrow type', () => {
+    const svg = drawioToSvg(EDGE_WITH_OPEN_ARROW)
+    assert.ok(svg.includes('<marker'), 'Output should contain marker for arrow')
+    assert.ok(svg.includes('arrow-open'), 'Output should contain arrow-open marker id')
+  })
+
+  it('should handle none arrow type (no marker-end)', () => {
+    const svg = drawioToSvg(EDGE_WITH_NO_ARROW)
+    assert.ok(svg.startsWith('<svg'), 'Output should start with <svg')
+    assert.ok(!svg.includes('marker-end'), 'endArrow=none should not produce marker-end attribute')
+  })
+
+  it('should render edge label text', () => {
+    const svg = drawioToSvg(EDGE_WITH_LABEL)
+    assert.ok(svg.includes('>connects<'), 'Output should contain the edge label text')
   })
 })

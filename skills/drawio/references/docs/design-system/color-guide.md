@@ -1,155 +1,160 @@
 # Color Scheme Selection Guide
 
-配色方案选择指南 — 帮助你在 3 步内为图表选出最合适的主题。
+A guide to help you choose the most suitable theme for your diagram in 3 steps.
+(配色方案选择指南 — 帮助你在 3 步内为图表选出最合适的主题。)
 
 ---
 
-## 决策树（3 步选对主题）
+## Decision Tree (3 Steps to Choose a Theme)
 
 ```
-Step 1: 最终用途？
-  ├── 印刷 / 出版
-  │   ├── 彩色印刷 / 数字 PDF → academic-color ⭐
-  │   └── 严格灰度（IEEE 投稿）→ academic
-  └── 数字 / 屏幕展示 → 继续 Step 2
+Step 1: Final use case? (最终用途？)
+  ├── Print / Publication (印刷 / 出版)
+  │   ├── Color print / Digital PDF → academic-color ⭐
+  │   └── Strict grayscale (IEEE submission) → academic
+  └── Digital / Screen display → Continue to Step 2
 
-Step 2: 目标受众？
-  ├── 技术 / 工程受众 → tech-blue（默认）
-  ├── 学术 / 研究受众 → academic-color
-  ├── 演讲 / 汇报观众 → dark
-  └── 环保 / 生态主题 → nature
+Step 2: Target audience? (目标受众？)
+  ├── Technical / Engineering → tech-blue (default)
+  ├── Academic / Research → academic-color
+  ├── Presentation / Slides → dark
+  └── Environmental / Ecology → nature
 
-Step 3: 特殊要求？
-  ├── 需要高对比度（无障碍）→ academic 或 tech-blue
-  ├── 深色背景投影仪 → dark
-  └── 其他 → 沿用 Step 2 结果
+Step 3: Special requirements? (特殊要求？)
+  ├── High contrast (accessibility) → academic or tech-blue
+  ├── Dark background projector → dark
+  └── Other → Use Step 2 result
 ```
 
 ---
 
-## 主题速查表
+## Theme Quick Reference
 
-| 主题 | Primary | Secondary | Background | 最适合 |
-|------|---------|-----------|------------|--------|
-| **tech-blue** | `#2563EB` | `#059669` | `#FFFFFF` | 架构图、DevOps、系统设计、API 文档 |
-| **academic-color** | `#2563EB` | `#059669` | `#FFFFFF` | 论文插图、研究报告（彩印）、深度学习图 |
-| **academic** | `#1E1E1E` | `#1E1E1E` | `#FFFFFF` | IEEE 论文、灰度打印、正式出版物 |
-| **dark** | `#60A5FA` | `#34D399` | `#0F172A` | 演讲 PPT、屏幕展示、夜间模式 |
-| **nature** | `#059669` | `#84CC16` | `#FFFFFF` | 生命周期流程、环境系统、绿色主题 |
-
----
-
-## 语义颜色含义（跨主题约定）
-
-不同节点类型在各主题中遵循统一的语义含义，即便具体颜色有差异：
-
-| 节点类型 | 语义含义 | tech-blue Fill | 说明 |
-|---------|---------|----------------|------|
-| `service` | 主流程 / API 处理 | `#DBEAFE`（浅蓝） | 主要处理单元，最常用 |
-| `database` | 持久化存储 | `#D1FAE5`（浅绿） | 数据持久层，区别于服务节点 |
-| `decision` | 条件判断 / 分支 | `#FEF3C7`（浅琥珀） | 菱形，流程控制关键点 |
-| `queue` | 异步 / 消息队列 | `#EDE9FE`（浅紫） | 解耦通信，非同步处理 |
-| `terminal` | 流程起始 / 终止 | `#F1F5F9`（浅灰） | 标记流程边界 |
-| `user` | 外部主体 / 角色 | `#E0F2FE`（浅天蓝） | 人或外部系统，与 service 区分 |
-| `document` | 文件 / 报告 | `#FFFBEB`（浅黄） | 输出产物，非处理单元 |
-| `cloud` | 外部网络 / SaaS | `#F0FDF4`（浅绿） | 第三方或网络服务 |
+| Theme | Primary | Secondary | Background | Best For |
+|-------|---------|-----------|------------|----------|
+| **tech-blue** | `#2563EB` | `#059669` | `#FFFFFF` | Architecture, DevOps, system design, API docs |
+| **academic-color** | `#2563EB` | `#059669` | `#FFFFFF` | Paper figures, research reports (color print), deep learning diagrams |
+| **academic** | `#1E1E1E` | `#1E1E1E` | `#FFFFFF` | IEEE papers, grayscale print, formal publications |
+| **dark** | `#60A5FA` | `#34D399` | `#0F172A` | Presentation slides, screen display, dark mode |
+| **nature** | `#059669` | `#84CC16` | `#FFFFFF` | Lifecycle flows, environmental systems, green themes |
 
 ---
 
-## 颜色覆盖规范
+## Semantic Color Meanings (Cross-theme Convention)
 
-### 优先使用主题 Token（强烈推荐）
+Different node types follow a unified semantic meaning across themes, even if the specific colors differ:
+(不同节点类型在各主题中遵循统一的语义含义，即便具体颜色有差异。)
 
-Token 与主题切换自动兼容，硬编码 hex 会在切换主题后失效：
+| Node Type | Semantic Meaning | tech-blue Fill | Description |
+|-----------|-----------------|----------------|-------------|
+| `service` | Main flow / API processing | `#DBEAFE` (light blue) | Primary processing unit, most common |
+| `database` | Persistent storage | `#D1FAE5` (light green) | Data persistence layer, distinct from services |
+| `decision` | Conditional / Branch | `#FEF3C7` (light amber) | Diamond shape, key flow control point |
+| `queue` | Async / Message queue | `#EDE9FE` (light purple) | Decoupled communication, async processing |
+| `terminal` | Flow start / end | `#F1F5F9` (light gray) | Marks flow boundaries |
+| `user` | External actor / Role | `#E0F2FE` (light sky blue) | Person or external system, distinct from service |
+| `document` | File / Report | `#FFFBEB` (light yellow) | Output artifact, not a processing unit |
+| `cloud` | External network / SaaS | `#F0FDF4` (light green) | Third-party or network services |
+
+---
+
+## Color Override Rules
+
+### Prefer Theme Tokens (Strongly Recommended)
+
+Tokens are automatically compatible with theme switching; hardcoded hex values break when themes change:
+(Token 与主题切换自动兼容，硬编码 hex 会在切换主题后失效。)
 
 ```yaml
-# ✅ 推荐：使用 Token
+# Recommended: Use tokens
 nodes:
   - id: api
     style:
-      fillColor: $primaryLight      # 随主题自动调整
+      fillColor: $primaryLight      # Adjusts automatically with theme
       strokeColor: $primary
       fontColor: $text
 
-# ❌ 避免：硬编码 hex
+# Avoid: Hardcoded hex
 nodes:
   - id: api
     style:
-      fillColor: "#DBEAFE"          # 切换到 dark 主题后不协调
+      fillColor: "#DBEAFE"          # Breaks when switching to dark theme
 ```
 
-### Token 完整列表
+### Complete Token List
 
 ```
-颜色基础:
-  $primary          主色（蓝/绿/深色等，随主题变化）
-  $primaryLight     主色浅版（填充色推荐）
-  $secondary        辅助色（数据库节点默认）
-  $secondaryLight   辅助色浅版
-  $accent           强调色（决策节点默认）
-  $accentLight      强调色浅版
-  $background       画布背景色
-  $surface          卡片/模块背景色
-  $surfaceAlt       交替背景色
+Base Colors:
+  $primary          Primary color (blue/green/dark, varies by theme)
+  $primaryLight     Light variant of primary (recommended for fills)
+  $secondary        Secondary color (database nodes default)
+  $secondaryLight   Light variant of secondary
+  $accent           Accent color (decision nodes default)
+  $accentLight      Light variant of accent
+  $background       Canvas background color
+  $surface          Card/module background color
+  $surfaceAlt       Alternate background color
 
-文字与边框:
-  $text             主要文字颜色
-  $textMuted        次要文字颜色
-  $textInverse      反色文字（深色背景上使用）
-  $border           标准边框颜色
-  $borderStrong     加粗边框颜色
+Text & Borders:
+  $text             Primary text color
+  $textMuted        Secondary text color
+  $textInverse      Inverse text (for dark backgrounds)
+  $border           Standard border color
+  $borderStrong     Bold border color
 
-语义颜色:
-  $success          成功状态（绿色系）
-  $successLight     成功浅色
-  $warning          警告状态（黄/橙色系）
-  $warningLight     警告浅色
-  $error            错误状态（红色系）
-  $errorLight       错误浅色
-  $info             信息提示（蓝色系）
-  $infoLight        信息浅色
-```
-
----
-
-## 连接线配色规范
-
-| 连接类型 | 线型 | 推荐用途 |
-|---------|------|---------|
-| `primary` | 实线 2px，实心箭头 | 主流程，默认选择 |
-| `data` | 虚线 2px（6 4），实心箭头 | 数据传输、异步通信 |
-| `optional` | 点线 1px（2 2），空心箭头 | 可选路径、回退逻辑 |
-| `dependency` | 实线 1px，菱形箭头 | 依赖关系、组合关系 |
-| `bidirectional` | 实线 1.5px，无箭头 | 双向关联、通信通道 |
-
-> 连接线颜色自动继承 `$text`（深色），无需手动设置除非有特殊语义标注需求。
-
----
-
-## 配色一致性检查清单
-
-生成 YAML spec 前，请逐项确认：
-
-```
-□ 主题已明确选择（meta.theme 已设置）
-□ 所有自定义 fillColor 使用 Token 或有效 hex（#RGB 或 #RRGGBB）
-□ strokeColor 与 fillColor 使用同类型的深/浅 Token 组合
-  例：fillColor: $primaryLight + strokeColor: $primary ✅
-  例：fillColor: $primaryLight + strokeColor: $error ❌（语义混乱）
-□ 决策节点（decision）使用 $accentLight / $accent 以视觉区分主流程
-□ 连接线颜色未覆盖，保持默认 $text 颜色
-□ 深色主题（dark）下确认 fontColor 使用 $textInverse 保证对比度
-□ 模块（modules）背景色使用 $surface 而非 $background（层次区分）
+Semantic Colors:
+  $success          Success state (green)
+  $successLight     Light success
+  $warning          Warning state (yellow/orange)
+  $warningLight     Light warning
+  $error            Error state (red)
+  $errorLight       Light error
+  $info             Info hint (blue)
+  $infoLight        Light info
 ```
 
 ---
 
-## 常见配色错误与修正
+## Connector Color Rules
 
-| 错误模式 | 问题 | 修正方案 |
-|---------|------|---------|
-| 所有节点用同一颜色 | 无法区分节点类型 | 利用语义类型自动配色，不要手动统一覆盖 |
-| decision 节点用蓝色填充 | 与 service 节点混淆 | 改用 `$accentLight`（琥珀/黄色）填充 |
-| 深色主题下黑色文字 | 对比度不足 | 添加 `fontColor: $textInverse` |
-| 全部使用硬编码 hex | 主题切换后样式崩坏 | 改为 Token 引用 |
-| 连接线覆盖为彩色 | 视觉噪音，分散注意力 | 仅在有特殊语义时才覆盖连接线颜色 |
+| Connector Type | Line Style | Recommended Use |
+|---------------|------------|-----------------|
+| `primary` | Solid 2px, filled arrow | Main flow, default choice |
+| `data` | Dashed 2px (6 4), filled arrow | Data transfer, async communication |
+| `optional` | Dotted 1px (2 2), open arrow | Optional path, fallback logic |
+| `dependency` | Solid 1px, diamond arrow | Dependency, composition |
+| `bidirectional` | Solid 1.5px, no arrow | Bidirectional association, communication channel |
+
+> Connector colors automatically inherit `$text` (dark); no manual override needed unless special semantic annotation is required.
+> (连接线颜色自动继承 `$text`（深色），无需手动设置除非有特殊语义标注需求。)
+
+---
+
+## Color Consistency Checklist
+
+Before generating a YAML spec, verify each item:
+(生成 YAML spec 前，请逐项确认。)
+
+```
+[] Theme explicitly selected (meta.theme is set)
+[] All custom fillColor uses tokens or valid hex (#RGB or #RRGGBB)
+[] strokeColor and fillColor use matching deep/light token pairs
+   e.g.: fillColor: $primaryLight + strokeColor: $primary
+   e.g.: fillColor: $primaryLight + strokeColor: $error (semantic mismatch)
+[] Decision nodes use $accentLight / $accent for visual distinction from main flow
+[] Connector colors not overridden, keeping default $text color
+[] In dark theme, confirm fontColor uses $textInverse for adequate contrast
+[] Module backgrounds use $surface instead of $background (layer distinction)
+```
+
+---
+
+## Common Color Mistakes & Fixes
+
+| Mistake | Problem | Fix |
+|---------|---------|-----|
+| All nodes same color | Cannot distinguish node types | Use semantic type auto-coloring; don't manually unify |
+| Decision node with blue fill | Confused with service nodes | Use `$accentLight` (amber/yellow) fill instead |
+| Black text on dark theme | Insufficient contrast | Add `fontColor: $textInverse` |
+| All hardcoded hex values | Styles break on theme switch | Use token references instead |
+| Colored connectors | Visual noise, distracting | Only override connector color for special semantics |
