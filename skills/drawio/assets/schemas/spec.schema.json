@@ -23,6 +23,11 @@
           "enum": ["orthogonal", "rounded"],
           "description": "Connector routing style"
         },
+        "profile": {
+          "type": "string",
+          "enum": ["default", "academic-paper", "engineering-review"],
+          "description": "Workflow profile that enables domain-specific validation and defaults"
+        },
         "canvas": {
           "type": "string",
           "description": "Canvas size (e.g. auto, 800x600, 1200x800)"
@@ -34,6 +39,10 @@
         "description": {
           "type": "string",
           "description": "Diagram description"
+        },
+        "legend": {
+          "type": "string",
+          "description": "Optional legend summary used by academic-paper validation"
         },
         "grid": {
           "type": "object",
@@ -155,7 +164,29 @@
               "strokeWidth": { "type": "number", "minimum": 0 },
               "dashed": { "type": "boolean" },
               "dashPattern": { "type": "string" },
-              "endArrow": { "type": "string" }
+              "endArrow": { "type": "string" },
+              "exitX": { "type": "number" },
+              "exitY": { "type": "number" },
+              "exitDx": { "type": "number" },
+              "exitDy": { "type": "number" },
+              "entryX": { "type": "number" },
+              "entryY": { "type": "number" },
+              "entryDx": { "type": "number" },
+              "entryDy": { "type": "number" },
+              "fontSize": { "type": "number", "minimum": 1 }
+            }
+          },
+          "waypoints": {
+            "type": "array",
+            "description": "Optional explicit routing waypoints for orthogonal edges",
+            "items": {
+              "type": "object",
+              "required": ["x", "y"],
+              "properties": {
+                "x": { "type": "number" },
+                "y": { "type": "number" }
+              },
+              "additionalProperties": false
             }
           }
         }

@@ -1,0 +1,81 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+
+import {
+  calculateLayout,
+  loadTheme,
+  validateAcademicProfile,
+  validateConnectionPointPolicy,
+  validateEdgeQuality
+} from '../skills/drawio/scripts/dsl/spec-to-drawio.js'
+import { parseCsvToSpec, parseMermaidToSpec } from '../skills/drawio/scripts/adapters/index.js'
+
+test('parseMermaidToSpec supports flowchart', () => {
+  const spec = parseMermaidToSpec(`flowchart TD
+    A[Start] --> B{Check}
+    B --> C[Done]
+  `)
+  assert.equal(spec.meta.layout, 'horizontal')
+  assert.equal(spec.nodes.length, 3)
+  assert.equal(spec.edges.length, 2)
+})
+
+test('parseMermaidToSpec rejects unsupported diagram type', () => {
+  assert.throws(
+    () => parseMermaidToSpec('journey\n  title Demo'),
+    /Unsupported Mermaid diagram type/
+  )
+})
+
+test('parseCsvToSpec builds parent-child edges', () => {
+  const spec = parseCsvToSpec(`name,parent,label
+CEO,,Chief Executive Officer
+CTO,CEO,Chief Technology Officer`)
+  assert.equal(spec.nodes.length, 2)
+  assert.equal(spec.edges.length, 1)
+  assert.equal(spec.edges[0].from, 'CEO')
+  assert.equal(spec.edges[0].to, 'CTO')
+})
+
+test('validateConnectionPointPolicy warns on partial connection points', () => {
+  const warnings = validateConnectionPointPolicy({
+    meta: {},
+    nodes: [],
+    edges: [
+      {
+        from: 'A',
+        to: 'B',
+        style: { exitX: 1, exitY: 0.5 }
+      }
+    ],
+    modules: []
+  })
+  assert.equal(warnings.length, 1)
+  assert.match(warnings[0], /partial connection points/)
+})
+
+test('validateAcademicProfile requires title and legend for academic-paper', () => {
+  const warnings = validateAcademicProfile({
+    meta: { profile: 'academic-paper', theme: 'academic-color' },
+    nodes: [{ id: 'A', label: 'API', icon: 'aws.lambda' }],
+    edges: [{ from: 'A', to: 'B', type: 'data' }],
+    modules: []
+  })
+  assert.ok(warnings.some(w => /meta.title/.test(w)))
+  assert.ok(warnings.some(w => /meta.legend/.test(w)))
+})
+
+test('validateEdgeQuality warns on short final segment', () => {
+  const spec = {
+    meta: { layout: 'horizontal' },
+    nodes: [
+      { id: 'A', label: 'Alpha', position: { x: 100, y: 100 } },
+      { id: 'B', label: 'Beta', position: { x: 180, y: 100 } }
+    ],
+    edges: [{ from: 'A', to: 'B', label: 'tight' }],
+    modules: []
+  }
+  const layout = calculateLayout(spec, loadTheme('tech-blue'))
+  const warnings = validateEdgeQuality(spec, layout)
+  assert.ok(warnings.some(w => /short final segment/.test(w)))
+})

@@ -173,6 +173,16 @@ test('validateSpec rejects invalid meta.routing', () => {
   assert.throws(() => validateSpec(spec), /Invalid meta\.routing/)
 })
 
+test('validateSpec rejects invalid meta.profile', () => {
+  const spec = {
+    meta: { profile: 'paper' },
+    nodes: [{ id: 'A', label: 'Test' }],
+    edges: [],
+    modules: []
+  }
+  assert.throws(() => validateSpec(spec), /Invalid meta\.profile/)
+})
+
 test('validateSpec rejects invalid edge.from', () => {
   const spec = {
     meta: {},
@@ -201,6 +211,16 @@ test('validateSpec rejects non-string edge label', () => {
     modules: []
   }
   assert.throws(() => validateSpec(spec), /label must be a string/)
+})
+
+test('validateSpec rejects malformed edge waypoints', () => {
+  const spec = {
+    meta: {},
+    nodes: [{ id: 'A', label: 'Test' }, { id: 'B', label: 'Test2' }],
+    edges: [{ from: 'A', to: 'B', waypoints: [{ x: 'bad', y: 10 }] }],
+    modules: []
+  }
+  assert.throws(() => validateSpec(spec), /waypoint 0 must have numeric x and y/)
 })
 
 test('validateSpec rejects invalid module id', () => {

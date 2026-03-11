@@ -137,3 +137,21 @@ test('CLI: --validate with example files', () => {
     assert.ok(output.includes('<mxGraphModel'), `${name} should produce valid XML with --validate`)
   }
 })
+
+test('CLI: Mermaid flowchart converts via adapter', () => {
+  const mermaid = `flowchart TD
+    A[Start] --> B{Approve}
+    B --> C[Done]`
+  const output = runCli(['-', '--input-format', 'mermaid'], { input: mermaid })
+  assert.ok(output.includes('Start'), 'Mermaid adapter should emit Start node')
+  assert.ok(output.includes('Approve'), 'Mermaid adapter should emit decision node')
+})
+
+test('CLI: CSV org chart converts via adapter', () => {
+  const csv = `name,parent,label
+CEO,,Chief Executive Officer
+CTO,CEO,Chief Technology Officer`
+  const output = runCli(['-', '--input-format', 'csv'], { input: csv })
+  assert.ok(output.includes('Chief Executive Officer'), 'CSV adapter should emit node labels')
+  assert.ok(output.includes('Chief Technology Officer'), 'CSV adapter should emit child node labels')
+})

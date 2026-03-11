@@ -7,6 +7,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve, extname } from 'node:path'
 import { parseSpecYaml, specToDrawioXml, validateXml } from './dsl/spec-to-drawio.js'
+import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
 
 /** draw.io format compatibility version */
 const DRAWIO_COMPAT_VERSION = '21.0.0'
@@ -22,16 +23,17 @@ if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
 draw.io YAML → XML/SVG Converter
 
 Usage:
-  node cli.js <input.yaml> [output.drawio|output.svg] [options]
+  node cli.js <input> [output.drawio|output.svg] [options]
 
 Arguments:
-  input.yaml          Path to YAML specification file, or - for stdin
+  input               Path to input file, or - for stdin
   output file         Optional output file. Extension determines format:
                         .drawio  → draw.io XML file format
                         .svg     → SVG (requires drawio-to-svg module)
                       If omitted, XML is printed to stdout.
 
 Options:
+  --input-format <f>  Input format: yaml (default), mermaid, csv
   --theme <name>      Override theme (e.g. tech-blue, academic, nature, dark)
   --strict            Fail on complexity errors
   --validate          Run XML validation and print results
@@ -41,7 +43,7 @@ Options:
 }
 
 // Extract positional arguments (non-flag args, excluding values of --flags)
-const flagsWithValues = new Set(['--theme'])
+const flagsWithValues = new Set(['--theme', '--input-format'])
 const positional = []
 for (let i = 0; i < args.length; i++) {
   if (flagsWithValues.has(args[i])) {
@@ -56,6 +58,8 @@ const outputFile = positional[1] || null
 // Extract flags
 const themeIndex = args.indexOf('--theme')
 const themeName = themeIndex !== -1 ? args[themeIndex + 1] : null
+const inputFormatIndex = args.indexOf('--input-format')
+const inputFormat = inputFormatIndex !== -1 ? args[inputFormatIndex + 1] : 'yaml'
 const strict = args.includes('--strict')
 const doValidate = args.includes('--validate')
 
@@ -94,9 +98,17 @@ if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
 
 let spec
 try {
-  spec = parseSpecYaml(yamlText)
+  if (inputFormat === 'yaml') {
+    spec = parseSpecYaml(yamlText)
+  } else if (inputFormat === 'mermaid') {
+    spec = parseMermaidToSpec(yamlText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
+  } else if (inputFormat === 'csv') {
+    spec = parseCsvToSpec(yamlText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
+  } else {
+    throw new Error(`Unsupported input format "${inputFormat}"`)
+  }
 } catch (err) {
-  console.error(`Error: Failed to parse YAML: ${err.message}`)
+  console.error(`Error: Failed to parse ${inputFormat}: ${err.message}`)
   process.exit(1)
 }
 
@@ -129,6 +141,10 @@ if (doValidate) {
     }
     process.exit(1)
   }
+}
+
+if (spec.meta?.profile === 'academic-paper' && outputFile && extname(outputFile).toLowerCase() !== '.svg') {
+  console.error('Validation: academic-paper profile recommends SVG export for paper-ready vector output.')
 }
 
 // ---------------------------------------------------------------------------
