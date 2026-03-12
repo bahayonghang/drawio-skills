@@ -1,6 +1,6 @@
 # Themes
 
-The Draw.io Design System provides 5 built-in themes optimized for different use cases. Custom themes can be created using the JSON theme format.
+The Draw.io Design System provides 6 built-in themes optimized for different use cases. Custom themes can be created using the JSON theme format.
 
 ---
 
@@ -145,13 +145,39 @@ meta:
 
 ---
 
+### High Contrast
+
+Maximum contrast for accessibility, screen readers, and print at any size.
+
+**Best for**: Accessibility-focused documents, high-DPI printing, presentations in bright rooms
+
+**Characteristics**:
+
+- Pure black/white with maximum contrast
+- Heavy stroke weights for visibility
+- Large, clear typography
+- No color dependencies
+
+```yaml
+meta:
+  theme: high-contrast
+```
+
+| Element | Color |
+|---------|-------|
+| All nodes | White fill (#FFFFFF), black stroke (#000000) |
+| Labels | Black (#000000) |
+| Connectors | Black (#000000), 2px minimum |
+
+---
+
 ## Theme Selection
 
 ### In Specification
 
 ```yaml
 meta:
-  theme: tech-blue  # or: academic, nature, dark
+  theme: tech-blue  # or: academic, academic-color, nature, dark, high-contrast
   layout: horizontal
 ```
 

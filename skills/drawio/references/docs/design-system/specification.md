@@ -1,6 +1,6 @@
 # Specification Format
 
-The Design System uses a YAML-based specification format for defining diagrams. This format replaces the legacy A-H format with structured, type-safe definitions.
+The Design System uses a YAML-based specification format for defining diagrams. This format supersedes the [legacy A-H format](../ah-format.md) (now deprecated) with structured, type-safe definitions.
 
 ---
 
@@ -53,7 +53,7 @@ meta:
   profile: default  # default | academic-paper | engineering-review
 
   # Theme selection (required)
-  theme: tech-blue  # tech-blue | academic | nature | dark | custom-name
+  theme: tech-blue  # tech-blue | academic | academic-color | nature | dark | high-contrast | custom-name
   
   # Layout direction
   layout: horizontal  # horizontal | vertical | hierarchical | radial
@@ -84,6 +84,7 @@ meta:
 | `academic-color` | Color paper or research poster |
 | `nature` | Green/environmental |
 | `dark` | Dark mode presentations |
+| `high-contrast` | Maximum contrast for accessibility and print |
 
 ### Profile Options
 
