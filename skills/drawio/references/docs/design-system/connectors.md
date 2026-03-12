@@ -138,6 +138,8 @@ edges:
 | Classic | → | `endArrow=classic` | Simple arrow |
 | None | — | `endArrow=none` | Bidirectional |
 
+> **Format note**: In draw.io XML style strings, boolean-like values use `1`/`0` (e.g., `endFill=1`), while theme JSON definitions use `true`/`false` (e.g., `"endFill": true`). The converter handles this translation automatically.
+
 ---
 
 ## Routing Modes
