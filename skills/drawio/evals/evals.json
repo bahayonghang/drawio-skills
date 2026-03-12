@@ -1,0 +1,137 @@
+{
+  "skill_name": "drawio",
+  "version": "2.1.0",
+  "evals": [
+    {
+      "id": "academic-campus-network",
+      "prompt": "Create an IEEE-style campus network figure with core, distribution, and access layers in grayscale.",
+      "expected_output": "A diagram with academic (grayscale) theme showing three network layers in IEEE-compatible styling.",
+      "files": [],
+      "assertions": [
+        "Output uses academic theme with grayscale palette",
+        "Contains core, distribution, and access layer modules",
+        "SVG or drawio output is grayscale-safe (no color-only semantics)",
+        "Node labels are <= 14 characters",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-research-workflow",
+      "prompt": "Create a research workflow figure for a paper showing data collection, preprocessing, modeling, validation, and reporting.",
+      "expected_output": "An academic-themed research pipeline diagram with 5 sequential stages.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains all 5 workflow stages as nodes",
+        "Edges use primary connector type for main flow",
+        "SVG export is grayscale-safe",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-system-overview",
+      "prompt": "Create a paper-ready system architecture overview with client, API, worker, and storage layers.",
+      "expected_output": "An academic-themed system architecture with 4 layers suitable for publication.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains client, API, worker, and storage layers",
+        "Nodes use semantic types (service, database, user)",
+        "SVG export preserves readability in grayscale",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-ablation-pipeline",
+      "prompt": "Create an ablation-study figure comparing baseline and two variants before a shared evaluation block.",
+      "expected_output": "A diagram with branching paths from baseline/variants converging at an evaluation node.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains baseline and at least two variant branches",
+        "Branches converge at a shared evaluation block",
+        "SVG export is grayscale-safe",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "engineering-cloud-reference",
+      "prompt": "Create a cloud reference architecture using gateway, compute, async queue, and object storage.",
+      "expected_output": "A tech-blue themed cloud architecture diagram with 4 key infrastructure components.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains gateway, compute, queue, and storage nodes",
+        "Nodes use appropriate semantic types (service, queue, database)",
+        "Edge routing follows orthogonal style",
+        "Edge quality: no overlapping arrows, minimum 30px last segment"
+      ]
+    },
+    {
+      "id": "engineering-microservices",
+      "prompt": "Create a microservices architecture with API gateway, auth service, order service, event bus, and PostgreSQL.",
+      "expected_output": "A microservices diagram with 5 components and appropriate connectors.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains all 5 specified components",
+        "Database node uses database semantic type",
+        "Service-to-database edges use data connector type",
+        "Edge quality: no overlapping arrows, clear routing"
+      ]
+    },
+    {
+      "id": "engineering-network-topology",
+      "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs.",
+      "expected_output": "A network topology diagram with hierarchical layout showing 4 network components.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains firewall, core switch, access switch, and AP nodes",
+        "Layout shows clear network hierarchy",
+        "Edge quality: orthogonal routing, no crossings where avoidable",
+        "meta.profile is set to engineering-review"
+      ]
+    },
+    {
+      "id": "simple-login-fast-path",
+      "prompt": "Create a horizontal tech-blue login flowchart with Start, Login Form, Validate, Success, and Error.",
+      "expected_output": "A simple horizontal flowchart with 5 nodes in tech-blue theme.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue theme",
+        "Contains exactly 5 nodes: Start, Login Form, Validate, Success, Error",
+        "Layout direction is horizontal",
+        "Terminal nodes use terminal semantic type",
+        "Decision/branch is present for validate step"
+      ]
+    },
+    {
+      "id": "dense-architecture-edge-audit",
+      "prompt": "Create a dense architecture diagram with shared event flows, two databases, and cross-service dependencies.",
+      "expected_output": "A complex architecture diagram that passes edge-quality validation.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains at least two database nodes",
+        "Event flows use data or optional connector types",
+        "Edge quality: no corner connection points, no shared face slots",
+        "Edge quality: last segment >= 30px, labels offset from edges",
+        "meta.profile is set to engineering-review"
+      ]
+    },
+    {
+      "id": "paper-figure-with-formula",
+      "prompt": "Create a paper figure for a training pipeline including the loss formula $$L = -\\sum y_i \\log(\\hat{y}_i)$$.",
+      "expected_output": "An academic-themed training pipeline diagram with LaTeX formula rendering.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains a formula node with the loss function",
+        "LaTeX formula is properly formatted",
+        "SVG export preserves formula readability",
+        "meta.profile is set to academic-paper"
+      ]
+    }
+  ]
+}
