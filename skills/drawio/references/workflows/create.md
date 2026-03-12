@@ -86,8 +86,8 @@ Step 9: Edge Audit
 └── Prefer straight arrows when alignment allows it
 
 Step 10: Render
-├── node $SKILL_DIR/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate
-└── For paper-quality diagrams prefer output.svg
+├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate
+└── For paper-quality diagrams prefer output.svg (SVG export requires scripts/svg/ module)
 
 Step 11: Preview
 ├── MCP available -> start_session / create_new_diagram

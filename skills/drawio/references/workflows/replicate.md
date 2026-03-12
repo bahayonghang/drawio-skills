@@ -26,7 +26,7 @@ Step 3: Structured Extraction
 │   ├── edges with connector types
 │   └── modules for grouping
 ├── Apply semantic shape mapping
-└── Mark missing info as "未提及"
+└── Mark missing info as "Not specified" (未提及)
 
 Step 4: Logic Verification (Mandatory)
 ├── Translate structural analysis into a pure ASCII logical flow graph
@@ -39,18 +39,18 @@ Step 5: Quality Validation
 ├── Check: total nodes ≤ 30
 └── If fails: suggest splitting
 
-Step 5: Convert to Diagram
+Step 6: Convert to Diagram
 ├── Parse specification via scripts/dsl/spec-to-drawio.js
 ├── Apply selected theme
 ├── Calculate 8px grid positions
 ├── Call MCP: start_session
 └── Call MCP: create_new_diagram
 
-Step 6: Review and Refine
+Step 7: Review and Refine
 ├── Compare with original image
 └── Use /drawio edit for adjustments
 
-Step 7: Validate (Optional)
+Step 8: Validate (Optional)
 ├── Check cell ID uniqueness
 ├── Check edge source/target reference validity
 ├── Check required root cells present
@@ -165,7 +165,7 @@ This is a figure from our research paper
 ⚠️ **Hard Rules (Violations cause regeneration):**
 
 1. **Only use content from input** - Never add inferred content
-2. **Mark missing as "未提及"** - Never guess
+2. **Mark missing as "Not specified" (未提及)** - Never guess
 3. **Apply semantic types** - Map visuals to design system types
 4. **Modules ≤ 5** - Merge if necessary
 5. **Nodes per module: 3-7** - Summarize if too many

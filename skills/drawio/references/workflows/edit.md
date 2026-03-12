@@ -43,12 +43,12 @@ Step 5: Apply Design System
 ├── New edges use typed connectors
 └── Maintain 8px grid alignment
 
-Step 5: Apply Changes
+Step 6: Apply Changes
 ├── Batch operations for efficiency
 ├── Call MCP: edit_diagram with operations
 └── Browser updates in real-time
 
-Step 6: Verify and Iterate
+Step 7: Verify and Iterate
 ├── User reviews changes
 └── Additional modifications as needed
 ```
@@ -146,13 +146,13 @@ Apply tech-blue theme
 
 | Operation | MCP Action | Design System Note |
 |-----------|------------|-------------------|
-| Update label | `edit_diagram` type: update | Preserves style |
-| Update style | `edit_diagram` type: update | Use theme tokens |
-| Change type | `edit_diagram` type: update | Updates shape |
-| Add node | `edit_diagram` type: add | Apply semantic type |
-| Add edge | `edit_diagram` type: add | Apply connector type |
-| Delete | `edit_diagram` type: delete | N/A |
-| Move | `edit_diagram` type: update | Snap to 8px grid |
+| Update label | `edit_diagram` operation: update | Preserves style |
+| Update style | `edit_diagram` operation: update | Use theme tokens |
+| Change type | `edit_diagram` operation: update | Updates shape |
+| Add node | `edit_diagram` operation: add | Apply semantic type |
+| Add edge | `edit_diagram` operation: add | Apply connector type |
+| Delete | `edit_diagram` operation: delete | N/A |
+| Move | `edit_diagram` operation: update | Snap to 8px grid |
 | Switch theme | Regenerate styles | Re-apply all tokens |
 
 ## Semantic Type Operations
