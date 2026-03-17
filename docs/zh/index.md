@@ -61,6 +61,12 @@ features:
 
 ## 快速开始 - 3 个工作流
 
+推荐安装命令：
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
 | 命令 | 说明 | 主题支持 |
 |------|------|----------|
 | `/drawio create` | 从自然语言创建图表 | ✅ 自动主题 |

@@ -6,6 +6,18 @@
 
 ## 安装方法
 
+### 推荐方式
+
+直接通过 `skills` 从 GitHub 安装：
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
+这是推荐安装方式。
+
+### 手动方式
+
 ```bash
 git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
 ```

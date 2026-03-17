@@ -94,7 +94,17 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
   - [Gemini CLI](https://ai.google.dev/gemini-api/docs/cli)
   - [Codex CLI](https://github.com/openai/codex-cli)
 
-### Quick Install
+### Recommended Install
+
+Install directly from GitHub with `skills`:
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
+This is the recommended installation method. It automatically installs the skill into the appropriate directory for your AI platform.
+
+### Manual Install
 
 **Step 1: Clone the repository**
 

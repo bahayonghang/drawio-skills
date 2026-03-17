@@ -61,6 +61,12 @@ features:
 
 ## Quick Start - 3 Workflows
 
+Recommended install:
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
 | Command | Description | Theme Support |
 |---------|-------------|---------------|
 | `/drawio create` | Create diagrams from natural language | ✅ Auto theme |

@@ -19,7 +19,17 @@ npx --version
 
 ## Installation Methods
 
-### Method 1: Install from GitHub (Recommended)
+### Method 1: Install with `skills` (Recommended)
+
+Install directly from GitHub:
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
+This is the recommended installation method.
+
+### Method 2: Install from GitHub Manually
 
 Clone the repository to your Claude Code skills directory:
 
@@ -30,7 +40,7 @@ git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/dra
 
 The skill will be automatically available in Claude Code.
 
-### Method 2: Manual Installation
+### Method 3: Manual Installation
 
 1. Download the repository as a ZIP file
 2. Extract to `~/.claude/skills/drawio`

@@ -22,6 +22,12 @@ Before you begin, make sure you have:
 
 See the [Installation Guide](./installation.md) for detailed installation instructions.
 
+Recommended command:
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
 ## Your First Diagram
 
 Once installed, creating a diagram is as simple as asking Claude:

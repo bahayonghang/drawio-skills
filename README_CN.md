@@ -94,7 +94,17 @@
   - [Gemini CLI](https://ai.google.dev/gemini-api/docs/cli)
   - [Codex CLI](https://github.com/openai/codex-cli)
 
-### 快速安装
+### 推荐安装
+
+使用 `skills` 直接从 GitHub 安装：
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
+这是推荐安装方式，会自动将技能安装到对应 AI 平台的技能目录。
+
+### 手动安装
 
 **步骤 1：克隆仓库**
 
