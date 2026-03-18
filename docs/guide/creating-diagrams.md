@@ -54,7 +54,7 @@ Shapes are auto-detected from labels or explicitly specified:
 | `queue` | Parallelogram | queue, buffer, kafka, stream |
 | `user` | Circle | user, actor, client, customer |
 | `document` | Wave rect | doc, file, report, document |
-| `formula` | White rect | equation, formula, `$$` |
+| `formula` | White rect | official math delimiters, standalone equations |
 
 ### Connector Types
 

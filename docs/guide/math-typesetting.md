@@ -6,15 +6,41 @@ Draw.io can render mathematical equations inside shape labels and text using Mat
 
 ## Supported Input Syntax
 
-Put your equation directly in the label text:
+Put your equation directly in the label text using one of the three supported syntaxes:
 
-- **AsciiMath (inline)**: wrap with backticks
-  - Example: `` `a^2+b^2=c^2` ``
-- **LaTeX (block)**: wrap with `$$`
-  - Example: `$$\sqrt{3×-1}+(1+x)^2$$`
-- **LaTeX (inline)**: wrap with `\(` and `\)`
-  - Example: `\(\sqrt{3×-1}+(1+x)^2\)`
-- **Mixing**: you can mix inline LaTeX and AsciiMath in the same label.
+| Syntax | When to Use | Example |
+|--------|-------------|---------|
+| `` `...` `` | Simple inline AsciiMath | `` `a^2+b^2=c^2` `` |
+| `$$...$$` | Standalone equations, dedicated formula nodes, labels that are entirely math | `$$\sqrt{3×-1}+(1+x)^2$$` |
+| `\(...\)` | Inline math inside a longer sentence or label | `\(\sqrt{3×-1}+(1+x)^2\)` |
+
+Rule of thumb:
+
+- Use `$$...$$` only when the label is essentially a formula block.
+- Use `\(...\)` for sentence-level inline math.
+- You can mix inline LaTeX and AsciiMath in the same label.
+
+## Unsupported or Discouraged Output
+
+Do not emit these forms in final labels:
+
+```text
+\frac{a}{b}      # bare LaTeX
+\alpha + \beta   # bare LaTeX
+$x^2 + y^2$      # discouraged single-dollar inline syntax
+\[x^2 + y^2\]    # discouraged bracket block syntax
+```
+
+Use these instead:
+
+```text
+\(\frac{a}{b}\)
+\(\alpha + \beta\)
+\(x^2 + y^2\)
+$$x^2 + y^2$$
+```
+
+The skill normalizes `$...$` to `\(...\)` and `\[...\]` to `$$...$$` when importing older labels, but new output should use only the three supported syntaxes above.
 
 ## Enable Rendering
 
@@ -99,6 +125,12 @@ Linear model: \(y = Wx + b\)
 Make the label left-aligned and readable.
 ```
 
+This is the preferred form for mixed prose + math labels. Avoid:
+
+```text
+Linear model: $$y = Wx + b$$
+```
+
 ### Block equations (bigger formulas)
 
 ```
@@ -106,6 +138,20 @@ Create a diagram with a node labeled:
 $$\mathcal{L}=\sum_i (y_i-\hat y_i)^2$$
 Resize the node so the equation is not clipped.
 ```
+
+## Auto-Wrapping Behavior
+
+The skill tries to wrap obvious math automatically before emitting draw.io XML:
+
+- `E = mc^2` -> `\(E = mc^2\)`
+- `Linear: y = mx + b` -> `Linear: \(y = mx + b\)`
+- `Output: \alpha + \beta` -> `Output: \(\alpha + \beta\)`
+
+It intentionally leaves non-math assignment-like text alone:
+
+- `Config: API version = v1` -> unchanged
+
+Automatic wrapping is a convenience layer. Final emitted labels still use only `$$...$$`, `\(...\)`, or `` `...` ``.
 
 ### IEEE Paper: Neural Network Architecture
 
@@ -205,6 +251,23 @@ If you are generating raw draw.io XML (instead of typing directly in the editor)
 - Avoid inserting HTML tags into the label text.
 - Keep math delimiters paired (backticks, `$$`, `\(` and `\)`).
 
+## YAML Label Safety
+
+If you are writing YAML specs:
+
+- Escape LaTeX backslashes inside quoted strings: `\\(`, `\\alpha`, `\\mathbb{R}`
+- Keep `$$` unchanged in YAML strings
+- Prefer:
+
+```yaml
+nodes:
+  - id: input
+    label: "Input: \\(x \\in \\mathbb{R}^d\\)"
+  - id: loss
+    label: "$$\\mathcal{L} = -\\sum_i y_i \\log(\\hat{y}_i)$$"
+    type: formula
+```
+
 ## Troubleshooting
 
 ### Math is not rendered
@@ -219,7 +282,8 @@ If you are generating raw draw.io XML (instead of typing directly in the editor)
 
 ## IEEE Submission Checklist
 
-- [ ] All equations use LaTeX format
+- [ ] All equations use `$$...$$`, `\(...\)`, or `` `...` ``
+- [ ] `$$...$$` is used only for standalone formulas, not sentence-level inline text
 - [ ] Figure has proper caption: "Fig. N. Description."
 - [ ] Legend explains all symbols
 - [ ] Grayscale compatibility verified

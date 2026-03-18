@@ -40,7 +40,7 @@ Neural network architecture:
 - Hidden Layer 1 (service)
 - Hidden Layer 2 (service)
 - Output Layer (terminal)
-- Loss Function: $$L = -\sum y \log(\hat{y})$$ (formula)
+- Loss Function: \(L = -\sum y \log(\hat{y})\) (formula)
 ```
 
 ### Design System Features

@@ -1,108 +1,19 @@
 # Formula Integration
 
-The Design System provides best practices for integrating LaTeX and mathematical formulas into draw.io diagrams.
+Use this file for formula-node styling, placement, and sizing inside the Draw.io design system.
 
----
+Syntax rules and troubleshooting live in `../math-typesetting.md`. Treat that file as the source of truth for:
 
-## Overview
+- `$$...$$` vs `\(...\)` vs `` `...` ``
+- mixed inline LaTeX and AsciiMath
+- unsupported forms such as `$...$` and `\[...\]`
+- MathJax toggling, YAML escaping, XML escaping, and export details
 
-Draw.io supports MathJax rendering for LaTeX formulas. The Design System defines consistent styling and placement rules for formula nodes.
+## Placement Strategy
 
-**Requirements**:
+### Inline in a Standard Node Label
 
-- Enable `Extras > Mathematical Typesetting` in draw.io
-- Use proper delimiters for formula content
-
----
-
-## Delimiter Syntax
-
-### Inline Formulas
-
-For formulas within text, use `\(...\)` delimiters:
-
-```yaml
-nodes:
-  - id: n1
-    label: "Linear: \\(y = mx + b\\)"
-```
-
-Renders as: "Linear: $y = mx + b$"
-
-### Block Formulas
-
-For standalone formulas, use `$$...$$` delimiters:
-
-```yaml
-nodes:
-  - id: eq1
-    label: "$$\\sum_{i=1}^{n} x_i$$"
-    type: formula
-```
-
-### AsciiMath
-
-For simpler notation, use backticks:
-
-```yaml
-nodes:
-  - id: n2
-    label: "`sum_(i=1)^n x_i`"
-```
-
----
-
-## Formula Node Styling
-
-Formula nodes use special styling for readability:
-
-| Property | Value | Reason |
-|----------|-------|--------|
-| Fill | White | Clean background for formulas |
-| Stroke | Primary blue | Visual distinction |
-| Stroke Width | 1px | Thin border, focus on content |
-| Font | Serif (Latin Modern) | Mathematical typography |
-| Padding | 8-16px | Space around formula |
-
-### Theme Styles
-
-**Tech Blue**:
-
-```json
-{
-  "fillColor": "#FFFFFF",
-  "strokeColor": "#2563EB",
-  "strokeWidth": 1
-}
-```
-
-**Academic**:
-
-```json
-{
-  "fillColor": "#FFFFFF",
-  "strokeColor": "#1E1E1E",
-  "strokeWidth": 1
-}
-```
-
-**Dark Mode**:
-
-```json
-{
-  "fillColor": "#1E293B",
-  "strokeColor": "#60A5FA",
-  "strokeWidth": 1
-}
-```
-
----
-
-## Placement Strategies
-
-### Inline in Node Label
-
-Best for: Simple formulas as part of explanation
+Use inline LaTeX when the label is mostly prose and the formula is only part of the sentence.
 
 ```yaml
 nodes:
@@ -111,9 +22,15 @@ nodes:
     type: process
 ```
 
+Best for:
+
+- variable annotations
+- short equations inside a pipeline step
+- labels such as input/output tensor shapes
+
 ### Dedicated Formula Node
 
-Best for: Important equations, theorems, definitions
+Use a `formula` node when the label is primarily an equation.
 
 ```yaml
 nodes:
@@ -123,9 +40,16 @@ nodes:
     size: medium
 ```
 
+Best for:
+
+- loss functions
+- update rules
+- theorem statements
+- important definitions
+
 ### Formula Sequence
 
-For derivations, create connected formula nodes:
+Break derivations into several connected formula nodes instead of one oversized label.
 
 ```yaml
 nodes:
@@ -143,75 +67,93 @@ edges:
     label: "Factor"
 ```
 
----
+## Formula Node Styling
+
+Formula nodes prioritize readability over visual decoration.
+
+| Property | Value | Reason |
+|----------|-------|--------|
+| Fill | White by default | Keep formulas easy to scan |
+| Stroke | Theme primary or grayscale academic stroke | Preserve semantic grouping |
+| Stroke Width | 1px | Keep border subtle |
+| Padding | 8-16px | Avoid clipping and crowding |
+| Alignment | Center by default | Works best for standalone equations |
+
+### Theme Examples
+
+**Tech Blue**
+
+```json
+{
+  "fillColor": "#FFFFFF",
+  "strokeColor": "#2563EB",
+  "strokeWidth": 1
+}
+```
+
+**Academic**
+
+```json
+{
+  "fillColor": "#FFFFFF",
+  "strokeColor": "#1E1E1E",
+  "strokeWidth": 1
+}
+```
+
+**Dark Mode**
+
+```json
+{
+  "fillColor": "#1E293B",
+  "strokeColor": "#60A5FA",
+  "strokeWidth": 1
+}
+```
+
+For dark themes, verify rendered math contrast manually. MathJax output often benefits from a light fill even when the rest of the diagram is dark.
 
 ## Sizing Guidelines
 
-Formula node sizes depend on content complexity:
+Choose node size based on rendered complexity, not only source length.
 
-| Complexity | Size | Example |
-|------------|------|---------|
-| Simple | 100×50 | `x^2 + y^2` |
-| Medium | 140×60 | `\sum_{i=1}^n x_i` |
-| Complex | 180×80 | Multi-line equations |
-| Very Complex | 220×100 | Matrices, systems |
+| Complexity | Suggested Size | Typical Content |
+|------------|----------------|-----------------|
+| Simple | 100x50 | `x^2 + y^2` |
+| Medium | 140x60 | `\sum_{i=1}^{n} x_i` |
+| Complex | 180x80 | long fractions, long summations |
+| Very Complex | 220x100 | matrices, multi-part expressions |
 
-### Auto-sizing
+### Auto-sizing Heuristic
 
-The system estimates size based on formula length:
+- Characters < 10: small
+- Characters 10-25: medium
+- Characters 25-50: large
+- Characters > 50: XL or manual sizing
 
-- Characters < 10: Small
-- Characters 10-25: Medium
-- Characters 25-50: Large
-- Characters > 50: XL or manual
+Always resize after preview when the formula contains fractions, matrices, or nested superscripts/subscripts.
 
----
+## Best Practices
 
-## Common Formula Patterns
+### Clarity
 
-### Greek Letters
+- Put one main equation in each formula node.
+- Use inline formulas for short variable mentions inside prose.
+- Split long derivations into multiple nodes.
 
-```latex
-\alpha, \beta, \gamma, \delta, \epsilon
-\theta, \lambda, \mu, \sigma, \omega
-```
+### Consistency
 
-### Subscripts & Superscripts
+- Use the same notation across the whole diagram.
+- Match symbols to the surrounding paper, slide deck, or specification.
+- Keep formula-bearing nodes visually consistent within the same module or stage.
 
-```latex
-x_i, x_{i,j}, x^2, x^{n+1}
-```
+### Readability
 
-### Fractions
+- Prefer white or high-contrast fills for formula nodes.
+- Leave enough padding around the rendered expression.
+- Avoid squeezing block math into narrow process nodes.
 
-```latex
-\frac{a}{b}, \frac{dy}{dx}
-```
-
-### Sums & Products
-
-```latex
-\sum_{i=1}^{n} x_i
-\prod_{j=1}^{m} y_j
-```
-
-### Integrals
-
-```latex
-\int_0^{\infty} e^{-x} dx
-```
-
-### Matrices
-
-```latex
-\begin{pmatrix} a & b \\ c & d \end{pmatrix}
-```
-
----
-
-## Academic Diagram Example
-
-For IEEE-style research diagrams:
+## Academic Example
 
 ```yaml
 meta:
@@ -222,97 +164,25 @@ nodes:
   - id: input
     label: "Input: \\(X \\in \\mathbb{R}^{n \\times d}\\)"
     type: terminal
-    
+
   - id: layer1
     label: "$$H_1 = \\sigma(W_1 X + b_1)$$"
     type: formula
-    
+
   - id: layer2
     label: "$$H_2 = \\sigma(W_2 H_1 + b_2)$$"
     type: formula
-    
+
   - id: output
     label: "Output: \\(\\hat{Y} = \\text{softmax}(H_2)\\)"
     type: terminal
-
-edges:
-  - from: input
-    to: layer1
-    type: primary
-  - from: layer1
-    to: layer2
-    type: primary
-  - from: layer2
-    to: output
-    type: primary
 ```
 
----
-
-## Troubleshooting
-
-### Formula Not Rendering
-
-1. Check MathJax is enabled: `Extras > Mathematical Typesetting`
-2. Verify delimiter syntax: `\(...\)` or `$$...$$`
-3. Escape backslashes in YAML: `\\sum` not `\sum`
-
-### Formula Cut Off
-
-- Increase node size
-- Check padding settings
-- Use block formula instead of inline
-
-### Wrong Font
-
-- Ensure theme uses serif formula font
-- Check custom style overrides
-
-### Dark Mode Issues
-
-- Formula background may need explicit white fill
-- MathJax renders in black by default
-
----
-
-## Best Practices
-
-### Clarity
-
-- One main equation per formula node
-- Use inline formulas for variables in text
-- Break complex derivations into steps
-
-### Consistency
-
-- Same delimiter style throughout diagram
-- Consistent symbol usage (e.g., always $x_i$ not $x_j$)
-- Match formula style to theme
-
-### Readability
-
-- Adequate node size for formula
-- Sufficient padding (8-16px)
-- High contrast (white background for formulas)
-
-### Academic Standards
-
-- Follow journal notation conventions
-- Use standard mathematical symbols
-- Provide equation numbers for reference
-
----
-
-## XML Reference
-
-Formula node in draw.io XML:
+## XML Styling Reference
 
 ```xml
-<mxCell value="$$\sum_{i=1}^{n} x_i$$" 
-  style="rounded=1;whiteSpace=wrap;html=1;
-  fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1;
-  fontFamily=Latin Modern;fontSize=13;
-  verticalAlign=middle;align=center;"
+<mxCell value="$$\sum_{i=1}^{n} x_i$$"
+  style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1;verticalAlign=middle;align=center;"
   vertex="1" parent="1">
   <mxGeometry x="100" y="100" width="140" height="60" as="geometry"/>
 </mxCell>
@@ -320,7 +190,7 @@ Formula node in draw.io XML:
 
 Key style properties:
 
-- `html=1`: Enable HTML/MathJax rendering
-- `whiteSpace=wrap`: Allow text wrapping
-- `fillColor=#FFFFFF`: White background
-- `fontFamily=Latin Modern`: Serif math font
+- `html=1` to allow MathJax rendering inside the cell
+- `whiteSpace=wrap` to avoid truncation
+- centered alignment for dedicated formula nodes
+- conservative stroke styling so the equation remains the focal point

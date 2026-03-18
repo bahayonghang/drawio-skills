@@ -19,7 +19,11 @@ Determine the route before asking questions:
 3. **Academic Branch**
    - Force-enable when prompt contains `paper`, `academic`, `IEEE`, `journal`, `thesis`, `figure`, `manuscript`, `research`.
    - Default `meta.profile = academic-paper`.
-4. **Stencil Branch**
+4. **Math / Formula Branch**
+   - Enable when the prompt mentions `formula`, `equation`, `LaTeX`, `AsciiMath`, `MathJax`, `loss function`, `derivation`, `symbol legend`, `公式`, `行内公式`, or `行间公式`.
+   - Load `references/docs/math-typesetting.md` as the syntax source of truth.
+   - Load `references/docs/design-system/formulas.md` for formula-node placement and sizing.
+5. **Stencil Branch**
    - Enable when the prompt mentions AWS, Azure, GCP, Cisco, Kubernetes, or vendor icons.
 
 ## Procedure
@@ -49,7 +53,8 @@ Step 4: Design Consultation (Full Path only)
 │   • expected complexity
 └── Store decisions in designIntent and pre-fill YAML meta
 
-Step 5: Academic / Stencil references
+Step 5: Academic / Math / Stencil references
+├── math/formula request -> load math typesetting + formula integration guide
 ├── academic-paper -> load IEEE + export checklist + math typesetting
 └── stencil-heavy -> load stencil guide + icon reference
 
@@ -105,6 +110,17 @@ When `meta.profile = academic-paper`:
 - Prefer `.svg` export over `.drawio` for paper-ready output.
 - Do not rely on color alone to distinguish semantics.
 
+## Math / Formula Branch Rules
+
+When the request includes formulas, equations, or math-heavy labels:
+
+- Use `$$...$$` only for standalone equations or labels that are entirely formula content.
+- Use `\(...\)` for sentence-level inline math inside a longer label.
+- Use `` `...` `` only when the user explicitly prefers AsciiMath or when the notation is simple.
+- Do not generate bare LaTeX, `$...$`, or `\[...\]` in final YAML/XML output.
+- Tell the user to enable `Extras > Mathematical Typesetting` when raw formulas may be edited in draw.io.
+- For PDF exports where selectable math matters, recommend `math-output=html`.
+
 ## Fast Path Examples
 
 ### Small explicit flowchart
@@ -117,6 +133,12 @@ When `meta.profile = academic-paper`:
 
 ```text
 /drawio create an academic-color research workflow figure with 8 nodes for a paper
+```
+
+### Diagram with inline and block formulas
+
+```text
+/drawio create a model pipeline with labels "Input: \(x \in \mathbb{R}^d\)" and a dedicated loss node "$$\mathcal{L} = -\sum_i y_i \log(\hat{y}_i)$$"
 ```
 
 ## Full Path Examples
@@ -139,4 +161,5 @@ distribution, and access layers in grayscale
 
 - YAML remains the canonical intermediate representation.
 - Mermaid and CSV inputs are convenience adapters, not separate rendering pipelines.
+- For formula-bearing labels, use only the three supported syntaxes: `$$...$$`, `\(...\)`, and `` `...` ``.
 - If validation warnings affect correctness or publication quality, switch to `--strict`.

@@ -3,7 +3,7 @@
  * Converts YAML/JSON specification to draw.io XML with Design System support
  */
 
-import { prepareMathLabel } from '../math/index.js'
+import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
 import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -230,8 +230,13 @@ export function detectSemanticType(label, explicitType) {
 
   const lowerLabel = label.toLowerCase()
 
-  // Check for formula delimiters first (highest priority)
-  if (label.includes('$$') || label.includes('\\(') || label.includes('\\[')) {
+  // Check for officially supported math delimiters first (highest priority)
+  if (label.includes('$$') || label.includes('\\(') || /`[^`]+`/.test(label)) {
+    return 'formula'
+  }
+
+  // Detect unlabeled standalone equations so they receive formula styling too.
+  if (isLikelyStandaloneMathLabel(label)) {
     return 'formula'
   }
 

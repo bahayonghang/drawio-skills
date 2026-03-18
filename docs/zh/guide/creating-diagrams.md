@@ -52,7 +52,7 @@
 | `queue` | 平行四边形 | queue、buffer、kafka、stream |
 | `user` | 圆形 | user、actor、client、customer |
 | `document` | 波浪矩形 | doc、file、report、document |
-| `formula` | 白色矩形 | equation、formula、`$$` |
+| `formula` | 白色矩形 | 官方公式分隔符、独立公式 |
 
 ### 连接器类型
 
@@ -104,7 +104,7 @@ AWS 无服务器架构：
 /drawio create with academic theme
 神经网络训练流程：
 - 数据预处理
-- 模型训练（损失函数：$$L = -\sum y_i \log(\hat{y}_i)$$）
+- 模型训练（损失函数：\(L = -\sum y_i \log(\hat{y}_i)\)）
 - 验证
 - 部署
 ```

@@ -1,3 +1,15 @@
+const DISCOURAGED_BLOCK_DELIMITER = /\\\[([\s\S]+?)\\\]/g
+const DISCOURAGED_INLINE_DELIMITER = /(^|[^\\$])\$(?!\$)([^$\n]+?)\$(?!\$)/g
+const OFFICIAL_DELIMITER_PATTERN = /\$\$|\\\(|`[^`]+`/
+const MATH_COMMAND_PATTERN = /\\(?:frac|sqrt|sum|prod|int|lim|mathbb|mathcal|text|begin|end|alpha|beta|gamma|delta|theta|lambda|sigma|phi|omega|pi|mu|epsilon|times|div|pm|leq|geq|neq|approx|infty|partial|nabla|rightarrow|vec|hat|mathbf)\b/i
+const RELATION_OPERATOR_PATTERN = /[=≈≤≥<>∈→⇒]/
+const MATH_OPERATOR_PATTERN = /[+\-*/^]|\\(?:cdot|times|log|ln|exp|sin|cos|tan|sum|prod|int|lim)\b/i
+const FUNCTION_LIKE_PATTERN = /\b[a-zA-Z]+\s*\([^)]*\)/
+
+function hasOfficialMathDelimiters(text) {
+  return typeof text === 'string' && OFFICIAL_DELIMITER_PATTERN.test(text)
+}
+
 export function wrapAsciiMathInline(expression) {
   if (typeof expression !== 'string' || expression.trim().length === 0) {
     throw new TypeError('AsciiMath expression must be a non-empty string')
@@ -28,6 +40,46 @@ export function wrapLatexBlock(expression) {
   return `$$${expression}$$`
 }
 
+export function detectDiscouragedMathDelimiters(text) {
+  if (typeof text !== 'string' || text.length === 0) {
+    return []
+  }
+
+  const issues = []
+
+  if (/\\\[/.test(text) || /\\\]/.test(text)) {
+    issues.push('\\[...\\]')
+  }
+
+  if (DISCOURAGED_INLINE_DELIMITER.test(text)) {
+    issues.push('$...$')
+  }
+
+  DISCOURAGED_INLINE_DELIMITER.lastIndex = 0
+
+  return issues
+}
+
+export function normalizeDiscouragedMathDelimiters(text) {
+  if (typeof text !== 'string' || text.trim().length === 0) {
+    return text
+  }
+
+  let normalized = text.replace(DISCOURAGED_BLOCK_DELIMITER, (match, expression) => {
+    const trimmed = expression.trim()
+    return trimmed ? wrapLatexBlock(trimmed) : match
+  })
+
+  normalized = normalized.replace(DISCOURAGED_INLINE_DELIMITER, (match, prefix, expression) => {
+    const trimmed = expression.trim()
+    return trimmed ? `${prefix}${wrapLatexInline(trimmed)}` : match
+  })
+
+  DISCOURAGED_INLINE_DELIMITER.lastIndex = 0
+
+  return normalized
+}
+
 export function validateMathText(text) {
   if (typeof text !== 'string') {
     throw new TypeError('Math text must be a string')
@@ -36,6 +88,14 @@ export function validateMathText(text) {
   const htmlTagLike = /<\s*\/?\s*[a-zA-Z][^>]*>/g
   if (htmlTagLike.test(text)) {
     throw new Error('Math text must not contain HTML tags; remove formatting and keep only LaTeX/AsciiMath')
+  }
+
+  const discouraged = detectDiscouragedMathDelimiters(text)
+  if (discouraged.length > 0) {
+    throw new Error(
+      `Unsupported math delimiters detected: ${discouraged.join(', ')}. ` +
+      'Use $$...$$ for standalone LaTeX, \\(...\\) for inline LaTeX, or `...` for AsciiMath.'
+    )
   }
 
   const backtickCount = (text.match(/`/g) ?? []).length
@@ -80,8 +140,8 @@ export function toMxCellValue(text, { validate = true } = {}) {
 export function detectUnwrappedMath(text) {
   if (typeof text !== 'string') return []
 
-  // Already has delimiters - skip detection
-  if (/\$\$/.test(text) || /\\\(/.test(text) || /`[^`]+`/.test(text)) {
+  // Already has supported official delimiters - skip detection
+  if (hasOfficialMathDelimiters(text)) {
     return []
   }
 
@@ -103,6 +163,72 @@ export function detectUnwrappedMath(text) {
   return detected
 }
 
+export function looksLikeMathExpression(text) {
+  if (typeof text !== 'string') return false
+
+  const trimmed = text.trim()
+  if (!trimmed) return false
+
+  if (hasOfficialMathDelimiters(trimmed)) return true
+  if (detectUnwrappedMath(trimmed).length > 0) return true
+
+  if (!RELATION_OPERATOR_PATTERN.test(trimmed)) {
+    return false
+  }
+
+  const parts = trimmed.split(/[=≈≤≥<>∈→⇒]/).map(part => part.trim()).filter(Boolean)
+  if (parts.length < 2) {
+    return false
+  }
+
+  const [left, ...rest] = parts
+  const right = rest.join(' ').trim()
+
+  const leftLooksMathy = /^[A-Za-z](?:[A-Za-z0-9_{}[\]()^]*|(?:\s+[A-Za-z][A-Za-z0-9_{}[\]()^]*){0,1})$/.test(left)
+  const rightLooksMathy =
+    MATH_OPERATOR_PATTERN.test(right) ||
+    FUNCTION_LIKE_PATTERN.test(right) ||
+    /[(){}\[\]]/.test(right) ||
+    detectUnwrappedMath(right).length > 0
+
+  return leftLooksMathy && rightLooksMathy
+}
+
+export function isLikelyStandaloneMathLabel(text) {
+  if (typeof text !== 'string') return false
+
+  const trimmed = text.trim()
+  if (!trimmed) return false
+  if (detectDiscouragedMathDelimiters(trimmed).length > 0) return false
+  if (hasOfficialMathDelimiters(trimmed)) return true
+  if (trimmed.includes(':')) return false
+
+  return looksLikeMathExpression(trimmed)
+}
+
+function wrapTrailingMathSuffix(text) {
+  if (typeof text !== 'string' || text.trim().length === 0) {
+    return text
+  }
+
+  const colonMatch = /^([\s\S]*?:\s*)([^:]+)$/.exec(text)
+  if (!colonMatch) {
+    return text
+  }
+
+  const [, prefix, candidateRaw] = colonMatch
+  const candidate = candidateRaw.trim()
+  if (!candidate || hasOfficialMathDelimiters(candidate)) {
+    return text
+  }
+
+  if (!looksLikeMathExpression(candidate)) {
+    return text
+  }
+
+  return `${prefix}${wrapLatexInline(candidate)}`
+}
+
 /**
  * Wraps detected math content in appropriate LaTeX delimiters.
  * - Block math (standalone equations): $$...$$
@@ -118,9 +244,19 @@ export function ensureLatexDelimiters(text, { mode = 'auto' } = {}) {
     return text
   }
 
-  // Already wrapped - return as-is
-  if (/\$\$/.test(text) || /\\\(/.test(text) || /`[^`]+`/.test(text)) {
+  const normalized = normalizeDiscouragedMathDelimiters(text)
+  if (normalized !== text) {
+    return normalized
+  }
+
+  // Already wrapped with supported official delimiters - return as-is
+  if (hasOfficialMathDelimiters(text)) {
     return text
+  }
+
+  const wrappedSuffix = wrapTrailingMathSuffix(text)
+  if (wrappedSuffix !== text) {
+    return wrappedSuffix
   }
 
   const detected = detectUnwrappedMath(text)
@@ -131,16 +267,15 @@ export function ensureLatexDelimiters(text, { mode = 'auto' } = {}) {
   // Auto mode: use block for pure math, inline for mixed content
   let useBlock = mode === 'block'
   if (mode === 'auto') {
-    // Pure math: starts with \ or contains mostly math symbols
     const pureMatch = /^\\/.test(text.trim()) || /^[^a-zA-Z]*\\/.test(text)
     useBlock = pureMatch
   }
 
   if (useBlock) {
-    return `$$${text}$$`
-  } else {
-    return `\\(${text}\\)`
+    return wrapLatexBlock(text)
   }
+
+  return wrapLatexInline(text)
 }
 
 /**
@@ -159,21 +294,24 @@ export function prepareMathLabel(text, { autoWrap = true, mode = 'auto', strict 
     throw new TypeError('Label text must be a string')
   }
 
-  const detected = detectUnwrappedMath(text)
+  text = normalizeDiscouragedMathDelimiters(text)
 
-  if (detected.length > 0) {
+  const wrappedCandidate = ensureLatexDelimiters(text, { mode })
+  const detected = detectUnwrappedMath(text)
+  const wouldWrap = wrappedCandidate !== text
+
+  if (detected.length > 0 || wouldWrap) {
     if (strict && !autoWrap) {
       throw new Error(
-        `Unwrapped math detected: ${detected.join(', ')}. ` +
-        'Use $$ for block math or \\( \\) for inline math.'
+        `Unwrapped math detected: ${detected.join(', ') || 'expression heuristic'}. ` +
+        'Use $$ for block math, \\(...\\) for inline math, or `...` for AsciiMath.'
       )
     }
     if (autoWrap) {
-      text = ensureLatexDelimiters(text, { mode })
+      text = wrappedCandidate
     }
   }
 
   validateMathText(text)
   return escapeXmlAttr(text)
 }
-

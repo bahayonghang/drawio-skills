@@ -221,7 +221,15 @@ nodes:
     type: formula
 ```
 
-**Auto-detection:** Labels containing `$$`, `\(`, or `\[`
+**Auto-detection:**
+
+- labels already using official math delimiters such as `$$...$$`, `\(...\)`, or `` `...` ``
+- standalone unlabeled equations such as `E = mc^2` or `\sum_{i=1}^{n} x_i`
+
+Notes:
+
+- mixed prose labels such as `Linear: y = mx + b` stay normal content nodes; the math suffix is wrapped inline instead of converting the entire node into `formula`
+- `\[...\]` is treated as legacy input to normalize, not as preferred emitted syntax
 
 ## Cloud Icons
 

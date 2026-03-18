@@ -59,9 +59,20 @@ describe('detectSemanticType', () => {
     assert.strictEqual(detectSemanticType('SQS Queue', null), 'queue')
   })
 
-  it('should detect formula from delimiters', () => {
+  it('should detect formula from official delimiters', () => {
     assert.strictEqual(detectSemanticType('$$E = mc^2$$', null), 'formula')
     assert.strictEqual(detectSemanticType('Linear: \\(y = mx + b\\)', null), 'formula')
+    assert.strictEqual(detectSemanticType('Simple relation: `x^2 + y^2`', null), 'formula')
+  })
+
+  it('should detect standalone unlabeled equations as formula without converting mixed prose labels', () => {
+    assert.strictEqual(detectSemanticType('E = mc^2', null), 'formula')
+    assert.strictEqual(detectSemanticType('\\sum_{i=1}^{n} x_i', null), 'formula')
+    assert.strictEqual(detectSemanticType('Linear: y = mx + b', null), 'service')
+  })
+
+  it('should not treat discouraged delimiters as official formula signals', () => {
+    assert.strictEqual(detectSemanticType('\\[E = mc^2\\]', null), 'service')
   })
 
   it('should default to service for unknown labels', () => {

@@ -204,8 +204,14 @@ If `type` is not specified, it's auto-detected from the label:
 | queue, buffer, kafka, rabbitmq, stream, sqs, message | `queue` |
 | user, actor, client, person, customer | `user` |
 | document, doc, file, report, log | `document` |
-| `$$`, `\(`, `\[` | `formula` |
+| official math delimiters `$$...$$`, `\(...\)`, `` `...` `` | `formula` |
+| standalone unlabeled equations such as `E = mc^2`, `\sum_{i=1}^{n} x_i` | `formula` |
 | (default) | `service` |
+
+Notes:
+
+- mixed labels such as `Linear: y = mx + b` remain normal content nodes; the math suffix is wrapped inline instead of changing the whole node to `formula`
+- `$...$` and `\[...\]` are legacy forms that may be normalized on import, but new output should use only `$$...$$`, `\(...\)`, or `` `...` ``
 
 ## Migration from A-H Format
 

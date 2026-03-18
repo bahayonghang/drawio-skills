@@ -1,398 +1,258 @@
 # Math Typesetting (LaTeX / AsciiMath) in Draw.io
 
-This reference explains how to place mathematical equations in draw.io labels and text shapes.
+Use this file as the syntax source of truth for formulas in draw.io labels and text shapes.
 
-> **Source**: <https://www.drawio.com/doc/faq/math-typesetting>
+> Source: <https://www.drawio.com/doc/faq/math-typesetting>
+> Related design guidance: `design-system/formulas.md`
 
-## ⚠️ MANDATORY: Delimiter Requirements
+## Official Delimiter Rules
 
-**CRITICAL**: All mathematical expressions MUST be wrapped in appropriate delimiters. Draw.io uses MathJax which requires explicit delimiters to recognize and render math.
+Draw.io uses MathJax for mathematical typesetting. Math is recognized only when wrapped in explicit delimiters.
 
-### Required Delimiter Format
+| Syntax | Use It For | Example |
+|--------|------------|---------|
+| `$$...$$` | Standalone equations, dedicated formula nodes, labels that are entirely math | `$$E = mc^2$$` |
+| `\(...\)` | Inline math inside a longer sentence or label | `Output: \(y = f(x)\)` |
+| `` `...` `` | Simple AsciiMath expressions | `` `sum_(i=1)^n x_i` `` |
 
-| Type | Delimiter | When to Use | Example |
-|------|-----------|-------------|---------|
-| **Block LaTeX** | `$$...$$` | Standalone equations, primary formulas | `$$E = mc^2$$` |
-| **Inline LaTeX** | `\(...\)` | Equations within text labels | `Output: \(y = f(x)\)` |
-| **AsciiMath** | `` `...` `` | Simple expressions | `` `x^2 + y^2` `` |
+### Rule of Thumb
 
-### ❌ Common Mistakes (NEVER do this)
+- Use `$$...$$` only when the label is essentially a formula block.
+- Use `\(...\)` for sentence-level inline math.
+- Use `` `...` `` only for simple AsciiMath or when the user explicitly asks for AsciiMath.
 
+### Minimal Examples
+
+```yaml
+nodes:
+  - id: inline
+    label: "Linear: \\(y = mx + b\\)"
+
+  - id: block
+    label: "$$\\sum_{i=1}^{n} x_i$$"
+    type: formula
+
+  - id: asciimath
+    label: "`sum_(i=1)^n x_i`"
 ```
-❌ \frac{a}{b}           → Missing delimiters!
-❌ \alpha + \beta        → Missing delimiters!
-❌ x^2 + y^2             → Missing delimiters!
-❌ E = mc^2              → Missing delimiters!
-❌ \sum_{i=1}^n x_i      → Missing delimiters!
+
+## Mixed Labels
+
+Inline LaTeX and AsciiMath may appear in the same label. Keep each formula wrapped independently.
+
+```yaml
+nodes:
+  - id: mixed
+    label: "Score: \\(x_i^2\\), baseline: `x^2`"
 ```
 
-### ✅ Correct Format (ALWAYS do this)
+Prefer `\(...\)` over `` `...` `` when the expression already uses LaTeX commands or must match the paper notation.
 
+## Unsupported or Discouraged Output
+
+Do not generate these forms in final skill output:
+
+```text
+\frac{a}{b}          # bare LaTeX
+\alpha + \beta       # bare LaTeX
+$x^2 + y^2$          # discouraged single-dollar inline syntax
+\[x^2 + y^2\]        # discouraged bracket block syntax
 ```
-✅ $$\frac{a}{b}$$
-✅ \(\alpha + \beta\)
-✅ $$x^2 + y^2$$
-✅ $$E = mc^2$$
-✅ $$\sum_{i=1}^{n} x_i$$
+
+Use these instead:
+
+```text
+\(\frac{a}{b}\)
+\(\alpha + \beta\)
+\(x^2 + y^2\)
+$$x^2 + y^2$$
 ```
 
-### Validation Checklist
+Notes:
 
-Before finalizing any diagram with math, verify:
+- The skill should not emit bare LaTeX, `$...$`, or `\[...\]`.
+- The current math helpers normalize `$...$` to `\(...\)` and `\[...\]` to `$$...$$` when encountered in imported text, but final emitted labels should still use the three supported syntaxes only.
 
-- [ ] Every LaTeX command (`\frac`, `\sqrt`, `\sum`, `\int`, `\lim`, etc.) is inside `$$` or `\(...\)`
-- [ ] Greek letters (`\alpha`, `\beta`, `\gamma`, etc.) are delimited
-- [ ] Superscripts (`^`) and subscripts (`_`) in math context are delimited
-- [ ] Special fonts (`\mathbb`, `\mathcal`, `\text`) are delimited
-- [ ] Matrix environments (`\begin{bmatrix}...`) are delimited
-- [ ] No bare backslash commands exist in any label text
+## Required UI Setting
 
-## Supported Syntax
+Enable this in draw.io before previewing or editing formulas:
 
-Enter the equation directly in a text shape (or any label) using one of these delimiters:
+`Extras > Mathematical Typesetting`
 
-- **AsciiMath (inline)**: wrap with a single backtick
-  - Example: `` `a^2+b^2=c^2` ``
-- **LaTeX (block)**: wrap with `$$`
-  - Example: `$$\sqrt{3×-1}+(1+x)^2$$`
-- **LaTeX (inline)**: wrap with `\(` and `\)`
-  - Example: `\(\sqrt{3×-1}+(1+x)^2\)`
-- **Mixing**: you can mix inline LaTeX and AsciiMath in the same text.
+When the toggle is enabled, draw.io renders the label through MathJax. Disable it temporarily to inspect the raw source.
+
+## YAML Writing Rules
+
+In YAML, escape backslashes inside quoted strings:
+
+```yaml
+nodes:
+  - id: input
+    label: "Input: \\(X \\in \\mathbb{R}^{n \\times d}\\)"
+
+  - id: loss
+    label: "$$\\mathcal{L} = -\\sum_{i=1}^{n} y_i \\log(\\hat{y}_i)$$"
+    type: formula
+```
+
+Checklist:
+
+- Write `\\(` and `\\)` in YAML strings when using inline LaTeX.
+- Keep `$$` unchanged in YAML strings.
+- Escape every LaTeX backslash inside the YAML string.
+
+## XML `value` Attribute Rules
+
+Equations are stored in the `value` attribute of `mxCell` nodes and edge labels.
+
+Keep the math delimiters inside `value="..."` and escape XML attribute characters:
+
+- `&` -> `&amp;`
+- `<` -> `&lt;`
+- `>` -> `&gt;`
+- `"` -> `&quot;`
+
+Avoid hidden HTML formatting tags in math labels.
+
+### Inline XML Example
+
+```xml
+<mxCell id="2" value="Model: \(y = Wx + b\)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
+  <mxGeometry x="120" y="120" width="220" height="70" as="geometry"/>
+</mxCell>
+```
+
+### Block XML Example
+
+```xml
+<mxCell id="3" value="$$\mathcal{L} = \sum_i (y_i-\hat y_i)^2$$" style="rounded=1;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
+  <mxGeometry x="120" y="220" width="320" height="90" as="geometry"/>
+</mxCell>
+```
+
+## Export Rules
+
+- Default math output is SVG-based.
+- For exported PDF files where selectable math matters, use `math-output=html`.
+- Vector export remains preferred for academic figures: PDF or SVG.
+
+## Validation Checklist
+
+Before finalizing any diagram with formulas, verify:
+
+- Every formula uses one of: `$$...$$`, `\(...\)`, or `` `...` ``.
+- `$$...$$` is reserved for standalone equations, not sentence-level inline text.
+- No bare backslash commands remain in labels.
+- No `$...$` or `\[...\]` remains in emitted YAML/XML.
+- `Extras > Mathematical Typesetting` is enabled before visual inspection.
+- YAML strings escape LaTeX backslashes correctly.
+- XML `value` content is HTML-free and XML-escaped.
+
+## Troubleshooting
+
+### Math does not render
+
+1. Enable `Extras > Mathematical Typesetting`.
+2. Check that the label uses `$$...$$`, `\(...\)`, or `` `...` ``.
+3. Click `</>` in the toolbar and remove hidden HTML tags if present.
+
+### Formula overflows or gets clipped
+
+- Increase the shape size.
+- In the Style panel, under Property -> Text Overflow, try `Block` or `Width`.
+- Prefer a dedicated formula node instead of forcing long block math into a small process node.
+
+### Exported PDF has extra whitespace
+
+- Keep formula nodes away from the diagram boundary.
+- Use left or right alignment for formula labels when appropriate.
 
 ## LaTeX Quick Reference
 
 ### Greek Letters
 
-| Lowercase | Code | Uppercase | Code |
-|-----------|------|-----------|------|
-| α | `\alpha` | Α | `A` |
-| β | `\beta` | Β | `B` |
-| γ | `\gamma` | Γ | `\Gamma` |
-| δ | `\delta` | Δ | `\Delta` |
-| ε | `\epsilon` | Ε | `E` |
-| θ | `\theta` | Θ | `\Theta` |
-| λ | `\lambda` | Λ | `\Lambda` |
-| μ | `\mu` | Μ | `M` |
-| π | `\pi` | Π | `\Pi` |
-| σ | `\sigma` | Σ | `\Sigma` |
-| φ | `\phi` | Φ | `\Phi` |
-| ω | `\omega` | Ω | `\Omega` |
+| Symbol | Code | Symbol | Code |
+|--------|------|--------|------|
+| α | `\alpha` | Γ | `\Gamma` |
+| β | `\beta` | Δ | `\Delta` |
+| γ | `\gamma` | Θ | `\Theta` |
+| λ | `\lambda` | Σ | `\Sigma` |
+| μ | `\mu` | Φ | `\Phi` |
+| π | `\pi` | Ω | `\Omega` |
 
-### Common Math Operators
-
-| Symbol | Code | Description |
-|--------|------|-------------|
-| × | `\times` | Multiplication |
-| ÷ | `\div` | Division |
-| ± | `\pm` | Plus-minus |
-| ≤ | `\leq` | Less than or equal |
-| ≥ | `\geq` | Greater than or equal |
-| ≠ | `\neq` | Not equal |
-| ≈ | `\approx` | Approximately |
-| ∈ | `\in` | Element of |
-| ⊂ | `\subset` | Subset |
-| ∪ | `\cup` | Union |
-| ∩ | `\cap` | Intersection |
-| ∞ | `\infty` | Infinity |
-| ∂ | `\partial` | Partial derivative |
-| ∇ | `\nabla` | Nabla/gradient |
-| → | `\rightarrow` | Right arrow |
-| ⇒ | `\Rightarrow` | Implies |
-| ∀ | `\forall` | For all |
-| ∃ | `\exists` | Exists |
-
-### Fractions, Roots, and Powers
+### Common Operators
 
 ```latex
-\frac{a}{b}           % Fraction: a/b
-\sqrt{x}              % Square root
-\sqrt[n]{x}           % nth root
-x^{n}                 % Superscript (power)
-x_{i}                 % Subscript
-x_{i}^{n}             % Combined sub/superscript
+\times
+\div
+\pm
+\leq
+\geq
+\neq
+\approx
+\infty
+\partial
+\nabla
+\rightarrow
+\Rightarrow
 ```
 
-### Summation, Product, Integral, Limit
+### Fractions, Powers, Sums
 
 ```latex
-\sum_{i=1}^{n} x_i              % Summation
-\prod_{i=1}^{n} x_i             % Product
-\int_{a}^{b} f(x) \, dx         % Definite integral
-\iint_{D} f(x,y) \, dA          % Double integral
-\oint_{C} \vec{F} \cdot d\vec{r} % Line integral
-\lim_{x \to \infty} f(x)        % Limit
+\frac{a}{b}
+\sqrt{x}
+\sqrt[n]{x}
+x^{n}
+x_{i}
+\sum_{i=1}^{n} x_i
+\prod_{i=1}^{n} x_i
+\int_{a}^{b} f(x) \, dx
+\lim_{x \to \infty} f(x)
 ```
 
-### Matrices and Vectors
+### Matrices and Sets
 
 ```latex
-\begin{bmatrix} a & b \\ c & d \end{bmatrix}   % Matrix with brackets
-\begin{pmatrix} x \\ y \\ z \end{pmatrix}      % Column vector with parentheses
-\vec{v}                                         % Vector notation
-\mathbf{A}                                      % Bold matrix notation
-\hat{x}                                         % Unit vector
+\begin{bmatrix} a & b \\ c & d \end{bmatrix}
+\begin{pmatrix} x \\ y \\ z \end{pmatrix}
+\mathbb{R}
+\mathbb{N}
+\mathbb{Z}
+\mathbb{C}
+\mathcal{L}
 ```
 
-### Special Fonts
+## Academic Diagram Notes
 
-```latex
-\mathbb{R}        % Real numbers ℝ
-\mathbb{N}        % Natural numbers ℕ
-\mathbb{Z}        % Integers ℤ
-\mathbb{C}        % Complex numbers ℂ
-\mathcal{L}       % Calligraphic (e.g., Lagrangian, Loss)
-\mathcal{F}       % Fourier transform
-\mathscr{H}       % Script (Hamiltonian)
+When formulas appear in paper figures:
+
+- Keep equation labels concise.
+- Use the same notation as the surrounding manuscript.
+- Define symbols in the caption or legend when needed.
+- For grayscale print, do not rely on color alone to distinguish formula-bearing nodes.
+
+### Example Academic Labels
+
+```yaml
+nodes:
+  - id: input
+    label: "Input: \\(x \\in \\mathbb{R}^d\\)"
+    type: terminal
+
+  - id: model
+    label: "Model: \\(y = Wx + b\\)"
+    type: process
+
+  - id: loss
+    label: "$$\\mathcal{L} = -\\sum_{i=1}^{n} y_i \\log(\\hat{y}_i)$$"
+    type: formula
 ```
 
-### Common IEEE/Academic Formulas
-
-#### Machine Learning
-
-```latex
-% Loss function (MSE)
-$$\mathcal{L} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2$$
-
-% Cross-entropy loss
-$$\mathcal{L} = -\sum_{i=1}^{n} y_i \log(\hat{y}_i)$$
-
-% Softmax
-$$\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}$$
-
-% Gradient descent
-$$\theta_{t+1} = \theta_t - \eta \nabla_\theta \mathcal{L}(\theta_t)$$
-```
-
-#### Signal Processing
-
-```latex
-% Fourier Transform
-$$X(f) = \int_{-\infty}^{\infty} x(t) e^{-j2\pi ft} \, dt$$
-
-% Convolution
-$$(f * g)(t) = \int_{-\infty}^{\infty} f(\tau) g(t-\tau) \, d\tau$$
-
-% Transfer function
-$$H(s) = \frac{Y(s)}{X(s)} = \frac{b_0 + b_1 s + \cdots}{a_0 + a_1 s + \cdots}$$
-```
-
-#### Control Systems
-
-```latex
-% PID Controller
-$$u(t) = K_p e(t) + K_i \int_0^t e(\tau) d\tau + K_d \frac{de(t)}{dt}$$
-
-% State-space representation
-$$\dot{x} = Ax + Bu, \quad y = Cx + Du$$
-```
-
-#### Statistics & Probability
-
-```latex
-% Normal distribution
-$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
-
-% Bayes' theorem
-$$P(A|B) = \frac{P(B|A) P(A)}{P(B)}$$
-
-% Expectation
-$$\mathbb{E}[X] = \sum_{i} x_i P(x_i)$$
-```
-
-#### Neural Networks
-
-```latex
-% Forward propagation
-$$a^{[l]} = \sigma(W^{[l]} a^{[l-1]} + b^{[l]})$$
-
-% Attention mechanism
-$$\text{Attention}(Q,K,V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
-
-% Batch normalization
-$$\hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}$$
-```
-
-## Enable Rendering
-
-In draw.io, enable:
-
-`Extras > Mathematical Typesetting`
-
-When enabled, draw.io uses MathJax to render the equation. Disable the same option to see/edit the raw LaTeX/AsciiMath source.
-
-## Using Equations in Diagram XML
-
-Equations are stored in the `value` attribute of cells (nodes or edges). The important parts:
-
-- Put the equation delimiters inside `value="..."`.
-- Avoid inserting extra HTML tags into the label content.
-- Escape XML attribute characters inside `value`:
-  - `&` → `&amp;`
-  - `<` → `&lt;`
-  - `>` → `&gt;`
-  - `"` → `&quot;`
-
-### Example: node label with inline LaTeX
-
-```xml
-<mxCell id="2" value="Model: \(y=Wx+b\)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1">
-  <mxGeometry x="120" y="120" width="220" height="70" as="geometry"/>
-</mxCell>
-```
-
-### Example: node label with block LaTeX
-
-```xml
-<mxCell id="3" value="$$\mathcal{L}=\sum_i (y_i-\hat y_i)^2$$" style="rounded=1;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1">
-  <mxGeometry x="120" y="220" width="320" height="90" as="geometry"/>
-</mxCell>
-```
-
-## Export Behavior
-
-- Default math output is **SVG**.
-- You can use a URL parameter to switch to HTML output:
-  - `math-output=html`
-  - This setting allows you to select most maths symbols in an exported PDF file.
-
-## Troubleshooting
-
-### Math overflows or looks clipped
-
-- In the Style panel, under Property → Text Overflow, set one of:
-  - `Block` or `Width` (sometimes `Hidden`)
-- Resize the shape to match the rendered math output.
-
-### Exported images/PDF have extra whitespace
-
-- Use left or right text alignment for formula labels.
-- Keep formula shapes away from the diagram edges.
-
-### Math is not rendered
-
-If equations do not render correctly, the text may include hidden HTML formatting tags:
-
-1. Select the text, then click `</>` in the toolbar to reveal hidden HTML tags.
-2. Delete extra HTML tags.
-3. Re-enable `Extras > Mathematical Typesetting`.
-
-## IEEE / Academic Publication Guidelines
-
-### Figure Labeling Standards
-
-For IEEE, ACM, and other academic journals, follow these conventions:
-
-```
-Fig. 1. Block diagram of the proposed neural network architecture.
-```
-
-- **Figure number**: Use "Fig." followed by Arabic numeral (1, 2, 3...)
-- **Caption**: Sentence case, period at end, placed below the figure
-- **Font**: Match journal requirements (typically 8-10pt Times New Roman)
-
-### Math in Figure Labels
-
-When including equations in diagram labels for academic papers:
-
-1. **Keep equations concise**: Use variable names rather than full expressions when possible
-2. **Define variables**: Include a legend or caption explaining all symbols
-3. **Consistency**: Use the same notation throughout the paper and diagrams
-
-#### Example: Block Diagram with Equations
-
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│     Input       │     │     Model       │     │     Output      │
-│  \(x \in R^d\)  │ ──▶ │  \(y = Wx + b\) │ ──▶ │   \(\hat{y}\)   │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
-
-### Black & White Compatibility
-
-Academic papers often print in grayscale. Ensure:
-
-- **No color-only encoding**: Don't rely solely on colors to convey meaning
-- **High contrast**: Black text on white background (or vice versa)
-- **Pattern differentiation**: Use line styles (solid, dashed, dotted) instead of colors
-- **Test**: Export to grayscale PDF and verify readability
-
-### Export Settings for IEEE Papers
-
-1. **Format**: PDF or SVG (vector formats preserve quality)
-2. **Resolution**: At least 300 DPI for any rasterized elements
-3. **Crop**: Enable "Crop" to remove excess whitespace
-4. **Background**: Usually white (uncheck "Transparent Background")
-5. **Math output**: Use `math-output=html` for selectable text in PDF
-
-### Common IEEE Domain Formulas
-
-#### Communications & Information Theory
-
-```latex
-% Shannon capacity
-$$C = B \log_2\left(1 + \frac{S}{N}\right)$$
-
-% Bit error rate (BPSK)
-$$P_b = Q\left(\sqrt{\frac{2E_b}{N_0}}\right)$$
-
-% MIMO capacity
-$$C = \log_2\det\left(\mathbf{I} + \frac{\text{SNR}}{n_t}\mathbf{H}\mathbf{H}^H\right)$$
-```
-
-#### Power Systems & Electronics
-
-```latex
-% Power equation
-$$P = VI\cos\theta = I^2 R = \frac{V^2}{R}$$
-
-% Three-phase power
-$$P_{3\phi} = \sqrt{3} V_L I_L \cos\theta$$
-
-% Transfer function (Buck converter)
-$$G_{vd}(s) = \frac{\hat{v}_o}{\hat{d}} = V_g \frac{1}{1 + sL/R + s^2 LC}$$
-```
-
-#### Computer Vision & Image Processing
-
-```latex
-% Convolution operation
-$$(I * K)(x,y) = \sum_i \sum_j I(x-i, y-j) K(i,j)$$
-
-% IoU (Intersection over Union)
-$$\text{IoU} = \frac{|A \cap B|}{|A \cup B|}$$
-
-% PSNR
-$$\text{PSNR} = 10 \log_{10}\left(\frac{\text{MAX}^2}{\text{MSE}}\right)$$
-```
-
-#### Robotics & Control
-
-```latex
-% Forward kinematics
-$$T_n^0 = \prod_{i=1}^{n} T_i^{i-1}$$
-
-% Jacobian
-$$\dot{x} = J(q)\dot{q}$$
-
-% LQR cost function
-$$J = \int_0^\infty (x^T Q x + u^T R u) \, dt$$
-```
-
-### Journal-Specific Notes
-
-| Journal | Math Format | Figure Format | Notes |
-|---------|-------------|---------------|-------|
-| IEEE Transactions | LaTeX preferred | EPS/PDF | Use IEEE templates |
-| ACM | LaTeX preferred | PDF/PNG | Follow ACM style guide |
-| Elsevier | LaTeX/MathML | TIFF/EPS/PDF | Check journal guidelines |
-| Springer | LaTeX preferred | EPS/PDF | Use svjour3 class |
-| Nature | LaTeX | PDF/AI/EPS | Simple, clean equations |
-
-### Recommended Workflow for Academic Diagrams
-
-1. **Design** diagram in draw.io with LaTeX labels
-2. **Enable** `Extras > Mathematical Typesetting` to preview
-3. **Verify** all equations render correctly
-4. **Export** as PDF with `math-output=html` for selectable math
-5. **Check** grayscale compatibility
-6. **Add** proper figure caption in your LaTeX/Word document
+### Recommended Export Workflow
+
+1. Draft the diagram with official formula delimiters only.
+2. Enable `Extras > Mathematical Typesetting`.
+3. Verify inline labels use `\(...\)` and standalone formulas use `$$...$$`.
+4. Export as PDF or SVG.
+5. For selectable math in PDF, use `math-output=html`.

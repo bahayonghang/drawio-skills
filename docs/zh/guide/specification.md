@@ -204,8 +204,14 @@ edges:
 | queue, buffer, kafka, rabbitmq, stream, sqs, message | `queue` |
 | user, actor, client, person, customer | `user` |
 | document, doc, file, report, log | `document` |
-| `$$`、`\(`、`\[` | `formula` |
+| 官方公式分隔符 `$$...$$`、`\(...\)`、`` `...` `` | `formula` |
+| 独立的未包裹公式，如 `E = mc^2`、`\sum_{i=1}^{n} x_i` | `formula` |
 | （默认） | `service` |
+
+说明：
+
+- `Linear: y = mx + b` 这类混合标签仍然保持普通内容节点，只把公式后缀转成行内公式
+- `$...$` 与 `\[...\]` 视为旧写法，导入时可归一化；新输出应只使用 `$$...$$`、`\(...\)` 或 `` `...` ``
 
 ## 从 A-H 格式迁移
 
