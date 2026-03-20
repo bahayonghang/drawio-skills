@@ -14,77 +14,118 @@ An AI-native, iterative Draw.io skill designed for academic and technical flowch
 
 ## ✨ Features
 
-- 🎨 **Natural Language → Diagram**: Describe what you need, get a professional diagram
-- 🔄 **Real-time Preview**: See changes instantly in your browser
-- 📊 **Multiple Diagram Types**: Flowcharts, architecture diagrams, sequence diagrams, and more
-- ☁️ **Cloud Architecture Support**: AWS, GCP, and Azure with official icons
-- ✏️ **Edit Existing Diagrams**: Modify diagrams using ID-based operations
-- 💾 **Export**: Save diagrams as `.drawio` files
-- 🎬 **Animated Connectors**: Create dynamic and animated connectors between elements
-- 📚 **Version History**: Restore previous diagram versions with visual thumbnails
-- 🧮 **Math Typesetting**: LaTeX/AsciiMath equations with MathJax rendering
-- 📐 **A-H Format Extraction**: Structured diagram extraction from text or images
-- 🖼️ **SVG Export**: Convert diagrams to standalone SVG with embedded XML for round-trip editing
-- 🔧 **CLI Tool**: Command-line YAML → draw.io XML/SVG conversion with theme and validation support
-- ✅ **XML Validation**: Structural validation for ID uniqueness, edge references, and root cells
-- 🏷️ **Cloud Icons**: AWS, GCP, Azure, Kubernetes icon support via `node.icon` field
-- 🎨 **5 Design Themes**: tech-blue, academic, academic-color, nature, dark with full token systems
+- 🎨 **YAML-first workflow**: Create, edit, validate, and export diagrams through a structured spec instead of raw XML
+- 🔀 **Three core routes**: `create`, `edit`, and `replicate`, with route-specific references loaded only when needed
+- 🔄 **Real-time browser preview**: Uses `@next-ai-drawio/mcp-server` for iterative editing with visual feedback
+- 🧠 **Multiple input formats**: Accepts natural language, Mermaid, CSV, and YAML, then normalizes to the draw.io workflow
+- 🧮 **Math and academic guardrails**: Supports LaTeX/AsciiMath labels, IEEE-style figures, and research workflow diagrams
+- ☁️ **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows
+- 🖼️ **Replication and structured edits**: Recreate uploaded diagrams or make ID-based incremental changes
+- 🧪 **CLI validation**: Validate structure, layout, and quality rules before shipping `.drawio` or `.svg`
+- 📦 **Portable outputs**: Export editable `.drawio` diagrams and optional `.svg` artifacts
 
-## 🚀 Quick Start - 3 Workflows
+## 🔌 MCP Setup
 
-| Command | Description | A-H Format |
-|---------|-------------|------------|
-| `/drawio create` | Create diagrams from natural language | Optional |
-| `/drawio replicate` | Replicate existing images | Required |
-| `/drawio edit` | Modify existing diagrams | Optional |
+This skill depends on the `@next-ai-drawio/mcp-server` MCP server.
 
-### `/drawio create` - Create from Scratch
+The bundled [`skills/drawio/.mcp.json`](./skills/drawio/.mcp.json) is a reference template, but most clients still need explicit MCP registration. Configure MCP first, then install the skill.
 
-```
-/drawio create a login flowchart with validation and error handling
-```
+### Claude Desktop / Claude Code
 
-### `/drawio replicate` - Replicate Existing Image
+Add the following to your Claude MCP configuration:
 
-```
-/drawio replicate
-【领域】软件架构
-[Upload image]
+**macOS/Linux**
+
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
 ```
 
-### `/drawio edit` - Modify Diagram
+**Windows**
 
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
 ```
-/drawio edit
-Change "User Service" to "Auth Service"
-Make database nodes green
+
+### Gemini CLI
+
+Add the following to `settings.json`:
+
+**macOS/Linux**
+
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
 ```
 
-## 🔗 Relationship with Upstream Project
+**Windows**
 
-This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** by [@DayuanJiang](https://github.com/DayuanJiang).
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
 
-| Project | Purpose |
-|---------|---------|
-| [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | MCP Server that provides draw.io diagram tools |
-| **This Project (drawio-skills)** | MCP skill that wraps the MCP server with workflow guidance, XML format references, and diagram examples. Compatible with Claude Desktop, Gemini CLI, and Codex |
+### Codex
 
-### What This Skill Adds
+Add the following to `~/.codex/config.toml`:
 
-- ✅ **3 Clear Workflows**: `/drawio create`, `/drawio replicate`, `/drawio edit`
-- ✅ **A-H Format**: Structured diagram extraction from text/images
-- ✅ **Comprehensive Documentation**: Detailed guides for creating various diagram types
-- ✅ **XML Format Reference**: Complete documentation of draw.io XML format and style properties
-- ✅ **Diagram Examples**: Ready-to-use examples for flowcharts, architecture diagrams, and more
-- ✅ **Automatic MCP Configuration**: Pre-configured `.mcp.json` for seamless integration
-- ✅ **Installation Scripts**: Easy setup for Windows, Linux, and macOS
-- ✅ **SVG Export**: JavaScript SVG converter (zero external dependencies)
-- ✅ **CLI Tool**: `node cli.js input.yaml [output]` with `--theme`, `--strict`, `--validate` options
-- ✅ **XML Validation**: Structural integrity checks for generated XML
-- ✅ **Cloud Icon Support**: AWS/GCP/Azure/K8s icon mapping via `node.icon`
-- ✅ **5 Design Themes**: tech-blue, academic, academic-color, nature, dark
+**macOS/Linux**
 
-## 📦 Installation
+```toml
+[mcp_servers.drawio]
+command = "npx"
+args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+**Windows**
+
+```toml
+[mcp_servers.drawio]
+type = "stdio"
+command = "cmd"
+args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+## 📦 Install the Skill
+
+### Recommended
+
+Install directly from GitHub with `skills`:
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
+This is the recommended installation method. It installs the `drawio` skill into the correct skill directory for your client. After installation, restart your AI client so it reloads the skill and MCP tools.
+
+## 📦 Manual Installation
 
 ### Prerequisites
 
@@ -93,16 +134,6 @@ This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang
   - [Claude Desktop](https://claude.ai/download)
   - [Gemini CLI](https://ai.google.dev/gemini-api/docs/cli)
   - [Codex CLI](https://github.com/openai/codex-cli)
-
-### Recommended Install
-
-Install directly from GitHub with `skills`:
-
-```bash
-npx skills add bahayonghang/drawio-skills
-```
-
-This is the recommended installation method. It automatically installs the skill into the appropriate directory for your AI platform.
 
 ### Manual Install
 
@@ -137,7 +168,7 @@ Copy-Item -Recurse skills/drawio "$env:APPDATA\Claude\skills\"
 cp -r skills/drawio ~/.config/Claude/skills/
 ```
 
-Then add to `claude_desktop_config.json`:
+Then add the MCP configuration shown above to `claude_desktop_config.json`:
 
 **macOS/Linux:**
 
@@ -186,7 +217,7 @@ Copy-Item -Recurse skills/drawio "$env:APPDATA\gemini\skills\"
 cp -r skills/drawio ~/.gemini/skills/
 ```
 
-Then add to `settings.json`:
+Then add the MCP configuration shown above to `settings.json`:
 
 **macOS/Linux:**
 
@@ -229,26 +260,64 @@ cp -r skills/drawio ~/.codex/skills/
 Copy-Item -Recurse skills/drawio "$env:USERPROFILE\.codex\skills\"
 ```
 
-Then add to `~/.codex/config.toml`:
-
-**macOS/Linux:**
-
-```toml
-[mcp_servers.drawio]
-command = "npx"
-args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
-```
-
-**Windows:**
-
-```toml
-[mcp_servers.drawio]
-type = "stdio"
-command = "cmd"
-args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
-```
+Then add the MCP configuration shown above to `~/.codex/config.toml`.
 
 The skill will be available automatically after restarting your AI client.
+
+## 🚀 Quick Start
+
+Once MCP and the skill are installed, invoke `drawio` explicitly or let your client auto-route to it.
+
+- In Codex, the most reliable explicit form is `$drawio <request>`.
+- In other clients, use the skill command they expose or simply ask for a draw.io diagram and let the client match the skill.
+
+### Route Selection
+
+| Route | Use it for | Example |
+|------|------------|---------|
+| `create` | New diagrams from text, Mermaid, CSV, or YAML | `$drawio create an IEEE-style training pipeline figure with labeled stages and one loss formula` |
+| `edit` | Incremental changes to an existing diagram | `$drawio edit the current diagram: rename User Service to Auth Service, make database nodes green, and clean up overlapping arrows` |
+| `replicate` | Redrawing an uploaded image or screenshot | `$drawio replicate this uploaded AWS architecture screenshot as a structured draw.io diagram with provider icons` |
+
+### What the Skill Does Automatically
+
+- Routes requests into `create`, `edit`, or `replicate`
+- Loads math references when the prompt includes formulas, equations, LaTeX, or AsciiMath
+- Loads academic references for paper figures, IEEE-style diagrams, theses, and research workflows
+- Loads stencil and icon references for cloud and network diagrams
+
+### Local CLI Validation
+
+If you are iterating inside this repository, validate outputs with:
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate
+```
+
+## 🔗 Relationship with Upstream Project
+
+This skill is built on top of **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** by [@DayuanJiang](https://github.com/DayuanJiang).
+
+| Project | Purpose |
+|---------|---------|
+| [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | MCP Server that provides draw.io diagram tools |
+| **This Project (drawio-skills)** | MCP skill that wraps the MCP server with workflow guidance, XML format references, and diagram examples. Compatible with Claude Desktop, Gemini CLI, and Codex |
+
+### What This Skill Adds
+
+- ✅ **3 Clear Workflows**: `/drawio create`, `/drawio replicate`, `/drawio edit`
+- ✅ **A-H Format**: Structured diagram extraction from text/images
+- ✅ **Comprehensive Documentation**: Detailed guides for creating various diagram types
+- ✅ **XML Format Reference**: Complete documentation of draw.io XML format and style properties
+- ✅ **Diagram Examples**: Ready-to-use examples for flowcharts, architecture diagrams, and more
+- ✅ **Bundled MCP Template**: Ships with a `.mcp.json` reference file for MCP-aware setups
+- ✅ **Installation Scripts**: Easy setup for Windows, Linux, and macOS
+- ✅ **SVG Export**: JavaScript SVG converter (zero external dependencies)
+- ✅ **CLI Tool**: `node cli.js input.yaml [output]` with `--theme`, `--strict`, `--validate` options
+- ✅ **XML Validation**: Structural integrity checks for generated XML
+- ✅ **Cloud Icon Support**: AWS/GCP/Azure/K8s icon mapping via `node.icon`
+- ✅ **5 Design Themes**: tech-blue, academic, academic-color, nature, dark
 
 ## 🛠️ MCP Tools
 

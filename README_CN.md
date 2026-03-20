@@ -14,77 +14,118 @@
 
 ## ✨ 功能特性
 
-- 🎨 **自然语言 → 图表**：描述你的需求，获得专业图表
-- 🔄 **实时预览**：在浏览器中即时查看变更
-- 📊 **多种图表类型**：流程图、架构图、序列图等
-- ☁️ **云架构支持**：支持 AWS、GCP 和 Azure 官方图标
-- ✏️ **编辑现有图表**：基于 ID 的精确修改操作
-- 💾 **导出功能**：保存为 `.drawio` 文件
-- 🎬 **动画连接器**：创建动态和动画连接线
-- 📚 **版本历史**：通过可视化缩略图恢复之前的图表版本
-- 🧮 **数学公式**：支持 LaTeX/AsciiMath 公式的 MathJax 渲染
-- 📐 **A-H 格式提取**：从文本或图片中提取结构化图表
-- 🖼️ **SVG 导出**：将图表转换为独立 SVG，内嵌 XML 支持双向编辑
-- 🔧 **CLI 工具**：命令行 YAML → draw.io XML/SVG 转换，支持主题和验证
-- ✅ **XML 验证**：ID 唯一性、边引用完整性、根节点结构验证
-- 🏷️ **云图标**：通过 `node.icon` 字段支持 AWS、GCP、Azure、Kubernetes 图标
-- 🎨 **5 个设计主题**：tech-blue、academic、academic-color、nature、dark 完整令牌系统
+- 🎨 **YAML 优先工作流**：通过结构化规格而不是原始 XML 来创建、编辑、验证和导出图表
+- 🔀 **三条核心路线**：`create`、`edit`、`replicate`，按需加载对应参考文档
+- 🔄 **实时浏览器预览**：基于 `@next-ai-drawio/mcp-server` 进行可视化迭代编辑
+- 🧠 **多种输入形式**：支持自然语言、Mermaid、CSV、YAML，并统一归一化到 draw.io 工作流
+- 🧮 **数学与学术护栏**：支持 LaTeX/AsciiMath 标签、IEEE 风格图和研究流程图
+- ☁️ **云与模板图标支持**：适用于 AWS、GCP、Azure、Kubernetes，以及网络/厂商图标场景
+- 🖼️ **图片复刻与结构化编辑**：可复刻上传图片，也可对现有图表做增量修改
+- 🧪 **CLI 验证**：在导出 `.drawio` 或 `.svg` 之前检查结构、布局和质量规则
+- 📦 **可移植输出**：导出可继续编辑的 `.drawio` 文件，以及可选的 `.svg` 产物
 
-## 🚀 快速开始 - 3 个工作流
+## 🔌 MCP 配置
 
-| 命令 | 说明 | A-H 格式 |
-|------|------|----------|
-| `/drawio create` | 从自然语言创建图表 | 可选 |
-| `/drawio replicate` | 复刻现有图片 | 必需 |
-| `/drawio edit` | 修改现有图表 | 可选 |
+本技能依赖 `@next-ai-drawio/mcp-server` 这个 MCP 服务器。
 
-### `/drawio create` - 从零开始创建
+仓库中自带的 [`skills/drawio/.mcp.json`](./skills/drawio/.mcp.json) 更适合作为参考模板，但大多数客户端仍然需要你显式注册 MCP。建议先完成 MCP 配置，再安装 skill。
 
-```
-/drawio create 创建一个带验证和错误处理的登录流程图
-```
+### Claude Desktop / Claude Code
 
-### `/drawio replicate` - 复刻现有图片
+将以下内容加入 Claude 的 MCP 配置：
 
-```
-/drawio replicate
-【领域】软件架构
-[上传图片]
+**macOS/Linux**
+
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
 ```
 
-### `/drawio edit` - 修改图表
+**Windows**
 
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
 ```
-/drawio edit
-将 "用户服务" 改为 "认证服务"
-将数据库节点改为绿色
+
+### Gemini CLI
+
+将以下内容加入 `settings.json`：
+
+**macOS/Linux**
+
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "command": "npx",
+      "args": ["--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
 ```
 
-## 🔗 与上游项目的关系
+**Windows**
 
-本技能基于 [@DayuanJiang](https://github.com/DayuanJiang) 开发的 **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** 项目构建。
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
 
-| 项目 | 作用 |
-|------|------|
-| [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | 提供 draw.io 图表工具的 MCP Server |
-| **本项目 (drawio-skills)** | MCP 技能，封装 MCP server 并提供工作流指导、XML 格式参考和图表示例。兼容 Claude Desktop、Gemini CLI 和 Codex |
+### Codex
 
-### 本技能的增强内容
+将以下内容加入 `~/.codex/config.toml`：
 
-- ✅ **3 个清晰的工作流**：`/drawio create`、`/drawio replicate`、`/drawio edit`
-- ✅ **A-H 格式**：从文本/图片中提取结构化图表
-- ✅ **完整文档**：详细的各类图表创建指南
-- ✅ **XML 格式参考**：完整的 draw.io XML 格式和样式属性文档
-- ✅ **图表示例**：流程图、架构图等即用示例
-- ✅ **自动 MCP 配置**：预配置的 `.mcp.json` 实现无缝集成
-- ✅ **安装脚本**：支持 Windows、Linux 和 macOS 的简易安装
-- ✅ **SVG 导出**：JavaScript SVG 转换器（零外部依赖）
-- ✅ **CLI 工具**：`node cli.js input.yaml [output]` 支持 `--theme`、`--strict`、`--validate` 选项
-- ✅ **XML 验证**：生成 XML 的结构完整性检查
-- ✅ **云图标支持**：通过 `node.icon` 实现 AWS/GCP/Azure/K8s 图标映射
-- ✅ **5 个设计主题**：tech-blue、academic、academic-color、nature、dark
+**macOS/Linux**
 
-## 📦 安装方法
+```toml
+[mcp_servers.drawio]
+command = "npx"
+args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+**Windows**
+
+```toml
+[mcp_servers.drawio]
+type = "stdio"
+command = "cmd"
+args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+## 📦 安装 Skill
+
+### 推荐方式
+
+推荐直接使用 `skills` 从 GitHub 安装：
+
+```bash
+npx skills add bahayonghang/drawio-skills
+```
+
+这是推荐安装方式，会把 `drawio` skill 安装到对应客户端的技能目录。安装后请重启 AI 客户端，让它重新加载 skill 与 MCP 工具。
+
+## 📦 手动安装
 
 ### 前置要求
 
@@ -93,16 +134,6 @@
   - [Claude Desktop](https://claude.ai/download)
   - [Gemini CLI](https://ai.google.dev/gemini-api/docs/cli)
   - [Codex CLI](https://github.com/openai/codex-cli)
-
-### 推荐安装
-
-使用 `skills` 直接从 GitHub 安装：
-
-```bash
-npx skills add bahayonghang/drawio-skills
-```
-
-这是推荐安装方式，会自动将技能安装到对应 AI 平台的技能目录。
 
 ### 手动安装
 
@@ -137,7 +168,7 @@ Copy-Item -Recurse skills/drawio "$env:APPDATA\Claude\skills\"
 cp -r skills/drawio ~/.config/Claude/skills/
 ```
 
-然后在 `claude_desktop_config.json` 中添加：
+然后将上文的 MCP 配置加入 `claude_desktop_config.json`：
 
 **macOS/Linux:**
 
@@ -186,7 +217,7 @@ Copy-Item -Recurse skills/drawio "$env:APPDATA\gemini\skills\"
 cp -r skills/drawio ~/.gemini/skills/
 ```
 
-然后在 `settings.json` 中添加：
+然后将上文的 MCP 配置加入 `settings.json`：
 
 **macOS/Linux:**
 
@@ -229,26 +260,64 @@ cp -r skills/drawio ~/.codex/skills/
 Copy-Item -Recurse skills/drawio "$env:USERPROFILE\.codex\skills\"
 ```
 
-然后在 `~/.codex/config.toml` 中添加：
-
-**macOS/Linux:**
-
-```toml
-[mcp_servers.drawio]
-command = "npx"
-args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
-```
-
-**Windows:**
-
-```toml
-[mcp_servers.drawio]
-type = "stdio"
-command = "cmd"
-args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
-```
+然后将上文的 MCP 配置加入 `~/.codex/config.toml`。
 
 重启你的 AI 客户端后，技能将自动可用。
+
+## 🚀 快速开始
+
+完成 MCP 和 skill 安装后，你可以显式调用 `drawio`，也可以让客户端根据请求自动匹配该 skill。
+
+- 在 Codex 中，最稳妥的显式写法是 `$drawio <请求内容>`。
+- 在其他客户端中，可以使用其提供的 skill 命令，或直接描述你的 draw.io 图表需求。
+
+### 路线选择
+
+| 路线 | 适用场景 | 示例 |
+|------|----------|------|
+| `create` | 从文本、Mermaid、CSV 或 YAML 新建图表 | `$drawio create 生成一个 IEEE 风格的训练流程图，包含各阶段标签和一个损失函数公式` |
+| `edit` | 对现有图表做增量修改 | `$drawio edit 修改当前图表：把 User Service 改成 Auth Service，把数据库节点改成绿色，并清理重叠连线` |
+| `replicate` | 复刻上传的图片或截图 | `$drawio replicate 将这张上传的 AWS 架构图截图复刻成结构化 draw.io 图表，并保留云厂商图标` |
+
+### Skill 会自动做什么
+
+- 自动把请求路由到 `create`、`edit` 或 `replicate`
+- 当提示中包含公式、LaTeX 或 AsciiMath 时，自动加载数学相关参考
+- 当提示中涉及论文插图、IEEE 风格、学位论文或研究流程时，自动加载学术相关参考
+- 当提示中涉及云架构、网络设备或厂商图标时，自动加载模板与图标相关参考
+
+### 本地 CLI 验证
+
+如果你是在这个仓库里本地迭代，可以使用下面的命令做输出验证：
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate
+```
+
+## 🔗 与上游项目的关系
+
+本技能基于 [@DayuanJiang](https://github.com/DayuanJiang) 开发的 **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** 项目构建。
+
+| 项目 | 作用 |
+|------|------|
+| [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) | 提供 draw.io 图表工具的 MCP Server |
+| **本项目 (drawio-skills)** | MCP 技能，封装 MCP server 并提供工作流指导、XML 格式参考和图表示例。兼容 Claude Desktop、Gemini CLI 和 Codex |
+
+### 本技能的增强内容
+
+- ✅ **3 个清晰的工作流**：`/drawio create`、`/drawio replicate`、`/drawio edit`
+- ✅ **A-H 格式**：从文本/图片中提取结构化图表
+- ✅ **完整文档**：详细的各类图表创建指南
+- ✅ **XML 格式参考**：完整的 draw.io XML 格式和样式属性文档
+- ✅ **图表示例**：流程图、架构图等即用示例
+- ✅ **内置 MCP 模板**：附带 `.mcp.json` 参考文件，便于 MCP 感知型环境复用
+- ✅ **安装脚本**：支持 Windows、Linux 和 macOS 的简易安装
+- ✅ **SVG 导出**：JavaScript SVG 转换器（零外部依赖）
+- ✅ **CLI 工具**：`node cli.js input.yaml [output]` 支持 `--theme`、`--strict`、`--validate` 选项
+- ✅ **XML 验证**：生成 XML 的结构完整性检查
+- ✅ **云图标支持**：通过 `node.icon` 实现 AWS/GCP/Azure/K8s 图标映射
+- ✅ **5 个设计主题**：tech-blue、academic、academic-color、nature、dark
 
 ## 🛠️ MCP 工具
 
