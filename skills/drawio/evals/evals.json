@@ -219,6 +219,59 @@
         "Output SVG is generated and is readable",
         "Validation passes with --validate and paper-grade strict warnings when requested"
       ]
+    },
+    {
+      "id": "mermaid-flowchart-input",
+      "prompt": "Convert this Mermaid flowchart to a draw.io diagram:\n\nflowchart LR\n  A[User Request] --> B[API Gateway]\n  B --> C[Auth Service]\n  B --> D[Order Service]\n  C --> E[(User DB)]\n  D --> F[(Order DB)]",
+      "expected_output": "A tech-blue themed diagram with 6 nodes converted from Mermaid input.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue theme",
+        "Contains all 6 nodes from Mermaid input",
+        "Database nodes use database semantic type",
+        "Edges preserve connectivity from Mermaid source",
+        "YAML spec is generated as intermediate representation"
+      ]
+    },
+    {
+      "id": "csv-orgchart-input",
+      "prompt": "Convert this CSV into an org chart diagram:\n\nname,parent,type\nCEO,,user\nVP Engineering,CEO,service\nVP Product,CEO,service\nBackend Lead,VP Engineering,service\nFrontend Lead,VP Engineering,service\nPM Lead,VP Product,service",
+      "expected_output": "A vertical org chart with 6 nodes showing hierarchy.",
+      "files": [],
+      "assertions": [
+        "Output uses vertical layout",
+        "Contains all 6 org chart nodes",
+        "CEO node is a user type",
+        "Parent-child edges are correctly generated",
+        "Hierarchy is visually clear"
+      ]
+    },
+    {
+      "id": "dl-neural-network-types",
+      "prompt": "Create a neural network architecture diagram showing: Input Layer → Conv2D → BatchNorm → MaxPool → Attention Block → Dense Layer → Output, using academic theme.",
+      "expected_output": "An academic-themed neural network diagram using deep learning semantic node types.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Conv2D node uses conv semantic type",
+        "BatchNorm node uses norm semantic type",
+        "MaxPool node uses pool semantic type",
+        "Attention Block uses attention semantic type",
+        "Dense Layer uses matrix semantic type"
+      ]
+    },
+    {
+      "id": "dark-theme-presentation",
+      "prompt": "Create a microservices overview with API Gateway, User Service, Order Service, and PostgreSQL DB using dark theme for a presentation.",
+      "expected_output": "A dark-themed microservices diagram suitable for slides.",
+      "files": [],
+      "assertions": [
+        "Output uses dark theme",
+        "Background color is dark (#0F172A or similar)",
+        "Contains all 4 specified components",
+        "Database node uses database semantic type",
+        "Node text colors provide sufficient contrast against dark background"
+      ]
     }
   ]
 }
