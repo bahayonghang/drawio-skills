@@ -1,184 +1,156 @@
 # 创建图表 (`/drawio create`)
 
-学习如何使用自然语言结合设计系统 2.0 创建各种类型的图表。
+当你要从文本、YAML、Mermaid 或 CSV 新建图表时，使用 `/drawio create`。
 
-## 快速开始
+## 快速示例
 
-```
-/drawio create
-创建一个带验证和错误处理的登录流程图
-```
-
-指定主题：
-
-```
-/drawio create with tech-blue theme
-微服务架构，包含 API Gateway、User Service 和 PostgreSQL
+```text
+/drawio create 生成一个横向 tech-blue 登录流程图，共 6 个节点
 ```
 
-## 基本工作流
-
-1. **触发**：使用 `/drawio create` 命令或关键词"创建"、"生成"、"画"
-2. **启动会话**：Claude 调用 `start_session` 打开浏览器
-3. **生成规格**：Claude 创建带设计系统样式的 YAML 规格
-4. **转换为 XML**：通过 `spec-to-drawio.js` 转换规格
-5. **实时预览**：图表在浏览器中即时显示
-6. **迭代修改**：使用 `/drawio edit` 进行调整
-
-## 设计系统支持
-
-### 主题选择
-
-| 主题 | 使用场景 | 命令 |
-|------|----------|------|
-| `tech-blue`（默认） | 软件架构、DevOps | 无需标志 |
-| `academic-color` ⭐ | 学术论文、研究（彩色） | "with academic-color theme" |
-| `academic` | IEEE 灰度打印 | "with academic theme" |
-| `nature` | 环境、生命周期 | "with nature theme" |
-| `dark` | 演示、幻灯片 | "with dark theme" |
-
-> ⭐ **学术推荐**：数字文档使用 `academic-color`，仅在严格灰度要求时使用 `academic`。
-
-### 语义节点类型
-
-形状从标签自动检测或显式指定：
-
-| 类型 | 形状 | 自动检测关键词 |
-|------|------|----------------|
-| `service` | 圆角矩形 | API、service、gateway、backend |
-| `database` | 圆柱体 | DB、SQL、storage、redis、mongo |
-| `decision` | 菱形 | if、check、condition，或标签含 `?` |
-| `terminal` | 体育场形 | start、end、begin、finish |
-| `queue` | 平行四边形 | queue、buffer、kafka、stream |
-| `user` | 圆形 | user、actor、client、customer |
-| `document` | 波浪矩形 | doc、file、report、document |
-| `formula` | 白色矩形 | 官方公式分隔符、独立公式 |
-
-### 连接器类型
-
-| 类型 | 样式 | 使用场景 |
-|------|------|----------|
-| `primary` | 实线 2px，填充箭头 | 主流程（默认） |
-| `data` | 虚线 2px，填充箭头 | 数据/异步流 |
-| `optional` | 点线 1px，空心箭头 | 弱关系 |
-| `dependency` | 实线 1px，菱形箭头 | 依赖关系 |
-| `bidirectional` | 实线 1.5px，无箭头 | 关联 |
-
-### 8px 网格系统
-
-所有位置对齐到 8px 增量：
-
-- 节点间距：32px（4 单位）
-- 模块内边距：24px（3 单位）
-- 画布边距：32px（4 单位）
-
-## 示例
-
-### 流程图
-
-```
-/drawio create
-创建用户登录流程：
-- 开始（terminal）
-- 输入凭据
-- 验证检查（decision）
-- 成功 → 仪表板
-- 错误 → 返回登录
+```text
+/drawio create 生成一张 academic-color 研究流程图，用于论文，共 8 个节点
 ```
 
-### AWS 架构
-
-```
-/drawio create with tech-blue theme
-AWS 无服务器架构：
-- API Gateway（service）入口
-- Lambda（service）业务逻辑
-- DynamoDB（database）存储
-- S3（storage）静态文件
-使用 AWS 图标，显示数据流
+```text
+/drawio create 生成一个带 AWS 图标的云架构图，包含事件总线和两个数据存储
 ```
 
-### 学术图表
+## 输入模式
 
+### 自然语言
+
+适合快速画流程图、架构草图和论文示意图。
+
+### YAML 规格
+
+适合需要精确控制、可版本化维护的场景。
+
+### Mermaid
+
+适合你已经拥有 Mermaid flowchart、sequence、class、state、ER 或 gantt 定义。
+
+### CSV
+
+适合层级关系强、接近组织结构图的输入。
+
+无论输入是什么，最终都会先归一化成统一 YAML 规格再渲染。
+
+## Fast Path 与 Full Path
+
+### Fast Path
+
+当请求已经明确以下信息时，skill 可以直接生成：
+
+- 图表类型
+- 主题或目标受众
+- 布局
+- 预期复杂度
+
+Fast path 适合较小图表，通常在 12 个节点以内。
+
+### Full Path
+
+以下情况会触发更谨慎的生成路径：
+
+- 需求含糊
+- 图表稠密
+- 对论文质量敏感
+- stencil-heavy
+- 对连线路由质量敏感
+- 节点多、分支复杂
+
+## 主题与 Profile 默认值
+
+| 场景 | 默认 profile | 默认主题 |
+|------|--------------|----------|
+| 常规图表 | `default` | `tech-blue` |
+| 学术论文 | `academic-paper` | `academic` |
+| 明确要求彩色论文图 | `academic-paper` | `academic-color` |
+| 稠密工程评审图 | `engineering-review` | `tech-blue` |
+
+## 特殊分支
+
+### Academic 分支
+
+当提示中出现 `paper`、`IEEE`、`thesis`、`journal`、`research` 等词时触发。
+
+常见附加要求：
+
+- `meta.title`
+- 建议填写 `meta.description`
+- 使用图标或多种连接器时补 `meta.legend`
+- 优先导出 SVG
+
+### Math / Formula 分支
+
+当提示中出现 `formula`、`equation`、`LaTeX`、`AsciiMath`、`MathJax`、`loss function` 等词时触发。
+
+最终输出只允许使用：
+
+- `$$...$$` 表示独立公式
+- `\(...\)` 表示行内公式
+- `` `...` `` 表示 AsciiMath
+
+不要输出裸 LaTeX、`$...$` 或 `\[...\]`。
+
+### Stencil-heavy 分支
+
+当提示里涉及 AWS、GCP、Azure、Kubernetes、Cisco 或厂商图标时触发。
+
+默认仍然先用语义形状，只有图表确实需要 provider-specific visuals 时再加图标。
+
+## 推荐工作流
+
+1. 尽量在 prompt 中先说清图表类型、主题、布局和复杂度。
+2. 让 skill 先归一化成 YAML。
+3. 在宣称交付前先做校验。
+4. 只要图表后续还会改，就保留 sidecar。
+
+## 校验命令
+
+生成 `.drawio` bundle：
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
 ```
-/drawio create with academic theme
-神经网络训练流程：
-- 数据预处理
-- 模型训练（损失函数：\(L = -\sum y_i \log(\hat{y}_i)\)）
-- 验证
-- 部署
+
+生成独立 SVG：
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-## YAML 规格格式
+论文或正式评审建议启用严格模式：
 
-对于复杂图表，使用结构化格式显式 YAML 规格：
-
-```yaml
-meta:
-  theme: tech-blue
-  layout: horizontal
-
-modules:
-  - id: frontend
-    label: 前端层
-  - id: backend
-    label: 后端服务
-
-nodes:
-  - id: web
-    label: Web 应用
-    type: service
-    module: frontend
-  - id: api
-    label: API Gateway
-    type: service
-    module: backend
-  - id: db
-    label: PostgreSQL
-    type: database
-    module: backend
-
-edges:
-  - from: web
-    to: api
-    type: primary
-  - from: api
-    to: db
-    type: data
-    label: 查询
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
 ```
 
-请求结构化格式：
+## 好用的 Prompt 模式
 
+### 工程图
+
+```text
+/drawio create 生成一个横向 tech-blue 微服务架构图，用于 engineering review，包含 10 个节点、事件总线和两个数据库
 ```
-/drawio create with structured format
-创建微服务架构...
+
+### 学术图
+
+```text
+/drawio create 生成一张 IEEE 风格校园网络图，用于论文，灰度输出，包含 core、distribution、access 三层和简短 legend
 ```
 
-## 复杂度护栏
+### 带公式图
 
-| 指标 | 警告 | 错误 |
-|------|------|------|
-| 节点 | >20 | >30 |
-| 边 | >30 | >50 |
-| 模块 | >5 | - |
-| 标签长度 | >14 字符 | - |
-
-超过阈值时，Claude 会建议拆分为子图表。
-
-## 最佳实践
-
-1. **内容在组件中** - 优先将文字和公式嵌入节点（形状），而非独立文本框
-2. **指定主题** - 使用 "with [theme] theme" 保持图表样式一致
-3. **使用语义类型** - 让设计系统自动选择形状
-4. **保持简单** - 每个图表目标 ≤20 个节点
-5. **使用模块** - 分组相关组件以便更好组织
+```text
+/drawio create 生成一个模型流水线图，标签包含 "Input: \(x \in \mathbb{R}^d\)"，并单独放一个损失函数节点 "$$\mathcal{L} = -\sum_i y_i \log(\hat{y}_i)$$"
+```
 
 ## 下一步
 
-- [复刻图表](./scientific-workflows.md) - `/drawio replicate` 工作流
-- [编辑图表](./editing-diagrams.md) - `/drawio edit` 工作流
-- [设计系统](./design-system.md) - 主题、形状、连接器参考
-- [规格格式](./specification.md) - YAML 规格参考
-- [导出与保存](./export.md) - 保存图表
-- [示例](/zh/examples/) - 更多示例
+- [工作流概览](./workflows.md)
+- [复刻图表](./scientific-workflows.md)
+- [编辑图表](./editing-diagrams.md)
+- [数学公式排版](./math-typesetting.md)
+- [规格格式](./specification.md)

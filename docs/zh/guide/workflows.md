@@ -1,253 +1,131 @@
 # 工作流概览
 
-Draw.io 技能提供 3 个清晰的工作流，与设计系统 2.0 完美集成。
+Draw.io Skill 暴露三条核心路线：
 
-## 快速参考
+- `/drawio create`
+- `/drawio edit`
+- `/drawio replicate`
 
-| 命令 | 说明 | 主题 | 语义类型 |
-|------|------|------|----------|
-| `/drawio create` | 从自然语言创建 | ✅ 可选择 | ✅ 自动检测 |
-| `/drawio replicate` | 复刻现有图片 | ✅ 基于领域 | ✅ 映射 |
-| `/drawio edit` | 修改现有图表 | ✅ 可切换 | ✅ 保留 |
+三条路线共享同一套 YAML-first 模型、设计系统和校验栈。
 
-## `/drawio create` - 从零开始创建
+## 共同运行规则
 
-从自然语言创建图表，完整支持设计系统。
+1. 默认 **离线优先**
+2. draw.io Desktop 可用时走 **桌面增强**
+3. 只有明确需要时才启用 **可选 Live MCP**
 
-### 基本用法
+只要图表可能继续演化，就尽量把这组三件套放在一起：
 
-```
-/drawio create
-创建一个带验证和错误处理的登录流程图
-```
+- `<name>.drawio`
+- `<name>.spec.yaml`
+- `<name>.arch.json`
 
-### 带主题选择
+## 路线对比
 
-```
-/drawio create with tech-blue theme
-微服务架构：
-- API Gateway 连接 User Service 和 Order Service
-- 两个服务都使用 PostgreSQL 数据库
-- Redis Cache 用于会话存储
-```
+| 路线 | 主要输入 | 默认输出 | 适用场景 |
+|------|----------|----------|----------|
+| `create` | 文本、YAML、Mermaid、CSV | 新 `.drawio` bundle | 新建图表 |
+| `edit` | 现有 bundle 或 `.drawio` 文件 | 更新后的 bundle | 修改或重构图表 |
+| `replicate` | 上传图片或截图 | 重绘后的 `.drawio` bundle | 复刻参考图 |
 
-### 带显式类型
+## `/drawio create`
 
-```
-/drawio create with academic theme
-神经网络架构：
-- Input Layer（service）
-- Hidden Layer 1（service）
-- Hidden Layer 2（service）
-- Output Layer（terminal）
-- 损失函数：\(L = -\sum y \log(\hat{y})\)（formula）
-```
+用于新建图表。
 
-### 设计系统特性
+### 输入模式
 
-| 特性 | 行为 |
-|------|------|
-| 主题 | 用 "with [theme] theme" 选择，默认 `tech-blue` |
-| 形状 | 从标签自动检测（database、queue 等） |
-| 连接器 | 从上下文推断（data、optional、dependency） |
-| 网格 | 所有位置对齐到 8px 网格 |
-| 布局 | 默认水平，用 "vertical layout" 垂直 |
+- 自然语言
+- YAML 规格
+- Mermaid
+- CSV 层级 / 组织结构输入
 
-**复杂度护栏：**
+### Fast path
 
-- 超过 20 个节点警告（建议拆分）
-- 超过 30 个节点错误（需要确认）
-- 标签超过 14 个字符提示
+当请求已经明确图表类型、主题、布局和复杂度时，skill 可以直接生成。
 
-→ [详细文档](./creating-diagrams.md)
+### Full path
 
-## `/drawio replicate` - 复刻现有图片
+当请求具备以下特征时，skill 会先做更谨慎的逻辑整理：
 
-使用结构化提取从图片重建图表，支持主题映射。
+- 含糊
+- 稠密
+- 学术投稿敏感
+- stencil-heavy
+- 连线对路由质量敏感
 
-### 基本用法
+### 自动分支
 
-```
-/drawio replicate
-[上传图片]
-```
+- **Academic**：启用论文级校验与默认值
+- **Math / Formula**：强制只用官方公式分隔符
+- **Stencil-heavy**：加载云图标与网络模板规则
 
-### 带主题覆盖
+详见 [创建图表](./creating-diagrams.md)。
 
-```
-/drawio replicate with academic theme
-[上传架构截图]
-```
+## `/drawio edit`
 
-### 基于领域的主题选择
+用于增量修改、导入已有文件、结构重组或主题切换。
 
-| 领域 | 推荐主题 |
-|------|----------|
-| 软件架构 | `tech-blue` |
-| 商业流程 | `tech-blue` |
-| 科研流程 | `academic` |
-| 工业流程 | `nature` |
-| 演示文稿 | `dark` |
+### 推荐编辑目标
 
-### 提取过程
+1. 已有离线 bundle
+2. 先把 `.drawio` 导入为 bundle 再编辑
+3. 只有明确要求时才用 live browser session
 
-1. **分析** - 从图片提取视觉元素
-2. **映射** - 转换为语义形状和类型化连接器
-3. **应用主题** - 使用选择或推断的主题样式化
-4. **生成** - 创建 YAML 规格然后 draw.io XML
-5. **预览** - 在浏览器实时显示
+### 常见编辑类型
 
-### 语义映射
+- 重命名标签
+- 增删节点与边
+- 切换主题
+- 修改语义类型
+- 重组模块
+- 用网格安全位置移动元素
 
-| 视觉元素 | 语义类型 |
-|----------|----------|
-| 圆角矩形 | `service` |
-| 圆柱体/数据库图标 | `database` |
-| 菱形 | `decision` |
-| 圆形 | `terminal` 或 `user` |
-| 平行四边形 | `queue` |
-| 文档形状 | `document` |
+详见 [编辑图表](./editing-diagrams.md)。
 
-→ [详细文档](./scientific-workflows.md)
+## `/drawio replicate`
 
-## `/drawio edit` - 修改图表
+用于把上传图片重绘为结构化规格。
 
-编辑现有图表，同时保持设计系统一致性。
+### 核心步骤
 
-### 基本用法
+1. 分析图表结构
+2. 提取源图调色板
+3. 构造 YAML 规格
+4. 必要时展示逻辑与配色摘要
+5. 生成离线 bundle
 
-```
-/drawio edit
-将 "用户服务" 改为 "认证服务"
-```
+### 颜色模式
 
-### 主题切换
+| 模式 | 默认 | 效果 |
+|------|------|------|
+| `preserve-original` | 是 | 通过显式样式覆盖保留源图主配色 |
+| `theme-first` | 否 | 让重绘结果优先服从所选主题 |
 
-```
-/drawio edit with dark theme
-转换为演示模式
-```
+详见 [复刻图表](./scientific-workflows.md)。
 
-### 样式操作
+## 共享护栏
 
-```
-/drawio edit
-- 将 API Gateway 改为强调色
-- 将所有服务节点转换为数据库类型
-- 异步连接使用数据流样式
-```
+### 设计系统
 
-### 添加元素
+- 6 个内置主题
+- 语义节点类型
+- 类型化连接器
+- 8px 网格默认值
 
-```
-/drawio edit
-在 API 和数据库之间添加 "Redis Cache" 节点（service 类型）
-用数据流箭头连接
-```
+### 校验
 
-### 结构变更
+- 结构校验
+- 布局校验
+- 质量校验
 
-```
-/drawio edit with restructure and academic theme
-重组为 3 个模块：
-- 输入层
-- 处理层
-- 输出层
-```
+### 严格模式
 
-### 保留规则
-
-| 编辑类型 | 主题行为 |
-|----------|----------|
-| 添加节点 | 使用当前主题样式 |
-| 添加边 | 使用当前主题连接器 |
-| 修改样式 | 建议主题兼容颜色 |
-| 切换主题 | 重新应用所有样式 |
-| 移动节点 | 对齐到 8px 网格 |
-
-→ [详细文档](./editing-diagrams.md)
-
-## 设计系统集成
-
-所有三个工作流共享相同的设计系统：
-
-### 5 个内置主题
-
-```
-tech-blue      # 默认，专业蓝色
-academic       # IEEE 就绪灰度
-academic-color # 增强色彩学术
-nature         # 绿色环保
-dark           # 演示模式
-```
-
-### 8 种语义节点类型
-
-```yaml
-service    # 圆角矩形（默认）
-database   # 圆柱体形状
-decision   # 菱形
-terminal   # 体育场形状
-queue      # 平行四边形
-user       # 椭圆
-document   # 文档形状
-formula    # 白色框支持数学
-```
-
-### 5 种连接器类型
-
-```yaml
-primary      # 实线 2px，块状箭头
-data         # 虚线，数据流
-optional     # 细虚线，可选路径
-dependency   # 菱形箭头末端
-bidirectional # 无箭头
-```
-
-### 8px 网格系统
-
-所有位置对齐到 8px 增量：
-
-- 节点间距：32px（4 单位）
-- 模块内边距：24px（3 单位）
-- 最小边距：8px（1 单位）
-
-## YAML 规格格式
-
-内部使用的新规格格式：
-
-```yaml
-meta:
-  theme: tech-blue
-  layout: horizontal
-
-modules:
-  - id: backend
-    label: 后端服务
-
-nodes:
-  - id: api
-    label: API Gateway
-    type: service
-    module: backend
-  - id: db
-    label: PostgreSQL
-    type: database
-
-edges:
-  - from: api
-    to: db
-    type: data
-    label: 查询
-```
-
-→ [规格格式](./specification.md)
+当输出用于论文、评审或正式发布时，使用 `--strict` 或 `--strict-warnings`。
 
 ## 下一步
 
-- [创建图表](./creating-diagrams.md) - 完整 `/drawio create` 指南
-- [科研工作流](./scientific-workflows.md) - 完整 `/drawio replicate` 指南
-- [编辑图表](./editing-diagrams.md) - 完整 `/drawio edit` 指南
-- [设计系统](./design-system.md) - 主题、形状、连接器
-- [规格格式](./specification.md) - YAML 规格参考
-- [示例](/zh/examples/) - 真实图表示例
+- [创建图表](./creating-diagrams.md)
+- [编辑图表](./editing-diagrams.md)
+- [复刻图表](./scientific-workflows.md)
+- [设计系统](./design-system.md)
+- [规格格式](./specification.md)

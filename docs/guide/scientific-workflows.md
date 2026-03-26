@@ -1,210 +1,116 @@
-# Replicate Diagrams (`/drawio replicate`)
+# Replicating Diagrams (`/drawio replicate`)
 
-Replicate existing images or diagrams using structured extraction with Design System styling.
+Use `/drawio replicate` when you want to recreate an uploaded image, screenshot, or reference diagram as a structured draw.io bundle.
 
-## Quick Start
+## What Replication Optimizes For
 
-```
+- cleaner redraws than raw screenshot tracing
+- editable YAML-first artifacts
+- palette-aware restyling
+- academic-safe exports when needed
+
+## Replication Flow
+
+1. Receive the uploaded image and any text hints
+2. Choose domain, theme, and color mode
+3. Extract structure into YAML
+4. Summarize logic and palette when needed
+5. Render the offline bundle
+6. Compare and refine with `/drawio edit`
+
+## Color Modes
+
+| Mode | Default | Behavior |
+|------|---------|----------|
+| `preserve-original` | Yes | Preserve source background and dominant palette through explicit style overrides |
+| `theme-first` | No | Normalize the redraw to the selected theme and treat source colors as hints |
+
+Replicated specs should usually record:
+
+- `meta.source: replicated`
+- `meta.replication.colorMode`
+- `meta.replication.background`
+- `meta.replication.palette`
+
+## Theme Defaults by Domain
+
+| Domain | Recommended theme |
+|--------|-------------------|
+| software architecture | `tech-blue` |
+| business process | `tech-blue` |
+| research workflow | `academic` |
+| environmental / lifecycle | `nature` |
+| accessibility-first review | `high-contrast` |
+| presentation slides | `dark` |
+
+## Logic Confirmation
+
+Replication should pause for confirmation when semantics are uncertain.
+
+The review draft should include:
+
+- a pure ASCII logic graph
+- the extracted palette summary
+- which colors will be preserved explicitly
+- which parts will fall back to theme tokens
+
+## Example Requests
+
+### Preserve the source palette
+
+```text
 /drawio replicate
-[Upload image]
+Color mode: preserve-original
+[upload image]
+Keep the warm nodes and dark connectors instead of normalizing everything to tech-blue
 ```
 
-With theme override:
+### Normalize to an academic paper palette
 
-```
+```text
 /drawio replicate with academic theme
-[Upload architecture screenshot]
+[upload paper figure]
+Redraw this for IEEE submission and keep it grayscale-safe
 ```
 
-## Workflow Process
+### Normalize to a presentation theme
 
-```
-Step 1: Receive Input
-├── Image upload (required)
-└── Optional: text description
-
-Step 2: Configuration
-├── Select domain (software architecture, research, etc.)
-├── Select theme (tech-blue default, academic for papers)
-└── Specify language (Chinese/English)
-
-Step 3: Structured Extraction
-├── Analyze image structure
-├── Extract to YAML specification:
-│   ├── nodes with semantic types
-│   ├── edges with connector types
-│   └── modules for grouping
-└── Mark missing info as "未提及"
-
-Step 4: Convert to Diagram
-├── Apply selected theme
-├── Calculate 8px grid positions
-└── Generate draw.io XML
-
-Step 5: Real-time Preview
-└── Diagram appears in browser
+```text
+/drawio replicate with dark theme
+[upload architecture screenshot]
+Redraw this for a keynote slide
 ```
 
-## Design System Integration
+## Output Artifacts
 
-### Theme Selection by Domain
+Replication should produce the same editable trio as other routes:
 
-| Domain | Recommended Theme | Reason |
-|--------|-------------------|--------|
-| 软件架构 (Software Architecture) | `tech-blue` | Professional technical style |
-| 商业流程 (Business Process) | `tech-blue` | Clean corporate look |
-| 科研流程 (Research Workflow) | `academic` | IEEE-compatible, grayscale-safe |
-| 工业流程 (Industrial Process) | `tech-blue` | Clear technical diagrams |
-| 演示文稿 (Presentation) | `dark` | Slides, video content |
-| 教学设计 (Teaching Design) | `nature` | Friendly, accessible colors |
+- `.drawio`
+- `.spec.yaml`
+- `.arch.json`
 
-### Semantic Shape Mapping
+Optionally add:
 
-During extraction, visual elements are mapped to semantic types:
-
-| Visual Element | Semantic Type | Draw.io Shape |
-|----------------|---------------|---------------|
-| Rectangle/Box | `service` | Rounded rectangle |
-| Cylinder/Drum | `database` | Cylinder |
-| Diamond | `decision` | Rhombus |
-| Oval/Rounded rect | `terminal` | Stadium |
-| Parallelogram | `queue` | Parallelogram |
-| Person/Stick figure | `user` | Circle |
-| Document shape | `document` | Wave rect |
-| Math formula | `formula` | White rect with border |
-
-### Connector Type Mapping
-
-| Visual Style | Connector Type | Output Style |
-|--------------|----------------|--------------|
-| Solid arrow | `primary` | Solid 2px, filled arrow |
-| Dashed arrow | `data` | Dashed 2px, filled arrow |
-| Dotted line | `optional` | Dotted 1px, open arrow |
-| Diamond end | `dependency` | Solid 1px, diamond |
-| Double-headed | `bidirectional` | Solid 1.5px, no arrow |
-
-## Input Examples
-
-### With Image Only
-
-```
-/drawio replicate
-[Upload image]
-```
-
-### With Theme Selection
-
-```
-/drawio replicate with academic theme
-[Upload paper figure]
-This is a figure from our research paper
-```
-
-### With Domain + Theme
-
-```
-/drawio replicate
-【领域】软件架构
-【主题】tech-blue
-【语言】中文
-[Upload image]
-这是我们的微服务架构图，请按设计系统标准重绘
-```
-
-### For Academic Papers
-
-```
-/drawio replicate with academic theme
-【领域】科研流程
-[Upload paper figure]
-这是论文中的实验流程图，需要IEEE标准化重绘
-```
-
-## Output Format
-
-The extraction produces a YAML specification:
-
-```yaml
-meta:
-  theme: tech-blue
-  layout: horizontal
-  source: replicated
-
-nodes:
-  - id: n1
-    label: API Gateway
-    type: service
-    module: frontend
-
-  - id: n2
-    label: User DB
-    type: database
-    module: data
-
-edges:
-  - from: n1
-    to: n2
-    type: data
-    label: Query
-
-modules:
-  - id: frontend
-    label: 前端层
-  - id: data
-    label: 数据层
-```
-
-## Extraction Rules
-
-⚠️ **Hard Rules (Violations cause regeneration):**
-
-1. **Only use content from input** - Never add inferred content
-2. **Mark missing as "未提及"** - Never guess
-3. **Apply semantic types** - Map visuals to design system types
-4. **Modules ≤ 5** - Merge if necessary
-5. **Nodes per module: 3-7** - Summarize if too many
-6. **Labels ≤ 14 characters** - No symbols in labels
-7. **Use typed connectors** - Map line styles to connector types
-
-## Complexity Guardrails
-
-| Metric | Threshold | Suggestion |
-|--------|-----------|------------|
-| Nodes | > 20 | Split into sub-diagrams |
-| Edges | > 30 | Use hierarchical layout |
-| Modules | > 5 | Create separate diagrams |
-| Label length | > 14 chars | Abbreviate or use tooltip |
+- standalone SVG
+- desktop PNG / PDF / JPG when draw.io Desktop is available
 
 ## Troubleshooting
 
-### Image too complex?
+### The redraw is too literal
 
-- Split into multiple diagrams (max 20-30 nodes each)
-- Focus on one module at a time
-- Use hierarchical layout for large structures
+Switch to `theme-first` if you want brand or paper normalization instead of source-color fidelity.
 
-### Colors don't match original?
+### The redraw is too generic
 
-- Design system applies consistent theme colors
-- Original colors are mapped to semantic types
-- Use explicit style overrides for custom colors
+Stay on `preserve-original` and make sure the extracted palette summary is accepted before rendering.
 
-### Shapes different from original?
+### The source image is too dense
 
-- Design system maps to semantic shapes
-- Explicit `type:` override available in spec
-- Check semantic shape documentation
+Split the figure into sub-diagrams or reduce the redraw scope before regeneration.
 
-### Text labels truncated?
+## Next Steps
 
-- Keep labels ≤ 14 characters
-- Use abbreviations
-- Move details to tooltips or annotations
-
-## Related
-
-- [Creating Diagrams](./creating-diagrams.md) - `/drawio create` workflow
-- [Editing Diagrams](./editing-diagrams.md) - `/drawio edit` workflow
-- [Design System](./design-system.md) - Themes, shapes, connectors
-- [Specification Format](./specification.md) - YAML spec reference
-- [Math Typesetting](./math-typesetting.md) - LaTeX support
+- [Workflows](./workflows.md)
+- [Editing Diagrams](./editing-diagrams.md)
+- [Design System](./design-system.md)
+- [Specification Format](./specification.md)

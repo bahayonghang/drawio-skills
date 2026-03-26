@@ -1,399 +1,97 @@
 # Design System
 
-The Draw.io Skill Design System 2.0 provides unified theming, semantic shapes, and typed connectors for professional diagram creation.
-
-## Overview
+The Draw.io design system gives the skill a stable visual vocabulary across engineering, academic, and presentation diagrams.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Design System 2.0                        │
-├─────────────────┬─────────────────┬────────────────────────┤
-│  5 Themes       │  8 Shapes       │  5 Connectors          │
-│  - tech-blue    │  - service      │  - primary             │
-│  - academic     │  - database     │  - data                │
-│  - academic-col │  - decision     │  - optional            │
-│  - nature       │  - terminal     │  - dependency          │
-│  - dark         │  - queue        │  - bidirectional       │
-│                 │  - user         │                        │
-│                 │  - document     │  8px Grid System       │
-│                 │  - formula      │  Auto-snap alignment   │
-└─────────────────┴─────────────────┴────────────────────────┘
-```
+## Core Concepts
 
-## Themes
+### Profiles
 
-### tech-blue (Default)
+| Profile | Purpose |
+|---------|---------|
+| `default` | Standard diagrams |
+| `academic-paper` | IEEE, thesis, journal, and paper-ready figures |
+| `engineering-review` | Dense architecture or network diagrams with stricter routing review |
 
-**Use case:** Technical documentation, software architecture, dashboards
+### 6 Built-In Themes
 
-| Token | Value |
-|-------|-------|
-| Primary | `#2563EB` |
-| Primary Light | `#DBEAFE` |
-| Secondary | `#059669` |
-| Background | `#FFFFFF` |
-| Text | `#1E293B` |
+| Theme | Best for |
+|-------|----------|
+| `tech-blue` | Software architecture, DevOps, general technical diagrams |
+| `academic` | Grayscale-safe papers and IEEE figures |
+| `academic-color` | Color paper figures and research presentations |
+| `nature` | Lifecycle, biology, environment, sustainability |
+| `dark` | Slides and presentation assets |
+| `high-contrast` | Accessibility-first and maximum legibility |
 
-```
-/drawio create with tech-blue theme
-```
+### Semantic Node Types
 
-### academic
+| Type | Shape |
+|------|-------|
+| `service` | Rounded rectangle |
+| `database` | Cylinder |
+| `decision` | Diamond |
+| `terminal` | Stadium |
+| `queue` | Parallelogram |
+| `user` | Ellipse |
+| `document` | Document |
+| `formula` | Rectangle tuned for math content |
 
-**Use case:** IEEE papers, academic publications, print-ready diagrams
+### Typed Connectors
 
-| Token | Value |
-|-------|-------|
-| Primary | `#1F2937` |
-| Primary Light | `#F3F4F6` |
-| Secondary | `#4B5563` |
-| Background | `#FFFFFF` |
-| Text | `#111827` |
+| Type | Purpose |
+|------|---------|
+| `primary` | Main flow |
+| `data` | Data or async flow |
+| `optional` | Weak relation |
+| `dependency` | Dependency annotation |
+| `bidirectional` | Mutual relationship |
 
-Features:
+### 8px Grid Defaults
 
-- High contrast for print
-- Grayscale-friendly
-- Serif font support
+- node spacing: `32px`
+- module padding: `24px`
+- canvas padding: `32px`
 
-```
-/drawio create with academic theme
-```
+## Theme Switching
 
-### academic-color
+Change the theme in the spec and re-render. Token-based styles will follow the new theme automatically.
 
-**Use case:** Academic papers with color accents, conference posters, digital presentations
+Explicit color overrides do **not** change when the theme changes.
 
-| Token | Value |
-|-------|-------|
-| Primary | `#1B4F72` |
-| Primary Light | `#D6EAF8` |
-| Secondary | `#1E8449` |
-| Background | `#FFFFFF` |
-| Text | `#1C2833` |
+## Replication Color Modes
 
-Features:
+| Mode | Meaning |
+|------|---------|
+| `preserve-original` | Keep extracted source colors as explicit overrides |
+| `theme-first` | Normalize the redraw to the selected theme |
 
-- Times New Roman font family
-- Color-enhanced for digital viewing
-- Bidirectional arrows with startArrow support
-- Compatible with color printing
+## Academic Notes
 
-```
-/drawio create with academic-color theme
-```
+For `academic-paper` output:
 
-### nature
-
-**Use case:** Environmental diagrams, lifecycle flows, sustainability
-
-| Token | Value |
-|-------|-------|
-| Primary | `#059669` |
-| Primary Light | `#D1FAE5` |
-| Secondary | `#0D9488` |
-| Background | `#F0FDF4` |
-| Text | `#064E3B` |
-
-```
-/drawio create with nature theme
-```
-
-### dark
-
-**Use case:** Presentations, dark mode UIs, video content
-
-| Token | Value |
-|-------|-------|
-| Primary | `#60A5FA` |
-| Primary Light | `#1E3A5F` |
-| Background | `#0F172A` |
-| Surface | `#1E293B` |
-| Text | `#F1F5F9` |
-
-```
-/drawio create with dark theme
-```
-
-## Semantic Shapes
-
-Shapes are auto-detected from labels or explicitly specified with `type:`.
-
-### service (Default)
-
-Rounded rectangle for components, services, and processes.
-
-```yaml
-nodes:
-  - id: api
-    label: API Gateway
-    type: service  # Optional, auto-detected
-```
-
-**Auto-detection keywords:** None (default for unrecognized labels)
-
-### database
-
-Cylinder shape for data stores.
-
-```yaml
-nodes:
-  - id: db
-    label: PostgreSQL
-    type: database
-```
-
-**Auto-detection keywords:** database, db, sql, storage, redis, mongo, postgresql, mysql, cache
-
-### decision
-
-Diamond shape for conditions and branches.
-
-```yaml
-nodes:
-  - id: check
-    label: Is Valid?
-    type: decision
-```
-
-**Auto-detection keywords:** decision, condition, branch, switch, route, or labels ending with `?`
-
-### terminal
-
-Stadium/pill shape for start/end points.
-
-```yaml
-nodes:
-  - id: start
-    label: Start
-    type: terminal
-```
-
-**Auto-detection keywords:** start, begin, end, finish, stop, terminate
-
-### queue
-
-Parallelogram for message queues and buffers.
-
-```yaml
-nodes:
-  - id: mq
-    label: Kafka
-    type: queue
-```
-
-**Auto-detection keywords:** queue, buffer, kafka, rabbitmq, stream, sqs, message
-
-### user
-
-Ellipse for actors and users.
-
-```yaml
-nodes:
-  - id: actor
-    label: Customer
-    type: user
-```
-
-**Auto-detection keywords:** user, actor, client, person, customer
-
-### document
-
-Document shape for reports and files.
-
-```yaml
-nodes:
-  - id: report
-    label: Report
-    type: document
-```
-
-**Auto-detection keywords:** document, doc, file, report, log
-
-### formula
-
-White box optimized for LaTeX math.
-
-```yaml
-nodes:
-  - id: eq
-    label: "$$E = mc^2$$"
-    type: formula
-```
-
-**Auto-detection:**
-
-- labels already using official math delimiters such as `$$...$$`, `\(...\)`, or `` `...` ``
-- standalone unlabeled equations such as `E = mc^2` or `\sum_{i=1}^{n} x_i`
-
-Notes:
-
-- mixed prose labels such as `Linear: y = mx + b` stay normal content nodes; the math suffix is wrapped inline instead of converting the entire node into `formula`
-- `\[...\]` is treated as legacy input to normalize, not as preferred emitted syntax
-
-## Cloud Icons
-
-Use the `icon` field on nodes to display cloud provider icons:
-
-| Prefix | Provider | Example |
-|--------|----------|---------|
-| `aws.` | Amazon Web Services | `aws.lambda`, `aws.s3`, `aws.api_gateway` |
-| `gcp.` | Google Cloud Platform | `gcp.cloud_functions`, `gcp.bigquery` |
-| `azure.` | Microsoft Azure | `azure.function_apps`, `azure.sql_database` |
-| `k8s.` | Kubernetes | `k8s.pod`, `k8s.svc`, `k8s.deploy` |
-
-```yaml
-nodes:
-  - id: fn
-    label: Lambda Function
-    icon: aws.lambda
-  - id: storage
-    label: S3 Bucket
-    icon: aws.s3
-```
-
-When an icon is specified, the node uses the cloud provider's official shape with the label positioned below.
-
-## Connectors
-
-### primary
-
-Main flow connections.
-
-```yaml
-edges:
-  - from: a
-    to: b
-    type: primary
-```
-
-| Property | Value |
-|----------|-------|
-| Stroke | 2px solid |
-| Arrow | Filled block |
-| Color | Theme text color |
-
-### data
-
-Data transfer connections.
-
-```yaml
-edges:
-  - from: api
-    to: db
-    type: data
-```
-
-| Property | Value |
-|----------|-------|
-| Stroke | 2px dashed (6 4) |
-| Arrow | Filled block |
-| Color | Theme text color |
-
-### optional
-
-Optional or conditional paths.
-
-```yaml
-edges:
-  - from: a
-    to: b
-    type: optional
-```
-
-| Property | Value |
-|----------|-------|
-| Stroke | 1px dashed (2 2) |
-| Arrow | Open |
-| Color | Theme muted color |
-
-### dependency
-
-Dependency relationships.
-
-```yaml
-edges:
-  - from: a
-    to: b
-    type: dependency
-```
-
-| Property | Value |
-|----------|-------|
-| Stroke | 1px solid |
-| Arrow | Diamond |
-| Color | Theme text color |
-
-### bidirectional
-
-Two-way connections.
-
-```yaml
-edges:
-  - from: a
-    to: b
-    type: bidirectional
-```
-
-| Property | Value |
-|----------|-------|
-| Stroke | 1.5px solid |
-| Arrow | None |
-| Color | Theme muted color |
-
-## 8px Grid System
-
-All positions snap to 8px increments:
-
-| Spacing | Value | Use |
-|---------|-------|-----|
-| 1 unit | 8px | Minimum margin |
-| 2 units | 16px | Small spacing |
-| 3 units | 24px | Module padding |
-| 4 units | 32px | Node spacing |
-| 5 units | 40px | Section spacing |
-
-## Complexity Guardrails
-
-The design system includes automatic complexity checking:
-
-| Metric | Warning | Error |
-|--------|---------|-------|
-| Nodes | >20 | >30 |
-| Edges | >30 | >50 |
-| Modules | >5 | - |
-| Label length | >14 chars | - |
-
-When thresholds are exceeded:
-
-- **Warning:** Suggestion to simplify
-- **Error:** Confirmation required to proceed
+- prefer `academic` unless the user explicitly wants color
+- include `title` and, when needed, a `legend`
+- avoid using color as the only semantic carrier
 
 ## Custom Themes
 
-Create custom themes by extending the base structure:
+Custom themes are JSON files that extend the theme schema. At minimum, define:
 
-```json
-{
-  "name": "my-theme",
-  "colors": {
-    "primary": "#your-color",
-    "primaryLight": "#your-light",
-    "secondary": "#your-secondary",
-    "background": "#ffffff",
-    "text": "#000000"
-  },
-  "node": {
-    "default": {
-      "fillColor": "#your-fill",
-      "strokeColor": "#your-stroke"
-    }
-  }
-}
-```
+- `name`
+- `displayName`
+- `colors`
+- `spacing`
+- `typography`
+- `node`
+- `connector`
+- `module`
+- `canvas`
+
+See the reference docs under `skills/drawio/references/docs/design-system/`.
 
 ## Related
 
-- [Specification Format](./specification.md) - YAML spec reference
-- [Workflows](./workflows.md) - How to use the design system
-- [Math Typesetting](./math-typesetting.md) - LaTeX support
+- [Specification Format](./specification.md)
+- [Creating Diagrams](./creating-diagrams.md)
+- [Replicating Diagrams](./scientific-workflows.md)
+- [Math Typesetting](./math-typesetting.md)

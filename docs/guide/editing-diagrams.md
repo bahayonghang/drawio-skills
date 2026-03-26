@@ -1,418 +1,124 @@
 # Editing Diagrams (`/drawio edit`)
 
-Learn how to modify existing diagrams while preserving Design System consistency.
+Use `/drawio edit` for incremental changes, theme switches, restructures, or imports from existing `.drawio` files.
 
-## Quick Start
+## Preferred Edit Modes
 
-```
-/drawio edit
-Change "User Service" to "Auth Service"
-```
+### Existing offline bundle
 
-With theme switching:
+This is the preferred path when the skill created the original diagram.
 
-```
-/drawio edit with dark theme
-Convert to presentation mode
-```
+- read `.spec.yaml`
+- update the spec
+- re-render `.drawio`
+- refresh `.arch.json`
 
-## Overview
+### Existing `.drawio` file without sidecars
 
-The `/drawio edit` workflow allows you to:
+Import first:
 
-1. **Natural Language**: Describe changes in plain text
-2. **Theme Switching**: Change the entire diagram's theme
-3. **Semantic Type Changes**: Update node types for different shapes
-4. **ID-based Operations**: Directly modify specific elements
-
-## Design System Preservation
-
-### Theme Consistency
-
-When editing, the design system is preserved:
-
-| Edit Type | Theme Behavior |
-|-----------|----------------|
-| Add node | Uses current theme's node style |
-| Add edge | Uses current theme's connector style |
-| Modify style | Suggests theme-compatible colors |
-| Switch theme | Re-applies all styles from new theme |
-| Move node | Snaps to 8px grid |
-
-### Theme Switching
-
-To change the entire diagram's theme:
-
-```
-/drawio edit with academic theme
-Convert to IEEE style for paper submission
+```bash
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
 ```
 
-```
-/drawio edit with dark theme
-Convert to presentation mode
-```
+Then edit the generated spec and re-render.
 
-### Semantic Type Changes
+### Live browser session
 
-Change a node's semantic type to update its shape:
+Use this only when optional MCP is already configured and the user explicitly wants live refinement.
 
-```
-/drawio edit
-Change "API" node from service to database type
-→ Shape changes from rounded rect to cylinder
-→ Colors updated to match type
-```
+Critical rule:
 
-### Connector Type Changes
+- call `get_diagram` before `edit_diagram`
 
-```
-/drawio edit
-Change the connection from API to DB to data flow
-→ Line becomes dashed
-→ Arrow style updates
+## Common Edit Operations
+
+### Rename labels
+
+```text
+/drawio edit rename User Service to Auth Service
 ```
 
-### Position and Label Position
+### Add elements
 
-Use the `position` field to manually place a node, overriding auto-layout:
-
-```
-/drawio edit
-Move the "API Gateway" node to position x=200, y=100
+```text
+/drawio edit add a Redis Cache node between API Gateway and User Service, then connect it with data-flow arrows
 ```
 
-Use the `labelPosition` field to control where an edge label appears:
+### Change semantic types
 
-```
-/drawio edit
-Set the label on the API→DB edge to appear at the start of the connector
-```
-
-`labelPosition` accepts `start`, `center` (default), or `end`.
-
-## Natural Language Editing
-
-The simplest way to edit a diagram is to describe what you want to change.
-
-### Example: Modify a Node
-
-```
-"Change the label of the 'Process' node to 'Validate Input'"
+```text
+/drawio edit change the Event Store node from service to database
 ```
 
-### Example: Add a New Element
+### Switch theme
 
-```
-"Add a new decision node after the validation step asking 'Is data valid?'"
-```
-
-### Example: Change Colors
-
-```
-"Make all error paths red and success paths green"
+```text
+/drawio edit switch the diagram to high-contrast for accessibility review
 ```
 
-### Example: Rearrange Layout
+### Restructure modules
 
-```
-"Move the database node to the right side of the diagram"
-```
-
-## Understanding Cell IDs
-
-Every element in a draw.io diagram has a unique cell ID. To perform precise edits, you need to know these IDs.
-
-### Getting Cell IDs
-
-First, get the current diagram XML:
-
-```
-"Show me the current diagram XML"
+```text
+/drawio edit restructure this into input, processing, and output modules using academic theme
 ```
 
-Claude will call `get_diagram` and show you the XML structure. Look for `id` attributes:
+Major structural edits should pause for confirmation after the logic draft when semantics may change.
 
-```xml
-<mxCell id="2" value="My Node" style="rounded=1" vertex="1" parent="1">
-  <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
-</mxCell>
+## Theme and Style Rules
+
+- new nodes inherit the current theme
+- new edges inherit the current connector style family
+- type changes update shape semantics
+- theme switches re-apply theme-token styling
+- explicit color overrides stay explicit
+
+## Offline Edit Commands
+
+Re-render a `.drawio` bundle:
+
+```bash
+node skills/drawio/scripts/cli.js my-diagram.spec.yaml my-diagram.drawio --validate --write-sidecars
 ```
 
-In this example, the cell ID is `"2"`.
+Re-render a strict SVG review artifact:
 
-::: tip
-Cell IDs "0" and "1" are reserved for the root and default layer. Your diagram elements start from ID "2".
-:::
-
-## ID-based Operations
-
-### Update Operation
-
-Modify an existing element's properties:
-
-```
-"Update cell 2: change the label to 'New Label' and make it blue"
+```bash
+node skills/drawio/scripts/cli.js my-diagram.spec.yaml my-diagram.svg --validate --write-sidecars --strict-warnings
 ```
 
-This translates to:
+## Live MCP Edit Flow
 
-```json
-{
-  "type": "update",
-  "cellId": "2",
-  "properties": {
-    "value": "New Label",
-    "style": "rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf"
-  }
-}
-```
+Use the live route only when needed:
 
-### Add Operation
+1. `start_session`
+2. `create_new_diagram` or load the current diagram
+3. `get_diagram`
+4. `edit_diagram`
+5. `export_diagram`
 
-Add a new element to the diagram:
-
-```
-"Add a new rectangle at position (200, 200) with label 'New Node'"
-```
-
-### Delete Operation
-
-Remove an element from the diagram:
-
-```
-"Delete cell 5"
-```
-
-## Batch Operations
-
-You can perform multiple edits in a single operation for better efficiency:
-
-```
-"Update cells 2, 3, and 4: make them all blue with rounded corners"
-```
-
-This performs three updates in one call:
-
-```json
-{
-  "operations": [
-    {"type": "update", "cellId": "2", "properties": {...}},
-    {"type": "update", "cellId": "3", "properties": {...}},
-    {"type": "update", "cellId": "4", "properties": {...}}
-  ]
-}
-```
-
-## Performance Tips
-
-- Prefer fewer `get_diagram` calls on large diagrams; use it mainly to discover IDs.
-- Batch multiple updates into a single `edit_diagram` call when possible.
-- Iterate “coarse → fine”: get a clean layout first, then refine styles and labels.
-
-## Common Editing Tasks
-
-### Change Node Labels
-
-```
-"Change the label of cell 3 to 'Authentication Service'"
-```
-
-### Change Colors
-
-```
-"Make cell 2 green (success state)"
-```
-
-Common colors:
-
-- Green: `#d5e8d4` (success)
-- Blue: `#dae8fc` (process)
-- Yellow: `#fff2cc` (warning)
-- Red: `#f8cecc` (error)
-
-### Change Shapes
-
-```
-"Change cell 4 to a diamond shape (decision node)"
-```
-
-Common shapes:
-
-- Rectangle: `shape=rectangle`
-- Ellipse: `shape=ellipse`
-- Diamond: `shape=rhombus`
-- Cylinder: `shape=cylinder`
-
-### Modify Connections
-
-```
-"Change the arrow from cell 2 to cell 3 to be dashed"
-```
-
-### Add Annotations
-
-```
-"Add a text note next to cell 5 saying 'This is the main process'"
-```
-
-## Style Properties
-
-When editing, you can modify various style properties:
-
-### Shape Properties
-
-- `fillColor`: Background color (hex)
-- `strokeColor`: Border color (hex)
-- `strokeWidth`: Border width (number)
-- `rounded`: Rounded corners (0 or 1)
-- `dashed`: Dashed border (0 or 1)
-
-### Text Properties
-
-- `fontColor`: Text color (hex)
-- `fontSize`: Font size (number)
-- `fontStyle`: Font style (0=normal, 1=bold, 2=italic, 4=underline)
-- `align`: Horizontal alignment (left, center, right)
-- `verticalAlign`: Vertical alignment (top, middle, bottom)
-
-### Edge Properties
-
-- `edgeStyle`: Edge routing (orthogonalEdgeStyle, elbowEdgeStyle)
-- `curved`: Curved edge (0 or 1)
-- `startArrow`: Start arrow type (classic, block, diamond)
-- `endArrow`: End arrow type (classic, block, diamond)
-
-## Example: Complete Edit Workflow
-
-1. **View current diagram**:
-
-   ```
-   "Show me the current diagram structure"
-   ```
-
-2. **Identify elements to edit**:
-
-   ```
-   "What are the cell IDs in this diagram?"
-   ```
-
-3. **Make changes**:
-
-   ```
-   "Update cell 2: change label to 'API Gateway' and make it blue"
-   "Update cell 3: change label to 'Lambda Function' and make it orange"
-   "Add a connection from cell 2 to cell 3 with label 'invokes'"
-   ```
-
-4. **Verify changes**:
-
-   ```
-   "Show me the updated diagram"
-   ```
-
-## Tips for Effective Editing
-
-### Use Natural Language First
-
-Start with natural language descriptions. Claude will handle the cell IDs for you:
-
-```
-"Make all database nodes green"
-```
-
-### Be Specific
-
-Instead of:
-
-```
-"Change the color"
-```
-
-Use:
-
-```
-"Change cell 3's background color to light blue (#dae8fc)"
-```
-
-### Incremental Changes
-
-Make small, incremental changes rather than trying to do everything at once:
-
-```
-1. "Change the layout to horizontal"
-2. "Add spacing between nodes"
-3. "Align all nodes to the center"
-```
-
-### Verify After Each Change
-
-After making changes, verify the result:
-
-```
-"Show me the current diagram"
-```
-
-## Structural Reorganization
-
-For major changes, use specification format with restructure:
-
-```
-/drawio edit with restructure and academic theme
-
-meta:
-  theme: academic
-  layout: vertical
-
-modules:
-  - id: input
-    label: Input Layer
-  - id: process
-    label: Processing
-  - id: output
-    label: Output Layer
-```
-
-## Best Practices
-
-1. **Preserve theme** - Don't mix styles from different themes
-2. **Use semantic types** - Let design system choose shapes
-3. **Reference clearly** - Use exact labels or positions
-4. **Batch related changes** - More efficient than multiple calls
-5. **Use grid alignment** - Maintain professional 8px grid layout
-6. **Switch theme intentionally** - Theme switch re-styles everything
+This route is optional. The offline sidecar path remains the default editing workflow.
 
 ## Troubleshooting
 
-### "Cell not found"
+### Styles look inconsistent after edits
 
-- Label may have changed
-- Call `get_diagram` to see current state
-- Use exact label text
+- check whether explicit style overrides were added
+- re-apply the theme if you want token-based consistency
 
-### Style looks wrong after edit
+### Labels or IDs no longer match
 
-- Verify theme is consistent
-- Check if type was changed accidentally
-- Re-apply theme if mixed styles
+- inspect the current `.spec.yaml`
+- if using live MCP, fetch the latest XML with `get_diagram`
 
-### New elements don't match existing
+### Edit scope is too large
 
-- Specify semantic type for new nodes
-- Specify connector type for new edges
-- Consider theme switch if inconsistent
-
-### Grid alignment off
-
-- Use layout operations to re-align
-- Snap positions to 8px grid
-- Increase spacing if crowded
+- convert it into a restructure request
+- confirm the new logic graph before rendering
 
 ## Next Steps
 
-- [Creating Diagrams](./creating-diagrams.md) - `/drawio create` workflow
-- [Replicate Diagrams](./scientific-workflows.md) - `/drawio replicate` workflow
-- [Design System](./design-system.md) - Themes, shapes, connectors reference
-- [Specification Format](./specification.md) - YAML spec reference
-- [Export & Save](./export.md) - Save your diagrams
-- [MCP Tools](/api/mcp-tools.md) - Learn about the edit_diagram tool
+- [Workflows](./workflows.md)
+- [Replicating Diagrams](./scientific-workflows.md)
+- [Export & Save](./export.md)
+- [Optional MCP Tools](/api/mcp-tools.md)

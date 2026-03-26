@@ -1,113 +1,91 @@
 # CLI Tool
 
-The Draw.io Skill includes a command-line tool for converting YAML specifications to draw.io XML or SVG files.
-
-## Overview
-
-The CLI tool allows you to:
-
-- Convert YAML specifications to draw.io XML
-- Generate SVG files from YAML
-- Apply different design themes
-- Validate generated XML structure
-- Enforce complexity guardrails in strict mode
-
-## Prerequisites
-
-- Node.js installed
-- Project dependencies installed (`npm install` in project root)
+The CLI converts diagram sources into `.drawio`, SVG, or imported YAML bundles.
 
 ## Usage
 
 ```bash
-node skills/drawio/scripts/cli.js <input.yaml> [output] [options]
+node skills/drawio/scripts/cli.js <input> [output] [options]
 ```
 
-### Arguments
+## Inputs
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `input.yaml` | Yes | YAML specification file |
-| `output` | No | Output file path. Omit for stdout |
+| Input | How to use it |
+|-------|---------------|
+| YAML | default input format |
+| Mermaid | `--input-format mermaid` |
+| CSV | `--input-format csv` |
+| `.drawio` | `--input-format drawio --export-spec` |
+| stdin | use `-` as the input path |
 
-### Options
+## Key Options
 
 | Flag | Description |
 |------|-------------|
-| `--theme <name>` | Override theme from YAML (tech-blue, academic, academic-color, nature, dark) |
-| `--strict` | Error mode: throw on >30 nodes or >50 edges |
-| `--validate` | Run XML structural validation after conversion |
-| `--help` | Show usage help |
+| `--input-format <f>` | `yaml`, `mermaid`, `csv`, or `drawio` |
+| `--theme <name>` | Override the theme: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast` |
+| `--page <selector>` | Select a page by index or diagram name during drawio import |
+| `--export-spec` | Export canonical YAML instead of rendering XML/SVG |
+| `--write-sidecars` | Emit `.spec.yaml` and `.arch.json` next to the output |
+| `--use-desktop` | Use draw.io Desktop for PNG, PDF, JPG, or embedded SVG exports |
+| `--validate` | Print spec warnings and run XML validation |
+| `--strict` | Fail on validation warnings and strict complexity errors |
+| `--strict-warnings` | Alias of `--strict` |
 
 ## Output Formats
 
-The output format is determined by the file extension:
-
-| Extension | Format | Description |
-|-----------|--------|-------------|
-| (none) | XML | Print draw.io XML to stdout |
-| `.drawio` | XML | Save as draw.io XML file |
-| `.svg` | SVG | Convert to standalone SVG file |
+| Output | Result |
+|--------|--------|
+| no output path | XML to stdout |
+| `.drawio` | draw.io XML file |
+| `.svg` | standalone SVG |
+| `.png` | desktop export |
+| `.pdf` | desktop export |
+| `.jpg` | desktop export |
 
 ## Examples
 
-### Basic Conversion
+### Render a `.drawio` bundle
 
 ```bash
-# Convert to stdout
-node cli.js microservices.yaml
-
-# Save as .drawio file
-node cli.js microservices.yaml output.drawio
-
-# Convert to SVG
-node cli.js microservices.yaml output.svg
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
 ```
 
-### With Theme Override
+### Render a strict SVG
 
 ```bash
-# Use academic theme instead of YAML-specified theme
-node cli.js diagram.yaml output.drawio --theme academic
-
-# Dark theme SVG
-node cli.js diagram.yaml presentation.svg --theme dark
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
 ```
 
-### With Validation
+### Override the theme
 
 ```bash
-# Validate XML structure
-node cli.js diagram.yaml output.drawio --validate
-
-# Strict mode (error on complex diagrams)
-node cli.js large-diagram.yaml output.drawio --strict
-
-# Combine options
-node cli.js diagram.yaml output.svg --theme nature --validate --strict
+node skills/drawio/scripts/cli.js input.yaml output.drawio --theme high-contrast
 ```
 
-## XML Validation
+### Import an existing `.drawio` file
 
-The `--validate` flag runs structural validation on the generated XML:
+```bash
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+```
 
-| Check | Description |
-|-------|-------------|
-| ID Uniqueness | All mxCell IDs must be unique |
-| Edge References | Edge source/target must reference existing cell IDs |
-| Root Cells | Root cells (id=0, id=1) must be present |
+### Convert Mermaid
 
-Validation errors are printed to stderr and the process exits with code 1.
+```bash
+node skills/drawio/scripts/cli.js flow.mmd output.drawio --input-format mermaid --validate
+```
 
-## Complexity Guardrails
+## Validation Output
 
-| Mode | Nodes | Edges | Behavior |
-|------|-------|-------|----------|
-| Default | >20 warning | >30 warning | Warnings printed, conversion continues |
-| `--strict` | >30 error | >50 error | Process exits with error |
+`--validate` reports two layers:
+
+1. spec warnings
+2. XML validation results
+
+Use `--strict` or `--strict-warnings` when those warnings should block the output.
 
 ## Related
 
-- [Specification Format](./specification.md) - YAML spec reference
-- [Design System](./design-system.md) - Themes and shapes
-- [Export & Save](./export.md) - Export options including SVG
+- [Specification Format](./specification.md)
+- [Export & Save](./export.md)
+- [SVG Converter](/api/svg-converter.md)

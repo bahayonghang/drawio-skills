@@ -1,27 +1,23 @@
 # Specification Format
 
-The YAML specification format is the new standard for defining diagrams in Draw.io Skill 2.0. It replaces the legacy A-H format with a more intuitive, theme-aware structure.
+The YAML specification is the canonical representation for Draw.io Skill 2.2.0.
 
-## Quick Example
+Mermaid, CSV, and imported `.drawio` files are convenience inputs. They should all normalize into this structure before rendering.
+
+## Minimal Example
 
 ```yaml
 meta:
   theme: tech-blue
   layout: horizontal
 
-modules:
-  - id: backend
-    label: Backend Services
-
 nodes:
   - id: api
     label: API Gateway
     type: service
-    module: backend
   - id: db
     label: PostgreSQL
     type: database
-    module: backend
 
 edges:
   - from: api
@@ -30,274 +26,137 @@ edges:
     label: Query
 ```
 
-## Structure
+## Top-Level Sections
 
-### meta (Required)
+### `meta`
 
-Diagram-level settings.
-
-```yaml
-meta:
-  theme: tech-blue      # Theme name (required)
-  layout: horizontal    # Layout direction (optional, default: horizontal)
-  routing: orthogonal   # Connector routing (optional, default: orthogonal)
-  title: My Diagram     # Diagram title (optional)
-```
-
-**Theme options:** `tech-blue`, `academic`, `academic-color`, `nature`, `dark`
-
-**Layout options:** `horizontal`, `vertical`, `hierarchical`
-
-**Routing options:** `orthogonal`, `rounded`, `curved`
-
-### modules (Optional)
-
-Logical groupings/containers for nodes.
-
-```yaml
-modules:
-  - id: frontend        # Unique identifier
-    label: Frontend     # Display label
-    color: "#E0F2FE"    # Optional background color override
-```
-
-### nodes (Required)
-
-The diagram elements.
-
-```yaml
-nodes:
-  - id: api             # Unique identifier (required)
-    label: API Gateway  # Display label (required)
-    type: service       # Semantic type (optional, auto-detected)
-    module: backend     # Parent module (optional)
-    size: medium        # Size preset (optional, default: medium)
-    position:           # Manual position (optional, overrides auto-layout)
-      x: 100
-      y: 200
-    icon: aws.api_gateway  # Cloud icon (optional)
-    style:              # Style overrides (optional)
-      fillColor: "#custom"
-```
-
-**Type options:** `service`, `database`, `decision`, `terminal`, `queue`, `user`, `document`, `formula`
-
-**Size options:** `small` (80×40), `medium` (120×60), `large` (160×80), `xl` (200×100)
-
-### edges (Optional)
-
-Connections between nodes.
-
-```yaml
-edges:
-  - from: api           # Source node id (required)
-    to: db              # Target node id (required)
-    type: data          # Connector type (optional, default: primary)
-    label: Query        # Edge label (optional)
-    labelPosition: center  # Label position: start | center | end (optional, default: center)
-    style:              # Style overrides (optional)
-      strokeColor: "#custom"
-```
-
-**Type options:** `primary`, `data`, `optional`, `dependency`, `bidirectional`
-
-## Complete Example
+Diagram-wide settings.
 
 ```yaml
 meta:
   theme: tech-blue
   layout: horizontal
-  title: E-Commerce Architecture
+  routing: orthogonal
+  profile: default
+  title: Example Diagram
+  source: authored
+```
 
+Common fields:
+
+- `theme`: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast`
+- `layout`: `horizontal`, `vertical`, `hierarchical`
+- `routing`: `orthogonal`, `rounded`
+- `profile`: `default`, `academic-paper`, `engineering-review`
+- `source`: `authored` or `replicated`
+
+### `modules`
+
+Logical containers for related nodes.
+
+```yaml
 modules:
-  - id: frontend
-    label: Frontend Layer
   - id: backend
-    label: Backend Services
-  - id: data
-    label: Data Layer
+    label: Backend
+```
 
+### `nodes`
+
+Required. Each node needs a stable `id` and `label`.
+
+```yaml
 nodes:
-  # Frontend
-  - id: web
-    label: Web App
-    type: service
-    module: frontend
-  - id: mobile
-    label: Mobile App
-    type: service
-    module: frontend
-
-  # Backend
   - id: api
     label: API Gateway
     type: service
     module: backend
-  - id: auth
-    label: Auth Service
-    type: service
-    module: backend
-  - id: order
-    label: Order Service
-    type: service
-    module: backend
+    position:
+      x: 160
+      y: 96
+    icon: aws.api-gateway
+```
 
-  # Data
-  - id: postgres
-    label: PostgreSQL
-    type: database
-    module: data
-  - id: redis
-    label: Redis Cache
-    type: database
-    module: data
-  - id: kafka
-    label: Kafka
-    type: queue
-    module: data
+### `edges`
 
+Optional, but most diagrams use them.
+
+```yaml
 edges:
-  # Frontend to API
-  - from: web
-    to: api
-    type: primary
-  - from: mobile
-    to: api
-    type: primary
-
-  # API to Services
   - from: api
-    to: auth
-    type: primary
-    label: Auth
-  - from: api
-    to: order
-    type: primary
-    label: Orders
-
-  # Services to Data
-  - from: auth
-    to: postgres
+    to: db
     type: data
-  - from: order
-    to: postgres
-    type: data
-  - from: order
-    to: redis
-    type: data
-    label: Cache
-  - from: order
-    to: kafka
-    type: data
-    label: Events
+    label: Query
+    labelPosition: center
 ```
 
-## Type Auto-Detection
+## Replication Metadata
 
-If `type` is not specified, it's auto-detected from the label:
-
-| Keywords | Detected Type |
-|----------|---------------|
-| database, db, sql, storage, redis, mongo, postgresql, mysql, cache | `database` |
-| decision, condition, branch, switch, route, or `?` | `decision` |
-| start, begin, end, finish, stop, terminate | `terminal` |
-| queue, buffer, kafka, rabbitmq, stream, sqs, message | `queue` |
-| user, actor, client, person, customer | `user` |
-| document, doc, file, report, log | `document` |
-| official math delimiters `$$...$$`, `\(...\)`, `` `...` `` | `formula` |
-| standalone unlabeled equations such as `E = mc^2`, `\sum_{i=1}^{n} x_i` | `formula` |
-| (default) | `service` |
-
-Notes:
-
-- mixed labels such as `Linear: y = mx + b` remain normal content nodes; the math suffix is wrapped inline instead of changing the whole node to `formula`
-- `$...$` and `\[...\]` are legacy forms that may be normalized on import, but new output should use only `$$...$$`, `\(...\)`, or `` `...` ``
-
-## Migration from A-H Format
-
-### Before (A-H Format)
-
-```
-【A 布局】3:2，左→右
-【B 模块】Frontend | Backend | Data
-【C 节点】
-- n1: API Gateway
-- n2: PostgreSQL
-【D 连线】n1→n2(数据)
-【G 视觉】蓝色主题
-```
-
-### After (YAML Specification)
+Replicated diagrams usually include:
 
 ```yaml
 meta:
-  theme: tech-blue
-  layout: horizontal
-
-modules:
-  - id: frontend
-    label: Frontend
-  - id: backend
-    label: Backend
-  - id: data
-    label: Data
-
-nodes:
-  - id: n1
-    label: API Gateway
-    type: service
-    module: backend
-  - id: n2
-    label: PostgreSQL
-    type: database
-    module: data
-
-edges:
-  - from: n1
-    to: n2
-    type: data
+  source: replicated
+  replication:
+    colorMode: preserve-original
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: service fill
+        appliesTo: nodes
+        confidence: high
 ```
 
-### Migration Mapping
+`colorMode` can be:
 
-| A-H Section | YAML Equivalent |
-|-------------|-----------------|
-| A (Layout) | `meta.layout` |
-| B (Modules) | `modules[]` |
-| C (Nodes) | `nodes[]` |
-| D (Edges) | `edges[]` |
-| E (Groups) | `modules[]` + `nodes[].module` |
-| F (Methods) | Node labels |
-| G (Visual) | `meta.theme` + `style` overrides |
-| H (Export) | Handled by MCP tools |
+- `preserve-original`
+- `theme-first`
 
-## Validation Rules
+## Type Auto-Detection
 
-1. **Required fields:**
-   - `meta.theme`
-   - `nodes` array with at least one node
-   - Each node must have `id` and `label`
+When `type` is omitted, labels can still map to:
 
-2. **Unique IDs:**
-   - All node IDs must be unique
-   - All module IDs must be unique
+- `database`
+- `decision`
+- `terminal`
+- `queue`
+- `user`
+- `document`
+- `formula`
+- default fallback: `service`
 
-3. **Valid references:**
-   - `edges.from` and `edges.to` must reference existing node IDs
-   - `nodes.module` must reference existing module ID
+Formula detection should only rely on:
 
-4. **Complexity limits:**
-   - Warning at >20 nodes
-   - Error at >30 nodes
-   - Warning at >30 edges
+- `$$...$$`
+- `\(...\)`
+- `` `...` ``
 
-5. **XML Validation** (via CLI `--validate` or `validateXml()` API):
-   - mxCell ID uniqueness across all elements
-   - Edge source/target reference integrity
-   - Root cells (id=0, id=1) presence verification
+## Validation Expectations
+
+The compiler validates:
+
+- schema and ID correctness
+- theme, profile, and layout values
+- layout consistency
+- edge quality
+- academic-paper requirements when enabled
+
+Use strict mode when warnings should fail the build.
+
+## Migration from A-H Format
+
+The old A-H format is legacy guidance. The canonical mapping is now:
+
+| Legacy idea | YAML location |
+|-------------|---------------|
+| layout | `meta.layout` |
+| modules | `modules[]` |
+| nodes | `nodes[]` |
+| edges | `edges[]` |
+| visual style | `meta.theme` and `style` overrides |
+| export intent | local CLI or Desktop export path |
 
 ## Related
 
-- [Design System](./design-system.md) - Themes, shapes, connectors
-- [Workflows](./workflows.md) - How to use the specification
-- [Math Typesetting](./math-typesetting.md) - LaTeX in specifications
+- [Design System](./design-system.md)
+- [CLI Tool](./cli.md)
+- [Replicating Diagrams](./scientific-workflows.md)

@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Draw.io Skill"
-  text: "for Claude Code"
-  tagline: AI-powered diagram creation with built-in Design System and real-time browser preview
+  text: "for Claude, Gemini, and Codex"
+  tagline: Desktop-first, offline-first draw.io authoring with YAML specs, local sidecars, optional live editing, and academic-quality guardrails.
   actions:
     - theme: brand
       text: Get Started
@@ -14,147 +14,94 @@ hero:
       link: https://github.com/bahayonghang/drawio-skills
 
 features:
-  - icon: 🎨
-    title: Design System 2.0
-    details: 5 built-in themes (tech-blue, academic, academic-color, nature, dark), 8px grid system, semantic shapes, typed connectors.
+  - icon: 🧭
+    title: Offline-First by Default
+    details: "Generate `.drawio` locally, keep `.spec.yaml` and `.arch.json` beside it, and use live MCP only when real-time browser refinement is genuinely needed."
 
-  - icon: 🚀
-    title: 3 Clear Workflows
-    details: "/drawio create for new diagrams, /drawio replicate for images, /drawio edit for modifications"
+  - icon: 🖥️
+    title: Desktop-Enhanced Export
+    details: "Use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` artifacts when available. Standalone SVG still works fully offline."
 
   - icon: 📝
-    title: YAML Specification
-    details: Simple, readable specification format with theme selection, semantic nodes, and typed edges.
+    title: YAML as Canonical Source
+    details: "Normalize natural language, Mermaid, CSV, or imported `.drawio` files into one structured YAML spec before rendering."
 
-  - icon: 🔄
-    title: Real-time Preview
-    details: See your diagrams appear and update in your browser as Claude creates them.
+  - icon: 🚀
+    title: 3 Core Routes
+    details: "Create new diagrams, edit existing bundles, or replicate uploaded diagrams with route-specific references and validation rules."
+
+  - icon: 🎨
+    title: 6 Built-In Themes
+    details: "Tech Blue, Academic, Academic Color, Nature, Dark, and High Contrast cover engineering review, paper figures, presentations, and accessibility-first output."
+
+  - icon: 🧮
+    title: Academic and Math Guardrails
+    details: "Built-in support for IEEE-style figures, MathJax-safe delimiters, caption metadata, legend checks, and grayscale-safe exports."
 
   - icon: ☁️
-    title: Cloud Architecture Support
-    details: AWS, GCP, Azure icons with proper icon libraries (mxgraph.aws4.*, mxgraph.gcp2.*, mxgraph.azure.*).
+    title: Stencil and Cloud Support
+    details: "Use semantic shapes first, then opt into AWS, GCP, Azure, Kubernetes, or network stencils when provider-specific visuals matter."
 
-  - icon: ∑
-    title: Math Typesetting
-    details: LaTeX/AsciiMath equations with MathJax rendering. IEEE/academic publication ready.
-
-  - icon: 🛡️
-    title: Complexity Guardrails
-    details: Auto-warnings for >20 nodes, >30 edges, >14 char labels. Keeps diagrams readable.
-
-  - icon: 💾
-    title: Export & Save
-    details: Save as .drawio files or convert to standalone SVG with embedded XML for round-trip editing. CLI tool support.
-
-  - icon: 🔧
-    title: CLI Tool
-    details: Convert YAML to draw.io XML or SVG from the command line. Supports theme selection, strict mode, and XML validation.
-
-  - icon: 🏷️
-    title: Cloud Icons
-    details: "AWS, GCP, Azure, Kubernetes icon support via node.icon field. Auto-maps to mxgraph icon libraries."
+  - icon: 🔁
+    title: Replication with Palette Control
+    details: "`/drawio replicate` preserves source colors by default and records extracted palette intent in `meta.replication` for future edits."
 
   - icon: ✅
-    title: XML Validation
-    details: Structural validation for generated XML. Checks ID uniqueness, edge reference integrity, and root cell presence.
+    title: Validation Before Claiming Done
+    details: "Structure, layout, and quality validators catch spec errors, overlap risk, edge routing issues, and academic profile omissions before export."
+
+  - icon: 🔌
+    title: Optional Live MCP
+    details: "next-ai MCP remains supported for browser sessions, but it is an enhancement layer rather than the default authoring runtime."
 ---
 
-## Quick Start - 3 Workflows
+## Runtime Model
 
-Recommended install:
+Use the skill in this order unless you explicitly need a browser session:
+
+1. **Offline-first**: generate `.drawio` locally and keep the sidecars in sync.
+2. **Desktop-enhanced**: add draw.io Desktop when you need PNG, PDF, JPG, or embedded SVG exports.
+3. **Optional live MCP**: start a browser session only for in-session visual refinement.
+
+## Quick Start
+
+Install the skill:
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
-| Command | Description | Theme Support |
-|---------|-------------|---------------|
-| `/drawio create` | Create diagrams from natural language | ✅ Auto theme |
-| `/drawio replicate` | Replicate existing images | ✅ Domain themes |
-| `/drawio edit` | Modify existing diagrams | ✅ Theme switch |
+Create a first diagram:
 
-### Example: Create with Design System
-
-```
-/drawio create with tech-blue theme
-A microservices architecture with:
-- API Gateway (service)
-- User Service (service)
-- Order Service (service)
-- PostgreSQL (database)
-- Redis Cache (database)
-All services connected via data flow arrows
+```text
+/drawio create a horizontal tech-blue login flow with 6 nodes
 ```
 
-### Example: Replicate with Theme
+Validate and export from the repo:
 
-```
-/drawio replicate with academic theme
-[Upload architecture image]
-```
-
-### Example: Edit with Theme Switch
-
-```
-/drawio edit with dark theme
-Convert to presentation mode
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-## Design System Features
+Import an existing `.drawio` file into the offline bundle:
 
-### 5 Built-in Themes
-
-| Theme | Use Case | Colors |
-|-------|----------|--------|
-| `tech-blue` | Technical docs, dashboards | Blue primary, modern |
-| `academic` | IEEE papers, publications | Grayscale, high contrast |
-| `academic-color` | Academic with color accents | Blue/green, Times New Roman |
-| `nature` | Environmental, lifecycle | Green palette |
-| `dark` | Presentations, dark mode | Dark background |
-
-### Semantic Shapes
-
-Shapes are auto-detected from labels or explicitly specified:
-
-- `service` → Rounded rectangle (API Gateway, User Service)
-- `database` → Cylinder (PostgreSQL, Redis, MongoDB)
-- `decision` → Diamond (conditions, branches)
-- `queue` → Parallelogram (Kafka, SQS, RabbitMQ)
-- `user` → Ellipse (actors, clients)
-- `formula` → White box with math support
-
-### Typed Connectors
-
-| Type | Style | Use Case |
-|------|-------|----------|
-| `primary` | Solid, block arrow | Main flow |
-| `data` | Dashed | Data transfer |
-| `optional` | Thin dashed | Optional paths |
-| `dependency` | Diamond arrow | Dependencies |
-| `bidirectional` | No arrows | Two-way |
-
-## How It Works
-
-```
-Claude Code <--stdio--> MCP Server <--http--> Browser (draw.io)
+```bash
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
 ```
 
-1. Ask Claude to create a diagram with a theme
-2. Claude generates YAML specification → draw.io XML
-3. XML sent to browser via MCP server
-4. Real-time preview with design system styling!
+## What the Site Covers
 
-## What is Draw.io Skill?
+- **Guide**: installation, routes, design system, YAML specification, CLI, and export workflow.
+- **API**: optional MCP tools, XML format notes, and the standalone SVG converter.
+- **Examples**: prompt-first examples plus reusable YAML specs under `skills/drawio/references/examples/`.
 
-Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation with a professional design system. It provides:
+## Source of Truth
 
-- **Design System 2.0**: Unified theming, semantic shapes, typed connectors
-- **YAML Specification**: Simple, readable diagram definitions
-- **3 Clear Workflows**: Create, replicate, and edit diagrams
-- **Real-time Preview**: See changes instantly in your browser
+This documentation tracks the current runtime model defined in:
 
-## Credits
+- `skills/drawio/SKILL.md`
+- `skills/drawio/references/workflows/*.md`
+- `skills/drawio/references/docs/**`
 
-- **MCP Server**: [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) by [@DayuanJiang](https://github.com/DayuanJiang)
-- **Skill Conversion**: [skill-seekers](https://github.com/modelcontextprotocol/skill-seekers)
-- **Draw.io**: [diagrams.net](https://www.diagrams.net/)
+If a page disagrees with those files, treat the skill and references as authoritative.

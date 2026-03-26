@@ -1,88 +1,129 @@
 # 快速开始
 
-欢迎使用 Draw.io Skill for Claude Code！
+Draw.io Skill 是一个桌面优先、离线优先的 draw.io 图表工作流，支持从自然语言、YAML、Mermaid、CSV 或导入的 `.drawio` 文件生成专业图表。
 
-## 什么是 Draw.io 技能？
+## 你需要准备什么
 
-Draw.io 技能是一个 Claude Code 技能，支持 AI 驱动的图表创建和编辑，提供实时浏览器预览。
+- 任一受支持客户端：Claude、Gemini 或 Codex
+- [Node.js](https://nodejs.org/) 用于 `npx` 和本地 CLI
+- 可选：draw.io Desktop，用于 PNG、PDF、JPG 或 embedded SVG 导出
+- 可选：next-ai MCP，仅在你需要浏览器实时精调时才需要
 
-## 前置要求
+## 安装 Skill
 
-- [Claude Code CLI](https://github.com/anthropics/claude-code)
-- [Node.js](https://nodejs.org/)
-
-## 安装
-
-推荐命令：
+推荐方式：
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
-详细说明见 [安装指南](./installation.md)。
+安装后重启客户端，让 skill 被重新加载。
 
-## 你的第一个图表
+具体客户端路径和可选 MCP 配置见 [安装](./installation.md)。
 
+## 先理解运行路径
+
+### 离线优先
+
+这是默认路径，适合大多数 create、edit、validate、export 场景。
+
+- 生成 `.drawio`
+- 维护 `.spec.yaml` 和 `.arch.json`
+- 每次编辑后重新运行 CLI
+
+### 桌面增强
+
+当安装了 draw.io Desktop 且你需要以下能力时使用：
+
+- PNG、PDF、JPG 导出
+- embedded `.drawio.svg`
+- 本地桌面预览
+
+### 可选 Live MCP
+
+只有在你明确要浏览器内实时编辑时才使用。
+
+- 配置 `@next-ai-drawio/mcp-server`
+- 用 `start_session` 打开会话
+- 修改前先 `get_diagram`
+
+## 第一张图
+
+### 从自然语言开始
+
+```text
+/drawio create 生成一个横向 tech-blue 登录流程图，共 6 个节点
 ```
-"创建一个用户登录流程图"
+
+### 从 YAML 开始
+
+```yaml
+meta:
+  theme: tech-blue
+  layout: horizontal
+
+nodes:
+  - id: start
+    label: Start
+    type: terminal
+  - id: auth
+    label: Auth Service
+    type: service
+  - id: db
+    label: PostgreSQL
+    type: database
+
+edges:
+  - from: start
+    to: auth
+    type: primary
+  - from: auth
+    to: db
+    type: data
 ```
 
-Claude 将会：
+渲染命令：
 
-1. 调用 `start_session` 打开浏览器窗口
-2. 生成图表 XML
-3. 在浏览器中实时显示图表
-4. 允许你用自然语言进行修改
-
-## 示例 Prompt
-
-### 流程图
-
-```
-"创建一个用户注册流程图，包含邮箱验证步骤"
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
 ```
 
-### AWS 架构图
+## 第一次编辑
 
-```
-"生成一个 AWS 架构图，包含 Lambda、API Gateway、DynamoDB 和 S3，
-用于无服务器 REST API。使用 AWS 官方图标。"
+如果图表是由 skill 创建的，优先编辑 sidecar bundle：
+
+1. 修改 `output.spec.yaml`
+2. 重新生成 `output.drawio`
+3. 用 `--write-sidecars` 保持 `output.arch.json` 同步
+
+如果你手上只有 `.drawio` 文件，先导入：
+
+```bash
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
 ```
 
-### 时序图
+## 第一次导出
 
-```
-"创建一个 OAuth 2.0 授权码流程的时序图，
-包含用户、客户端应用、授权服务器和资源服务器"
+生成独立 SVG：
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-### IEEE 论文数学公式图
+如果需要位图或 PDF，改走 Desktop 路径：
 
-```
-"创建一个 IEEE 风格的神经网络架构图：
-1) 输入层：\(x \in \mathbb{R}^{H \times W \times C}\)
-2) 卷积层：\(f = \sigma(W * x + b)\)
-3) 全连接层：\(y = \text{softmax}(Wh + b)\)
-使用灰度兼容样式。添加标题：Fig. 1. CNN 架构。"
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
 ```
 
 ## 下一步
 
-- [安装指南](./installation.md) - 详细安装说明
-- [工作流概览](./workflows.md) - 3 个工作流概述
-- [创建图表](./creating-diagrams.md) - `/drawio create` 工作流
-- [复刻图表](./scientific-workflows.md) - `/drawio replicate` 工作流
-- [编辑图表](./editing-diagrams.md) - `/drawio edit` 工作流
-- [设计系统](./design-system.md) - 主题、形状、连接器
-- [规格格式](./specification.md) - YAML 规格参考
-- [数学公式排版](./math-typesetting.md) - LaTeX/AsciiMath 公式
-- [导出与保存](./export.md) - 保存图表
-
-## 获取帮助
-
-如果遇到问题：
-
-1. 查看 [安装指南](./installation.md) 中的故障排除部分
-2. 参考 [API 文档](/zh/api/mcp-tools.md)
-3. 查看 [示例](/zh/examples/) 获取灵感
-4. 在 [GitHub](https://github.com/bahayonghang/drawio-skills/issues) 提交 issue
+- [安装](./installation.md)
+- [工作流概览](./workflows.md)
+- [创建图表](./creating-diagrams.md)
+- [复刻图表](./scientific-workflows.md)
+- [编辑图表](./editing-diagrams.md)
+- [设计系统](./design-system.md)
+- [规格格式](./specification.md)
+- [CLI 工具](./cli.md)
+- [导出与保存](./export.md)

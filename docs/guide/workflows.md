@@ -1,253 +1,131 @@
 # Workflows Overview
 
-Draw.io Skill provides 3 clear workflows integrated with the Design System 2.0.
+Draw.io Skill exposes three core routes:
 
-## Quick Reference
+- `/drawio create`
+- `/drawio edit`
+- `/drawio replicate`
 
-| Command | Description | Theme | Semantic Types |
-|---------|-------------|-------|----------------|
-| `/drawio create` | Create from natural language | ✅ Selectable | ✅ Auto-detect |
-| `/drawio replicate` | Replicate existing images | ✅ Domain-based | ✅ Mapped |
-| `/drawio edit` | Modify existing diagrams | ✅ Switchable | ✅ Preserved |
+All three routes share the same YAML-first model, design system, and validation stack.
 
-## `/drawio create` - Create from Scratch
+## Shared Runtime Rules
 
-Create diagrams from natural language with full design system support.
+1. **Offline-first** by default
+2. **Desktop-enhanced** when draw.io Desktop is available
+3. **Optional live MCP** only for real-time browser refinement
 
-### Basic Usage
+The skill keeps this editable bundle together whenever possible:
 
-```
-/drawio create
-A login flowchart with validation and error handling
-```
+- `<name>.drawio`
+- `<name>.spec.yaml`
+- `<name>.arch.json`
 
-### With Theme Selection
+## Route Comparison
 
-```
-/drawio create with tech-blue theme
-A microservices architecture:
-- API Gateway connects to User Service and Order Service
-- Both services use PostgreSQL database
-- Redis Cache for session storage
-```
+| Route | Primary input | Default output | When to use |
+|------|---------------|----------------|-------------|
+| `create` | Text, YAML, Mermaid, CSV | New `.drawio` bundle | Build a new diagram |
+| `edit` | Existing bundle or `.drawio` file | Updated bundle | Modify or restyle a diagram |
+| `replicate` | Uploaded image or screenshot | Redrawn `.drawio` bundle | Recreate a reference diagram |
 
-### With Explicit Types
+## `/drawio create`
 
-```
-/drawio create with academic theme
-Neural network architecture:
-- Input Layer (service)
-- Hidden Layer 1 (service)
-- Hidden Layer 2 (service)
-- Output Layer (terminal)
-- Loss Function: \(L = -\sum y \log(\hat{y})\) (formula)
-```
+Use this for brand-new diagrams.
 
-### Design System Features
+### Input modes
 
-| Feature | Behavior |
-|---------|----------|
-| Theme | Select with "with [theme] theme" or defaults to `tech-blue` |
-| Shapes | Auto-detected from labels (database, queue, etc.) |
-| Connectors | Inferred from context (data, optional, dependency) |
-| Grid | All positions snapped to 8px grid |
-| Layout | Horizontal by default, vertical with "vertical layout" |
+- Natural language
+- YAML spec
+- Mermaid
+- CSV hierarchy / org-chart style input
 
-**Complexity Guardrails:**
+### Fast path
 
-- Warning at >20 nodes (suggest splitting)
-- Error at >30 nodes (require confirmation)
-- Info for labels >14 characters
+The skill can skip clarification when the request already makes the type, theme, layout, and complexity clear.
 
-→ [Full documentation](./creating-diagrams.md)
+### Full path
 
-## `/drawio replicate` - Replicate Existing
+The skill slows down and drafts the logic first when the request is:
 
-Recreate diagrams from images using structured extraction with theme mapping.
+- ambiguous
+- dense
+- academic
+- stencil-heavy
+- routing-sensitive
 
-### Basic Usage
+### Automatic branches
 
-```
-/drawio replicate
-[Upload image]
-```
+- **Academic**: enables paper-quality validation and academic defaults
+- **Math / Formula**: enforces official delimiters only
+- **Stencil-heavy**: loads cloud and network icon guidance
 
-### With Theme Override
+See [Creating Diagrams](./creating-diagrams.md).
 
-```
-/drawio replicate with academic theme
-[Upload architecture screenshot]
-```
+## `/drawio edit`
 
-### Domain-Based Theme Selection
+Use this for incremental changes, imports, restructures, or theme switches.
 
-| Domain | Recommended Theme |
-|--------|-------------------|
-| 软件架构 (Software) | `tech-blue` |
-| 商业流程 (Business) | `tech-blue` |
-| 科研流程 (Research) | `academic` |
-| 工业流程 (Industrial) | `nature` |
-| 演示文稿 (Presentation) | `dark` |
+### Preferred edit targets
 
-### Extraction Process
+1. Existing offline bundle
+2. Existing `.drawio` imported into a bundle
+3. Live browser session only when explicitly requested
 
-1. **Analyze** - Extract visual elements from image
-2. **Map** - Convert to semantic shapes and typed connectors
-3. **Apply Theme** - Style with selected or inferred theme
-4. **Generate** - Create YAML spec then draw.io XML
-5. **Preview** - Real-time display in browser
+### Common edit types
 
-### Semantic Mapping
+- rename labels
+- add or remove nodes and edges
+- switch themes
+- change semantic types
+- restructure modules
+- move elements with grid-safe positions
 
-| Visual Element | Semantic Type |
-|----------------|---------------|
-| Rounded rectangle | `service` |
-| Cylinder/Database icon | `database` |
-| Diamond | `decision` |
-| Circle | `terminal` or `user` |
-| Parallelogram | `queue` |
-| Document shape | `document` |
+See [Editing Diagrams](./editing-diagrams.md).
 
-→ [Full documentation](./scientific-workflows.md)
+## `/drawio replicate`
 
-## `/drawio edit` - Modify Diagram
+Use this to redraw an uploaded image into a structured spec.
 
-Edit existing diagrams while preserving design system consistency.
+### Core replication steps
 
-### Basic Usage
+1. Analyze the diagram structure
+2. Extract the source palette
+3. Build a YAML spec
+4. Present logic and palette summary when needed
+5. Render the offline bundle
 
-```
-/drawio edit
-Change "User Service" to "Auth Service"
-```
+### Color modes
 
-### Theme Switching
+| Mode | Default | Effect |
+|------|---------|--------|
+| `preserve-original` | Yes | Preserve source palette with explicit style overrides |
+| `theme-first` | No | Normalize the redraw to the selected theme |
 
-```
-/drawio edit with dark theme
-Convert to presentation mode
-```
+See [Replicating Diagrams](./scientific-workflows.md).
 
-### Style Operations
+## Shared Guardrails
 
-```
-/drawio edit
-- Change API Gateway to use accent color
-- Convert all service nodes to database type
-- Use data flow style for async connections
-```
+### Design system
 
-### Add Elements
+- 6 built-in themes
+- semantic node types
+- typed connectors
+- 8px grid defaults
 
-```
-/drawio edit
-Add a "Redis Cache" node (service type) between API and Database
-Connect with data flow arrow
-```
+### Validation
 
-### Structural Changes
+- structure validation
+- layout validation
+- quality validation
 
-```
-/drawio edit with restructure and academic theme
-Reorganize into 3 modules:
-- Input Layer
-- Processing
-- Output Layer
-```
+### Strict mode
 
-### Preservation Rules
-
-| Edit Type | Theme Behavior |
-|-----------|----------------|
-| Add node | Uses current theme's style |
-| Add edge | Uses current theme's connector |
-| Modify style | Suggests theme-compatible colors |
-| Switch theme | Re-applies all styles |
-| Move node | Snaps to 8px grid |
-
-→ [Full documentation](./editing-diagrams.md)
-
-## Design System Integration
-
-All three workflows share the same design system:
-
-### 5 Built-in Themes
-
-```
-tech-blue      # Default, professional blue
-academic       # IEEE-ready grayscale
-academic-color # Color-enhanced academic
-nature         # Green environmental
-dark           # Presentation mode
-```
-
-### 8 Semantic Node Types
-
-```yaml
-service    # Rounded rectangle (default)
-database   # Cylinder shape
-decision   # Diamond
-terminal   # Stadium shape
-queue      # Parallelogram
-user       # Ellipse
-document   # Document shape
-formula    # White box with math support
-```
-
-### 5 Connector Types
-
-```yaml
-primary      # Solid 2px, block arrow
-data         # Dashed, for data flow
-optional     # Thin dashed, optional paths
-dependency   # Diamond arrow end
-bidirectional # No arrows
-```
-
-### 8px Grid System
-
-All positions are snapped to 8px increments:
-
-- Node spacing: 32px (4 units)
-- Module padding: 24px (3 units)
-- Minimum margin: 8px (1 unit)
-
-## YAML Specification Format
-
-The new specification format used internally:
-
-```yaml
-meta:
-  theme: tech-blue
-  layout: horizontal
-
-modules:
-  - id: backend
-    label: Backend Services
-
-nodes:
-  - id: api
-    label: API Gateway
-    type: service
-    module: backend
-  - id: db
-    label: PostgreSQL
-    type: database
-
-edges:
-  - from: api
-    to: db
-    type: data
-    label: Query
-```
-
-→ [Specification Format](./specification.md)
+Use `--strict` or `--strict-warnings` when publication quality or release-grade review matters.
 
 ## Next Steps
 
-- [Creating Diagrams](./creating-diagrams.md) - Full `/drawio create` guide
-- [Scientific Workflows](./scientific-workflows.md) - Full `/drawio replicate` guide
-- [Editing Diagrams](./editing-diagrams.md) - Full `/drawio edit` guide
-- [Design System](./design-system.md) - Themes, shapes, connectors
-- [Specification Format](./specification.md) - YAML spec reference
-- [Examples](/examples/) - Real diagram examples
+- [Creating Diagrams](./creating-diagrams.md)
+- [Editing Diagrams](./editing-diagrams.md)
+- [Replicating Diagrams](./scientific-workflows.md)
+- [Design System](./design-system.md)
+- [Specification Format](./specification.md)

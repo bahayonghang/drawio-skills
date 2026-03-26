@@ -1,270 +1,104 @@
-# MCP Tools Reference
+# 可选 MCP 工具
 
-This document describes the available MCP tools provided by the Next AI Draw.io MCP server.
+这些 MCP 工具用于浏览器内实时编辑。它们**不是** Draw.io Skill 2.2.0 的默认运行时。
 
-## start_session
+只有在以下条件成立时才使用：
 
-Opens a browser window with real-time diagram preview.
+- 已配置 next-ai MCP
+- 用户明确需要浏览器实时精调
 
-### Description
+默认工作流仍然是离线优先的 `.drawio` + sidecar 模型。
 
-This tool starts a new diagram editing session by:
+## `start_session`
 
-1. Starting an embedded HTTP server (default port: 6002)
-2. Opening the user's default browser with the draw.io editor
-3. Establishing a connection between the MCP server and the browser
+打开新的浏览器编辑会话。
 
-### Parameters
+### 作用
 
-None
+- 启动内嵌 HTTP 服务
+- 在浏览器中打开 draw.io
+- 为后续工具调用建立 live session 通道
 
-### Returns
+### 参数
 
-- `sessionId`: Unique identifier for the session
-- `url`: Browser URL with the draw.io editor
-- `port`: Port number of the embedded HTTP server
+无。
 
-### Example
+### 说明
 
-```
-Tool: start_session
-Result: Session started at http://localhost:6002?mcp=abc123
-```
+- 其他 MCP 图表调用前必须先执行
+- 只用于实时精调场景
 
-### Notes
+## `create_new_diagram`
 
-- Must be called before any diagram operations
-- Only one session can be active at a time
-- The browser window will show the draw.io editor with real-time updates
+从完整 `mxGraphModel` XML 创建一张新图。
 
----
+### 参数
 
-## create_new_diagram
+| 名称 | 必需 | 说明 |
+|------|------|------|
+| `xml` | 是 | 完整 `mxGraphModel` XML 字符串 |
 
-Create a new diagram from XML.
+### 说明
 
-### Description
+- 适用于新建或整图替换
+- `0` 和 `1` 仍然是保留根节点 ID
 
-Creates a new diagram by sending draw.io XML to the browser. The diagram will appear immediately in the browser window.
+## `get_diagram`
 
-### Parameters
+从浏览器获取最新图表 XML。
 
-- `xml` (required): Draw.io diagram XML string
+### 为什么重要
 
-### Returns
+在 `edit_diagram` 前必须先执行 `get_diagram`，否则可能覆盖用户在浏览器里手动做过的修改。
 
-- `success`: Boolean indicating if the diagram was created
-- `message`: Status message
+## `edit_diagram`
 
-### Example
+基于 ID 更新、添加或删除 cell。
 
-```
-Tool: create_new_diagram
-Parameters:
-  xml: <mxGraphModel>...</mxGraphModel>
-Result: Diagram created successfully
-```
+### 参数
 
-### Notes
+| 名称 | 必需 | 说明 |
+|------|------|------|
+| `operations` | 是 | `update`、`add`、`delete` 操作数组 |
 
-- Requires an active session (call `start_session` first)
-- The XML must be valid draw.io format
-- The browser will update immediately with the new diagram
+### 操作结构
 
----
+| 字段 | 必需 | 说明 |
+|------|------|------|
+| `operation` | 是 | `update`、`add` 或 `delete` |
+| `cell_id` | 是 | update/delete 用现有 ID，add 用新 ID |
+| `new_xml` | add/update 时必需 | 完整 `<mxCell>`，包含 `<mxGeometry>` |
 
-## edit_diagram
+## `export_diagram`
 
-Edit diagram by ID-based operations.
+把当前 live diagram 导出到磁盘。
 
-### Description
+### 参数
 
-Modifies an existing diagram by performing operations on specific cells (nodes, edges, etc.) identified by their IDs.
+| 名称 | 必需 | 说明 |
+|------|------|------|
+| `path` | 是 | 输出路径 |
+| `format` | 否 | `drawio`、`png` 或 `svg`；不写时根据扩展名推断 |
 
-### Parameters
+## Live 工作流
 
-- `operations` (required): Array of edit operations
+1. `start_session`
+2. `create_new_diagram`
+3. `get_diagram`
+4. `edit_diagram`
+5. `export_diagram`
 
-Each operation has:
+## 什么时候不要用 MCP
 
-- `type`: Operation type (`update`, `add`, `delete`)
-- `cellId`: ID of the cell to modify
-- `properties`: Properties to update (for `update` and `add` operations)
+以下情况优先走本地 CLI 与 sidecar bundle：
 
-### Returns
+- 从零创建图表且不需要浏览器
+- 需要版本化维护编辑过程
+- 需要可重复执行的导出命令
+- 运行在 CI 或脚本环境中
 
-- `success`: Boolean indicating if the edit was successful
-- `message`: Status message
+## 相关
 
-### Example
-
-```
-Tool: edit_diagram
-Parameters:
-  operations: [
-    {
-      "type": "update",
-      "cellId": "2",
-      "properties": {
-        "value": "Updated Label",
-        "style": "rounded=1;fillColor=#dae8fc"
-      }
-    }
-  ]
-Result: Diagram updated successfully
-```
-
-### Notes
-
-- Requires an active session with an existing diagram
-- Cell IDs can be obtained from `get_diagram`
-- Multiple operations can be performed in a single call
-
----
-
-## get_diagram
-
-Get the current diagram XML.
-
-### Description
-
-Retrieves the current diagram XML from the browser. Useful for:
-
-- Inspecting the diagram structure
-- Getting cell IDs for editing
-- Saving the current state
-
-### Parameters
-
-None
-
-### Returns
-
-- `xml`: Current diagram XML string
-
-### Example
-
-```
-Tool: get_diagram
-Result: <mxGraphModel>...</mxGraphModel>
-```
-
-### Notes
-
-- Requires an active session with an existing diagram
-- Returns the complete diagram XML including all cells and styles
-
----
-
-## export_diagram
-
-Save diagram to a `.drawio` file.
-
-### Description
-
-Exports the current diagram to a `.drawio` file on the local filesystem.
-
-### Parameters
-
-- `filename` (required): Output filename (with or without `.drawio` extension)
-- `path` (optional): Directory path (defaults to current directory)
-
-### Returns
-
-- `success`: Boolean indicating if the export was successful
-- `filepath`: Full path to the exported file
-- `message`: Status message
-
-### Example
-
-```
-Tool: export_diagram
-Parameters:
-  filename: "my-architecture.drawio"
-  path: "./diagrams"
-Result: Diagram exported to ./diagrams/my-architecture.drawio
-```
-
-### Notes
-
-- Requires an active session with an existing diagram
-- The `.drawio` extension is added automatically if not provided
-- The directory must exist or be creatable
-
----
-
-## Workflow Example
-
-Here's a typical workflow using these tools:
-
-```
-1. start_session
-   → Opens browser with draw.io editor
-
-2. create_new_diagram
-   → Creates initial diagram from XML
-
-3. get_diagram (optional)
-   → Inspect current diagram structure
-
-4. edit_diagram (optional, multiple times)
-   → Make iterative changes to the diagram
-
-5. export_diagram
-   → Save the final diagram to a file
-```
-
-## Error Handling
-
-All tools return error messages if something goes wrong:
-
-- **"No active session"**: Call `start_session` first
-- **"Invalid XML"**: The provided XML is not valid draw.io format
-- **"Cell not found"**: The specified cell ID doesn't exist in the diagram
-- **"Port in use"**: The server port is already in use (will auto-increment)
-
-## Tips
-
-### Getting Cell IDs
-
-To edit specific elements, you need their cell IDs. Use `get_diagram` to get the XML, then parse it to find cell IDs:
-
-```xml
-<mxCell id="2" value="My Node" style="rounded=1" vertex="1" parent="1">
-  <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
-</mxCell>
-```
-
-The `id="2"` is the cell ID you can use in `edit_diagram`.
-
-### Batch Operations
-
-You can perform multiple edits in a single `edit_diagram` call for better performance:
-
-```json
-{
-  "operations": [
-    {"type": "update", "cellId": "2", "properties": {"value": "New Label"}},
-    {"type": "update", "cellId": "3", "properties": {"style": "fillColor=#f8cecc"}},
-    {"type": "delete", "cellId": "4"}
-  ]
-}
-```
-
-### Diagram Styles
-
-Draw.io uses a style string format for visual properties:
-
-```
-rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000
-```
-
-Common style properties:
-
-- `fillColor`: Background color (hex)
-- `strokeColor`: Border color (hex)
-- `fontColor`: Text color (hex)
-- `rounded`: Rounded corners (0 or 1)
-- `dashed`: Dashed border (0 or 1)
-- `fontSize`: Font size (number)
-- `fontStyle`: Font style (0=normal, 1=bold, 2=italic, 4=underline)
+- [快速开始](../guide/getting-started.md)
+- [编辑图表](../guide/editing-diagrams.md)
+- [导出与保存](../guide/export.md)

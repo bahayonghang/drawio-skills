@@ -1,77 +1,67 @@
 # Installation
 
-This guide will walk you through installing the Draw.io Skill for Claude Code.
+Install the Draw.io Skill itself first. Add optional live-edit MCP only if you want browser sessions.
 
 ## Prerequisites
 
-Before installing, ensure you have:
+- [Node.js](https://nodejs.org/) with `npx`
+- One supported client:
+  - Claude
+  - Gemini
+  - Codex
 
-- **Claude Code CLI**: [Installation Guide](https://github.com/anthropics/claude-code)
-- **Node.js**: Version 14 or higher ([Download](https://nodejs.org/))
-- **npx**: Comes with Node.js
-
-Verify your installation:
+Verify Node:
 
 ```bash
 node --version
 npx --version
 ```
 
-## Installation Methods
-
-### Method 1: Install with `skills` (Recommended)
-
-Install directly from GitHub:
+## Recommended Install
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
-This is the recommended installation method.
+This installs the skill into the correct skill directory for the current client integration.
 
-### Method 2: Install from GitHub Manually
+## Manual Install
 
-Clone the repository to your Claude Code skills directory:
-
-```bash
-# Clone to skills directory
-git clone https://github.com/bahayonghang/drawio-skills.git ~/.claude/skills/drawio
-```
-
-The skill will be automatically available in Claude Code.
-
-### Method 3: Manual Installation
-
-1. Download the repository as a ZIP file
-2. Extract to `~/.claude/skills/drawio`
-3. Restart Claude Code
-
-## Verify Installation
-
-Check if the skill is installed correctly:
+### 1. Clone the repository
 
 ```bash
-ls ~/.claude/skills/drawio
+git clone https://github.com/bahayonghang/drawio-skills.git
+cd drawio-skills
 ```
 
-You should see:
+### 2. Copy `skills/drawio` into your client's skill directory
 
-```
-drawio/
-├── .mcp.json
-├── SKILL.md
-├── scripts/
-│   ├── install.sh
-│   └── install.bat
-└── references/
-    ├── mcp-tools.md
-    ├── xml-format.md
-    └── examples.md
-```
+#### Claude
 
-## MCP Server Configuration
+- macOS: `~/Library/Application Support/Claude/skills/`
+- Linux: `~/.config/Claude/skills/`
+- Windows: `%APPDATA%\Claude\skills\`
 
-The skill automatically configures the MCP server with:
+#### Gemini
+
+- macOS: `~/Library/Application Support/gemini/skills/`
+- Linux: `~/.gemini/skills/`
+- Windows: `%APPDATA%\gemini\skills\`
+
+#### Codex
+
+- macOS / Linux: `~/.codex/skills/`
+- Windows: `%USERPROFILE%\.codex\skills\`
+
+Restart the client after copying the folder.
+
+## Optional Live Editing Setup
+
+Normal create/edit/export work does **not** require MCP. Configure `@next-ai-drawio/mcp-server` only if you want live browser editing.
+
+### Claude / Gemini JSON config
+
+macOS / Linux:
 
 ```json
 {
@@ -84,157 +74,92 @@ The skill automatically configures the MCP server with:
 }
 ```
 
-The MCP server will be automatically installed on first use via npx.
+Windows:
 
-## Environment Variables
+```json
+{
+  "mcpServers": {
+    "drawio": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+    }
+  }
+}
+```
 
-You can customize the MCP server behavior with environment variables:
+### Codex `config.toml`
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `6002` | Port for the embedded HTTP server |
-| `DRAWIO_BASE_URL` | `https://embed.diagrams.net` | Base URL for draw.io (for self-hosted deployments) |
+macOS / Linux:
 
-### Setting Environment Variables
+```toml
+[mcp_servers.drawio]
+command = "npx"
+args = ["--yes", "@next-ai-drawio/mcp-server@latest"]
+```
 
-**Linux/macOS**:
+Windows:
+
+```toml
+[mcp_servers.drawio]
+type = "stdio"
+command = "cmd"
+args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
+```
+
+## Optional Desktop Export Setup
+
+Install draw.io Desktop if you want:
+
+- `.png`, `.pdf`, `.jpg` export
+- embedded `.drawio.svg`
+- local desktop preview
+
+The standalone SVG path does **not** require draw.io Desktop.
+
+## Verify the Installation
+
+### Verify the skill is reachable
+
+Try a simple request in your client:
+
+```text
+/drawio create a small high-contrast flowchart with 4 nodes
+```
+
+### Verify the local CLI
 
 ```bash
-export PORT=6003
-export DRAWIO_BASE_URL=https://your-drawio-instance.com
+node skills/drawio/scripts/cli.js skills/drawio/references/examples/login-flow.yaml --validate
 ```
 
-**Windows**:
+### Verify optional MCP availability
 
-```cmd
-set PORT=6003
-set DRAWIO_BASE_URL=https://your-drawio-instance.com
+```bash
+npm view @next-ai-drawio/mcp-server version
 ```
-
-## Testing the Installation
-
-Test the skill by asking Claude:
-
-```
-"Create a simple flowchart with start, process, and end nodes"
-```
-
-If successful, you should see:
-
-1. A browser window opens automatically
-2. The draw.io editor loads
-3. Your diagram appears in real-time
 
 ## Troubleshooting
 
-### Port Already in Use
+### The skill loads, but no browser opens
 
-**Problem**: Port 6002 is already in use.
+That is expected in the default runtime. Browser sessions happen only when you configured optional MCP and explicitly use live editing.
 
-**Solution**: The server will automatically try the next available port (up to 6020). You can also set a custom port:
+### `No active session`
 
-```bash
-export PORT=6003
-```
+You are using MCP tools without a live session. Call `start_session` first, or switch back to the offline bundle workflow.
 
-### "No active session"
+### Desktop export fails
 
-**Problem**: Error message "No active session" when trying to create a diagram.
+Use standalone SVG instead, or install draw.io Desktop before using `--use-desktop`.
 
-**Solution**: Make sure to call `start_session` first. Claude should do this automatically, but if not, ask:
+### Windows MCP launch fails
 
-```
-"Start a new diagram session"
-```
-
-### Browser Not Opening
-
-**Problem**: Browser window doesn't open automatically.
-
-**Solution**:
-
-1. Check if your default browser is set correctly
-2. Try manually opening the URL shown in the console
-3. Check firewall settings
-
-### Browser Not Updating
-
-**Problem**: Diagram doesn't appear or update in the browser.
-
-**Solution**:
-
-1. Check that the browser URL has the `?mcp=` query parameter
-2. Refresh the browser page
-3. Restart the session
-
-### MCP Server Not Found
-
-**Problem**: Error message about MCP server not being found.
-
-**Solution**:
-
-1. Verify Node.js and npx are installed:
-
-   ```bash
-   node --version
-   npx --version
-   ```
-
-2. Try manually installing the MCP server:
-
-   ```bash
-   npm view @next-ai-drawio/mcp-server version
-   ```
-
-3. Check your internet connection
-
-### Permission Denied
-
-**Problem**: Permission denied when accessing the skills directory.
-
-**Solution**:
-
-1. Check directory permissions:
-
-   ```bash
-   ls -la ~/.claude/skills/
-   ```
-
-2. Fix permissions if needed:
-
-   ```bash
-   chmod -R 755 ~/.claude/skills/drawio
-   ```
-
-## Updating the Skill
-
-To update to the latest version:
-
-```bash
-cd ~/.claude/skills/drawio
-git pull origin main
-```
-
-The MCP server will automatically update to the latest version on next use (via `@latest` tag).
-
-## Uninstalling
-
-To remove the skill:
-
-```bash
-rm -rf ~/.claude/skills/drawio
-```
+Wrap `npx` with `cmd /c` as shown above. Direct `npx` launch is often unreliable on Windows MCP transports.
 
 ## Next Steps
 
-- [Getting Started](./getting-started.md) - Learn the basics
-- [Creating Diagrams](./creating-diagrams.md) - Create your first diagram
-- [API Reference](/api/mcp-tools.md) - Explore available tools
-
-## Getting Help
-
-If you're still having issues:
-
-1. Check the [GitHub Issues](https://github.com/bahayonghang/drawio-skills/issues)
-2. Review the [MCP Server Documentation](https://github.com/DayuanJiang/next-ai-draw-io/tree/main/packages/mcp-server)
-3. Open a new issue with details about your problem
+- [Getting Started](./getting-started.md)
+- [Workflows](./workflows.md)
+- [CLI Tool](./cli.md)
+- [Optional MCP Tools](/api/mcp-tools.md)

@@ -1,121 +1,129 @@
 # Getting Started
 
-Welcome to Draw.io Skill for Claude Code! This guide will help you get started with creating diagrams using natural language.
+Draw.io Skill is a desktop-first, offline-first workflow for producing professional draw.io diagrams from natural language, YAML, Mermaid, CSV, or imported `.drawio` files.
 
-## What is Draw.io Skill?
+## What You Need
 
-Draw.io Skill is a Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview. It allows you to:
+- One supported client: Claude, Gemini, or Codex
+- [Node.js](https://nodejs.org/) for `npx` and the local CLI
+- Optional: draw.io Desktop for PNG, PDF, JPG, or embedded SVG export
+- Optional: next-ai MCP only when you want real-time browser refinement
 
-- Create diagrams using natural language descriptions
-- Edit existing diagrams with simple commands
-- Export diagrams as `.drawio` files
-- View diagrams in real-time in your browser
+## Install the Skill
 
-## Prerequisites
-
-Before you begin, make sure you have:
-
-- [Claude Code CLI](https://github.com/anthropics/claude-code) installed
-- [Node.js](https://nodejs.org/) (for npx command)
-
-## Installation
-
-See the [Installation Guide](./installation.md) for detailed installation instructions.
-
-Recommended command:
+Recommended:
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
+Then restart your client so it reloads the skill.
+
+See [Installation](./installation.md) for client-specific paths and optional MCP configuration.
+
+## Choose the Runtime Path
+
+### Offline-first
+
+Use this for normal create, edit, validate, and export work.
+
+- Generate `.drawio`
+- Keep `.spec.yaml` and `.arch.json` beside it
+- Re-run the CLI after edits
+
+### Desktop-enhanced
+
+Use this when draw.io Desktop is installed and you need:
+
+- PNG, PDF, or JPG export
+- embedded `.drawio.svg`
+- a quick local preview in the desktop app
+
+### Optional live MCP
+
+Use this only when you explicitly want in-session browser editing.
+
+- Configure `@next-ai-drawio/mcp-server`
+- open a session with `start_session`
+- use `get_diagram` before `edit_diagram`
+
 ## Your First Diagram
 
-Once installed, creating a diagram is as simple as asking Claude:
+### Route from natural language
 
-```
-"Create a flowchart for user login process"
-```
-
-Claude will:
-
-1. Call `start_session` to open a browser window
-2. Generate the diagram XML
-3. Display the diagram in your browser
-4. Allow you to make changes with natural language
-
-## Basic Concepts
-
-### MCP Tools
-
-The skill uses the following MCP tools:
-
-- **start_session**: Opens browser with real-time preview
-- **create_new_diagram**: Creates a new diagram from XML
-- **get_diagram**: Retrieves current diagram XML
-- **edit_diagram**: Modifies diagram by cell ID
-- **export_diagram**: Saves as .drawio file
-
-### Diagram Types
-
-You can create various types of diagrams:
-
-- **Flowcharts**: Process flows, decision trees, workflows
-- **Architecture Diagrams**: System architecture, microservices, deployment
-- **Sequence Diagrams**: Interaction flows, API calls, message sequences
-- **Network Diagrams**: Network topology, VPC architecture, security zones
-- **Data Flow Diagrams**: Data pipelines, ETL processes, analytics workflows
-- **UML Diagrams**: Class diagrams, state diagrams, component diagrams
-- **Cloud Architecture**: AWS, GCP, Azure with official icons
-
-## Example Prompts
-
-### Simple Flowchart
-
-```
-"Create a flowchart showing a user registration process with email verification"
+```text
+/drawio create a horizontal tech-blue login flow with 6 nodes
 ```
 
-### AWS Architecture
+### Route from YAML
 
+```yaml
+meta:
+  theme: tech-blue
+  layout: horizontal
+
+nodes:
+  - id: start
+    label: Start
+    type: terminal
+  - id: auth
+    label: Auth Service
+    type: service
+  - id: db
+    label: PostgreSQL
+    type: database
+
+edges:
+  - from: start
+    to: auth
+    type: primary
+  - from: auth
+    to: db
+    type: data
 ```
-"Generate an AWS architecture diagram with Lambda, API Gateway, DynamoDB,
-and S3 for a serverless REST API. Use AWS icons."
+
+Render it:
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
 ```
 
-### Sequence Diagram
+## First Edit
 
-```
-"Create a sequence diagram showing OAuth 2.0 authorization code flow
-between user, client app, auth server, and resource server"
-```
+If the skill created the diagram, edit the sidecar bundle:
 
-### IEEE Paper with Math Equations
+1. Update `output.spec.yaml`
+2. Re-render `output.drawio`
+3. Keep `output.arch.json` in sync with `--write-sidecars`
 
-```
-"Create an IEEE-style neural network architecture diagram:
-1) Input: \(x \in \mathbb{R}^{H \times W \times C}\)
-2) Conv: \(f = \sigma(W * x + b)\)
-3) FC: \(y = \text{softmax}(Wh + b)\)
-Use grayscale-compatible styling. Add caption: Fig. 1. CNN architecture."
+If you only have a `.drawio` file, import it first:
+
+```bash
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
 ```
 
-## Next Steps
+## First Export
 
-- [Installation Guide](./installation.md) - Detailed installation instructions
-- [Workflows](./workflows.md) - Overview of the 3 workflows
-- [Creating Diagrams](./creating-diagrams.md) - `/drawio create` workflow
-- [Replicate Diagrams](./scientific-workflows.md) - `/drawio replicate` workflow
-- [Editing Diagrams](./editing-diagrams.md) - `/drawio edit` workflow
-- [Design System](./design-system.md) - Themes, shapes, connectors
-- [Specification Format](./specification.md) - YAML specification reference
-- [Math Typesetting](./math-typesetting.md) - LaTeX/AsciiMath equations
-- [Export & Save](./export.md) - Save your diagrams
+Generate a standalone SVG:
 
-## Getting Help
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+```
 
-If you encounter any issues:
+Use draw.io Desktop when you need raster or PDF export:
 
-1. Check the [Troubleshooting](./installation.md#troubleshooting) section
-2. Review the [API Reference](/api/mcp-tools.md)
-3. Check the [Examples](/examples/) for inspiration
-4. Open an issue on [GitHub](https://github.com/bahayonghang/drawio-skills/issues)
+```bash
+node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
+```
+
+## Where to Go Next
+
+- [Installation](./installation.md)
+- [Workflows](./workflows.md)
+- [Creating Diagrams](./creating-diagrams.md)
+- [Replicating Diagrams](./scientific-workflows.md)
+- [Editing Diagrams](./editing-diagrams.md)
+- [Design System](./design-system.md)
+- [Specification Format](./specification.md)
+- [CLI Tool](./cli.md)
+- [Export & Save](./export.md)

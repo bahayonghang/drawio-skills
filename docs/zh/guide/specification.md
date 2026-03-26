@@ -1,303 +1,162 @@
 # 规格格式
 
-YAML 规格格式是 Draw.io 技能 2.0 中定义图表的新标准。它用更直观、主题感知的结构替代了旧的 A-H 格式。
+YAML 规格是 Draw.io Skill 2.2.0 的规范表示方式。
 
-## 快速示例
+Mermaid、CSV 和导入的 `.drawio` 都只是输入适配层，进入渲染前都应该先归一化成这个结构。
+
+## 最小示例
 
 ```yaml
 meta:
   theme: tech-blue
   layout: horizontal
 
-modules:
-  - id: backend
-    label: 后端服务
-
 nodes:
   - id: api
     label: API Gateway
     type: service
-    module: backend
   - id: db
     label: PostgreSQL
     type: database
-    module: backend
 
 edges:
   - from: api
     to: db
     type: data
-    label: 查询
+    label: Query
 ```
 
-## 结构
+## 顶层结构
 
-### meta（必需）
+### `meta`
 
-图表级别设置。
-
-```yaml
-meta:
-  theme: tech-blue      # 主题名称（必需）
-  layout: horizontal    # 布局方向（可选，默认：horizontal）
-  routing: orthogonal   # 连接器路由（可选，默认：orthogonal）
-  title: 我的图表       # 图表标题（可选）
-```
-
-**主题选项：** `tech-blue`、`academic`、`academic-color`、`nature`、`dark`
-
-**布局选项：** `horizontal`、`vertical`、`hierarchical`
-
-**路由选项：** `orthogonal`、`rounded`、`curved`
-
-### modules（可选）
-
-节点的逻辑分组/容器。
-
-```yaml
-modules:
-  - id: frontend        # 唯一标识符
-    label: 前端         # 显示标签
-    color: "#E0F2FE"    # 可选背景颜色覆盖
-```
-
-### nodes（必需）
-
-图表元素。
-
-```yaml
-nodes:
-  - id: api             # 唯一标识符（必需）
-    label: API Gateway  # 显示标签（必需）
-    type: service       # 语义类型（可选，自动检测）
-    module: backend     # 父模块（可选）
-    size: medium        # 尺寸预设（可选，默认：medium）
-    position:           # 手动定位（可选，覆盖自动布局）
-      x: 100
-      y: 200
-    icon: aws.api_gateway  # 云图标（可选）
-    style:              # 样式覆盖（可选）
-      fillColor: "#custom"
-```
-
-**类型选项：** `service`、`database`、`decision`、`terminal`、`queue`、`user`、`document`、`formula`
-
-**尺寸选项：** `small` (80×40)、`medium` (120×60)、`large` (160×80)、`xl` (200×100)
-
-### edges（可选）
-
-节点之间的连接。
-
-```yaml
-edges:
-  - from: api           # 源节点 id（必需）
-    to: db              # 目标节点 id（必需）
-    type: data          # 连接器类型（可选，默认：primary）
-    label: Query        # 边标签（可选）
-    labelPosition: center  # 标签位置：start | center | end（可选，默认：center）
-    style:              # 样式覆盖（可选）
-      strokeColor: "#custom"
-```
-
-**类型选项：** `primary`、`data`、`optional`、`dependency`、`bidirectional`
-
-## 完整示例
+图表级设置。
 
 ```yaml
 meta:
   theme: tech-blue
   layout: horizontal
-  title: 电商架构
+  routing: orthogonal
+  profile: default
+  title: Example Diagram
+  source: authored
+```
 
+常见字段：
+
+- `theme`：`tech-blue`、`academic`、`academic-color`、`nature`、`dark`、`high-contrast`
+- `layout`：`horizontal`、`vertical`、`hierarchical`
+- `routing`：`orthogonal`、`rounded`
+- `profile`：`default`、`academic-paper`、`engineering-review`
+- `source`：`authored` 或 `replicated`
+
+### `modules`
+
+相关节点的逻辑容器。
+
+```yaml
 modules:
-  - id: frontend
-    label: 前端层
   - id: backend
-    label: 后端服务
-  - id: data
-    label: 数据层
+    label: Backend
+```
 
+### `nodes`
+
+必需。每个节点都需要稳定的 `id` 和 `label`。
+
+```yaml
 nodes:
-  # 前端
-  - id: web
-    label: Web 应用
-    type: service
-    module: frontend
-  - id: mobile
-    label: 移动应用
-    type: service
-    module: frontend
-
-  # 后端
   - id: api
     label: API Gateway
     type: service
     module: backend
-  - id: auth
-    label: 认证服务
-    type: service
-    module: backend
-  - id: order
-    label: 订单服务
-    type: service
-    module: backend
+    position:
+      x: 160
+      y: 96
+    icon: aws.api-gateway
+```
 
-  # 数据
-  - id: postgres
-    label: PostgreSQL
-    type: database
-    module: data
-  - id: redis
-    label: Redis 缓存
-    type: database
-    module: data
-  - id: kafka
-    label: Kafka
-    type: queue
-    module: data
+### `edges`
 
+可选，但大多数图都会用到。
+
+```yaml
 edges:
-  # 前端到 API
-  - from: web
-    to: api
-    type: primary
-  - from: mobile
-    to: api
-    type: primary
-
-  # API 到服务
   - from: api
-    to: auth
-    type: primary
-    label: 认证
-  - from: api
-    to: order
-    type: primary
-    label: 订单
-
-  # 服务到数据
-  - from: auth
-    to: postgres
+    to: db
     type: data
-  - from: order
-    to: postgres
-    type: data
-  - from: order
-    to: redis
-    type: data
-    label: 缓存
-  - from: order
-    to: kafka
-    type: data
-    label: 事件
+    label: Query
+    labelPosition: center
 ```
 
-## 类型自动检测
+## 复刻元数据
 
-如果未指定 `type`，将从标签自动检测：
-
-| 关键词 | 检测类型 |
-|--------|----------|
-| database, db, sql, storage, redis, mongo, postgresql, mysql, cache | `database` |
-| decision, condition, branch, switch, route 或 `?` | `decision` |
-| start, begin, end, finish, stop, terminate | `terminal` |
-| queue, buffer, kafka, rabbitmq, stream, sqs, message | `queue` |
-| user, actor, client, person, customer | `user` |
-| document, doc, file, report, log | `document` |
-| 官方公式分隔符 `$$...$$`、`\(...\)`、`` `...` `` | `formula` |
-| 独立的未包裹公式，如 `E = mc^2`、`\sum_{i=1}^{n} x_i` | `formula` |
-| （默认） | `service` |
-
-说明：
-
-- `Linear: y = mx + b` 这类混合标签仍然保持普通内容节点，只把公式后缀转成行内公式
-- `$...$` 与 `\[...\]` 视为旧写法，导入时可归一化；新输出应只使用 `$$...$$`、`\(...\)` 或 `` `...` ``
-
-## 从 A-H 格式迁移
-
-### 之前（A-H 格式）
-
-```
-【A 布局】3:2，左→右
-【B 模块】Frontend | Backend | Data
-【C 节点】
-- n1: API Gateway
-- n2: PostgreSQL
-【D 连线】n1→n2(数据)
-【G 视觉】蓝色主题
-```
-
-### 之后（YAML 规格）
+复刻图通常会额外记录：
 
 ```yaml
 meta:
-  theme: tech-blue
-  layout: horizontal
-
-modules:
-  - id: frontend
-    label: Frontend
-  - id: backend
-    label: Backend
-  - id: data
-    label: Data
-
-nodes:
-  - id: n1
-    label: API Gateway
-    type: service
-    module: backend
-  - id: n2
-    label: PostgreSQL
-    type: database
-    module: data
-
-edges:
-  - from: n1
-    to: n2
-    type: data
+  source: replicated
+  replication:
+    colorMode: preserve-original
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: service fill
+        appliesTo: nodes
+        confidence: high
 ```
 
-### 迁移映射
+`colorMode` 可取值：
 
-| A-H 节 | YAML 对应 |
+- `preserve-original`
+- `theme-first`
+
+## 自动类型检测
+
+当 `type` 省略时，标签仍可能自动映射到：
+
+- `database`
+- `decision`
+- `terminal`
+- `queue`
+- `user`
+- `document`
+- `formula`
+- 默认兜底：`service`
+
+公式检测只应依赖：
+
+- `$$...$$`
+- `\(...\)`
+- `` `...` ``
+
+## 校验预期
+
+编译器会检查：
+
+- schema 与 ID 正确性
+- 主题、profile、布局字段是否合法
+- 布局一致性
+- 连线质量
+- 开启 `academic-paper` 时的附加要求
+
+如果你希望 warning 直接阻断输出，启用 strict 模式。
+
+## 从 A-H 格式迁移
+
+A-H 现在是历史格式。规范映射关系如下：
+
+| 旧概念 | YAML 位置 |
 |--------|-----------|
-| A（布局） | `meta.layout` |
-| B（模块） | `modules[]` |
-| C（节点） | `nodes[]` |
-| D（连线） | `edges[]` |
-| E（分组） | `modules[]` + `nodes[].module` |
-| F（方法） | 节点标签 |
-| G（视觉） | `meta.theme` + `style` 覆盖 |
-| H（导出） | 由 MCP 工具处理 |
-
-## 验证规则
-
-1. **必需字段：**
-   - `meta.theme`
-   - `nodes` 数组至少包含一个节点
-   - 每个节点必须有 `id` 和 `label`
-
-2. **唯一 ID：**
-   - 所有节点 ID 必须唯一
-   - 所有模块 ID 必须唯一
-
-3. **有效引用：**
-   - `edges.from` 和 `edges.to` 必须引用现有节点 ID
-   - `nodes.module` 必须引用现有模块 ID
-
-4. **复杂度限制：**
-   - 超过 20 个节点警告
-   - 超过 30 个节点错误
-   - 超过 30 条边警告
-
-5. **XML 验证**（通过 CLI `--validate` 或 `validateXml()` API）：
-   - 所有元素的 mxCell ID 唯一性
-   - 边的 source/target 引用完整性
-   - 根节点（id=0、id=1）存在性验证
+| 布局 | `meta.layout` |
+| 模块 | `modules[]` |
+| 节点 | `nodes[]` |
+| 边 | `edges[]` |
+| 视觉风格 | `meta.theme` 与 `style` 覆盖 |
+| 导出意图 | 本地 CLI 或 Desktop 导出路径 |
 
 ## 相关
 
-- [设计系统](./design-system.md) - 主题、形状、连接器
-- [工作流](./workflows.md) - 如何使用规格
-- [数学公式排版](./math-typesetting.md) - 规格中的 LaTeX
+- [设计系统](./design-system.md)
+- [CLI 工具](./cli.md)
+- [复刻图表](./scientific-workflows.md)
