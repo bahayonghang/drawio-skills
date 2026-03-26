@@ -299,4 +299,89 @@ describe('drawioToSvg', () => {
     const svg = drawioToSvg(EDGE_WITH_LABEL)
     assert.ok(svg.includes('>connects<'), 'Output should contain the edge label text')
   })
+
+  // --- Shape type rendering tests ---
+
+  it('should render rhombus shape as <polygon>', () => {
+    const xml = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Decision" style="rhombus;fillColor=#FEF9C3;strokeColor=#CA8A04;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="120" height="80" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+    const svg = drawioToSvg(xml)
+    assert.ok(svg.includes('<polygon'), 'Rhombus shape should render as <polygon>')
+  })
+
+  it('should render ellipse shape as <ellipse>', () => {
+    const xml = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Oval" style="ellipse;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="120" height="80" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+    const svg = drawioToSvg(xml)
+    assert.ok(svg.includes('<ellipse'), 'Ellipse shape should render as <ellipse>')
+  })
+
+  it('should render roundedRect with rx attribute on <rect>', () => {
+    const xml = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Box" style="rounded=1;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+    const svg = drawioToSvg(xml)
+    assert.ok(svg.includes('<rect'), 'Rounded rect should render as <rect>')
+    assert.ok(svg.includes('rx='), 'Rounded rect should have rx attribute')
+  })
+
+  it('should render cylinder shape with <ellipse> elements', () => {
+    const svg = drawioToSvg(DATABASE_NODE)
+    assert.ok(svg.includes('<ellipse'), 'Cylinder shape should contain <ellipse> for top/bottom caps')
+  })
+
+  it('should render edge as <line> element', () => {
+    const svg = drawioToSvg(EDGE_WITH_BLOCK_ARROW)
+    assert.ok(svg.includes('<line'), 'Edge should render as <line> element')
+  })
+
+  it('should render background color from graph attributes', () => {
+    const xml = `
+<mxGraphModel background="#E0F2FE">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Node" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="50" y="50" width="100" height="50" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+    const svg = drawioToSvg(xml)
+    assert.ok(
+      svg.includes('fill="#E0F2FE"'),
+      'Background color should render as <rect> with matching fill'
+    )
+  })
+
+  it('should throw Error on null input', () => {
+    assert.throws(() => drawioToSvg(null), Error, 'null input should throw Error')
+  })
+
+  it('should throw Error on non-string input', () => {
+    assert.throws(() => drawioToSvg(42), Error, 'Number input should throw Error')
+    assert.throws(() => drawioToSvg(undefined), Error, 'undefined input should throw Error')
+  })
 })
