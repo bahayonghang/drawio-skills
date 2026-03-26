@@ -74,39 +74,106 @@ function pushNode(nodeMap, nodes, node) {
   if (current.type === 'service' && node.type && node.type !== 'service') {
     current.type = node.type
   }
+  if (!current.module && node.module) {
+    current.module = node.module
+  }
 }
 
+/**
+ * Arrow-type to connector-type mapping.
+ * Order matters: longer/more-specific patterns must come first so the regex
+ * engine matches them before shorter prefixes.
+ */
+const ARROW_TYPE_MAP = [
+  { pattern: '-.->',  type: 'data' },
+  { pattern: '===>',  type: 'primary' },
+  { pattern: '==>',   type: 'primary' },
+  { pattern: '-->>',  type: 'primary' },
+  { pattern: '->>',   type: 'primary' },
+  { pattern: '--x',   type: 'optional' },
+  { pattern: '-->',   type: 'primary' },
+  { pattern: '---',   type: 'bidirectional' },
+  { pattern: '->',    type: 'primary' },
+]
+
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+const ARROW_SPLIT_RE = new RegExp(
+  ARROW_TYPE_MAP.map(a => escapeRegex(a.pattern)).join('|'),
+  'g'
+)
+
 function splitMermaidArrow(line) {
-  const cleaned = line
-    .replace(/\|[^|]+\|/g, ' ')
-    .replace(/--x/g, '-->')
-    .replace(/===/g, '-->')
-    .replace(/-.->/g, '-->')
-    .replace(/---/g, '-->')
-  const parts = cleaned.split(/-->|==>|->>|-->>|->|--/).map(part => part.trim()).filter(Boolean)
-  return parts
+  const cleaned = line.replace(/\|[^|]+\|/g, ' ')
+
+  // Collect arrows in order of appearance
+  const arrows = []
+  let m
+  const re = new RegExp(ARROW_SPLIT_RE.source, 'g')
+  while ((m = re.exec(cleaned)) !== null) {
+    const mapped = ARROW_TYPE_MAP.find(a => a.pattern === m[0])
+    arrows.push(mapped ? mapped.type : 'primary')
+  }
+
+  const parts = cleaned.split(ARROW_SPLIT_RE).map(part => part.trim()).filter(Boolean)
+  return { parts, arrows }
 }
 
 function parseFlowchart(text, profile = 'default') {
   const nodes = []
   const edges = []
   const nodeMap = new Map()
+  const modules = []
+  const moduleMap = new Map()
+  const subgraphStack = [] // stack of subgraph ids for nesting
 
   for (const rawLine of text.split(/\r?\n/)) {
     const line = rawLine.trim()
-    if (!line || line.startsWith('%%') || /^(graph|flowchart)\b/i.test(line) || /^subgraph\b/i.test(line) || line === 'end') {
+    if (!line || line.startsWith('%%') || /^(graph|flowchart)\b/i.test(line)) {
       continue
     }
+
+    // Handle subgraph opening
+    const subgraphMatch = line.match(/^subgraph\s+(\S+)(?:\s+\[(.+)\])?/i)
+    if (subgraphMatch) {
+      const rawId = subgraphMatch[1]
+      const id = normalizeId(rawId)
+      const label = subgraphMatch[2] || rawId
+      if (!moduleMap.has(id)) {
+        const mod = { id, label }
+        moduleMap.set(id, mod)
+        modules.push(mod)
+      }
+      subgraphStack.push(id)
+      continue
+    }
+
+    // Handle subgraph closing
+    if (/^end$/i.test(line)) {
+      subgraphStack.pop()
+      continue
+    }
+
     if (!line.includes('-')) continue
 
-    const parts = splitMermaidArrow(line)
+    const { parts, arrows } = splitMermaidArrow(line)
     if (parts.length < 2) continue
+
+    const currentModule = subgraphStack.length > 0 ? subgraphStack[subgraphStack.length - 1] : undefined
+
     for (let i = 0; i < parts.length - 1; i++) {
       const source = parseMermaidNodeToken(parts[i])
       const target = parseMermaidNodeToken(parts[i + 1])
+      if (currentModule) {
+        source.module = currentModule
+        target.module = currentModule
+      }
       pushNode(nodeMap, nodes, source)
       pushNode(nodeMap, nodes, target)
-      edges.push({ from: source.id, to: target.id, type: 'primary' })
+      const connectorType = arrows[i] || 'primary'
+      edges.push({ from: source.id, to: target.id, type: connectorType })
     }
   }
 
@@ -114,7 +181,7 @@ function parseFlowchart(text, profile = 'default') {
     meta: { layout: 'horizontal', profile },
     nodes,
     edges,
-    modules: []
+    modules
   }
 }
 
