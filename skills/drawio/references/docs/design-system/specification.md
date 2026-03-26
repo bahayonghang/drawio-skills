@@ -60,13 +60,13 @@ meta:
   theme: tech-blue  # tech-blue | academic | academic-color | nature | dark | high-contrast | custom-name
   
   # Layout direction
-  layout: horizontal  # horizontal | vertical | hierarchical | radial
+  layout: horizontal  # horizontal | vertical | hierarchical
   
   # Canvas sizing
   canvas: auto  # auto | 800x600 | 1200x800
   
   # Connector routing
-  routing: orthogonal  # orthogonal | rounded | curved
+  routing: orthogonal  # orthogonal | rounded
   
   # Grid settings (optional, uses theme defaults)
   grid:
@@ -128,8 +128,7 @@ meta:
 |--------|-------------|----------|
 | `horizontal` | Left-to-right flow | Process flows |
 | `vertical` | Top-to-bottom flow | Hierarchy |
-| `hierarchical` | Dagre algorithm | Complex dependencies |
-| `radial` | Center-outward | Mind maps |
+| `hierarchical` | Auto-grid (4 columns) | Complex dependencies |
 
 ---
 

@@ -93,6 +93,8 @@ Step 9: Edge Audit
 Step 10: Render
 ├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars
 ├── For paper-quality diagrams prefer output.svg --validate --write-sidecars
+├── Note: standalone SVG (without --use-desktop) is preview-quality (straight-line edges).
+│   For publication-grade vector output, add --use-desktop or export to .drawio and refine in draw.io.
 └── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
 
 Step 11: Preview

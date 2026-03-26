@@ -190,16 +190,20 @@ Features:
 
 ---
 
-### Curved
+### Curved (Planned)
+
+> **Note:** `curved` routing is not yet supported by the validator (`meta.routing` accepts `orthogonal` and `rounded` only). The draw.io XML style below works when hand-editing, but the CLI/DSL pipeline does not generate it automatically.
 
 Bezier curves for mind maps and organic layouts.
 
 ```yaml
+# Not yet supported in meta.routing — use rounded as the closest alternative
 meta:
-  routing: curved
+  routing: rounded
 ```
 
 ```xml
+<!-- Manual XML only -->
 <mxCell style="edgeStyle=entityRelationEdgeStyle;curved=1;" />
 ```
 

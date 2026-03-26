@@ -43,7 +43,7 @@ Step 4: Logic Verification (Mandatory)
 Step 5: Quality Validation
 ├── Check: modules ≤ 5
 ├── Check: nodes per module 3-7
-├── Check: labels ≤ 14 characters
+├── Recommend: labels ≤ 14 characters (longer labels trigger info-level warnings)
 ├── Check: total nodes ≤ 30
 └── If fails: suggest splitting
 
@@ -189,7 +189,7 @@ This is a figure from our research paper
 3. **Apply semantic types** - Map visuals to design system types
 4. **Modules ≤ 5** - Merge if necessary
 5. **Nodes per module: 3-7** - Summarize if too many
-6. **Labels ≤ 14 characters** - No symbols in labels
+6. **Labels ≤ 14 characters (recommended)** - Abbreviate when possible
 7. **Use typed connectors** - Map line styles to connector types
 
 ## Output Format
