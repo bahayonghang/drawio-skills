@@ -1,81 +1,17 @@
 /**
  * drawio-to-svg.js
  * Converts draw.io mxGraphModel XML to standalone SVG
- * Zero external dependencies — Node.js built-ins only
+ * Uses shared XML utilities from ../shared/xml-utils.js
  */
 
-// ============================================================================
-// XML Parsing (regex-based, for machine-generated draw.io XML)
-// ============================================================================
-
-/**
- * Parse semicolon-separated style string into a Map
- * @param {string} styleStr - e.g. "rounded=1;fillColor=#FF0000;strokeColor=#333"
- * @returns {Map<string, string>}
- */
-function parseStyle(styleStr) {
-  const map = new Map()
-  if (!styleStr) return map
-  for (const part of styleStr.split(';')) {
-    const eq = part.indexOf('=')
-    if (eq > 0) {
-      map.set(part.slice(0, eq).trim(), part.slice(eq + 1).trim())
-    } else if (part.trim()) {
-      // Flag-style value like "rhombus" or "ellipse"
-      map.set(part.trim(), '1')
-    }
-  }
-  return map
-}
-
-/**
- * Extract an attribute value from an XML tag string
- * @param {string} tag - the raw XML tag text
- * @param {string} attr - attribute name
- * @returns {string|null}
- */
-function attr(tag, name) {
-  // Match name="value" or name='value'
-  const re = new RegExp(`${name}\\s*=\\s*"([^"]*)"`)
-  const m = re.exec(tag)
-  if (m) return m[1]
-  const re2 = new RegExp(`${name}\\s*=\\s*'([^']*)'`)
-  const m2 = re2.exec(tag)
-  return m2 ? m2[1] : null
-}
-
-/**
- * Build a cell object from raw attribute string and body content
- * @param {string} cellAttrs - raw attribute string from the mxCell tag
- * @param {string} cellBody - inner content (may contain mxGeometry)
- * @returns {object}
- */
-function buildCell(cellAttrs, cellBody) {
-  let geo = null
-  const geoMatch = /<mxGeometry([^>]*?)\/?>/.exec(cellBody)
-  if (geoMatch) {
-    const geoAttrs = geoMatch[1]
-    geo = {
-      x: Number(attr(geoAttrs, 'x')) || 0,
-      y: Number(attr(geoAttrs, 'y')) || 0,
-      width: Number(attr(geoAttrs, 'width')) || 0,
-      height: Number(attr(geoAttrs, 'height')) || 0,
-      relative: attr(geoAttrs, 'relative') === '1'
-    }
-  }
-
-  return {
-    id: attr(cellAttrs, 'id'),
-    value: attr(cellAttrs, 'value'),
-    style: attr(cellAttrs, 'style'),
-    vertex: attr(cellAttrs, 'vertex') === '1',
-    edge: attr(cellAttrs, 'edge') === '1',
-    source: attr(cellAttrs, 'source'),
-    target: attr(cellAttrs, 'target'),
-    parent: attr(cellAttrs, 'parent'),
-    geometry: geo
-  }
-}
+import {
+  attr,
+  decodeEntities,
+  escapeXml,
+  extractCells,
+  extractGraphAttrs,
+  parseStyle
+} from '../shared/xml-utils.js'
 
 /**
  * Parse mxGraphModel XML into a structured object
@@ -83,76 +19,9 @@ function buildCell(cellAttrs, cellBody) {
  * @returns {{ graph: object, cells: object[] }}
  */
 function parseDrawioXml(xml) {
-  // Extract graph-level attributes from <mxGraphModel ...>
-  const graphMatch = /<mxGraphModel([^>]*)>/i.exec(xml)
-  const graphAttrs = graphMatch ? graphMatch[1] : ''
-  const graph = {
-    dx: Number(attr(graphAttrs, 'dx')) || 0,
-    dy: Number(attr(graphAttrs, 'dy')) || 0,
-    pageWidth: Number(attr(graphAttrs, 'pageWidth')) || 800,
-    pageHeight: Number(attr(graphAttrs, 'pageHeight')) || 600,
-    background: attr(graphAttrs, 'background') || 'none'
-  }
-
-  // Extract all mxCell elements (may span multiple lines with child mxGeometry)
-  const cells = []
-
-  // Two-pass approach: first match <mxCell ...>...</mxCell>, then self-closing <mxCell .../>
-  // Pass 1: open-close pairs (these contain mxGeometry children)
-  const pairRegex = /<mxCell\b([^>]*[^/])>([\s\S]*?)<\/mxCell>/gi
-  let match
-  const matchedRanges = []
-  while ((match = pairRegex.exec(xml)) !== null) {
-    matchedRanges.push({ start: match.index, end: match.index + match[0].length })
-    const cellAttrs = match[1]
-    const cellBody = match[2] || ''
-    cells.push(buildCell(cellAttrs, cellBody))
-  }
-
-  // Pass 2: self-closing <mxCell ... /> not already captured
-  const selfRegex = /<mxCell\b([^>]*?)\/>/gi
-  while ((match = selfRegex.exec(xml)) !== null) {
-    const pos = match.index
-    // Skip if this position was inside a pair match
-    const overlaps = matchedRanges.some(r => pos >= r.start && pos < r.end)
-    if (overlaps) continue
-    cells.push(buildCell(match[1], ''))
-  }
-
+  const graph = extractGraphAttrs(xml)
+  const cells = extractCells(xml)
   return { graph, cells }
-}
-
-// ============================================================================
-// HTML Entity Decoding
-// ============================================================================
-
-const HTML_ENTITIES = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#39;': "'",
-  '&apos;': "'"
-}
-
-/**
- * Decode common HTML entities in a string
- * @param {string} str
- * @returns {string}
- */
-function decodeEntities(str) {
-  if (!str) return ''
-  return str.replace(/&(?:amp|lt|gt|quot|#39|apos);/g, (m) => HTML_ENTITIES[m] || m)
-}
-
-/**
- * Escape text for safe SVG embedding
- * @param {string} str
- * @returns {string}
- */
-function escapeXml(str) {
-  if (!str) return ''
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
 // ============================================================================

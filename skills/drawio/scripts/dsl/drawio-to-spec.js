@@ -10,16 +10,16 @@
 import { inflateRawSync, inflateSync } from 'node:zlib'
 
 import { detectSemanticType, snapToGrid } from './spec-to-drawio.js'
-
-const HTML_ENTITIES = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#39;': "'",
-  '&apos;': "'",
-  '&nbsp;': ' '
-}
+import {
+  attr,
+  buildCell,
+  decodeEntities,
+  extractCells,
+  labelFromCellValue,
+  parsePoints,
+  parseStyle,
+  stripHtml
+} from '../shared/xml-utils.js'
 
 const SIZE_PRESETS = {
   tiny: { width: 32, height: 32 },
@@ -29,122 +29,13 @@ const SIZE_PRESETS = {
   xl: { width: 200, height: 100 }
 }
 
-function decodeEntities(str) {
-  if (!str) return ''
-  return String(str).replace(
-    /&(?:amp|lt|gt|quot|#39|apos|nbsp);/g,
-    (match) => HTML_ENTITIES[match] || match
-  )
-}
-
-function stripHtml(value) {
-  if (!value) return ''
-  const normalized = String(value)
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<[^>]+>/g, ' ')
-  return normalized.replace(/\s+/g, ' ').trim()
-}
-
-function labelFromCellValue(value) {
-  const decoded = decodeEntities(value)
-  return stripHtml(decoded)
-}
-
-function parseStyle(styleStr) {
-  const map = new Map()
-  if (!styleStr) return map
-  for (const part of String(styleStr).split(';')) {
-    const eq = part.indexOf('=')
-    if (eq > 0) {
-      map.set(part.slice(0, eq).trim(), part.slice(eq + 1).trim())
-    } else if (part.trim()) {
-      map.set(part.trim(), '1')
-    }
-  }
-  return map
-}
-
-function attr(tag, name) {
-  const re = new RegExp(`${name}\\s*=\\s*"([^"]*)"` )
-  const match = re.exec(tag)
-  if (match) return match[1]
-  const re2 = new RegExp(`${name}\\s*=\\s*'([^']*)'`)
-  const match2 = re2.exec(tag)
-  return match2 ? match2[1] : null
-}
-
-function parsePoints(geometryBody) {
-  if (!geometryBody) return []
-  const pointsBlock = /<Array[^>]*\bas="points"[^>]*>([\s\S]*?)<\/Array>/i.exec(geometryBody)
-  if (!pointsBlock) return []
-
-  const points = []
-  const pointRe = /<mxPoint\b([^>]*?)\/>/gi
-  let match
-  while ((match = pointRe.exec(pointsBlock[1])) !== null) {
-    const x = Number(attr(match[1], 'x'))
-    const y = Number(attr(match[1], 'y'))
-    if (Number.isFinite(x) && Number.isFinite(y)) {
-      points.push({ x, y })
-    }
-  }
-  return points
-}
-
-function buildCell(cellAttrs, cellBody) {
-  const geometryMatch = /<mxGeometry\b([^>]*?)>([\s\S]*?)<\/mxGeometry>/i.exec(cellBody)
-  const geometrySelfMatch = /<mxGeometry\b([^>]*?)\/>/i.exec(cellBody)
-  const geometryAttrs = geometryMatch ? geometryMatch[1] : geometrySelfMatch ? geometrySelfMatch[1] : null
-  const geometryBody = geometryMatch ? geometryMatch[2] : ''
-
-  const geometry = geometryAttrs ? {
-    x: Number(attr(geometryAttrs, 'x')) || 0,
-    y: Number(attr(geometryAttrs, 'y')) || 0,
-    width: Number(attr(geometryAttrs, 'width')) || 0,
-    height: Number(attr(geometryAttrs, 'height')) || 0,
-    relative: attr(geometryAttrs, 'relative') === '1',
-    labelX: attr(geometryAttrs, 'x'),
-    points: parsePoints(geometryBody)
-  } : null
-
-  return {
-    id: attr(cellAttrs, 'id'),
-    value: attr(cellAttrs, 'value'),
-    style: attr(cellAttrs, 'style'),
-    vertex: attr(cellAttrs, 'vertex') === '1',
-    edge: attr(cellAttrs, 'edge') === '1',
-    source: attr(cellAttrs, 'source'),
-    target: attr(cellAttrs, 'target'),
-    parent: attr(cellAttrs, 'parent'),
-    geometry
-  }
-}
-
 function parseMxGraphModelXml(xml) {
   const match = /<mxGraphModel\b[^>]*>[\s\S]*?<\/mxGraphModel>/i.exec(xml)
   if (!match) {
     throw new Error('Could not find <mxGraphModel> in the decoded diagram')
   }
   const mxGraphModelXml = match[0]
-
-  const cells = []
-  const pairRegex = /<mxCell\b([^>]*[^/])>([\s\S]*?)<\/mxCell>/gi
-  const selfRegex = /<mxCell\b([^>]*?)\/>/gi
-
-  let m
-  const matchedRanges = []
-  while ((m = pairRegex.exec(mxGraphModelXml)) !== null) {
-    matchedRanges.push({ start: m.index, end: m.index + m[0].length })
-    cells.push(buildCell(m[1], m[2] || ''))
-  }
-
-  while ((m = selfRegex.exec(mxGraphModelXml)) !== null) {
-    const pos = m.index
-    const overlaps = matchedRanges.some(r => pos >= r.start && pos < r.end)
-    if (overlaps) continue
-    cells.push(buildCell(m[1], ''))
-  }
-
+  const cells = extractCells(mxGraphModelXml)
   return { mxGraphModelXml, cells }
 }
 
