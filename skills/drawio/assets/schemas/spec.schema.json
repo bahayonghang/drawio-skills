@@ -28,6 +28,11 @@
           "enum": ["default", "academic-paper", "engineering-review"],
           "description": "Workflow profile that enables domain-specific validation and defaults"
         },
+        "source": {
+          "type": "string",
+          "enum": ["generated", "replicated", "edited"],
+          "description": "How this spec was produced"
+        },
         "canvas": {
           "type": "string",
           "description": "Canvas size (e.g. auto, 800x600, 1200x800)"
@@ -49,6 +54,47 @@
           "properties": {
             "size": { "type": "integer", "minimum": 1 },
             "snap": { "type": "boolean" }
+          }
+        },
+        "replication": {
+          "type": "object",
+          "description": "Optional metadata for image-driven redraws and source-palette preservation",
+          "properties": {
+            "colorMode": {
+              "type": "string",
+              "enum": ["preserve-original", "theme-first"],
+              "description": "Whether to preserve extracted source colors or normalize them to the selected theme"
+            },
+            "background": {
+              "type": "string",
+              "description": "Detected source background color"
+            },
+            "palette": {
+              "type": "array",
+              "description": "Detected flat colors from the source image",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hex": { "type": "string" },
+                  "role": { "type": "string" },
+                  "appliesTo": {
+                    "type": "string",
+                    "enum": ["canvas", "nodes", "edges", "modules", "mixed"]
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high"]
+                  },
+                  "notes": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "confidenceNotes": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Freeform notes about low-confidence color extraction or normalization decisions"
+            }
           }
         }
       }

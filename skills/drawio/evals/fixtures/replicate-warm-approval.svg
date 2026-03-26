@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="220" viewBox="0 0 640 220">
+  <rect width="640" height="220" fill="#FFF7ED"/>
+  <rect x="40" y="72" width="140" height="64" rx="18" fill="#FED7AA" stroke="#EA580C" stroke-width="3"/>
+  <rect x="250" y="72" width="140" height="64" rx="18" fill="#FDBA74" stroke="#EA580C" stroke-width="3"/>
+  <polygon points="480,70 600,104 480,138 360,104" fill="#FCD34D" stroke="#B45309" stroke-width="3"/>
+  <text x="110" y="111" font-size="22" text-anchor="middle" fill="#7C2D12" font-family="Arial, sans-serif">Submit</text>
+  <text x="320" y="111" font-size="22" text-anchor="middle" fill="#7C2D12" font-family="Arial, sans-serif">Review</text>
+  <text x="480" y="111" font-size="22" text-anchor="middle" fill="#7C2D12" font-family="Arial, sans-serif">Approve?</text>
+  <line x1="180" y1="104" x2="250" y2="104" stroke="#7C2D12" stroke-width="4"/>
+  <polygon points="250,104 238,98 238,110" fill="#7C2D12"/>
+  <line x1="390" y1="104" x2="430" y2="104" stroke="#7C2D12" stroke-width="4"/>
+  <polygon points="430,104 418,98 418,110" fill="#7C2D12"/>
+</svg>

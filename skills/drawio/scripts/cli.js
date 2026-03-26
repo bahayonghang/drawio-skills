@@ -4,10 +4,22 @@
  * Usage: node cli.js input.yaml [output.drawio|output.svg] [--theme name] [--strict] [--validate]
  */
 
-import { readFileSync, writeFileSync } from 'node:fs'
-import { resolve, extname } from 'node:path'
-import { parseSpecYaml, specToDrawioXml, validateXml } from './dsl/spec-to-drawio.js'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { extname, join, resolve } from 'node:path'
+import { parseSpecYaml, specToDrawioXml, validateSpec, validateXml } from './dsl/spec-to-drawio.js'
 import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
+import { drawioToSpec } from './dsl/drawio-to-spec.js'
+import {
+  buildArchMetadata,
+  createDrawioFileContent,
+  deriveArtifactPaths,
+  serializeSpecYaml
+} from './runtime/artifacts.js'
+import {
+  exportWithDrawioDesktop,
+  isDesktopExportFormat
+} from './runtime/desktop.js'
 
 /** draw.io format compatibility version */
 const DRAWIO_COMPAT_VERSION = '21.0.0'
@@ -29,21 +41,29 @@ Arguments:
   input               Path to input file, or - for stdin
   output file         Optional output file. Extension determines format:
                         .drawio  → draw.io XML file format
-                        .svg     → SVG (requires drawio-to-svg module)
+                        .svg     → Standalone SVG (or desktop SVG with --use-desktop)
+                        .png     → PNG via draw.io Desktop CLI
+                        .pdf     → PDF via draw.io Desktop CLI
+                        .jpg     → JPG via draw.io Desktop CLI
                       If omitted, XML is printed to stdout.
 
 Options:
-  --input-format <f>  Input format: yaml (default), mermaid, csv
+  --input-format <f>  Input format: yaml (default), mermaid, csv, drawio
   --theme <name>      Override theme (e.g. tech-blue, academic, nature, dark)
-  --strict            Fail on complexity errors
-  --validate          Run XML validation and print results
+  --page <selector>   drawio only: page index (0-based) or diagram name
+  --export-spec       Export the canonical YAML spec instead of generating XML/SVG
+  --strict            Fail on complexity and spec validation warnings
+  --strict-warnings   Alias of --strict (recommended for paper-grade validation)
+  --validate          Run XML validation and print results (also summarizes spec warnings)
+  --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
+  --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
   --help, -h          Show this help message
 `.trim())
   process.exit(0)
 }
 
 // Extract positional arguments (non-flag args, excluding values of --flags)
-const flagsWithValues = new Set(['--theme', '--input-format'])
+const flagsWithValues = new Set(['--theme', '--input-format', '--page'])
 const positional = []
 for (let i = 0; i < args.length; i++) {
   if (flagsWithValues.has(args[i])) {
@@ -60,8 +80,13 @@ const themeIndex = args.indexOf('--theme')
 const themeName = themeIndex !== -1 ? args[themeIndex + 1] : null
 const inputFormatIndex = args.indexOf('--input-format')
 const inputFormat = inputFormatIndex !== -1 ? args[inputFormatIndex + 1] : 'yaml'
-const strict = args.includes('--strict')
+const strict = args.includes('--strict') || args.includes('--strict-warnings')
 const doValidate = args.includes('--validate')
+const writeSidecars = args.includes('--write-sidecars')
+const useDesktop = args.includes('--use-desktop')
+const exportSpec = args.includes('--export-spec')
+const pageIndex = args.indexOf('--page')
+const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
 
 // ---------------------------------------------------------------------------
 // SVG module (optional)
@@ -69,7 +94,7 @@ const doValidate = args.includes('--validate')
 
 let drawioToSvg = null
 try {
-  const svgModule = await import('../svg/drawio-to-svg.js')
+  const svgModule = await import('./svg/drawio-to-svg.js')
   drawioToSvg = svgModule.drawioToSvg
 } catch {
   // SVG export not available
@@ -79,17 +104,17 @@ try {
 // Read and convert
 // ---------------------------------------------------------------------------
 
-let yamlText
+let inputText
 if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
   const chunks = []
   for await (const chunk of process.stdin) chunks.push(chunk)
-  yamlText = Buffer.concat(chunks).toString('utf-8')
+  inputText = Buffer.concat(chunks).toString('utf-8')
 } else if (!inputFile) {
-  console.error('Error: input YAML file is required. Use - for stdin.')
+  console.error('Error: input file is required. Use - for stdin.')
   process.exit(1)
 } else {
   try {
-    yamlText = readFileSync(resolve(inputFile), 'utf-8')
+    inputText = readFileSync(resolve(inputFile), 'utf-8')
   } catch (err) {
     console.error(`Error: Could not read input file "${inputFile}": ${err.message}`)
     process.exit(1)
@@ -99,16 +124,25 @@ if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
 let spec
 try {
   if (inputFormat === 'yaml') {
-    spec = parseSpecYaml(yamlText)
+    spec = parseSpecYaml(inputText)
   } else if (inputFormat === 'mermaid') {
-    spec = parseMermaidToSpec(yamlText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
+    spec = parseMermaidToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'csv') {
-    spec = parseCsvToSpec(yamlText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
+    spec = parseCsvToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
+  } else if (inputFormat === 'drawio') {
+    spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
   } else {
     throw new Error(`Unsupported input format "${inputFormat}"`)
   }
 } catch (err) {
   console.error(`Error: Failed to parse ${inputFormat}: ${err.message}`)
+  process.exit(1)
+}
+
+try {
+  validateSpec(spec)
+} catch (err) {
+  console.error(`Error: Spec validation failed: ${err.message}`)
   process.exit(1)
 }
 
@@ -120,7 +154,21 @@ if (themeName) {
 
 let xml
 try {
-  xml = specToDrawioXml(spec, { strict })
+  if (exportSpec) {
+    xml = null
+  } else if (doValidate) {
+    const result = specToDrawioXml(spec, { strict, returnWarnings: true, silent: true })
+    xml = result.xml
+    const problems = (result.warnings || []).filter(w => w.level && w.level !== 'fatal')
+    if (problems.length === 0) {
+      console.error('Spec validation: PASSED (no warnings)')
+    } else {
+      console.error(`Spec validation: WARNINGS (${problems.length})`)
+      problems.forEach(w => console.error(`  • [${w.level}] ${w.message}`))
+    }
+  } else {
+    xml = specToDrawioXml(spec, { strict })
+  }
 } catch (err) {
   console.error(`Error: Conversion failed: ${err.message}`)
   process.exit(1)
@@ -130,12 +178,12 @@ try {
 // Validation
 // ---------------------------------------------------------------------------
 
-if (doValidate) {
+if (doValidate && !exportSpec) {
   const result = validateXml(xml)
   if (result.valid) {
-    console.error('Validation: PASSED (no errors)')
+    console.error('XML validation: PASSED (no errors)')
   } else {
-    console.error('Validation: FAILED')
+    console.error('XML validation: FAILED')
     for (const e of result.errors) {
       console.error(`  - ${e}`)
     }
@@ -143,7 +191,7 @@ if (doValidate) {
   }
 }
 
-if (spec.meta?.profile === 'academic-paper' && outputFile && extname(outputFile).toLowerCase() !== '.svg') {
+if (!exportSpec && spec.meta?.profile === 'academic-paper' && outputFile && extname(outputFile).toLowerCase() !== '.svg') {
   console.error('Validation: academic-paper profile recommends SVG export for paper-ready vector output.')
 }
 
@@ -151,49 +199,154 @@ if (spec.meta?.profile === 'academic-paper' && outputFile && extname(outputFile)
 // Output
 // ---------------------------------------------------------------------------
 
+if (exportSpec) {
+  const yamlOut = serializeSpecYaml(spec)
+  let specPath = outputFile
+  if (!specPath && inputFormat === 'drawio' && inputFile && inputFile !== '-') {
+    specPath = deriveArtifactPaths(inputFile).specPath
+  }
+
+  if (!specPath) {
+    process.stdout.write(yamlOut)
+    if (!yamlOut.endsWith('\n')) process.stdout.write('\n')
+    process.exit(0)
+  }
+
+  try {
+    writeFileSync(resolve(specPath), yamlOut, 'utf-8')
+    console.error(`Saved spec: ${specPath}`)
+  } catch (err) {
+    console.error(`Error: Could not write spec file "${specPath}": ${err.message}`)
+    process.exit(1)
+  }
+
+  if (writeSidecars) {
+    const normalized = specPath.replace(/\\/g, '/')
+    let archPath = null
+    if (/\.spec\.ya?ml$/i.test(normalized)) {
+      archPath = normalized.replace(/\.spec\.ya?ml$/i, '.arch.json')
+    } else if (/\.ya?ml$/i.test(normalized)) {
+      archPath = normalized.replace(/\.ya?ml$/i, '.arch.json')
+    }
+
+    if (archPath) {
+      const drawioPath = /\.arch\.json$/i.test(archPath)
+        ? archPath.replace(/\.arch\.json$/i, '.drawio')
+        : null
+      try {
+        writeFileSync(
+          resolve(archPath),
+          JSON.stringify(buildArchMetadata(spec, { outputFile: drawioPath || specPath }), null, 2) + '\n',
+          'utf-8'
+        )
+        console.error(`Saved arch: ${archPath}`)
+      } catch (err) {
+        console.error(`Error: Could not write arch file "${archPath}": ${err.message}`)
+        process.exit(1)
+      }
+    }
+  }
+
+  process.exit(0)
+}
+
 if (!outputFile) {
-  // Print XML to stdout
   process.stdout.write(xml)
   process.stdout.write('\n')
   process.exit(0)
 }
 
 const ext = extname(outputFile).toLowerCase()
+const drawioContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
+const artifactPaths = deriveArtifactPaths(outputFile)
+const needsDesktopExport = isDesktopExportFormat(ext.slice(1)) && (ext !== '.svg' || useDesktop)
+let tempDir = null
+let desktopInputPath = null
 
-if (ext === '.svg') {
-  if (!drawioToSvg) {
-    console.error('Error: SVG export is not available (drawio-to-svg module not found).')
-    process.exit(1)
-  }
-  let svg
-  try {
-    svg = drawioToSvg(xml)
-  } catch (err) {
-    console.error(`Error: SVG conversion failed: ${err.message}`)
-    process.exit(1)
-  }
-  try {
-    writeFileSync(resolve(outputFile), svg, 'utf-8')
-    console.error(`Saved SVG: ${outputFile}`)
-  } catch (err) {
-    console.error(`Error: Could not write output file "${outputFile}": ${err.message}`)
-    process.exit(1)
-  }
-} else {
-  // Default: .drawio or any other extension → draw.io file format (XML wrapper)
-  const drawioContent =
-    '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    `<mxfile host="cli" modified="" agent="drawio-skill-cli" version="${DRAWIO_COMPAT_VERSION}">\n` +
-    '  <diagram name="Page-1">\n' +
-    '    ' + xml + '\n' +
-    '  </diagram>\n' +
-    '</mxfile>\n'
+function writeCanonicalSidecars() {
+  if (!writeSidecars) return
 
-  try {
+  writeFileSync(resolve(artifactPaths.specPath), serializeSpecYaml(spec), 'utf-8')
+  writeFileSync(
+    resolve(artifactPaths.archPath),
+    JSON.stringify(buildArchMetadata(spec, { outputFile }), null, 2) + '\n',
+    'utf-8'
+  )
+}
+
+function ensureDesktopInput() {
+  if (desktopInputPath) return desktopInputPath
+
+  if (writeSidecars) {
+    desktopInputPath = resolve(artifactPaths.drawioPath)
+    writeFileSync(desktopInputPath, drawioContent, 'utf-8')
+    return desktopInputPath
+  }
+
+  tempDir = mkdtempSync(join(tmpdir(), 'drawio-skill-'))
+  desktopInputPath = resolve(tempDir, 'export-input.drawio')
+  writeFileSync(desktopInputPath, drawioContent, 'utf-8')
+  return desktopInputPath
+}
+
+let exitCode = 0
+
+try {
+  if (ext === '.drawio') {
     writeFileSync(resolve(outputFile), drawioContent, 'utf-8')
+    writeCanonicalSidecars()
     console.error(`Saved: ${outputFile}`)
-  } catch (err) {
-    console.error(`Error: Could not write output file "${outputFile}": ${err.message}`)
-    process.exit(1)
+  } else if (needsDesktopExport) {
+    try {
+      exportWithDrawioDesktop({
+        inputFile: ensureDesktopInput(),
+        outputFile: resolve(outputFile),
+        format: ext.slice(1)
+      })
+      writeCanonicalSidecars()
+      console.error(`Saved: ${outputFile}`)
+    } catch (err) {
+      console.error(`Error: ${err.message}`)
+      exitCode = 1
+    }
+  } else if (ext === '.svg') {
+    if (!drawioToSvg) {
+      console.error('Error: SVG export is not available (drawio-to-svg module not found).')
+      exitCode = 1
+    } else {
+      let svg
+      try {
+        svg = drawioToSvg(xml)
+      } catch (err) {
+        console.error(`Error: SVG conversion failed: ${err.message}`)
+        exitCode = 1
+      }
+
+      if (exitCode === 0) {
+        try {
+          writeFileSync(resolve(outputFile), svg, 'utf-8')
+          if (writeSidecars) {
+            writeFileSync(resolve(artifactPaths.drawioPath), drawioContent, 'utf-8')
+          }
+          writeCanonicalSidecars()
+          console.error(`Saved SVG: ${outputFile}`)
+        } catch (err) {
+          console.error(`Error: Could not write output file "${outputFile}": ${err.message}`)
+          exitCode = 1
+        }
+      }
+    }
+  } else {
+    console.error(
+      `Error: Unsupported output extension "${ext || '(none)'}". ` +
+      'Use .drawio, .svg, .png, .pdf, or .jpg/.jpeg.'
+    )
+    exitCode = 1
+  }
+} finally {
+  if (tempDir) {
+    rmSync(tempDir, { recursive: true, force: true })
   }
 }
+
+process.exit(exitCode)

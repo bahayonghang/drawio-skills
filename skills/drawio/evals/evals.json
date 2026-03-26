@@ -1,6 +1,6 @@
 {
   "skill_name": "drawio",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "evals": [
     {
       "id": "academic-campus-network",
@@ -131,6 +131,93 @@
         "LaTeX formula is properly formatted",
         "SVG export preserves formula readability",
         "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "replicate-warm-approval-palette",
+      "prompt": "Replicate the uploaded approval-flow image. Keep the warm orange fills, brown connectors, and cream background instead of remapping everything to tech-blue.",
+      "expected_output": "A replicated spec that preserves the warm source palette with explicit node, edge, and module color overrides.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-warm-approval.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.replication.colorMode is preserve-original",
+        "meta.replication includes a background color and extracted palette entries",
+        "High-confidence nodes, edges, and modules use explicit hex style overrides",
+        "The output does not collapse back to only default tech-blue palette values"
+      ]
+    },
+    {
+      "id": "replicate-brand-architecture-palette",
+      "prompt": "Recreate the uploaded architecture image and preserve its blue-green brand palette. Keep semantic shapes, but do not normalize colors to the default theme.",
+      "expected_output": "A replicated architecture diagram whose dominant colors stay close to the source brand palette.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-brand-architecture.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.replication.palette captures multiple extracted colors with confidence",
+        "Node styles contain explicit brand-blue and brand-green fills or strokes",
+        "Connector colors are preserved when clearly visible in the source",
+        "Low-confidence elements may fall back to theme tokens instead of inventing colors"
+      ]
+    },
+    {
+      "id": "replicate-academic-highlight-palette",
+      "prompt": "Replicate the uploaded paper figure. Keep the grayscale structure and its single accent highlight while remaining publication-safe.",
+      "expected_output": "A replicated academic figure with grayscale-safe structure and one preserved emphasis color.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.replication.colorMode is preserve-original unless the user requests theme-first",
+        "The canvas and neutral elements remain grayscale-safe",
+        "Only the source accent color is preserved as an explicit override",
+        "The output stays suitable for academic-paper review"
+      ]
+    },
+    {
+      "id": "import-drawio-to-spec-uncompressed",
+      "prompt": "Import the uploaded .drawio file into YAML spec and write sidecars.",
+      "expected_output": "A YAML spec bundle (.spec.yaml + .arch.json) that preserves the module, node labels, and basic connector semantics from the .drawio input.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple.drawio"
+      ],
+      "assertions": [
+        "Output spec contains meta.source: edited",
+        "Output spec contains module label Backend",
+        "Output spec contains nodes labeled API and DB",
+        "Node positions are present (x/y) on an 8px grid",
+        "Edge from API to DB imports as dashed/data connector type (or equivalent typed connector)"
+      ]
+    },
+    {
+      "id": "import-drawio-to-spec-compressed",
+      "prompt": "Import the uploaded compressed .drawio file into YAML spec and write sidecars.",
+      "expected_output": "A YAML spec bundle imported from a compressed <diagram> payload that preserves modules, nodes, and connectors.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple-compressed.drawio"
+      ],
+      "assertions": [
+        "Importer decodes compressed diagram content into mxGraphModel XML",
+        "Output spec contains nodes labeled API and DB",
+        "Output spec contains module label Backend",
+        "Edge semantics (dashed/data) are preserved into typed connector fields"
+      ]
+    },
+    {
+      "id": "edit-after-import",
+      "prompt": "Import the uploaded .drawio file into YAML spec, rename API to Auth, and export as SVG.",
+      "expected_output": "A regenerated SVG (and sidecars) reflecting the edited label with a validated structure.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple.drawio"
+      ],
+      "assertions": [
+        "The resulting spec and export rename API -> Auth",
+        "Output SVG is generated and is readable",
+        "Validation passes with --validate and paper-grade strict warnings when requested"
       ]
     }
   ]

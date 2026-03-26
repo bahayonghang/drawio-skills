@@ -20,6 +20,56 @@ test('parseMermaidToSpec supports flowchart', () => {
   assert.equal(spec.edges.length, 2)
 })
 
+test('parseMermaidToSpec supports sequenceDiagram', () => {
+  const spec = parseMermaidToSpec(`sequenceDiagram
+participant Alice
+participant Bob
+Alice->>Bob: Hello
+`)
+  assert.equal(spec.nodes.length, 2)
+  assert.equal(spec.edges.length, 1)
+})
+
+test('parseMermaidToSpec supports classDiagram', () => {
+  const spec = parseMermaidToSpec(`classDiagram
+class Book
+class Member
+Book <|-- Member : inherits
+`)
+  assert.equal(spec.nodes.length, 2)
+  assert.equal(spec.edges.length, 1)
+})
+
+test('parseMermaidToSpec supports stateDiagram-v2', () => {
+  const spec = parseMermaidToSpec(`stateDiagram-v2
+[*] --> Pending
+Pending --> Confirmed : ok
+Confirmed --> [*]
+`)
+  assert.ok(spec.nodes.length >= 3)
+  assert.ok(spec.edges.length >= 2)
+})
+
+test('parseMermaidToSpec supports erDiagram', () => {
+  const spec = parseMermaidToSpec(`erDiagram
+CUSTOMER ||--o{ ORDER : places
+`)
+  assert.equal(spec.nodes.length, 2)
+  assert.equal(spec.edges.length, 1)
+})
+
+test('parseMermaidToSpec supports gantt', () => {
+  const spec = parseMermaidToSpec(`gantt
+title Demo
+dateFormat YYYY-MM-DD
+section Build
+Task 1 :done, 2024-01-01, 1d
+Task 2 :active, 2024-01-02, 1d
+`)
+  assert.ok(spec.nodes.length >= 2)
+  assert.ok(spec.edges.length >= 1)
+})
+
 test('parseMermaidToSpec rejects unsupported diagram type', () => {
   assert.throws(
     () => parseMermaidToSpec('journey\n  title Demo'),

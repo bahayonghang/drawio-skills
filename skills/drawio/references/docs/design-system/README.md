@@ -64,6 +64,17 @@ All positions, sizes, and spacing are multiples of 8px for professional alignmen
 | **Academic Color** | Academic papers, research (color print/digital) |
 | **High Contrast** | WCAG AA accessible, maximum readability |
 
+### Replication Color Modes
+
+When redrawing from an uploaded image, keep theme selection and color extraction separate:
+
+| Mode | Default? | Behavior |
+|------|----------|----------|
+| `preserve-original` | Yes | Keep the source background and dominant palette, writing explicit style overrides for high-confidence colors. |
+| `theme-first` | No | Use the selected theme as the primary palette and only keep source colors as hints/reference metadata. |
+
+Replicated specs should usually include `meta.source: replicated` and a `meta.replication` block so later edits can tell which colors came from the image and which colors are theme fallbacks.
+
 ### Semantic Shapes
 
 Automatic shape selection based on node type:

@@ -27,7 +27,10 @@ help:
     @echo "  just lint           - 检查 Markdown 文件（需要 markdownlint-cli）"
     @echo "  just format         - 格式化 Markdown 文件（需要 prettier）"
     @echo "  just test           - 运行测试用例"
-    @echo "  just ci             - 运行 CI 环境测试（相当于 lint + test）"
+    @echo "  just version-check  - 检查版本号是否已同步（不修改文件）"
+    @echo "  just version-sync   - 同步版本号（默认以 skills/drawio/SKILL.md 为准）"
+    @echo "  just version-sync-to <v> - 同步版本号到指定版本号（例如 2.3.0）"
+    @echo "  just ci             - 运行 CI 检查（version-check + lint + test + docs-build）"
     @echo ""
     @echo "📁 实用工具："
     @echo "  just tree           - 显示项目目录结构"
@@ -91,4 +94,16 @@ test:
     npm test
 
 # 运行所有 CI 检查和测试
-ci: lint test
+version-check:
+    @echo "🔎 正在检查版本号同步状态..."
+    node scripts/version-sync.js --check
+
+version-sync:
+    @echo "🔁 正在同步版本号（以 skills/drawio/SKILL.md 为准）..."
+    node scripts/version-sync.js
+
+version-sync-to VERSION:
+    @echo "🔁 正在同步版本号到 {{VERSION}}..."
+    node scripts/version-sync.js --version {{VERSION}}
+
+ci: version-check lint test docs-build

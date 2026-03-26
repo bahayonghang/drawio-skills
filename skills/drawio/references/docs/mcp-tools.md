@@ -2,6 +2,8 @@
 
 This document describes the available MCP tools provided by the draw.io MCP server for real-time diagram editing in the browser.
 
+> These tools are **optional live-editing enhancers**, not the default runtime. Use them only when next-ai MCP is configured and the user wants real-time browser refinement. The core skill should still work offline with `.drawio` + sidecars.
+
 ## start_session
 
 Start a new diagram session and open the browser for real-time preview.

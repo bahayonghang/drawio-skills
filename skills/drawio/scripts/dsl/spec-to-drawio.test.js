@@ -326,6 +326,33 @@ describe('generateModuleStyle', () => {
     assert.ok(style.includes('dashed=1'), 'should contain dashed=1 from module style')
     assert.ok(style.includes('dashPattern=4 2'), 'should use module dashPattern')
   })
+
+  it('should resolve theme tokens in module color fields', () => {
+    const theme = {
+      colors: {
+        accentLight: '#EDE9FE',
+        accent: '#7C3AED',
+        text: '#1E293B'
+      },
+      module: {
+        fillColor: '#FAFAFA',
+        strokeColor: '#BDBDBD',
+        labelFontColor: '#111827'
+      }
+    }
+    const style = generateModuleStyle({
+      id: 'm1',
+      label: 'Token Module',
+      color: '$accentLight',
+      style: {
+        strokeColor: '$accent',
+        fontColor: '$text'
+      }
+    }, theme)
+    assert.ok(style.includes('fillColor=#EDE9FE'), 'module fill should resolve token values')
+    assert.ok(style.includes('strokeColor=#7C3AED'), 'module stroke should resolve token values')
+    assert.ok(style.includes('fontColor=#1E293B'), 'module font color should resolve token values')
+  })
 })
 
 // ============================================================================
@@ -614,6 +641,31 @@ meta:
     assert.strictEqual(spec.meta.grid.snap, true, 'grid.snap should be true')
   })
 
+  it('should parse replication metadata for replicated specs', () => {
+    const yamlText = `
+meta:
+  source: replicated
+  theme: tech-blue
+  replication:
+    colorMode: preserve-original
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: service fill
+        appliesTo: nodes
+        confidence: high
+    confidenceNotes:
+      - "Flattened a gradient footer into a solid background"
+nodes:
+  - id: n1
+    label: Box
+`
+    const spec = parseSpecYaml(yamlText)
+    assert.strictEqual(spec.meta.source, 'replicated')
+    assert.strictEqual(spec.meta.replication.colorMode, 'preserve-original')
+    assert.strictEqual(spec.meta.replication.palette[0].hex, '#FDBA74')
+  })
+
   it('should return default empty spec for empty string', () => {
     const spec = parseSpecYaml('')
     assert.deepStrictEqual(spec.meta, {}, 'meta should be empty object')
@@ -628,6 +680,23 @@ meta:
 
   it('should throw Error for invalid YAML', () => {
     assert.throws(() => parseSpecYaml('key: [unclosed'), Error, 'should throw Error for invalid YAML')
+  })
+
+  it('should reject invalid replication color modes', () => {
+    const yamlText = `
+meta:
+  source: replicated
+  replication:
+    colorMode: rainbow
+nodes:
+  - id: n1
+    label: Box
+`
+    assert.throws(
+      () => parseSpecYaml(yamlText),
+      /meta\.replication\.colorMode/,
+      'invalid replication color modes should be rejected'
+    )
   })
 })
 
@@ -1242,6 +1311,15 @@ describe('validateColorScheme', () => {
     assert.ok(warnings[0].includes('module "m1"'), 'warning should identify the module')
   })
 
+  it('returns no warnings for valid module.color token values', () => {
+    const spec = {
+      nodes: [{ id: 'n1', label: 'A' }],
+      edges: [],
+      modules: [{ id: 'm1', label: 'Mod', color: '$accent' }]
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
   it('returns multiple warnings for multiple invalid values', () => {
     const spec = {
       nodes: [
@@ -1261,6 +1339,43 @@ describe('validateColorScheme', () => {
       modules: []
     }
     assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
+  it('validates replication metadata colors', () => {
+    const spec = {
+      meta: {
+        source: 'replicated',
+        replication: {
+          background: '#FFF7ED',
+          palette: [
+            { hex: '#FDBA74', role: 'node fill', appliesTo: 'nodes', confidence: 'high' },
+            { hex: '#7C2D12', role: 'connector stroke', appliesTo: 'edges', confidence: 'medium' }
+          ]
+        }
+      },
+      nodes: [{ id: 'n1', label: 'A' }],
+      edges: [],
+      modules: []
+    }
+    assert.deepStrictEqual(validateColorScheme(spec, theme), [])
+  })
+
+  it('warns when replication palette colors are not flat hex values', () => {
+    const spec = {
+      meta: {
+        source: 'replicated',
+        replication: {
+          background: '#FFF7ED',
+          palette: [{ hex: '$primary', role: 'bad extracted color', appliesTo: 'nodes' }]
+        }
+      },
+      nodes: [{ id: 'n1', label: 'A' }],
+      edges: [],
+      modules: []
+    }
+    const warnings = validateColorScheme(spec, theme)
+    assert.strictEqual(warnings.length, 1)
+    assert.ok(warnings[0].includes('meta.replication.palette[0].hex'))
   })
 })
 

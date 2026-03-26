@@ -23,6 +23,7 @@ The specification format provides:
 meta:
   profile: default
   theme: tech-blue
+  source: generated
   layout: horizontal
   canvas: auto
 
@@ -52,6 +53,9 @@ meta:
   # Workflow profile
   profile: default  # default | academic-paper | engineering-review
 
+  # How this spec was produced
+  source: generated  # generated | replicated | edited
+
   # Theme selection (required)
   theme: tech-blue  # tech-blue | academic | academic-color | nature | dark | high-contrast | custom-name
   
@@ -73,6 +77,22 @@ meta:
   title: "System Architecture"
   description: "Overview of microservices"
   legend: "Optional legend summary for paper-facing diagrams"
+
+  # Optional replicate metadata
+  replication:
+    colorMode: preserve-original  # preserve-original | theme-first
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: warm node fill
+        appliesTo: nodes
+        confidence: high
+      - hex: "#7C2D12"
+        role: connector stroke
+        appliesTo: edges
+        confidence: medium
+    confidenceNotes:
+      - "Arrowheads were anti-aliased in the source; connector color was normalized to the nearest flat brown."
 ```
 
 ### Theme Options
@@ -93,6 +113,14 @@ meta:
 | `default` | Standard diagram workflow |
 | `academic-paper` | Enables paper-facing validation and export checklist |
 | `engineering-review` | Enables stricter routing and readability review |
+
+### Source Options
+
+| Source | Description |
+|--------|-------------|
+| `generated` | New diagram created from text/spec |
+| `replicated` | Structured redraw from an uploaded image or screenshot |
+| `edited` | Existing diagram/spec that has been revised |
 
 ### Layout Options
 
@@ -285,6 +313,36 @@ style:
   strokeColor: $primary      # Theme's primary color
   fontColor: $text           # Theme's text color
 ```
+
+### Replication Metadata
+
+Use `meta.replication` to capture source-palette intent without turning the whole file into raw pixel data:
+
+```yaml
+meta:
+  source: replicated
+  theme: tech-blue
+  replication:
+    colorMode: preserve-original
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: service fill
+        appliesTo: nodes
+        confidence: high
+      - hex: "#7C2D12"
+        role: connector and text
+        appliesTo: mixed
+        confidence: medium
+    confidenceNotes:
+      - "Footer gradient was simplified into a flat warm background."
+```
+
+Recommended usage:
+
+- Write explicit `style.fillColor`, `style.strokeColor`, and `style.fontColor` on nodes/edges/modules when color extraction is high-confidence.
+- Keep low-confidence or non-essential elements on theme tokens so theme changes and accessibility refinements still work.
+- Use `theme-first` only when the user explicitly wants palette normalization.
 
 ---
 

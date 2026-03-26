@@ -17,19 +17,27 @@ Step 1: Receive Input
 Step 2: Configuration
 ├── Select domain (software architecture, research, etc.)
 ├── Select theme (tech-blue default, academic for papers)
+├── Select color mode (preserve-original default, theme-first optional)
 └── Specify language (Chinese/English)
 
 Step 3: Structured Extraction
 ├── Analyze image structure
+├── Extract source color summary:
+│   ├── background/canvas color
+│   ├── 3-6 dominant flat colors
+│   ├── node / edge / module color assignments
+│   └── confidence notes for uncertain regions
 ├── Extract to YAML specification format:
 │   ├── nodes with semantic types
 │   ├── edges with connector types
-│   └── modules for grouping
+│   ├── modules for grouping
+│   └── explicit style overrides for high-confidence colors
 ├── Apply semantic shape mapping
 └── Mark missing info as "Not specified" (未提及)
 
 Step 4: Logic Verification (Mandatory)
 ├── Translate structural analysis into a pure ASCII logical flow graph
+├── Summarize the extracted palette and where each color will be applied
 └── ⚠️ PAUSE and wait for user's confirmation to ensure no misinterpretation
 
 Step 5: Quality Validation
@@ -42,13 +50,16 @@ Step 5: Quality Validation
 Step 6: Convert to Diagram
 ├── Parse specification via scripts/dsl/spec-to-drawio.js
 ├── Apply selected theme
+├── Keep `meta.replication.background` as canvas background when provided
 ├── Calculate 8px grid positions
-├── Call MCP: start_session
-└── Call MCP: create_new_diagram
+├── Generate .drawio + .spec.yaml + .arch.json offline first
+├── Export standalone SVG or desktop preview if available
+└── Only call MCP: start_session / create_new_diagram when real-time browser refinement is explicitly needed
 
 Step 7: Review and Refine
 ├── Compare with original image
-└── Use /drawio edit for adjustments
+├── Default to /drawio edit in offline mode
+└── Use live MCP refinement only when configured and useful
 
 Step 8: Validate (Optional)
 ├── Check cell ID uniqueness
@@ -110,6 +121,15 @@ During extraction, map visual elements to semantic types:
 /drawio replicate with academic theme
 [Upload image]
 This is a figure from our research paper
+```
+
+### Preserve Original Palette Explicitly
+
+```
+/drawio replicate
+【颜色模式】preserve-original
+[Upload image]
+请尽量保留原图的暖色节点和深色箭头，不要全部改成 tech-blue
 ```
 
 ### With Domain + Theme
@@ -179,29 +199,53 @@ The extraction produces a YAML specification:
 ```yaml
 meta:
   theme: tech-blue  # or academic for papers
-  layout: horizontal
   source: replicated
+  layout: horizontal
+  replication:
+    colorMode: preserve-original
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: service fill
+        appliesTo: nodes
+        confidence: high
+      - hex: "#7C2D12"
+        role: connector stroke
+        appliesTo: edges
+        confidence: medium
 
 nodes:
   - id: n1
     label: API Gateway
     type: service
     module: frontend
+    style:
+      fillColor: "#FDBA74"
+      strokeColor: "#EA580C"
+      fontColor: "#7C2D12"
 
   - id: n2
     label: User DB
     type: database
     module: data
+    style:
+      fillColor: "#FED7AA"
+      strokeColor: "#C2410C"
 
 edges:
   - from: n1
     to: n2
     type: data
     label: Query
+    style:
+      strokeColor: "#7C2D12"
 
 modules:
   - id: frontend
     label: 前端层
+    style:
+      fillColor: "#FFEDD5"
+      strokeColor: "#FDBA74"
   - id: data
     label: 数据层
 ```
@@ -247,9 +291,9 @@ Recreate this microservices architecture with design system styling
 
 ### Colors don't match original?
 
-- Design system applies consistent theme colors
-- Original colors are mapped to semantic types
-- Use `--preserve-colors` to keep original palette (advanced)
+- Replicate defaults to `preserve-original`; confirm the palette summary before rendering
+- High-confidence source colors should become explicit node/edge/module styles in the spec
+- If the user wants a normalized or print-safe result instead, switch to `theme-first`
 
 ### Shapes different from original?
 

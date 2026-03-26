@@ -91,12 +91,14 @@ Step 9: Edge Audit
 └── Prefer straight arrows when alignment allows it
 
 Step 10: Render
-├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate
-└── For paper-quality diagrams prefer output.svg (SVG export requires scripts/svg/ module)
+├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars
+├── For paper-quality diagrams prefer output.svg --validate --write-sidecars
+└── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
 
 Step 11: Preview
-├── MCP available -> start_session / create_new_diagram
-└── Otherwise open output in draw.io desktop or diagrams.net
+├── draw.io Desktop available -> open .drawio locally or export preview PNG/SVG
+├── Optional live MCP available + user wants real-time refinement -> start_session / create_new_diagram
+└── Otherwise present .drawio + standalone SVG and continue offline
 ```
 
 ## Academic Branch Rules
@@ -160,6 +162,7 @@ distribution, and access layers in grayscale
 ## Notes
 
 - YAML remains the canonical intermediate representation.
+- `.drawio`, `.spec.yaml`, and `.arch.json` together form the editable offline bundle.
 - Mermaid and CSV inputs are convenience adapters, not separate rendering pipelines.
 - For formula-bearing labels, use only the three supported syntaxes: `$$...$$`, `\(...\)`, and `` `...` ``.
 - If validation warnings affect correctness or publication quality, switch to `--strict`.

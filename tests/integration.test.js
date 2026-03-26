@@ -7,6 +7,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
+import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
@@ -29,6 +31,10 @@ function runCli(args, opts = {}) {
     cwd: PROJECT_ROOT,
     ...opts
   })
+}
+
+function createTempDir() {
+  return mkdtempSync(resolve(tmpdir(), 'drawio-skill-test-'))
 }
 
 // ============================================================================
@@ -147,6 +153,33 @@ test('CLI: Mermaid flowchart converts via adapter', () => {
   assert.ok(output.includes('Approve'), 'Mermaid adapter should emit decision node')
 })
 
+test('CLI: Mermaid sequence diagram converts via adapter', () => {
+  const mermaid = `sequenceDiagram
+participant Alice
+participant Bob
+Alice->>Bob: Hello`
+  const output = runCli(['-', '--input-format', 'mermaid'], { input: mermaid })
+  assert.ok(output.includes('Alice'), 'Mermaid sequence should emit participant nodes')
+  assert.ok(output.includes('Bob'), 'Mermaid sequence should emit participant nodes')
+  assert.ok(output.includes('Hello'), 'Mermaid sequence should emit message label')
+})
+
+test('CLI: drawio import can export a spec bundle', () => {
+  const tempDir = createTempDir()
+  const inputFile = resolve(PROJECT_ROOT, 'skills/drawio/evals/fixtures/import-simple.drawio')
+  const specFile = resolve(tempDir, 'imported.spec.yaml')
+
+  runCli([inputFile, specFile, '--input-format', 'drawio', '--export-spec', '--write-sidecars'])
+
+  assert.ok(existsSync(specFile), 'spec output should exist')
+  assert.ok(existsSync(resolve(tempDir, 'imported.arch.json')), 'arch sidecar should exist')
+
+  const specText = readFileSync(specFile, 'utf-8')
+  assert.ok(specText.includes('label: Backend'), 'imported spec should include module label')
+  assert.ok(specText.includes('label: API'), 'imported spec should include API node')
+  assert.ok(specText.includes('label: DB'), 'imported spec should include DB node')
+})
+
 test('CLI: CSV org chart converts via adapter', () => {
   const csv = `name,parent,label
 CEO,,Chief Executive Officer
@@ -154,4 +187,77 @@ CTO,CEO,Chief Technology Officer`
   const output = runCli(['-', '--input-format', 'csv'], { input: csv })
   assert.ok(output.includes('Chief Executive Officer'), 'CSV adapter should emit node labels')
   assert.ok(output.includes('Chief Technology Officer'), 'CSV adapter should emit child node labels')
+})
+
+// ============================================================================
+// File Outputs and Sidecars
+// ============================================================================
+
+test('CLI: svg output writes a standalone svg file', () => {
+  const tempDir = createTempDir()
+  const outputFile = resolve(tempDir, 'simple-flow.svg')
+  const yamlInput = 'nodes:\n  - id: A\n    label: SVG Node\n'
+
+  runCli(['-', outputFile], { input: yamlInput })
+
+  assert.ok(existsSync(outputFile), 'SVG output file should exist')
+  const svg = readFileSync(outputFile, 'utf-8')
+  assert.ok(svg.startsWith('<svg'), 'SVG output should start with <svg')
+  assert.ok(svg.includes('SVG Node'), 'SVG should contain the node label')
+})
+
+test('CLI: --write-sidecars creates drawio, spec, and arch files for drawio output', () => {
+  const tempDir = createTempDir()
+  const outputFile = resolve(tempDir, 'hybrid-flow.drawio')
+  const yamlInput = 'meta:\n  theme: dark\nnodes:\n  - id: A\n    label: Sidecar Node\n'
+
+  runCli(['-', outputFile, '--write-sidecars'], { input: yamlInput })
+
+  const specFile = resolve(tempDir, 'hybrid-flow.spec.yaml')
+  const archFile = resolve(tempDir, 'hybrid-flow.arch.json')
+  assert.ok(existsSync(outputFile), 'drawio output file should exist')
+  assert.ok(existsSync(specFile), 'spec sidecar should exist')
+  assert.ok(existsSync(archFile), 'arch sidecar should exist')
+
+  const specText = readFileSync(specFile, 'utf-8')
+  assert.ok(specText.includes('theme: dark'), 'spec sidecar should preserve theme overrides')
+
+  const arch = JSON.parse(readFileSync(archFile, 'utf-8'))
+  assert.deepEqual(arch.counts, { nodes: 1, edges: 0, modules: 0 })
+  assert.equal(arch.nodes[0].id, 'A')
+  assert.equal(arch.nodes[0].label, 'Sidecar Node')
+})
+
+test('CLI: --write-sidecars with svg output writes drawio companion and sidecars', () => {
+  const tempDir = createTempDir()
+  const outputFile = resolve(tempDir, 'paper-figure.svg')
+  const yamlInput = 'meta:\n  profile: academic-paper\nnodes:\n  - id: A\n    label: Figure Node\n'
+
+  runCli(['-', outputFile, '--write-sidecars'], { input: yamlInput })
+
+  assert.ok(existsSync(outputFile), 'SVG output file should exist')
+  assert.ok(existsSync(resolve(tempDir, 'paper-figure.drawio')), 'drawio companion should exist')
+  assert.ok(existsSync(resolve(tempDir, 'paper-figure.spec.yaml')), 'spec sidecar should exist')
+  assert.ok(existsSync(resolve(tempDir, 'paper-figure.arch.json')), 'arch sidecar should exist')
+})
+
+test('CLI: replicated specs preserve source background and replication metadata in sidecars', () => {
+  const tempDir = createTempDir()
+  const inputFile = resolve(EXAMPLES_DIR, 'replicated-brand-flow.yaml')
+  const outputFile = resolve(tempDir, 'replicated-brand-flow.drawio')
+
+  const xml = runCli([inputFile, outputFile, '--write-sidecars'])
+  assert.equal(xml, '', 'drawio file output should not print XML to stdout')
+  assert.ok(existsSync(outputFile), 'drawio output file should exist')
+
+  const drawioText = readFileSync(outputFile, 'utf-8')
+  assert.ok(drawioText.includes('background="#FFF7ED"'), 'canvas background should come from replication metadata')
+  assert.ok(drawioText.includes('fillColor=#FDBA74'), 'node fill should preserve extracted warm color')
+  assert.ok(drawioText.includes('strokeColor=#7C2D12'), 'connector stroke should preserve extracted brown color')
+
+  const arch = JSON.parse(readFileSync(resolve(tempDir, 'replicated-brand-flow.arch.json'), 'utf-8'))
+  assert.equal(arch.source, 'replicated')
+  assert.equal(arch.replication.colorMode, 'preserve-original')
+  assert.equal(arch.replication.background, '#FFF7ED')
+  assert.equal(arch.replication.palette[0].hex, '#FDBA74')
 })

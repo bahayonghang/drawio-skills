@@ -1,7 +1,7 @@
 {
   "name": "drawio-skills",
-  "version": "2.0.0",
-  "description": "A Claude Code skill that enables AI-powered diagram creation and editing with real-time browser preview.",
+  "version": "2.2.0",
+  "description": "A desktop-first Draw.io skill with YAML DSL, offline sidecars, and optional live browser editing.",
   "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev docs",

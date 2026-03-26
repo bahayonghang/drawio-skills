@@ -474,6 +474,18 @@ const ICON_PREFIXES = {
 }
 
 /**
+ * Resolve a theme token (e.g. $primary) or return the original value.
+ */
+function resolveThemeColor(value, theme, fallback) {
+  if (!value) return fallback
+  if (typeof value === 'string' && value.startsWith('$')) {
+    const tokenName = value.slice(1)
+    return theme.colors?.[tokenName] || fallback
+  }
+  return value
+}
+
+/**
  * Resolve icon name to draw.io shape identifier
  */
 export function resolveIconShape(icon) {
@@ -506,20 +518,10 @@ export function generateNodeStyle(node, theme) {
   const nodeTheme = theme.node?.[semanticType] || theme.node?.default || {}
   const defaultTheme = theme.node?.default || {}
 
-  // Resolve theme token (e.g., $primary)
-  const resolveColor = (val, defaultVal) => {
-    if (!val) return defaultVal
-    if (typeof val === 'string' && val.startsWith('$')) {
-      const tokenName = val.substring(1)
-      return theme.colors?.[tokenName] || defaultVal
-    }
-    return val
-  }
-
-  const fillColor = resolveColor(node.style?.fillColor, nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
-  const strokeColor = resolveColor(node.style?.strokeColor, nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
+  const fillColor = resolveThemeColor(node.style?.fillColor, theme, nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
+  const strokeColor = resolveThemeColor(node.style?.strokeColor, theme, nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
   const strokeWidth = node.style?.strokeWidth || nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5
-  const fontColor = node.style?.fontColor || nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
+  const fontColor = resolveThemeColor(node.style?.fontColor, theme, nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B')
   const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
   const fontFamily = theme.typography?.fontFamily?.primary || 'Inter, sans-serif'
 
@@ -567,16 +569,7 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
   const connectorType = edge.type || 'primary'
   const connectorTheme = theme.connector?.[connectorType] || theme.connector?.primary || {}
 
-  const resolveColor = (val, defaultVal) => {
-    if (!val) return defaultVal
-    if (typeof val === 'string' && val.startsWith('$')) {
-      const tokenName = val.substring(1)
-      return theme.colors?.[tokenName] || defaultVal
-    }
-    return val
-  }
-
-  const strokeColor = resolveColor(edge.style?.strokeColor, connectorTheme.strokeColor || '#1E293B')
+  const strokeColor = resolveThemeColor(edge.style?.strokeColor, theme, connectorTheme.strokeColor || '#1E293B')
   const strokeWidth = edge.style?.strokeWidth || connectorTheme.strokeWidth || 2
   const dashed = edge.style?.dashed ?? connectorTheme.dashed ?? false
   const dashPattern = edge.style?.dashPattern || connectorTheme.dashPattern || '6 4'
@@ -630,11 +623,11 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
 export function generateModuleStyle(module, theme) {
   const moduleTheme = theme.module || {}
 
-  const fillColor = module.style?.fillColor || module.color || moduleTheme.fillColor || '#F8FAFC'
-  const strokeColor = module.style?.strokeColor || moduleTheme.strokeColor || '#E2E8F0'
+  const fillColor = resolveThemeColor(module.style?.fillColor || module.color, theme, moduleTheme.fillColor || '#F8FAFC')
+  const strokeColor = resolveThemeColor(module.style?.strokeColor, theme, moduleTheme.strokeColor || '#E2E8F0')
   const strokeWidth = moduleTheme.strokeWidth || 1
   const rounded = moduleTheme.rounded || 12
-  const fontColor = moduleTheme.labelFontColor || '#1E293B'
+  const fontColor = resolveThemeColor(module.style?.fontColor, theme, moduleTheme.labelFontColor || '#1E293B')
   const fontSize = moduleTheme.labelFontSize || 14
   const fontWeight = moduleTheme.labelFontWeight || 600
 
@@ -791,8 +784,13 @@ export function buildXml(spec, theme, layout) {
   }
 
   // Build final XML
+  const canvasBackground = resolveThemeColor(
+    spec.meta?.replication?.background,
+    theme,
+    theme.canvas?.background || '#FFFFFF'
+  )
   const xml =
-    `<mxGraphModel dx="1120" dy="720" grid="1" gridSize="8" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${canvasWidth}" pageHeight="${canvasHeight}" math="1" background="${theme.canvas?.background || '#FFFFFF'}">` +
+    `<mxGraphModel dx="1120" dy="720" grid="1" gridSize="8" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${canvasWidth}" pageHeight="${canvasHeight}" math="1" background="${canvasBackground}">` +
     `<root>` +
     `<mxCell id="0"/>` +
     `<mxCell id="1" parent="0"/>` +
@@ -847,8 +845,19 @@ export function validateColorScheme(spec, theme) {
   // Validate module style overrides
   spec.modules?.forEach(mod => {
     const ctx = `module "${mod.id}"`
+    checkColor(mod.color,                `${ctx}.color`)
     checkColor(mod.style?.fillColor,   `${ctx}.style.fillColor`)
     checkColor(mod.style?.strokeColor, `${ctx}.style.strokeColor`)
+  })
+
+  checkColor(spec.meta?.replication?.background, 'meta.replication.background')
+  spec.meta?.replication?.palette?.forEach((entry, index) => {
+    if (!entry?.hex) return
+    if (hexRegex.test(entry.hex)) return
+    warnings.push(
+      `Invalid color "${entry.hex}" in meta.replication.palette[${index}].hex. ` +
+      'Use a flat hex code (#RGB or #RRGGBB) for extracted source colors.'
+    )
   })
 
   return warnings
@@ -1304,6 +1313,10 @@ export function validateSpec(spec) {
   const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical']
   const VALID_ROUTINGS = ['orthogonal', 'rounded']
   const VALID_PROFILES = ['default', 'academic-paper', 'engineering-review']
+  const VALID_SOURCES = ['generated', 'replicated', 'edited']
+  const VALID_REPLICATION_MODES = ['preserve-original', 'theme-first']
+  const VALID_REPLICATION_TARGETS = ['canvas', 'nodes', 'edges', 'modules', 'mixed']
+  const VALID_CONFIDENCE_LEVELS = ['low', 'medium', 'high']
 
   // Hard limits
   const MAX_NODES = 100
@@ -1322,6 +1335,76 @@ export function validateSpec(spec) {
   }
   if (spec.meta?.profile != null && !VALID_PROFILES.includes(spec.meta.profile)) {
     throw new Error(`Invalid meta.profile "${spec.meta.profile}": must be one of ${VALID_PROFILES.join(', ')}`)
+  }
+  if (spec.meta?.source != null && !VALID_SOURCES.includes(spec.meta.source)) {
+    throw new Error(`Invalid meta.source "${spec.meta.source}": must be one of ${VALID_SOURCES.join(', ')}`)
+  }
+  if (spec.meta?.replication != null) {
+    if (typeof spec.meta.replication !== 'object' || Array.isArray(spec.meta.replication)) {
+      throw new Error('meta.replication must be an object when provided')
+    }
+    if (
+      spec.meta.replication.colorMode != null &&
+      !VALID_REPLICATION_MODES.includes(spec.meta.replication.colorMode)
+    ) {
+      throw new Error(
+        `Invalid meta.replication.colorMode "${spec.meta.replication.colorMode}": ` +
+        `must be one of ${VALID_REPLICATION_MODES.join(', ')}`
+      )
+    }
+    if (
+      spec.meta.replication.background != null &&
+      typeof spec.meta.replication.background !== 'string'
+    ) {
+      throw new Error('meta.replication.background must be a string when provided')
+    }
+    if (spec.meta.replication.palette != null) {
+      if (!Array.isArray(spec.meta.replication.palette)) {
+        throw new Error('meta.replication.palette must be an array when provided')
+      }
+      spec.meta.replication.palette.forEach((entry, index) => {
+        if (typeof entry !== 'object' || entry == null || Array.isArray(entry)) {
+          throw new Error(`meta.replication.palette[${index}] must be an object`)
+        }
+        if (entry.hex != null && typeof entry.hex !== 'string') {
+          throw new Error(`meta.replication.palette[${index}].hex must be a string when provided`)
+        }
+        if (entry.role != null && typeof entry.role !== 'string') {
+          throw new Error(`meta.replication.palette[${index}].role must be a string when provided`)
+        }
+        if (
+          entry.appliesTo != null &&
+          !VALID_REPLICATION_TARGETS.includes(entry.appliesTo)
+        ) {
+          throw new Error(
+            `Invalid meta.replication.palette[${index}].appliesTo "${entry.appliesTo}": ` +
+            `must be one of ${VALID_REPLICATION_TARGETS.join(', ')}`
+          )
+        }
+        if (
+          entry.confidence != null &&
+          !VALID_CONFIDENCE_LEVELS.includes(entry.confidence)
+        ) {
+          throw new Error(
+            `Invalid meta.replication.palette[${index}].confidence "${entry.confidence}": ` +
+            `must be one of ${VALID_CONFIDENCE_LEVELS.join(', ')}`
+          )
+        }
+        if (entry.notes != null && typeof entry.notes !== 'string') {
+          throw new Error(`meta.replication.palette[${index}].notes must be a string when provided`)
+        }
+      })
+    }
+    if (spec.meta.replication.confidenceNotes != null) {
+      if (!Array.isArray(spec.meta.replication.confidenceNotes)) {
+        throw new Error('meta.replication.confidenceNotes must be an array when provided')
+      }
+      spec.meta.replication.confidenceNotes.forEach((note, index) => {
+        if (typeof note !== 'string') {
+          throw new Error(`meta.replication.confidenceNotes[${index}] must be a string`)
+        }
+      })
+    }
   }
 
   // Hard limit checks

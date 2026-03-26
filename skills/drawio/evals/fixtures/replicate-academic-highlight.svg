@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="240" viewBox="0 0 680 240">
+  <rect width="680" height="240" fill="#FFFFFF"/>
+  <rect x="70" y="74" width="150" height="64" rx="10" fill="#F5F5F5" stroke="#4B5563" stroke-width="2.5"/>
+  <rect x="265" y="74" width="150" height="64" rx="10" fill="#E5E7EB" stroke="#374151" stroke-width="2.5"/>
+  <rect x="460" y="74" width="150" height="64" rx="10" fill="#D1FAE5" stroke="#047857" stroke-width="2.5"/>
+  <text x="145" y="113" font-size="22" text-anchor="middle" fill="#111827" font-family="Times New Roman, serif">Input</text>
+  <text x="340" y="113" font-size="22" text-anchor="middle" fill="#111827" font-family="Times New Roman, serif">Model</text>
+  <text x="535" y="113" font-size="22" text-anchor="middle" fill="#064E3B" font-family="Times New Roman, serif">Highlight</text>
+  <line x1="220" y1="106" x2="265" y2="106" stroke="#374151" stroke-width="3.5"/>
+  <polygon points="265,106 253,100 253,112" fill="#374151"/>
+  <line x1="415" y1="106" x2="460" y2="106" stroke="#374151" stroke-width="3.5"/>
+  <polygon points="460,106 448,100 448,112" fill="#374151"/>
+</svg>

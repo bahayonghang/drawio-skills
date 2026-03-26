@@ -48,5 +48,35 @@
     "id": "paper-figure-with-formula",
     "profile": "academic-paper",
     "prompt": "Create a paper figure for a training pipeline including the loss formula $$L = -\\sum y_i \\log(\\hat{y}_i)$$."
+  },
+  {
+    "id": "replicate-warm-approval-palette",
+    "profile": "default",
+    "prompt": "Replicate the uploaded approval-flow image. Keep the warm orange fills, brown connectors, and cream background instead of remapping everything to tech-blue."
+  },
+  {
+    "id": "replicate-brand-architecture-palette",
+    "profile": "default",
+    "prompt": "Recreate the uploaded architecture image and preserve its blue-green brand palette. Keep semantic shapes, but do not normalize colors to the default theme."
+  },
+  {
+    "id": "replicate-academic-highlight-palette",
+    "profile": "academic-paper",
+    "prompt": "Replicate the uploaded paper figure. Keep the grayscale structure and its single accent highlight while remaining publication-safe."
+  },
+  {
+    "id": "import-drawio-to-spec-uncompressed",
+    "profile": "default",
+    "prompt": "Import the uploaded .drawio file into YAML spec and write sidecars."
+  },
+  {
+    "id": "import-drawio-to-spec-compressed",
+    "profile": "default",
+    "prompt": "Import the uploaded compressed .drawio file into YAML spec and write sidecars."
+  },
+  {
+    "id": "edit-after-import",
+    "profile": "default",
+    "prompt": "Import the uploaded .drawio file into YAML spec, rename API to Auth, and export as SVG."
   }
 ]

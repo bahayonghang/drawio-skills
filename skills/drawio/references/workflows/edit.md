@@ -9,46 +9,49 @@ Edit existing diagrams with natural language modifications while preserving Desi
 
 ## Procedure
 
-```
+```text
 Step 1: Identify Target
-├── Option A: Current session diagram
-│   └── Continue with active session
-├── Option B: Load from file
-│   └── User provides .drawio file path
-└── Option C: Load from XML
-    └── User provides XML content
+├── Option A: Existing offline bundle (.drawio + .spec.yaml)
+│   └── Preferred path when the skill created the original diagram
+├── Option B: Existing .drawio file without sidecar
+│   └── Import to YAML spec first, then regenerate (recommended)
+├── Option C: Current live session
+│   └── Only when optional MCP is already active or the user explicitly wants it
+└── Option D: Raw XML provided inline
+    └── Treat as expert-mode patch input
 
-Step 2: Understand Current State
-├── Call MCP: get_diagram (if needed)
-├── Parse XML structure
-├── Detect current theme (if any)
-└── Identify cell IDs for modification
+Step 2: Choose Edit Mode
+├── Sidecar exists -> edit YAML spec, regenerate .drawio, keep sidecars in sync
+├── No sidecar -> import .drawio to YAML spec bundle, then edit spec and regenerate
+└── Live browser refinement requested -> use MCP after confirming it is available
 
-Step 3: Parse Edit Instructions
+Step 3: Understand Current State
+├── Offline sidecar path -> read .spec.yaml and .arch.json first
+├── Import path -> run CLI import, then read .spec.yaml and .arch.json
+├── Live path -> call MCP: get_diagram before edit_diagram
+└── Detect current theme/profile/layout before applying edits
+
+Step 4: Parse Edit Instructions
 ├── Add operations (new nodes/edges)
 ├── Modify operations (change labels/styles)
 ├── Delete operations (remove elements)
-├── Layout operations (rearrange)
+├── Layout operations (rearrange / regenerate)
 └── Theme operations (switch theme)
 
-Step 4: Draft Modification & Confirm (For restructure)
+Step 5: Draft Modification & Confirm (For restructure)
 ├── If the edit involves major structural reorganization:
 │   ├── Present the modified logical flow as an ASCII text-art graph
 │   └── ⚠️ PAUSE and wait for user's confirmation before applying
 └── For minor edits (labels/colors/themes), proceed directly
 
-Step 5: Apply Design System
-├── Preserve existing theme unless switching
-├── New nodes use semantic types
-├── New edges use typed connectors
-└── Maintain 8px grid alignment
-
 Step 6: Apply Changes
-├── Batch operations for efficiency
-├── Call MCP: edit_diagram with operations
-└── Browser updates in real-time
+├── Offline sidecar path -> update YAML, rerun CLI with --write-sidecars
+├── Import path -> write a fresh YAML spec bundle, then regenerate outputs
+├── Live path -> batch MCP operations for efficiency
+└── Keep .drawio, .spec.yaml, and .arch.json aligned after each accepted edit
 
 Step 7: Verify and Iterate
+├── Export preview if needed (desktop PNG/SVG or standalone SVG)
 ├── User reviews changes
 └── Additional modifications as needed
 ```
@@ -144,16 +147,16 @@ Apply tech-blue theme
 
 ## Edit Operation Types
 
-| Operation | MCP Action | Design System Note |
-|-----------|------------|-------------------|
-| Update label | `edit_diagram` operation: update | Preserves style |
-| Update style | `edit_diagram` operation: update | Use theme tokens |
-| Change type | `edit_diagram` operation: update | Updates shape |
-| Add node | `edit_diagram` operation: add | Apply semantic type |
-| Add edge | `edit_diagram` operation: add | Apply connector type |
-| Delete | `edit_diagram` operation: delete | N/A |
-| Move | `edit_diagram` operation: update | Snap to 8px grid |
-| Switch theme | Regenerate styles | Re-apply all tokens |
+| Operation | Preferred Path | Design System Note |
+|-----------|----------------|-------------------|
+| Update label | YAML sidecar (or import to sidecar) | Preserves style |
+| Update style | YAML sidecar (or import to sidecar) | Use theme tokens |
+| Change type | YAML sidecar (or import to sidecar) | Updates shape |
+| Add node | YAML sidecar | Apply semantic type |
+| Add edge | YAML sidecar | Apply connector type |
+| Delete | YAML sidecar (or import to sidecar) | N/A |
+| Move | YAML sidecar (or import to sidecar) | Snap to 8px grid |
+| Switch theme | Regenerate from YAML | Re-apply all tokens |
 
 ## Semantic Type Operations
 
@@ -188,7 +191,7 @@ For efficiency, batch multiple changes:
 5. Apply academic theme
 ```
 
-Claude will combine these into efficient `edit_diagram` calls.
+If a live MCP session is active, Claude will combine these into efficient `edit_diagram` calls. Otherwise, regenerate from the YAML sidecar (importing an existing .drawio to a sidecar first when needed).
 
 ## Finding Elements
 
@@ -314,9 +317,9 @@ Simplify to 3 modules:
 
 ## Related
 
-- [MCP Tools Reference](../references/docs/mcp-tools.md)
-- [Design System Overview](../references/docs/design-system/README.md)
-- [Themes Reference](../references/docs/design-system/themes.md)
-- [Semantic Shapes](../references/docs/design-system/shapes.md)
-- [Connectors](../references/docs/design-system/connectors.md)
-- [Specification Format](../references/docs/design-system/specification.md)
+- [MCP Tools Reference](../docs/mcp-tools.md)
+- [Design System Overview](../docs/design-system/README.md)
+- [Themes Reference](../docs/design-system/themes.md)
+- [Semantic Shapes](../docs/design-system/shapes.md)
+- [Connectors](../docs/design-system/connectors.md)
+- [Specification Format](../docs/design-system/specification.md)
