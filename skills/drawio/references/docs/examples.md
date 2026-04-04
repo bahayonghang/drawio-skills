@@ -11,9 +11,17 @@ For math equations in labels (LaTeX/AsciiMath), see:
 
 - `math-typesetting.md`
 
-For consistent visual styling, see:
+For consistent visual styling, prefer:
 
-- `style-presets.md`
+- `design-system/README.md`
+- `design-system/themes.md`
+- `design-system/shapes.md`
+- `design-system/connectors.md`
+
+For the complete upstream XML and style rules, see:
+
+- `../official/xml-reference.md`
+- `../official/style-reference.md`
 
 For converting structured A–H specs into starter draw.io XML, see:
 

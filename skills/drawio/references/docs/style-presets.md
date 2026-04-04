@@ -1,42 +1,29 @@
-# Style Presets (Draw.io Style Strings)
+# Style Presets
 
-> ⚠️ **DEPRECATED**: This file is deprecated. Please use the new **Design System** documentation instead:
->
-> - [Design System Overview](design-system/README.md)
-> - [Design Tokens](design-system/tokens.md)
-> - [Themes](design-system/themes.md)
-> - [Shapes](design-system/shapes.md)
-> - [Connectors](design-system/connectors.md)
->
-> The new design system provides unified theming, semantic shapes, and typed connectors.
+This file is a **local supplement**, not the full draw.io style dictionary.
 
----
+Use these presets when you need a small set of copy-paste style strings for quick patches or hand-authored XML. For the full upstream catalog of shape types, style properties, color semantics, and HTML label rules, read:
 
-*Legacy content preserved for reference:*
+- [Official Style Reference Mirror](../official/style-reference.md)
+- [Official XML Reference Mirror](../official/xml-reference.md)
 
-This reference provides copy-paste style string presets for consistent, professional-looking diagrams. Use these presets when generating draw.io XML or when updating cells via `edit_diagram`.
+For normal skill usage, prefer the design system over raw style strings:
 
-## General Rules
+- [Design System Overview](design-system/README.md)
+- [Themes](design-system/themes.md)
+- [Shapes](design-system/shapes.md)
+- [Connectors](design-system/connectors.md)
 
-- Keep a limited palette (3–4 colors).
+## Local Usage Rules
+
+- Keep a limited palette (3-4 colors) unless the source diagram explicitly needs more.
 - Use `html=1` for rich text and MathJax labels.
-- Prefer left-aligned text for long labels and formulas.
 - Prefer orthogonal connectors for technical architecture diagrams.
-
-## Color Palette (Default)
-
-- Primary fill: `#dae8fc` (light blue)
-- Primary stroke: `#6c8ebf` (blue)
-- Success fill: `#d5e8d4` (light green)
-- Success stroke: `#82b366` (green)
-- Warning fill: `#fff2cc` (light yellow)
-- Warning stroke: `#d6b656` (yellow)
-- Neutral container fill: `#f5f5f5` (light gray)
-- Neutral container stroke: `#999999` (gray)
+- When patching existing XML, only use these presets as short helpers; do not treat them as the authoritative style vocabulary.
 
 ## Presets: Nodes
 
-### Node: Primary (Service/Component)
+### Service / Component
 
 ```
 rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;
@@ -44,7 +31,7 @@ fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontColor=#000000;
 spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6
 ```
 
-### Node: Success (Data/Result)
+### Data / Result
 
 ```
 rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;
@@ -52,7 +39,7 @@ fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontColor=#000000;
 spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6
 ```
 
-### Node: Warning (Note/Constraint)
+### Note / Constraint
 
 ```
 rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;
@@ -60,7 +47,7 @@ fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontColor=#000000;
 spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6
 ```
 
-### Node: Formula (MathJax-Friendly)
+### Formula
 
 ```
 rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;
@@ -70,7 +57,7 @@ spacingLeft=12;spacingRight=12;spacingTop=8;spacingBottom=8
 
 ## Presets: Containers
 
-### Container: Zone / Boundary (VPC / Subnet / Module)
+### Zone / Boundary
 
 ```
 rounded=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;
@@ -78,7 +65,7 @@ fillColor=#f5f5f5;strokeColor=#999999;fontSize=12;fontColor=#333333;
 spacingLeft=12;spacingRight=12;spacingTop=10;spacingBottom=10
 ```
 
-### Container: Dashed Boundary (Optional)
+### Dashed Boundary
 
 ```
 rounded=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;
@@ -86,32 +73,25 @@ fillColor=#f5f5f5;strokeColor=#999999;dashed=1;dashPattern=4 4;
 fontSize=12;fontColor=#333333;spacingLeft=12;spacingRight=12;spacingTop=10;spacingBottom=10
 ```
 
-## Presets: Edges (Connectors)
+## Presets: Edges
 
-### Edge: Main Flow (Orthogonal, Arrow)
+### Main Flow
 
 ```
 edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;
 endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=2;html=1
 ```
 
-### Edge: Data Flow (Dashed)
+### Data Flow
 
 ```
 edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;
 endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=2;dashed=1;dashPattern=6 4;html=1
 ```
 
-### Edge: Dependency (Thin)
+### Dependency
 
 ```
 edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;
 endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=1;html=1
 ```
-
-## Tips for Layout Quality
-
-- Keep node widths consistent within the same layer.
-- Keep 40–80px spacing between nodes.
-- Avoid edge crossings; prefer routing around containers.
-- When exporting, enable crop to remove whitespace.

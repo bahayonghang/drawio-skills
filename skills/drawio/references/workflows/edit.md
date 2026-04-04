@@ -1,11 +1,20 @@
 # Workflow: /drawio edit
 
-Edit existing diagrams with natural language modifications while preserving Design System consistency.
+Edit existing diagrams with natural-language modifications while preserving design-system consistency and explicit live-backend fallback rules.
 
 ## Trigger
 
 - **Command**: `/drawio edit ...`
-- **Keywords**: "edit", "modify", "update", "change", "编辑", "修改"
+- **Keywords**: `edit`, `modify`, `update`, `change`, `编辑`, `修改`
+
+## Live Capability Gate
+
+Incremental live edit is allowed only when the active provider supports **both**:
+
+- `read_diagram_xml`
+- `patch_diagram_cells`
+
+If either capability is missing, do **not** attempt to edit the browser state directly. Import the `.drawio` file into a YAML bundle first, then regenerate offline.
 
 ## Procedure
 
@@ -14,22 +23,23 @@ Step 1: Identify Target
 ├── Option A: Existing offline bundle (.drawio + .spec.yaml)
 │   └── Preferred path when the skill created the original diagram
 ├── Option B: Existing .drawio file without sidecar
-│   └── Import to YAML spec first, then regenerate (recommended)
+│   └── Import to YAML spec first, then regenerate
 ├── Option C: Current live session
-│   └── Only when optional MCP is already active or the user explicitly wants it
+│   └── Only when the active provider has `read_diagram_xml + patch_diagram_cells`
 └── Option D: Raw XML provided inline
-    └── Treat as expert-mode patch input
+    └── Treat as expert-mode patch input, usually normalize to offline bundle after the first edit
 
 Step 2: Choose Edit Mode
 ├── Sidecar exists -> edit YAML spec, regenerate .drawio, keep sidecars in sync
 ├── No sidecar -> import .drawio to YAML spec bundle, then edit spec and regenerate
-└── Live browser refinement requested -> use MCP after confirming it is available
+├── Live session + required capabilities -> read current XML, patch incrementally, export if needed
+└── Live provider lacks required capabilities -> treat it as preview only and return to offline import/regenerate
 
 Step 3: Understand Current State
 ├── Offline sidecar path -> read .spec.yaml and .arch.json first
 ├── Import path -> run CLI import, then read .spec.yaml and .arch.json
-├── Live path -> call MCP: get_diagram before edit_diagram
-└── Detect current theme/profile/layout before applying edits
+├── Live path -> read current browser XML before planning edits
+└── Detect current theme/profile/layout before applying changes
 
 Step 4: Parse Edit Instructions
 ├── Add operations (new nodes/edges)
@@ -41,13 +51,13 @@ Step 4: Parse Edit Instructions
 Step 5: Draft Modification & Confirm (For restructure)
 ├── If the edit involves major structural reorganization:
 │   ├── Present the modified logical flow as an ASCII text-art graph
-│   └── ⚠️ PAUSE and wait for user's confirmation before applying
+│   └── Pause for user's confirmation before applying
 └── For minor edits (labels/colors/themes), proceed directly
 
 Step 6: Apply Changes
 ├── Offline sidecar path -> update YAML, rerun CLI with --write-sidecars
 ├── Import path -> write a fresh YAML spec bundle, then regenerate outputs
-├── Live path -> batch MCP operations for efficiency
+├── Live path -> batch cell patches only after reading the latest XML
 └── Keep .drawio, .spec.yaml, and .arch.json aligned after each accepted edit
 
 Step 7: Verify and Iterate
@@ -56,185 +66,65 @@ Step 7: Verify and Iterate
 └── Additional modifications as needed
 ```
 
-## Design System Preservation
+## Design-System Preservation
 
 ### Theme Consistency
 
-When editing, the design system is preserved:
+When editing, preserve the current theme unless the user asks to switch it:
 
 | Edit Type | Theme Behavior |
 |-----------|----------------|
 | Add node | Uses current theme's node style |
 | Add edge | Uses current theme's connector style |
-| Modify style | Suggests theme-compatible colors |
-| Switch theme | Re-applies all styles from new theme |
-
-### Theme Switching
-
-To change the entire diagram's theme:
-
-```
-/drawio edit
-Switch to academic theme for paper submission
-```
-
-```
-/drawio edit with dark theme
-Convert to presentation mode
-```
+| Modify style | Suggest theme-compatible colors |
+| Switch theme | Re-applies all styles from the new theme |
 
 ### Semantic Type Changes
 
 Change a node's semantic type to update its shape:
 
-```
+```text
 /drawio edit
 Change "User Service" from service to database type
 ```
 
-## Input Types
+### Batch Operations
 
-### Modify Labels
+For efficiency, batch multiple changes in one planning pass. If the active live provider has the required capabilities, those changes may be turned into one patch batch. Otherwise regenerate from the YAML bundle once.
 
-```
-/drawio edit
-Change "User Service" to "Auth Service"
-Update the database label to include "PostgreSQL"
-```
+## Preferred Operation Mapping
 
-### Modify Styles (Theme-Aware)
-
-```
-/drawio edit
-Make the API Gateway node use the accent color
-Change all service nodes to database type
-Use data flow style for async connections
-```
-
-### Add Elements (With Semantic Types)
-
-```
-/drawio edit
-Add a new "Cache" node (type: service) between API and Database
-Add a data flow arrow from Order Service to Notification Service
-```
-
-### Delete Elements
-
-```
-/drawio edit
-Remove the legacy system node
-Delete the connection between A and B
-```
-
-### Layout Changes (8px Grid)
-
-```
-/drawio edit
-Move the database to the bottom (grid-aligned)
-Align all services horizontally with 32px spacing
-Increase spacing between modules
-```
-
-### Theme Switch
-
-```
-/drawio edit
-Switch to dark theme for presentation
-Convert to academic theme for paper
-Apply tech-blue theme
-```
-
-## Edit Operation Types
-
-| Operation | Preferred Path | Design System Note |
-|-----------|----------------|-------------------|
+| Operation | Preferred Path | Notes |
+|-----------|----------------|-------|
 | Update label | YAML sidecar (or import to sidecar) | Preserves style |
 | Update style | YAML sidecar (or import to sidecar) | Use theme tokens |
 | Change type | YAML sidecar (or import to sidecar) | Updates shape |
 | Add node | YAML sidecar | Apply semantic type |
 | Add edge | YAML sidecar | Apply connector type |
-| Delete | YAML sidecar (or import to sidecar) | N/A |
+| Delete | YAML sidecar (or import to sidecar) | Keeps bundle coherent |
 | Move | YAML sidecar (or import to sidecar) | Snap to 8px grid |
 | Switch theme | Regenerate from YAML | Re-apply all tokens |
-
-## Semantic Type Operations
-
-### Change Node Type
-
-```
-/drawio edit
-Change "API" node from service to user type
-→ Shape changes from rounded rect to circle
-→ Colors updated to match type
-```
-
-### Change Connector Type
-
-```
-/drawio edit
-Change the connection from API to DB to data flow
-→ Line becomes dashed
-→ Arrow style updates
-```
-
-## Batch Operations
-
-For efficiency, batch multiple changes:
-
-```
-/drawio edit
-1. Change "Service A" to "User Service"
-2. Change its type to database
-3. Add a new "Cache" node (service type)
-4. Connect Cache to Database with data flow
-5. Apply academic theme
-```
-
-If a live MCP session is active, Claude will combine these into efficient `edit_diagram` calls. Otherwise, regenerate from the YAML sidecar (importing an existing .drawio to a sidecar first when needed).
-
-## Finding Elements
-
-Reference elements by:
-
-- **Label**: "the node labeled 'API Gateway'"
-- **Position**: "the leftmost node"
-- **Type**: "all database nodes"
-- **Module**: "nodes in the Data module"
-
-## Structural Reorganization
-
-For major changes, use specification format:
-
-```
-/drawio edit with restructure
-Reorganize into 3 modules with academic theme:
-
-meta:
-  theme: academic
-  layout: vertical
-
-modules:
-  - id: input
-    label: Input Layer
-  - id: process
-    label: Processing
-  - id: output
-    label: Output Layer
-```
+| Live incremental patch | Live provider with required capabilities | Requires current XML read-back first |
 
 ## Examples
 
 ### Quick Label Update
 
-```
+```text
 /drawio edit
 Rename "User Auth" to "Authentication Service"
 ```
 
+### Import Then Edit
+
+```text
+/drawio edit
+Import this existing .drawio file, rename API to Auth, then regenerate the SVG
+```
+
 ### Theme-Aware Style Update
 
-```
+```text
 /drawio edit
 Apply these changes:
 - All service nodes: use primary color
@@ -242,84 +132,36 @@ Apply these changes:
 - All data flows: use dashed connector style
 ```
 
-### Add Component with Design System
+### Complex Restructure
 
+```text
+/drawio edit with restructure
+Reorganize into 3 modules with academic theme and horizontal layout
 ```
-/drawio edit
-Add a "Redis Cache" node:
-- Type: service
-- Position: between API Gateway and User Service
-- Connect with data flow to both
-```
-
-### Theme Switch for Presentation
-
-```
-/drawio edit with dark theme
-Convert this architecture diagram to dark mode for my presentation
-```
-
-### Academic Conversion
-
-```
-/drawio edit with academic theme
-Convert to IEEE style:
-- Grayscale colors
-- Serif fonts
-- High contrast for print
-```
-
-### Complex Restructure with New Theme
-
-```
-/drawio edit with restructure and nature theme
-
-Simplify to 3 modules:
-- Merge "Data Collection" and "Data Processing" into "Data Pipeline"
-- Keep semantic types for all nodes
-- Use horizontal layout
-```
-
-## Best Practices
-
-1. **Preserve theme** - Don't mix styles from different themes
-2. **Use semantic types** - Let design system choose shapes
-3. **Reference clearly** - Use exact labels or positions
-4. **Batch related changes** - More efficient than multiple calls
-5. **Use grid alignment** - Maintain professional 8px grid layout
-6. **Switch theme intentionally** - Theme switch re-styles everything
 
 ## Troubleshooting
 
-### "Cell not found"
+### No live incremental edit capability
 
-- Label may have changed
-- Call `get_diagram` to see current state
-- Use exact label text
+- Import the current `.drawio` into `.spec.yaml` + `.arch.json`
+- Apply the change offline
+- Regenerate outputs instead of trying to patch the browser state
+
+### Existing `.drawio` has no sidecar
+
+- Run CLI import first
+- Treat the imported YAML bundle as the new canonical source
 
 ### Style looks wrong after edit
 
 - Verify theme is consistent
-- Check if type was changed accidentally
-- Re-apply theme if mixed styles
-
-### New elements don't match existing
-
-- Specify semantic type for new nodes
-- Specify connector type for new edges
-- Consider theme switch if inconsistent
-
-### Grid alignment off
-
-- Use layout operations to re-align
-- Snap positions to 8px grid
-- Increase spacing if crowded
+- Check whether the node type changed accidentally
+- Re-apply the theme if mixed styles appeared after a manual patch
 
 ## Related
 
-- [MCP Tools Reference](../docs/mcp-tools.md)
+- [Live Backend Reference](../docs/mcp-tools.md)
+- [Migration Readiness](../docs/migration-readiness.md)
 - [Design System Overview](../docs/design-system/README.md)
 - [Themes Reference](../docs/design-system/themes.md)
-- [Semantic Shapes](../docs/design-system/shapes.md)
-- [Connectors](../docs/design-system/connectors.md)
 - [Specification Format](../docs/design-system/specification.md)

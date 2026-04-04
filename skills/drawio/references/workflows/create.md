@@ -25,6 +25,7 @@ Determine the route before asking questions:
    - Load `references/docs/design-system/formulas.md` for formula-node placement and sizing.
 5. **Stencil Branch**
    - Enable when the prompt mentions AWS, Azure, GCP, Cisco, Kubernetes, or vendor icons.
+   - Use `references/docs/stencil-library-guide.md` to decide whether `search_shape_catalog` would help or whether semantic/icon fallbacks are sufficient.
 
 ## Procedure
 
@@ -56,7 +57,9 @@ Step 4: Design Consultation (Full Path only)
 Step 5: Academic / Math / Stencil references
 ├── math/formula request -> load math typesetting + formula integration guide
 ├── academic-paper -> load IEEE + export checklist + math typesetting
-└── stencil-heavy -> load stencil guide + icon reference
+└── stencil-heavy -> decide whether shape search is needed
+    ├── if `search_shape_catalog` exists, use it for exact vendor/device lookup
+    └── otherwise use design-system icons or semantic fallbacks
 
 Step 6: Build the YAML spec
 ├── Normalize Mermaid/CSV inputs to YAML spec
@@ -97,10 +100,11 @@ Step 10: Render
 │   For publication-grade vector output, add --use-desktop or export to .drawio and refine in draw.io.
 └── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
 
-Step 11: Preview
+Step 11: Preview / Optional Live Handoff
 ├── draw.io Desktop available -> open .drawio locally or export preview PNG/SVG
-├── Optional live MCP available + user wants real-time refinement -> start_session / create_new_diagram
-└── Otherwise present .drawio + standalone SVG and continue offline
+├── live backend has `replace_diagram_xml` + user wants browser or inline refinement
+│   └── use the provider-specific tool mapping from `references/docs/mcp-tools.md`
+└── otherwise present .drawio + standalone SVG and continue offline
 ```
 
 ## Academic Branch Rules
@@ -125,46 +129,10 @@ When the request includes formulas, equations, or math-heavy labels:
 - Tell the user to enable `Extras > Mathematical Typesetting` when raw formulas may be edited in draw.io.
 - For PDF exports where selectable math matters, recommend `math-output=html`.
 
-## Fast Path Examples
-
-### Small explicit flowchart
-
-```text
-/drawio create a horizontal tech-blue login flow with 5 nodes
-```
-
-### Explicit academic pipeline
-
-```text
-/drawio create an academic-color research workflow figure with 8 nodes for a paper
-```
-
-### Diagram with inline and block formulas
-
-```text
-/drawio create a model pipeline with labels "Input: \(x \in \mathbb{R}^d\)" and a dedicated loss node "$$\mathcal{L} = -\sum_i y_i \log(\hat{y}_i)$$"
-```
-
-## Full Path Examples
-
-### Dense architecture diagram
-
-```text
-/drawio create a microservices architecture with shared infrastructure, event bus,
-two data stores, and cross-service async flows
-```
-
-### IEEE figure
-
-```text
-/drawio create an IEEE-style campus network figure for a paper with core,
-distribution, and access layers in grayscale
-```
-
 ## Notes
 
 - YAML remains the canonical intermediate representation.
 - `.drawio`, `.spec.yaml`, and `.arch.json` together form the editable offline bundle.
 - Mermaid and CSV inputs are convenience adapters, not separate rendering pipelines.
 - For formula-bearing labels, use only the three supported syntaxes: `$$...$$`, `\(...\)`, and `` `...` ``.
-- If validation warnings affect correctness or publication quality, switch to `--strict`.
+- Stencil-heavy requests may use shape search when available, but the create flow must still succeed without it.
