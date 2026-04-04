@@ -64,7 +64,21 @@
         "Contains gateway, compute, queue, and storage nodes",
         "Nodes use appropriate semantic types (service, queue, database)",
         "Edge routing follows orthogonal style",
-        "Edge quality: no overlapping arrows, minimum 30px last segment"
+        "Edge quality: no overlapping arrows, minimum 30px last segment",
+        "The diagram can be produced from the offline bundle workflow without requiring a live session"
+      ]
+    },
+    {
+      "id": "aws-icons-shape-search-optional",
+      "prompt": "Create an AWS reference architecture with API Gateway, Lambda, SQS, and DynamoDB. Use exact provider icons if a shape catalog is available; otherwise fall back to documented icons or semantic shapes without failing.",
+      "expected_output": "A valid architecture diagram that prefers AWS icons when possible but still succeeds without a live shape-search provider.",
+      "files": [],
+      "assertions": [
+        "Contains API Gateway, Lambda, SQS, and DynamoDB components",
+        "The workflow does not require `search_shape_catalog` to succeed",
+        "If exact icons are unavailable, semantic/icon fallback still produces a valid offline bundle",
+        "The response does not claim a single live MCP implementation is required",
+        "The resulting artifact remains editable through `.drawio` plus sidecars"
       ]
     },
     {
@@ -117,7 +131,8 @@
         "Event flows use data or optional connector types",
         "Edge quality: no corner connection points, no shared face slots",
         "Edge quality: last segment >= 30px, labels offset from edges",
-        "meta.profile is set to engineering-review"
+        "meta.profile is set to engineering-review",
+        "The diagram completes without depending on live incremental edit capabilities"
       ]
     },
     {
@@ -217,7 +232,23 @@
       "assertions": [
         "The resulting spec and export rename API -> Auth",
         "Output SVG is generated and is readable",
-        "Validation passes with --validate and paper-grade strict warnings when requested"
+        "Validation passes with --validate and paper-grade strict warnings when requested",
+        "The workflow remains valid without assuming a live session"
+      ]
+    },
+    {
+      "id": "offline-edit-fallback-no-live-session",
+      "prompt": "Edit the uploaded .drawio file offline: import it into YAML sidecars, rename API to Auth Service, and regenerate the bundle and SVG without assuming any live browser session.",
+      "expected_output": "An offline-imported spec bundle and regenerated export that prove the edit path does not depend on live incremental editing.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple.drawio"
+      ],
+      "assertions": [
+        "The `.drawio` input is imported into `.spec.yaml` and `.arch.json` before regeneration",
+        "The edited bundle renames API -> Auth Service",
+        "A regenerated SVG or drawio artifact is produced from the offline bundle",
+        "The task does not require `read_diagram_xml` or `patch_diagram_cells` to succeed",
+        "The offline sidecar bundle remains the canonical editable source"
       ]
     },
     {
