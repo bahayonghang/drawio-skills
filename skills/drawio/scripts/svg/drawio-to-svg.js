@@ -39,6 +39,10 @@ function classifyShape(style) {
   if (shape === 'parallelogram') return 'parallelogram'
   if (shape === 'document') return 'document'
   if (shape === 'cloud') return 'cloud'
+  if (shape === 'switch') return 'switch'
+  if (shape === 'hexagon') return 'hexagon'
+  if (shape === 'mxgraph.cisco.firewalls.firewall') return 'firewall'
+  if (shape === 'mxgraph.cisco.wireless.access_point') return 'wirelessAp'
   if (style.has('rhombus')) return 'rhombus'
   if (style.has('ellipse')) return 'ellipse'
   const rounded = style.get('rounded')
@@ -185,6 +189,39 @@ function renderVertex(cell, style) {
       break
     }
 
+    case 'hexagon': {
+      const inset = Math.min(width * 0.22, 24)
+      const points = [
+        `${x + inset},${y}`,
+        `${x + width - inset},${y}`,
+        `${x + width},${y + height / 2}`,
+        `${x + width - inset},${y + height}`,
+        `${x + inset},${y + height}`,
+        `${x},${y + height / 2}`
+      ].join(' ')
+      parts.push(`<polygon points="${points}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'switch': {
+      const inset = Math.min(width * 0.18, 18)
+      const d = [
+        `M ${x + inset} ${y}`,
+        `L ${x + width - inset} ${y}`,
+        `L ${x + width} ${y + height / 2}`,
+        `L ${x + width - inset} ${y + height}`,
+        `L ${x + inset} ${y + height}`,
+        `L ${x} ${y + height / 2}`,
+        'Z'
+      ].join(' ')
+      const portY1 = y + height * 0.35
+      const portY2 = y + height * 0.65
+      parts.push(`<path d="${d}" ${baseAttrs}/>`)
+      parts.push(`<line x1="${x + inset}" y1="${portY1}" x2="${x + width - inset}" y2="${portY1}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(`<line x1="${x + inset}" y1="${portY2}" x2="${x + width - inset}" y2="${portY2}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      break
+    }
+
     case 'document': {
       const waveH = height * 0.1
       const d = [
@@ -218,6 +255,50 @@ function renderVertex(cell, style) {
         'Z'
       ].join(' ')
       parts.push(`<path d="${d}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'firewall': {
+      const archHeight = height * 0.18
+      const bodyTop = y + archHeight
+      const brickWidth = width / 4
+      const brickHeight = (height - archHeight) / 3
+      const outer = [
+        `M ${x} ${bodyTop}`,
+        `Q ${x + width / 2} ${y - archHeight * 0.2} ${x + width} ${bodyTop}`,
+        `L ${x + width} ${y + height}`,
+        `L ${x} ${y + height}`,
+        'Z'
+      ].join(' ')
+      const mortar = [
+        `M ${x + brickWidth} ${bodyTop} L ${x + brickWidth} ${y + height}`,
+        `M ${x + brickWidth * 2} ${bodyTop} L ${x + brickWidth * 2} ${y + height}`,
+        `M ${x + brickWidth * 3} ${bodyTop} L ${x + brickWidth * 3} ${y + height}`,
+        `M ${x} ${bodyTop + brickHeight} L ${x + width} ${bodyTop + brickHeight}`,
+        `M ${x} ${bodyTop + brickHeight * 2} L ${x + width} ${bodyTop + brickHeight * 2}`
+      ].join(' ')
+      parts.push(`<path d="${outer}" ${baseAttrs}/>`)
+      parts.push(`<path d="${mortar}" fill="none" stroke="${strokeColor}" stroke-width="${Math.max(strokeWidth * 0.8, 1)}"/>`)
+      break
+    }
+
+    case 'wirelessAp': {
+      const cx = x + width / 2
+      const cy = y + height / 2
+      const baseRy = height * 0.12
+      const baseY = y + height * 0.78
+      const arc1 = [
+        `M ${cx - width * 0.16} ${cy + height * 0.02}`,
+        `Q ${cx} ${cy - height * 0.18} ${cx + width * 0.16} ${cy + height * 0.02}`
+      ].join(' ')
+      const arc2 = [
+        `M ${cx - width * 0.28} ${cy + height * 0.1}`,
+        `Q ${cx} ${cy - height * 0.32} ${cx + width * 0.28} ${cy + height * 0.1}`
+      ].join(' ')
+      parts.push(`<ellipse cx="${cx}" cy="${baseY}" rx="${width * 0.16}" ry="${baseRy}" ${baseAttrs}/>`)
+      parts.push(`<line x1="${cx}" y1="${baseY - baseRy}" x2="${cx}" y2="${cy + height * 0.12}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(`<path d="${arc1}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(`<path d="${arc2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
       break
     }
 

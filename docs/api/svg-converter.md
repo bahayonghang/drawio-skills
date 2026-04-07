@@ -31,9 +31,12 @@ Convert draw.io XML into standalone SVG.
 ## Features
 
 - semantic shape rendering for the built-in node families
+- standalone rendering for the built-in network semantic shapes (`switch`, `hexagon`, Cisco firewall, Cisco AP)
 - marker support for common arrow types
 - text styling from draw.io style strings
 - embedded `data-drawio` payload for round-trip recovery
+
+Vendor-specific stencil libraries outside that supported set may still fall back to simplified geometry in standalone SVG. Use draw.io Desktop export when full stencil fidelity matters.
 
 ## Typical Use
 

@@ -69,6 +69,7 @@ That path is optional. The default export model remains local CLI generation.
 
 - use `--strict-warnings` for paper-quality review
 - keep SVG for vector workflows
+- standalone SVG covers the built-in node families and the supported network semantic shapes; Desktop export is still the full-fidelity path for other draw.io stencil libraries
 - keep the sidecars if the diagram will be edited later
 
 ## Next Steps

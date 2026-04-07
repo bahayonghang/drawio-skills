@@ -90,6 +90,50 @@ const NODE_WITH_COLOR = `
   </root>
 </mxGraphModel>`
 
+const SWITCH_NODE = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Core Switch" style="shape=switch;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="120" height="60" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const LOAD_BALANCER_NODE = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Reverse Proxy" style="shape=hexagon;perimeter=hexagonPerimeter2;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="140" height="80" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const FIREWALL_NODE = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Firewall" style="shape=mxgraph.cisco.firewalls.firewall;fillColor=#FDE68A;strokeColor=#B45309;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="120" height="80" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
+const AP_NODE = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="Wireless AP" style="shape=mxgraph.cisco.wireless.access_point;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
+      <mxGeometry x="100" y="100" width="100" height="100" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+
 const EDGE_WITH_START_ARROW = `
 <mxGraphModel>
   <root>
@@ -351,6 +395,28 @@ describe('drawioToSvg', () => {
   it('should render cylinder shape with <ellipse> elements', () => {
     const svg = drawioToSvg(DATABASE_NODE)
     assert.ok(svg.includes('<ellipse'), 'Cylinder shape should contain <ellipse> for top/bottom caps')
+  })
+
+  it('should render switch shapes without falling back to plain rectangles', () => {
+    const svg = drawioToSvg(SWITCH_NODE)
+    assert.ok(svg.includes('<path'), 'Switch shape should render as a path-based stencil')
+  })
+
+  it('should render load balancer hexagons as polygons', () => {
+    const svg = drawioToSvg(LOAD_BALANCER_NODE)
+    assert.ok(svg.includes('<polygon'), 'Hexagon shape should render as <polygon>')
+  })
+
+  it('should render firewall stencils as composed SVG shapes', () => {
+    const svg = drawioToSvg(FIREWALL_NODE)
+    const pathCount = (svg.match(/<path\b/g) || []).length
+    assert.ok(pathCount >= 2, 'Firewall shape should render multiple path elements')
+  })
+
+  it('should render wireless access points with antenna arcs', () => {
+    const svg = drawioToSvg(AP_NODE)
+    assert.ok(svg.includes('<ellipse'), 'AP shape should include a base ellipse')
+    assert.ok(svg.includes('<path'), 'AP shape should include antenna arcs')
   })
 
   it('should render edge as <line> element', () => {
