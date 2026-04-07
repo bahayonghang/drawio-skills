@@ -42,6 +42,14 @@ features:
     title: Stencil and Cloud Support
     details: "Use semantic shapes first, then opt into AWS, GCP, Azure, Kubernetes, or network stencils when provider-specific visuals matter."
 
+  - icon: ☁️
+    title: Network Topology Workflows
+    details: "Model campus LANs, AWS VPCs, and DMZ layouts with semantic network node types, `hierarchical` / `star` / `mesh` layouts, and automatic interface/IP/VLAN link labels."
+
+  - icon: 🧩
+    title: Vendor-Aware Icon Mapping
+    details: "Use explicit AWS/Cisco icon prefixes, supported aliases such as `aws.alb` and `cisco.ap`, or let `network.vendor` + `network.device` derive documented stencils automatically."
+
   - icon: 🔁
     title: Replication with Palette Control
     details: "`/drawio replicate` preserves source colors by default and records extracted palette intent in `meta.replication` for future edits."
@@ -75,6 +83,12 @@ Create a first diagram:
 
 ```text
 /drawio create a horizontal tech-blue login flow with 6 nodes
+```
+
+Create a network topology bundle:
+
+```text
+/drawio create a tech-blue AWS VPC topology with an internet gateway, an application load balancer, two app servers, and a private RDS subnet. Label the private links.
 ```
 
 Validate and export from the repo:

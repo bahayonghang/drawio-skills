@@ -54,6 +54,9 @@
 - `microservices.yaml`
 - `research-pipeline.yaml`
 - `ieee-network-paper.yaml`
+- `campus-lan-topology.yaml`
+- `aws-vpc-topology.yaml`
+- `onprem-dmz-topology.yaml`
 - `replicated-brand-flow.yaml`
 
 直接渲染其中一个：

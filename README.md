@@ -19,6 +19,8 @@ Draw.io Skill is a YAML-first, offline-first draw.io skill for engineering diagr
 - **6 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast`.
 - **Academic and math guardrails**: IEEE-style output, MathJax-safe delimiters, caption and legend checks.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows.
+- **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`), Phase B `star/mesh` layout improvements, and automatic link labels from interface/IP/VLAN/bandwidth metadata.
+- **Vendor-aware icon mapping**: explicit AWS/Cisco icon prefixes, alias resolution (for example `aws.alb`, `aws.ec2`, `cisco.ap`), and vendor/device auto-mapping via `network.vendor` + `network.device`.
 - **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec`.
 - **Validation before export**: structure, layout, and quality checks, plus strict mode for paper-grade output.
 
@@ -119,6 +121,12 @@ Create a new diagram:
 /drawio create a horizontal tech-blue login flow with 6 nodes
 ```
 
+Create a network topology with structured metadata:
+
+```text
+/drawio create a tech-blue network topology with a firewall, core switch, two app servers, and a private database subnet. Label interfaces and VLANs on the links.
+```
+
 Replicate an uploaded image:
 
 ```text
@@ -162,6 +170,28 @@ When the diagram will continue evolving, keep these files together:
 - `<name>.arch.json`
 
 This is the preferred edit surface for the offline workflow.
+
+## Network Topology Authoring
+
+The current network-topology workflow supports:
+
+- semantic node types such as `router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, and `ap`
+- link metadata fields such as `srcInterface`, `dstInterface`, `ip`, `vlan`, `bandwidth`, and `linkType`
+- layout intents `hierarchical`, `star`, and `mesh`
+- provider-aware icon mapping through explicit `icon` fields or `network.vendor` + `network.device`
+
+Representative specs now ship in `skills/drawio/references/examples/`:
+
+- `campus-lan-topology.yaml`
+- `aws-vpc-topology.yaml`
+- `onprem-dmz-topology.yaml`
+- `vendor-device-mapping.yaml`
+
+Render one directly:
+
+```bash
+node skills/drawio/scripts/cli.js skills/drawio/references/examples/vendor-device-mapping.yaml output.drawio --validate --write-sidecars
+```
 
 ## Documentation
 
