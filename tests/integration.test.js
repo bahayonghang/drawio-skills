@@ -66,6 +66,36 @@ test('CLI: e-commerce.yaml produces valid XML', () => {
   assert.ok(output.includes('</mxGraphModel>'), 'Output should close mxGraphModel')
 })
 
+test('CLI: campus-lan-topology.yaml produces network topology XML', () => {
+  const output = runCli([resolve(EXAMPLES_DIR, 'campus-lan-topology.yaml'), '--validate'])
+  assert.ok(output.includes('Edge Firewall'), 'Output should contain firewall node')
+  assert.ok(output.includes('shape=switch'), 'Output should render switch shape')
+  assert.ok(output.includes('VLAN 10'), 'Output should derive VLAN label from edge metadata')
+})
+
+test('CLI: aws-vpc-topology.yaml produces provider icon XML', () => {
+  const output = runCli([resolve(EXAMPLES_DIR, 'aws-vpc-topology.yaml'), '--validate'])
+  assert.ok(output.includes('mxgraph.aws4.application_load_balancer'), 'Output should contain AWS ALB icon')
+  assert.ok(output.includes('AWS VPC'), 'Output should include the AWS VPC module container label')
+  assert.ok(output.includes('listener-443 ↔ eth0'), 'Output should derive interface label from edge metadata')
+})
+
+test('CLI: onprem-dmz-topology.yaml produces DMZ topology XML', () => {
+  const output = runCli([resolve(EXAMPLES_DIR, 'onprem-dmz-topology.yaml'), '--validate'])
+  assert.ok(output.includes('mxgraph.cisco.firewalls.firewall'), 'Output should contain firewall stencil')
+  assert.ok(output.includes('DMZ'), 'Output should include the DMZ module container label')
+  assert.ok(output.includes('Internal Network'), 'Output should include the Internal Network module label')
+  assert.ok(output.includes('east-west'), 'Output should derive linkType label from edge metadata')
+})
+
+test('CLI: vendor-device-mapping.yaml derives icons from network metadata', () => {
+  const output = runCli([resolve(EXAMPLES_DIR, 'vendor-device-mapping.yaml'), '--validate'])
+  assert.ok(output.includes('mxgraph.aws4.internet_gateway'), 'Output should derive AWS internet gateway icon')
+  assert.ok(output.includes('mxgraph.aws4.application_load_balancer'), 'Output should derive AWS load balancer icon')
+  assert.ok(output.includes('mxgraph.cisco.firewalls.firewall'), 'Output should derive Cisco firewall stencil')
+  assert.ok(output.includes('mxgraph.cisco.wireless.access_point'), 'Output should derive Cisco AP stencil')
+})
+
 // ============================================================================
 // Stdin Support
 // ============================================================================
@@ -137,7 +167,15 @@ test('CLI: --validate passes on valid input', () => {
 
 test('CLI: --validate with example files', () => {
   // All examples should pass validation
-  const examples = ['microservices.yaml', 'login-flow.yaml', 'neural-network.yaml', 'e-commerce.yaml']
+  const examples = [
+    'microservices.yaml',
+    'login-flow.yaml',
+    'neural-network.yaml',
+    'e-commerce.yaml',
+    'campus-lan-topology.yaml',
+    'aws-vpc-topology.yaml',
+    'onprem-dmz-topology.yaml'
+  ]
   for (const name of examples) {
     const output = runCli([resolve(EXAMPLES_DIR, name), '--validate'])
     assert.ok(output.includes('<mxGraphModel'), `${name} should produce valid XML with --validate`)

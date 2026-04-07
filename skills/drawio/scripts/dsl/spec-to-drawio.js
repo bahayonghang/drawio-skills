@@ -140,6 +140,16 @@ export function loadTheme(themeName) {
 // ============================================================================
 
 const SHAPE_KEYWORDS = {
+  // Network topology
+  router: ['router', 'core router', 'edge router', 'gateway router'],
+  switch: ['core switch', 'distribution switch', 'access switch'],
+  firewall: ['firewall', 'fw', 'security gateway', 'ngfw'],
+  server: ['server', 'app server', 'web server', 'host', 'vm server'],
+  load_balancer: ['load balancer', 'lb', 'alb', 'nlb', 'reverse proxy'],
+  subnet: ['subnet', 'cidr', 'segment', 'lan segment', 'network segment'],
+  internet: ['internet', 'wan', 'isp', 'public network'],
+  ap: ['wireless ap', 'access point', 'wifi ap', 'wap'],
+
   // Traditional types (check first for backward compatibility)
   database: ['database', 'db', 'sql', 'storage', 'redis', 'mongo', 'postgresql', 'mysql', 'cache'],
   decision: ['decision', 'condition', 'branch', 'switch', 'route'],
@@ -201,6 +211,14 @@ const SHAPE_STYLES = {
   formula: 'rounded=1',
   cloud: 'ellipse;shape=cloud',
   process: 'rounded=1;arcSize=20',
+  router: 'ellipse',
+  switch: 'shape=switch',
+  firewall: 'shape=mxgraph.cisco.firewalls.firewall;sketch=0',
+  server: 'rounded=1;arcSize=12',
+  load_balancer: 'shape=hexagon;perimeter=hexagonPerimeter2',
+  subnet: 'swimlane;startSize=24',
+  internet: 'ellipse;shape=cloud',
+  ap: 'shape=mxgraph.cisco.wireless.access_point;sketch=0',
 
   // Deep learning shapes
   input: 'rounded=1;arcSize=15',
@@ -223,9 +241,13 @@ const SHAPE_STYLES = {
 /**
  * Detect semantic type from label if not explicitly specified
  */
-export function detectSemanticType(label, explicitType) {
+export function detectSemanticType(label, explicitType, network = null) {
   if (explicitType && SHAPE_STYLES[explicitType]) {
     return explicitType
+  }
+
+  if (network?.device && SHAPE_STYLES[network.device]) {
+    return network.device
   }
 
   const lowerLabel = label.toLowerCase()
@@ -278,6 +300,14 @@ const TYPE_DEFAULT_SIZES = {
   decision: 'medium',
   terminal: 'small',
   user: 'small',
+  router: 'small',
+  switch: 'small',
+  firewall: 'small',
+  server: 'medium',
+  load_balancer: 'medium',
+  subnet: 'large',
+  internet: 'small',
+  ap: 'small',
   tensor3d: 'tensor_md'
 }
 
@@ -317,19 +347,39 @@ export function snapToGrid(value, gridSize = 8) {
  */
 export function calculateLayout(spec, theme) {
   const layout = spec.meta?.layout || 'horizontal'
+  const normalizedLayout = layout === 'star' || layout === 'mesh' ? 'hierarchical' : layout
   const gridSize = theme.canvas?.gridSize || 8
   const nodeMargin = 32 // Minimum space between nodes
   const containerPadding = theme.module?.padding || 24
+  const moduleHeaderHeight = 40
 
   const nodes = spec.nodes || []
   const modules = spec.modules || []
   const positions = new Map()
 
+  const placeNode = (node, x, y) => {
+    const semanticType = detectSemanticType(node.label, node.type, node.network)
+    const size = getNodeSize(node.size, semanticType)
+    positions.set(node.id, {
+      x: snapToGrid(x, gridSize),
+      y: snapToGrid(y, gridSize),
+      width: size.width,
+      height: size.height
+    })
+    return size
+  }
+
+  const getNodeMetrics = (node) => {
+    const semanticType = detectSemanticType(node.label, node.type, node.network)
+    const size = getNodeSize(node.size, semanticType)
+    return { semanticType, size }
+  }
+
   // Handle manually positioned nodes first
   const manuallyPositioned = new Set()
   for (const node of nodes) {
     if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
-      const semanticType = detectSemanticType(node.label, node.type)
+      const semanticType = detectSemanticType(node.label, node.type, node.network)
       const size = getNodeSize(node.size, semanticType)
       positions.set(node.id, {
         x: snapToGrid(node.position.x - size.width / 2, gridSize),
@@ -359,9 +409,8 @@ export function calculateLayout(spec, theme) {
 
   let currentX = 40
   let currentY = 40
-  const modulePositions = new Map()
 
-  if (layout === 'horizontal') {
+  if (normalizedLayout === 'horizontal') {
     // Horizontal: modules side by side, nodes stacked vertically
     for (const [moduleId, moduleNodes] of moduleGroups) {
       if (moduleNodes.length === 0) continue
@@ -369,11 +418,11 @@ export function calculateLayout(spec, theme) {
       const moduleX = snapToGrid(currentX, gridSize)
       const moduleY = snapToGrid(40, gridSize)
       let maxWidth = 0
-      let nodeY = moduleY + containerPadding + 40 // Header space
+      let nodeY = moduleY + containerPadding + moduleHeaderHeight
 
       for (const node of moduleNodes) {
         if (manuallyPositioned.has(node.id)) continue
-        const semanticType = detectSemanticType(node.label, node.type)
+        const semanticType = detectSemanticType(node.label, node.type, node.network)
         const size = getNodeSize(node.size, semanticType)
         const nodeX = snapToGrid(moduleX + containerPadding, gridSize)
         positions.set(node.id, {
@@ -386,19 +435,9 @@ export function calculateLayout(spec, theme) {
         nodeY += size.height + nodeMargin
       }
 
-      const moduleWidth = maxWidth + containerPadding * 2
-      const moduleHeight = nodeY - moduleY + containerPadding
-
-      modulePositions.set(moduleId, {
-        x: moduleX,
-        y: moduleY,
-        width: snapToGrid(moduleWidth, gridSize),
-        height: snapToGrid(moduleHeight, gridSize)
-      })
-
-      currentX += moduleWidth + nodeMargin
+      currentX += maxWidth + containerPadding * 2 + nodeMargin
     }
-  } else if (layout === 'vertical') {
+  } else if (normalizedLayout === 'vertical') {
     // Vertical: modules stacked, nodes side by side
     for (const [moduleId, moduleNodes] of moduleGroups) {
       if (moduleNodes.length === 0) continue
@@ -410,11 +449,11 @@ export function calculateLayout(spec, theme) {
 
       for (const node of moduleNodes) {
         if (manuallyPositioned.has(node.id)) continue
-        const semanticType = detectSemanticType(node.label, node.type)
+        const semanticType = detectSemanticType(node.label, node.type, node.network)
         const size = getNodeSize(node.size, semanticType)
         positions.set(node.id, {
           x: snapToGrid(nodeX, gridSize),
-          y: snapToGrid(moduleY + containerPadding + 40, gridSize),
+          y: snapToGrid(moduleY + containerPadding + moduleHeaderHeight, gridSize),
           width: size.width,
           height: size.height
         })
@@ -422,18 +461,48 @@ export function calculateLayout(spec, theme) {
         nodeX += size.width + nodeMargin
       }
 
-      const moduleWidth = nodeX - moduleX + containerPadding
-      const moduleHeight = maxHeight + containerPadding * 2 + 40
-
-      modulePositions.set(moduleId, {
-        x: moduleX,
-        y: moduleY,
-        width: snapToGrid(moduleWidth, gridSize),
-        height: snapToGrid(moduleHeight, gridSize)
-      })
-
-      currentY += moduleHeight + nodeMargin
+      currentY += maxHeight + containerPadding * 2 + moduleHeaderHeight + nodeMargin
     }
+  } else if (layout === 'star') {
+    const autoNodes = nodes.filter(node => !manuallyPositioned.has(node.id))
+    if (autoNodes.length > 0) {
+      const centerNode = autoNodes.find(node => {
+        const type = detectSemanticType(node.label, node.type, node.network)
+        return ['router', 'switch', 'load_balancer', 'firewall'].includes(type)
+      }) || autoNodes[0]
+
+      const centerX = 360
+      const centerY = 180
+      placeNode(centerNode, centerX, centerY)
+
+      const spokes = autoNodes.filter(node => node.id !== centerNode.id)
+      const radiusX = 220
+      const radiusY = 140
+      spokes.forEach((node, index) => {
+        const angle = (Math.PI * 2 * index) / Math.max(spokes.length, 1) - Math.PI / 2
+        const { size } = getNodeMetrics(node)
+        placeNode(
+          node,
+          centerX + Math.cos(angle) * radiusX - size.width / 2,
+          centerY + Math.sin(angle) * radiusY - size.height / 2
+        )
+      })
+    }
+  } else if (layout === 'mesh') {
+    const autoNodes = nodes.filter(node => !manuallyPositioned.has(node.id))
+    const centerX = 340
+    const centerY = 180
+    const radius = Math.max(140, autoNodes.length * 18)
+
+    autoNodes.forEach((node, index) => {
+      const { size } = getNodeMetrics(node)
+      const angle = (Math.PI * 2 * index) / Math.max(autoNodes.length, 1) - Math.PI / 2
+      placeNode(
+        node,
+        centerX + Math.cos(angle) * radius - size.width / 2,
+        centerY + Math.sin(angle) * radius - size.height / 2
+      )
+    })
   } else {
     // Hierarchical or other: simple grid layout
     let row = 0
@@ -442,7 +511,7 @@ export function calculateLayout(spec, theme) {
 
     for (const node of nodes) {
       if (manuallyPositioned.has(node.id)) continue
-      const semanticType = detectSemanticType(node.label, node.type)
+      const semanticType = detectSemanticType(node.label, node.type, node.network)
       const size = getNodeSize(node.size, semanticType)
       positions.set(node.id, {
         x: snapToGrid(40 + col * (size.width + nodeMargin), gridSize),
@@ -458,6 +527,32 @@ export function calculateLayout(spec, theme) {
     }
   }
 
+  const snapDown = (value) => Math.floor(value / gridSize) * gridSize
+  const snapUp = (value) => Math.ceil(value / gridSize) * gridSize
+  const modulePositions = new Map()
+
+  for (const [moduleId, moduleNodes] of moduleGroups) {
+    if (moduleId === '__default__' || moduleNodes.length === 0) continue
+
+    const nodePositions = moduleNodes
+      .map(node => positions.get(node.id))
+      .filter(Boolean)
+
+    if (nodePositions.length === 0) continue
+
+    const minX = Math.min(...nodePositions.map(pos => pos.x))
+    const minY = Math.min(...nodePositions.map(pos => pos.y))
+    const maxX = Math.max(...nodePositions.map(pos => pos.x + pos.width))
+    const maxY = Math.max(...nodePositions.map(pos => pos.y + pos.height))
+
+    const x = snapDown(minX - containerPadding)
+    const y = snapDown(minY - containerPadding - moduleHeaderHeight)
+    const width = snapUp(maxX + containerPadding) - x
+    const height = snapUp(maxY + containerPadding) - y
+
+    modulePositions.set(moduleId, { x, y, width, height })
+  }
+
   return { positions, modulePositions }
 }
 
@@ -470,7 +565,41 @@ const ICON_PREFIXES = {
   'gcp.': 'mxgraph.gcp2.',
   'azure.': 'mxgraph.azure.',
   'k8s.': 'mxgraph.kubernetes.',
+  'cisco.': 'mxgraph.cisco.',
+  'cisco19.': 'mxgraph.cisco19.',
   'mxgraph.': 'mxgraph.'  // pass-through for direct mxgraph references
+}
+
+const ICON_ALIASES = {
+  'aws.alb': 'aws.application_load_balancer',
+  'aws.app_lb': 'aws.application_load_balancer',
+  'aws.internet-gateway': 'aws.internet_gateway',
+  'aws.igw': 'aws.internet_gateway',
+  'aws.ec2': 'aws.ec2_instance',
+  'aws.rds': 'aws.rds_instance',
+  'cisco.firewall': 'mxgraph.cisco.firewalls.firewall',
+  'cisco.ap': 'mxgraph.cisco.wireless.access_point',
+  'cisco.access-point': 'mxgraph.cisco.wireless.access_point'
+}
+
+const NETWORK_VENDOR_DEVICE_ICONS = {
+  aws: {
+    internet: 'aws.internet_gateway',
+    internet_gateway: 'aws.internet_gateway',
+    load_balancer: 'aws.application_load_balancer',
+    application_load_balancer: 'aws.application_load_balancer',
+    server: 'aws.ec2_instance',
+    ec2: 'aws.ec2_instance',
+    ec2_instance: 'aws.ec2_instance',
+    subnet: 'aws.rds_instance',
+    rds: 'aws.rds_instance',
+    rds_instance: 'aws.rds_instance'
+  },
+  cisco: {
+    firewall: 'mxgraph.cisco.firewalls.firewall',
+    ap: 'mxgraph.cisco.wireless.access_point',
+    access_point: 'mxgraph.cisco.wireless.access_point'
+  }
 }
 
 /**
@@ -490,17 +619,28 @@ function resolveThemeColor(value, theme, fallback) {
  */
 export function resolveIconShape(icon) {
   if (!icon) return null
+  const normalizedIcon = ICON_ALIASES[icon] || icon
   for (const [prefix, mxPrefix] of Object.entries(ICON_PREFIXES)) {
-    if (icon.startsWith(prefix)) {
-      return mxPrefix + icon.slice(prefix.length)
+    if (normalizedIcon.startsWith(prefix)) {
+      return mxPrefix + normalizedIcon.slice(prefix.length)
     }
   }
   // Security: validate unprefixed icons to prevent style injection
-  if (!/^[a-zA-Z][a-zA-Z0-9._-]*$/.test(icon)) {
-    console.warn(`[resolveIconShape] Invalid icon name '${icon}'. Ignoring.`)
+  if (!/^[a-zA-Z][a-zA-Z0-9._-]*$/.test(normalizedIcon)) {
+    console.warn(`[resolveIconShape] Invalid icon name '${normalizedIcon}'. Ignoring.`)
     return null
   }
-  return icon
+  return normalizedIcon
+}
+
+export function deriveNodeIcon(node) {
+  if (node.icon) return node.icon
+
+  const vendor = node.network?.vendor?.toLowerCase()
+  const device = node.network?.device?.toLowerCase()
+  if (!vendor || !device) return null
+
+  return NETWORK_VENDOR_DEVICE_ICONS[vendor]?.[device] || null
 }
 
 // ============================================================================
@@ -511,7 +651,7 @@ export function resolveIconShape(icon) {
  * Generate mxCell style string for a node
  */
 export function generateNodeStyle(node, theme) {
-  const semanticType = detectSemanticType(node.label, node.type)
+  const semanticType = detectSemanticType(node.label, node.type, node.network)
   const shapeStyle = SHAPE_STYLES[semanticType] || SHAPE_STYLES.service
 
   // Get colors from theme
@@ -526,7 +666,7 @@ export function generateNodeStyle(node, theme) {
   const fontFamily = theme.typography?.fontFamily?.primary || 'Inter, sans-serif'
 
   // If node has an icon, override shape to use the icon
-  const iconShape = resolveIconShape(node.icon)
+  const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
   let effectiveShapeStyle = shapeStyle
   const parts = []
   if (iconShape) {
@@ -657,6 +797,23 @@ export function generateModuleStyle(module, theme) {
   return parts.join(';')
 }
 
+function formatNetworkEdgeLabel(edge) {
+  if (edge.label) return edge.label
+
+  const parts = []
+  if (edge.srcInterface || edge.dstInterface) {
+    const src = edge.srcInterface || '?'
+    const dst = edge.dstInterface || '?'
+    parts.push(`${src} ↔ ${dst}`)
+  }
+  if (edge.ip) parts.push(edge.ip)
+  if (edge.vlan !== undefined) parts.push(`VLAN ${edge.vlan}`)
+  if (edge.bandwidth) parts.push(edge.bandwidth)
+  if (edge.linkType) parts.push(edge.linkType)
+
+  return parts.join('\n')
+}
+
 // ============================================================================
 // XML Generation
 // ============================================================================
@@ -750,7 +907,8 @@ export function buildXml(spec, theme, layout) {
 
     const cellId = allocId()
     const style = generateConnectorStyle(edge, theme, routing)
-    const edgeLabel = edge.label ? prepareMathLabel(edge.label) : ''
+    const rawEdgeLabel = formatNetworkEdgeLabel(edge)
+    const edgeLabel = rawEdgeLabel ? prepareMathLabel(rawEdgeLabel) : ''
 
     let edgeXml = `<mxCell id="${cellId}" value="${edgeLabel}" style="${style}" edge="1" parent="1" source="${sourceId}" target="${targetId}">`
     edgeXml += `<mxGeometry relative="1" as="geometry">`
@@ -764,7 +922,7 @@ export function buildXml(spec, theme, layout) {
     edgeXml += `</mxGeometry>`
 
     // Add label if present
-    if (edge.label) {
+    if (rawEdgeLabel) {
       const labelId = allocId()
       const labelX = edge.labelPosition === 'start' ? '0.2'
         : edge.labelPosition === 'end' ? '0.8'
@@ -997,6 +1155,7 @@ function getSlot(index) {
 
 function buildRoutedEdges(spec, layout) {
   const { positions } = layout
+  const declaredLayout = spec.meta?.layout || 'horizontal'
   const edges = (spec.edges || []).map(edge => ({
     ...edge,
     style: { ...(edge.style || {}) },
@@ -1015,6 +1174,54 @@ function buildRoutedEdges(spec, layout) {
     edge.__routing = faces
 
     if (edge.waypoints?.length) continue
+
+    if (declaredLayout === 'star' && edge.__routing.orientation === 'horizontal') {
+      const sourceCenterY = sourcePos.y + sourcePos.height / 2
+      const targetCenterY = targetPos.y + targetPos.height / 2
+      const midX = snapToGrid((sourcePos.x + sourcePos.width / 2 + targetPos.x + targetPos.width / 2) / 2, 8)
+      const waypointCandidates = [
+        { x: midX, y: snapToGrid(sourceCenterY, 8) },
+        { x: midX, y: snapToGrid(targetCenterY, 8) }
+      ]
+      const dedupedWaypoints = []
+      for (const point of waypointCandidates) {
+        const prev = dedupedWaypoints[dedupedWaypoints.length - 1]
+        if (!prev || Math.abs(prev.x - point.x) >= 1 || Math.abs(prev.y - point.y) >= 1) {
+          dedupedWaypoints.push(point)
+        }
+      }
+      edge.waypoints = dedupedWaypoints
+      if (edge.waypoints.length > 0) {
+        continue
+      }
+    }
+
+    if (declaredLayout === 'mesh') {
+      const sourceCenterX = sourcePos.x + sourcePos.width / 2
+      const sourceCenterY = sourcePos.y + sourcePos.height / 2
+      const targetCenterX = targetPos.x + targetPos.width / 2
+      const targetCenterY = targetPos.y + targetPos.height / 2
+      const midX = snapToGrid((sourceCenterX + targetCenterX) / 2, 8)
+      const midY = snapToGrid((sourceCenterY + targetCenterY) / 2, 8)
+      if (Math.abs(sourceCenterX - targetCenterX) > 80 && Math.abs(sourceCenterY - targetCenterY) > 80) {
+        const waypointCandidates = [
+          { x: midX, y: snapToGrid(sourceCenterY, 8) },
+          { x: midX, y: midY },
+          { x: midX, y: snapToGrid(targetCenterY, 8) }
+        ]
+        const dedupedWaypoints = []
+        for (const point of waypointCandidates) {
+          const prev = dedupedWaypoints[dedupedWaypoints.length - 1]
+          if (!prev || Math.abs(prev.x - point.x) >= 1 || Math.abs(prev.y - point.y) >= 1) {
+            dedupedWaypoints.push(point)
+          }
+        }
+        edge.waypoints = dedupedWaypoints
+        if (edge.waypoints.length > 0) {
+          continue
+        }
+      }
+    }
 
     const sourceKey = `${edge.from}:${faces.sourceFace}`
     const targetKey = `${edge.to}:${faces.targetFace}`
@@ -1310,7 +1517,7 @@ export function validateSpec(spec) {
   const VALID_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
   const VALID_THEME = /^[a-z][a-z0-9-]*$/
   const VALID_ICON = /^[a-zA-Z][a-zA-Z0-9._-]*$/
-  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical']
+  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical', 'star', 'mesh']
   const VALID_ROUTINGS = ['orthogonal', 'rounded']
   const VALID_PROFILES = ['default', 'academic-paper', 'engineering-review']
   const VALID_SOURCES = ['generated', 'replicated', 'edited']
@@ -1432,6 +1639,20 @@ export function validateSpec(spec) {
     if (node.icon != null && !VALID_ICON.test(node.icon)) {
       throw new Error(`Node "${node.id}" has invalid icon "${node.icon}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`)
     }
+    if (node.network != null) {
+      if (typeof node.network !== 'object' || Array.isArray(node.network)) {
+        throw new Error(`Node "${node.id}" network must be an object when provided`)
+      }
+      const networkStringFields = ['device', 'role', 'vendor', 'zone', 'ip', 'cidr']
+      for (const field of networkStringFields) {
+        if (node.network[field] != null && typeof node.network[field] !== 'string') {
+          throw new Error(`Node "${node.id}" network.${field} must be a string when provided`)
+        }
+      }
+      if (node.network.device != null && !VALID_ICON.test(node.network.device)) {
+        throw new Error(`Node "${node.id}" has invalid network.device "${node.network.device}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`)
+      }
+    }
     if (node.position != null) {
       if (typeof node.position.x !== 'number' || typeof node.position.y !== 'number') {
         throw new Error(`Node "${node.id}" position must have numeric x and y`)
@@ -1449,6 +1670,24 @@ export function validateSpec(spec) {
     }
     if (edge.label != null && typeof edge.label !== 'string') {
       throw new Error(`Edge "${edge.from}->${edge.to}" label must be a string`)
+    }
+    if (edge.srcInterface != null && typeof edge.srcInterface !== 'string') {
+      throw new Error(`Edge "${edge.from}->${edge.to}" srcInterface must be a string`)
+    }
+    if (edge.dstInterface != null && typeof edge.dstInterface !== 'string') {
+      throw new Error(`Edge "${edge.from}->${edge.to}" dstInterface must be a string`)
+    }
+    if (edge.ip != null && typeof edge.ip !== 'string') {
+      throw new Error(`Edge "${edge.from}->${edge.to}" ip must be a string`)
+    }
+    if (edge.vlan != null && typeof edge.vlan !== 'string' && !Number.isInteger(edge.vlan)) {
+      throw new Error(`Edge "${edge.from}->${edge.to}" vlan must be a string or integer`)
+    }
+    if (edge.bandwidth != null && typeof edge.bandwidth !== 'string') {
+      throw new Error(`Edge "${edge.from}->${edge.to}" bandwidth must be a string`)
+    }
+    if (edge.linkType != null && typeof edge.linkType !== 'string') {
+      throw new Error(`Edge "${edge.from}->${edge.to}" linkType must be a string`)
     }
     if (edge.waypoints != null) {
       if (!Array.isArray(edge.waypoints)) {

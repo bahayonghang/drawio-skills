@@ -19,6 +19,7 @@ import {
   checkComplexity,
   loadTheme,
   resolveIconShape,
+  deriveNodeIcon,
   validateXml,
   validateColorScheme,
   validateLayoutConsistency
@@ -121,12 +122,20 @@ describe('detectSemanticType', () => {
     assert.strictEqual(detectSemanticType('Dense Layer', null), 'matrix')
   })
 
-  it('should detect 3D tensor/feature map types', () => {
-    assert.strictEqual(detectSemanticType('Feature Map', null), 'tensor3d')
-    assert.strictEqual(detectSemanticType('Tensor 224×224×64', null), 'tensor3d')
-    assert.strictEqual(detectSemanticType('NCHW', null), 'tensor3d')
-    assert.strictEqual(detectSemanticType('Activation Map', null), 'tensor3d')
-    assert.strictEqual(detectSemanticType('3D Block', null), 'tensor3d')
+  it('should detect network topology types', () => {
+    assert.strictEqual(detectSemanticType('Core Router', null), 'router')
+    assert.strictEqual(detectSemanticType('Access Switch', null), 'switch')
+    assert.strictEqual(detectSemanticType('Edge Firewall', null), 'firewall')
+    assert.strictEqual(detectSemanticType('Wireless AP', null), 'ap')
+  })
+
+  it('should preserve legacy decision inference for bare "Switch" labels', () => {
+    assert.strictEqual(detectSemanticType('Switch', null), 'decision')
+    assert.strictEqual(detectSemanticType('Switch', 'switch'), 'switch')
+  })
+
+  it('should respect network.device metadata for semantic type', () => {
+    assert.strictEqual(detectSemanticType('Gateway', null, { device: 'router' }), 'router')
   })
 })
 
@@ -384,24 +393,89 @@ describe('calculateLayout', () => {
     assert.strictEqual(pos2.y % 8, 0, 'n2.y should be grid-aligned')
   })
 
-  it('should group nodes by module', () => {
+  it('should calculate star layout with a central network node', () => {
     const spec = {
-      meta: { layout: 'horizontal' },
-      modules: [
-        { id: 'm1', label: 'Module 1' },
-        { id: 'm2', label: 'Module 2' }
-      ],
+      meta: { layout: 'star' },
       nodes: [
-        { id: 'n1', label: 'Node 1', module: 'm1' },
-        { id: 'n2', label: 'Node 2', module: 'm1' },
-        { id: 'n3', label: 'Node 3', module: 'm2' }
+        { id: 'core', label: 'Core Switch', type: 'switch' },
+        { id: 'fw', label: 'Firewall', type: 'firewall' },
+        { id: 'ap', label: 'Wireless AP', type: 'ap' }
       ]
     }
     const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
-    const { modulePositions } = calculateLayout(spec, theme)
+    const { positions } = calculateLayout(spec, theme)
 
-    assert.strictEqual(modulePositions.has('m1'), true, 'should have position for m1')
-    assert.strictEqual(modulePositions.has('m2'), true, 'should have position for m2')
+    const core = positions.get('core')
+    const fw = positions.get('fw')
+    const ap = positions.get('ap')
+    assert.ok(core.x > fw.x, 'core should not be placed left of every spoke')
+    assert.ok(core.x < ap.x || core.y !== ap.y, 'core should act as central anchor')
+  })
+
+  it('should calculate mesh layout with dispersed nodes', () => {
+    const spec = {
+      meta: { layout: 'mesh' },
+      nodes: [
+        { id: 'a', label: 'Node A' },
+        { id: 'b', label: 'Node B' },
+        { id: 'c', label: 'Node C' },
+        { id: 'd', label: 'Node D' }
+      ]
+    }
+    const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
+    const { positions } = calculateLayout(spec, theme)
+
+    const xs = [...positions.values()].map(pos => pos.x)
+    const ys = [...positions.values()].map(pos => pos.y)
+    assert.ok(new Set(xs).size > 2, 'mesh layout should spread x positions')
+    assert.ok(new Set(ys).size > 2, 'mesh layout should spread y positions')
+  })
+
+  it('should calculate module containers for star layouts', () => {
+    const spec = {
+      meta: { layout: 'star' },
+      modules: [{ id: 'vpc', label: 'AWS VPC' }],
+      nodes: [
+        { id: 'internet', label: 'Internet Gateway', type: 'internet', module: 'vpc' },
+        { id: 'core', label: 'Core Switch', type: 'switch', module: 'vpc' },
+        { id: 'app', label: 'App Server', type: 'server', module: 'vpc' }
+      ]
+    }
+    const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
+    const { positions, modulePositions } = calculateLayout(spec, theme)
+
+    assert.ok(modulePositions.has('vpc'), 'star layout should include module bounds')
+    const modulePos = modulePositions.get('vpc')
+    const nodeBounds = ['internet', 'core', 'app'].map(id => positions.get(id))
+    assert.ok(modulePos.width > 0, 'module width should be positive')
+    assert.ok(modulePos.height > 0, 'module height should be positive')
+    assert.ok(modulePos.x <= Math.min(...nodeBounds.map(pos => pos.x)), 'module should start before child nodes')
+    assert.ok(modulePos.y <= Math.min(...nodeBounds.map(pos => pos.y)), 'module should start above child nodes')
+  })
+
+  it('should calculate module containers for mesh layouts with manual nodes', () => {
+    const spec = {
+      meta: { layout: 'mesh' },
+      modules: [
+        { id: 'dmz', label: 'DMZ' },
+        { id: 'internal', label: 'Internal Network' }
+      ],
+      nodes: [
+        { id: 'fw', label: 'Perimeter Firewall', type: 'firewall', module: 'dmz' },
+        { id: 'proxy', label: 'Reverse Proxy', type: 'load_balancer', module: 'dmz' },
+        { id: 'app', label: 'App Server', type: 'server', module: 'internal' },
+        { id: 'db', label: 'Database Segment', type: 'subnet', module: 'internal', position: { x: 520, y: 240 } }
+      ]
+    }
+    const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
+    const { positions, modulePositions } = calculateLayout(spec, theme)
+
+    assert.ok(modulePositions.has('dmz'), 'mesh layout should include DMZ module bounds')
+    assert.ok(modulePositions.has('internal'), 'mesh layout should include Internal module bounds')
+    const internalPos = modulePositions.get('internal')
+    const dbPos = positions.get('db')
+    assert.ok(internalPos.x <= dbPos.x, 'internal module should include manually positioned nodes')
+    assert.ok(internalPos.y <= dbPos.y, 'internal module should extend above manually positioned nodes')
   })
 })
 
@@ -492,18 +566,97 @@ describe('specToDrawioXml', () => {
     assert.throws(() => specToDrawioXml({ nodes: [] }), 'should throw for empty nodes')
   })
 
-  it('should include module containers', () => {
+  it('should generate network edge labels from metadata', () => {
     const spec = {
-      meta: { theme: 'tech-blue' },
-      modules: [{ id: 'm1', label: 'Backend' }],
+      meta: { theme: 'tech-blue', layout: 'star' },
       nodes: [
-        { id: 'n1', label: 'Service', module: 'm1' }
+        { id: 'fw', label: 'Firewall', type: 'firewall' },
+        { id: 'core', label: 'Core Switch', type: 'switch' }
       ],
-      edges: []
+      edges: [
+        {
+          from: 'fw',
+          to: 'core',
+          srcInterface: 'ge-0/0/0',
+          dstInterface: 'ge-0/0/1',
+          vlan: 10,
+          bandwidth: '1G'
+        }
+      ]
     }
 
     const xml = specToDrawioXml(spec)
-    assert.ok(xml.includes('Backend'), 'should contain module label Backend')
+    assert.ok(xml.includes('ge-0/0/0 ↔ ge-0/0/1'), 'should include derived interface label')
+    assert.ok(xml.includes('VLAN 10'), 'should include VLAN label')
+    assert.ok(xml.includes('1G'), 'should include bandwidth label')
+  })
+
+  it('should emit module containers for star and mesh topology examples', () => {
+    const starSpec = {
+      meta: { theme: 'tech-blue', layout: 'star' },
+      modules: [{ id: 'vpc', label: 'AWS VPC' }],
+      nodes: [
+        { id: 'internet', label: 'Internet Gateway', type: 'internet', module: 'vpc' },
+        { id: 'core', label: 'Core Switch', type: 'switch', module: 'vpc' },
+        { id: 'app', label: 'App Server', type: 'server', module: 'vpc' }
+      ],
+      edges: [{ from: 'internet', to: 'core' }]
+    }
+    const starXml = specToDrawioXml(starSpec)
+    const starModuleId = starXml.match(/<mxCell id="(\d+)" value="AWS VPC"[^>]*parent="1">/)?.[1]
+    assert.ok(starModuleId, 'star layout should render AWS VPC module cell')
+    assert.match(
+      starXml,
+      new RegExp(`<mxCell id="\\d+" value="App Server"[^>]*parent="${starModuleId}">`),
+      'star layout should parent module nodes under the module cell'
+    )
+
+    const meshSpec = {
+      meta: { theme: 'tech-blue', layout: 'mesh' },
+      modules: [{ id: 'dmz', label: 'DMZ' }],
+      nodes: [
+        { id: 'fw', label: 'Perimeter Firewall', type: 'firewall', module: 'dmz' },
+        { id: 'proxy', label: 'Reverse Proxy', type: 'load_balancer', module: 'dmz' }
+      ],
+      edges: [{ from: 'fw', to: 'proxy' }]
+    }
+    const meshXml = specToDrawioXml(meshSpec)
+    assert.ok(meshXml.includes('value="DMZ"'), 'mesh layout should render DMZ module cell')
+  })
+
+  it('should resolve Cisco icon prefixes', () => {
+    assert.strictEqual(resolveIconShape('cisco.firewalls.firewall'), 'mxgraph.cisco.firewalls.firewall')
+  })
+
+  it('should resolve documented icon aliases', () => {
+    assert.strictEqual(resolveIconShape('aws.alb'), 'mxgraph.aws4.application_load_balancer')
+    assert.strictEqual(resolveIconShape('aws.ec2'), 'mxgraph.aws4.ec2_instance')
+    assert.strictEqual(resolveIconShape('cisco.ap'), 'mxgraph.cisco.wireless.access_point')
+  })
+
+  it('should derive node icons from network vendor/device metadata', () => {
+    assert.strictEqual(
+      deriveNodeIcon({ network: { vendor: 'aws', device: 'load_balancer' } }),
+      'aws.application_load_balancer'
+    )
+    assert.strictEqual(
+      deriveNodeIcon({ network: { vendor: 'cisco', device: 'firewall' } }),
+      'mxgraph.cisco.firewalls.firewall'
+    )
+  })
+
+  it('should generate vendor-derived icon shapes when icon field is absent', () => {
+    const theme = {
+      node: { default: { fillColor: '#DBEAFE', strokeColor: '#2563EB', strokeWidth: 1.5, fontColor: '#1E293B', fontSize: 13 } },
+      typography: { fontFamily: { primary: 'Inter, sans-serif' } }
+    }
+    const style = generateNodeStyle({
+      id: 'fw',
+      label: 'Cisco Firewall',
+      type: 'firewall',
+      network: { vendor: 'cisco', device: 'firewall' }
+    }, theme)
+    assert.ok(style.includes('shape=mxgraph.cisco.firewalls.firewall'), 'should use vendor-derived stencil shape')
   })
 
   it('default behavior: 25 nodes returns a string (no error)', () => {

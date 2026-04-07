@@ -15,8 +15,8 @@
         },
         "layout": {
           "type": "string",
-          "enum": ["horizontal", "vertical", "hierarchical"],
-          "description": "Layout direction for automatic positioning"
+          "enum": ["horizontal", "vertical", "hierarchical", "star", "mesh"],
+          "description": "Layout direction or topology intent for automatic positioning"
         },
         "routing": {
           "type": "string",
@@ -123,7 +123,9 @@
               "user", "document", "formula", "cloud", "process",
               "input", "output", "loss", "feature",
               "conv", "pool", "embed", "temporal", "attention",
-              "gate", "norm", "graph", "matrix", "operator", "tensor3d"
+              "gate", "norm", "graph", "matrix", "operator", "tensor3d",
+              "router", "switch", "firewall", "server", "load_balancer",
+              "subnet", "internet", "ap"
             ],
             "description": "Semantic type for automatic shape selection"
           },
@@ -141,6 +143,22 @@
             "type": "string",
             "pattern": "^[a-zA-Z][a-zA-Z0-9._-]*$",
             "description": "Icon identifier (e.g. aws.lambda, gcp.compute)"
+          },
+          "network": {
+            "type": "object",
+            "description": "Optional network-specific node metadata",
+            "properties": {
+              "device": {
+                "type": "string",
+                "pattern": "^[a-zA-Z][a-zA-Z0-9._-]*$"
+              },
+              "role": { "type": "string" },
+              "vendor": { "type": "string" },
+              "zone": { "type": "string" },
+              "ip": { "type": "string" },
+              "cidr": { "type": "string" }
+            },
+            "additionalProperties": false
           },
           "position": {
             "type": "object",
@@ -201,6 +219,33 @@
           "bidirectional": {
             "type": "boolean",
             "description": "Two-way connection flag"
+          },
+          "srcInterface": {
+            "type": "string",
+            "description": "Source interface label for network links"
+          },
+          "dstInterface": {
+            "type": "string",
+            "description": "Target interface label for network links"
+          },
+          "ip": {
+            "type": "string",
+            "description": "IP address or subnet label for the link"
+          },
+          "vlan": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "integer" }
+            ],
+            "description": "VLAN identifier for the link"
+          },
+          "bandwidth": {
+            "type": "string",
+            "description": "Bandwidth/capacity label for the link"
+          },
+          "linkType": {
+            "type": "string",
+            "description": "Link media or semantic category (e.g. trunk, access, fiber)"
           },
           "style": {
             "type": "object",

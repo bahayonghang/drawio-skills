@@ -32,7 +32,12 @@
   {
     "id": "engineering-network-topology",
     "profile": "engineering-review",
-    "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs."
+    "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs. Include interface or VLAN labels on the links."
+  },
+  {
+    "id": "engineering-aws-vpc-topology",
+    "profile": "engineering-review",
+    "prompt": "Create an AWS VPC topology with internet gateway, application load balancer, two EC2 app servers, and a private RDS subnet. Label the private links."
   },
   {
     "id": "simple-login-fast-path",

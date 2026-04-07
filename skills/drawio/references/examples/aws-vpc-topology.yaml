@@ -1,0 +1,66 @@
+meta:
+  profile: engineering-review
+  theme: tech-blue
+  layout: star
+  title: "AWS VPC Topology"
+  description: "Internet ingress, load balancing, application servers, and private data tier."
+
+modules:
+  - id: vpc
+    label: AWS VPC
+    color: $surface
+
+nodes:
+  - id: internet
+    label: Internet Gateway
+    type: internet
+    icon: aws.internet_gateway
+    module: vpc
+  - id: alb
+    label: Public ALB
+    type: load_balancer
+    icon: aws.application_load_balancer
+    module: vpc
+  - id: web1
+    label: App Server A
+    type: server
+    icon: aws.ec2_instance
+    module: vpc
+  - id: web2
+    label: App Server B
+    type: server
+    icon: aws.ec2_instance
+    module: vpc
+  - id: db
+    label: RDS Subnet
+    type: subnet
+    icon: aws.rds_instance
+    module: vpc
+    network:
+      cidr: 10.0.2.0/24
+
+edges:
+  - from: internet
+    to: alb
+    type: primary
+    bandwidth: HTTPS
+  - from: alb
+    to: web1
+    type: primary
+    srcInterface: listener-443
+    dstInterface: eth0
+  - from: alb
+    to: web2
+    type: primary
+    srcInterface: listener-443
+    dstInterface: eth0
+  - from: web1
+    to: db
+    type: data
+    ip: 10.0.2.10
+    linkType: private
+  - from: web2
+    to: db
+    type: data
+    ip: 10.0.2.11
+    linkType: private

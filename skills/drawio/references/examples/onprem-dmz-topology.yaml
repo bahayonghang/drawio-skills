@@ -1,0 +1,62 @@
+meta:
+  profile: engineering-review
+  theme: tech-blue
+  layout: mesh
+  title: "On-Prem DMZ Segmentation"
+  description: "Firewall, DMZ services, and internal application/database tiers."
+
+modules:
+  - id: dmz
+    label: DMZ
+    color: $surface
+  - id: internal
+    label: Internal Network
+    color: $primaryLight
+
+nodes:
+  - id: firewall
+    label: Perimeter Firewall
+    type: firewall
+    module: dmz
+  - id: revproxy
+    label: Reverse Proxy
+    type: load_balancer
+    module: dmz
+  - id: web
+    label: Web Server
+    type: server
+    module: dmz
+  - id: app
+    label: App Server
+    type: server
+    module: internal
+  - id: db
+    label: Database Segment
+    type: subnet
+    module: internal
+    network:
+      cidr: 172.16.20.0/24
+
+edges:
+  - from: firewall
+    to: revproxy
+    type: primary
+    srcInterface: port1
+    dstInterface: wan0
+  - from: firewall
+    to: web
+    type: optional
+    linkType: inspection
+  - from: revproxy
+    to: web
+    type: primary
+    bandwidth: 1G
+  - from: web
+    to: app
+    type: primary
+    vlan: 30
+  - from: app
+    to: db
+    type: data
+    ip: 172.16.20.15
+    linkType: east-west

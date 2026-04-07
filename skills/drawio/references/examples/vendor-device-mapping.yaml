@@ -1,0 +1,46 @@
+meta:
+  profile: engineering-review
+  theme: tech-blue
+  layout: star
+  title: "Vendor Device Auto-Mapping"
+  description: "Network vendor/device metadata maps to documented provider and Cisco stencils without explicit icon fields."
+
+nodes:
+  - id: igw
+    label: Internet Gateway
+    type: internet
+    network:
+      vendor: aws
+      device: internet_gateway
+  - id: alb
+    label: ALB
+    type: load_balancer
+    network:
+      vendor: aws
+      device: load_balancer
+  - id: fw
+    label: Cisco Firewall
+    type: firewall
+    network:
+      vendor: cisco
+      device: firewall
+  - id: wap
+    label: Branch AP
+    type: ap
+    network:
+      vendor: cisco
+      device: access_point
+
+edges:
+  - from: igw
+    to: alb
+    type: primary
+    bandwidth: HTTPS
+  - from: alb
+    to: fw
+    type: primary
+    linkType: ingress
+  - from: fw
+    to: wap
+    type: primary
+    vlan: 20

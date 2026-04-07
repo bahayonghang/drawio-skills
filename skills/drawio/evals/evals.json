@@ -96,14 +96,28 @@
     },
     {
       "id": "engineering-network-topology",
-      "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs.",
-      "expected_output": "A network topology diagram with hierarchical layout showing 4 network components.",
+      "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs. Include interface or VLAN labels on the links.",
+      "expected_output": "A network topology diagram with hierarchical layout showing 4 network components and labeled links.",
       "files": [],
       "assertions": [
         "Output uses tech-blue or similar engineering theme",
         "Contains firewall, core switch, access switch, and AP nodes",
         "Layout shows clear network hierarchy",
+        "Derived link labels include interface, VLAN, bandwidth, or link type metadata",
         "Edge quality: orthogonal routing, no crossings where avoidable",
+        "meta.profile is set to engineering-review"
+      ]
+    },
+    {
+      "id": "engineering-aws-vpc-topology",
+      "prompt": "Create an AWS VPC topology with internet gateway, application load balancer, two EC2 app servers, and a private RDS subnet. Label the private links.",
+      "expected_output": "An engineering review topology with AWS icons and labeled private links.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains internet gateway, load balancer, app servers, and RDS/private subnet nodes",
+        "Provider icons are used for AWS infrastructure where requested",
+        "Derived link labels include listener/interface or private-link metadata",
         "meta.profile is set to engineering-review"
       ]
     },
