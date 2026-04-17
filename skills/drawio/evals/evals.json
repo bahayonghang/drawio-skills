@@ -12,6 +12,7 @@
         "Contains core, distribution, and access layer modules",
         "SVG or drawio output is grayscale-safe (no color-only semantics)",
         "Node labels are <= 14 characters",
+        "meta.figureType is set to architecture",
         "meta.profile is set to academic-paper"
       ]
     },
@@ -25,6 +26,7 @@
         "Contains all 5 workflow stages as nodes",
         "Edges use primary connector type for main flow",
         "SVG export is grayscale-safe",
+        "meta.figureType is set to workflow",
         "meta.profile is set to academic-paper"
       ]
     },
@@ -38,6 +40,7 @@
         "Contains client, API, worker, and storage layers",
         "Nodes use semantic types (service, database, user)",
         "SVG export preserves readability in grayscale",
+        "meta.figureType is set to architecture",
         "meta.profile is set to academic-paper"
       ]
     },
@@ -51,7 +54,49 @@
         "Contains baseline and at least two variant branches",
         "Branches converge at a shared evaluation block",
         "SVG export is grayscale-safe",
+        "meta.figureType is set to workflow",
         "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-technical-roadmap",
+      "prompt": "Create a paper-ready technical roadmap figure showing problem framing, prototype, ablation study, scale-up, and submission milestones.",
+      "expected_output": "An academic roadmap diagram with ordered stages and meta.figureType set to roadmap.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "meta.figureType is set to roadmap",
+        "Contains staged progression for problem framing, prototype, ablation, scale-up, and submission",
+        "The figure emphasizes progression rather than runtime structure",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-thesis-bundle-delivery",
+      "prompt": "Create an A4-safe thesis workflow figure for Word export showing data collection, preprocessing, model training, validation, and chapter outputs. Deliver the editable drawio bundle plus SVG, and include a matching PNG if desktop export is available.",
+      "expected_output": "An academic workflow bundle with figureType workflow, default academic sidecars, and optional PNG companion for thesis use.",
+      "files": [],
+      "assertions": [
+        "meta.figureType is set to workflow",
+        "The response describes `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the default academic deliverables",
+        "PNG is treated as an additional thesis-friendly export when desktop export is available",
+        "The workflow does not require a live session",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-replicate-editable-bundle",
+      "prompt": "Replicate the uploaded paper figure into an editable academic bundle. Preserve the grayscale structure and its single accent highlight, and return the offline bundle plus SVG.",
+      "expected_output": "A replicated academic figure that stays paper-safe while remaining editable through the offline bundle.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.figureType is set for the extracted academic figure",
+        "The output includes `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the editable delivery set",
+        "The grayscale-safe structure remains intact while the single accent highlight is preserved",
+        "The output stays suitable for academic-paper review"
       ]
     },
     {
@@ -159,6 +204,7 @@
         "Contains a formula node with the loss function",
         "LaTeX formula is properly formatted",
         "SVG export preserves formula readability",
+        "meta.figureType is set to workflow",
         "meta.profile is set to academic-paper"
       ]
     },
@@ -201,6 +247,7 @@
       ],
       "assertions": [
         "meta.source is set to replicated",
+        "meta.figureType is set for the extracted academic figure",
         "meta.replication.colorMode is preserve-original unless the user requests theme-first",
         "The canvas and neutral elements remain grayscale-safe",
         "Only the source accent color is preserved as an explicit override",

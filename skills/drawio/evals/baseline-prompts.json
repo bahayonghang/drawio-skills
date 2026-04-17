@@ -20,6 +20,16 @@
     "prompt": "Create an ablation-study figure comparing baseline and two variants before a shared evaluation block."
   },
   {
+    "id": "academic-technical-roadmap",
+    "profile": "academic-paper",
+    "prompt": "Create a paper-ready technical roadmap figure showing problem framing, prototype, ablation study, scale-up, and submission milestones."
+  },
+  {
+    "id": "academic-thesis-bundle-delivery",
+    "profile": "academic-paper",
+    "prompt": "Create an A4-safe thesis workflow figure for Word export showing data collection, preprocessing, model training, validation, and chapter outputs. Deliver the editable drawio bundle plus SVG, and include a matching PNG if desktop export is available."
+  },
+  {
     "id": "engineering-cloud-reference",
     "profile": "engineering-review",
     "prompt": "Create a cloud reference architecture using gateway, compute, async queue, and object storage."
@@ -68,6 +78,11 @@
     "id": "replicate-academic-highlight-palette",
     "profile": "academic-paper",
     "prompt": "Replicate the uploaded paper figure. Keep the grayscale structure and its single accent highlight while remaining publication-safe."
+  },
+  {
+    "id": "academic-replicate-editable-bundle",
+    "profile": "academic-paper",
+    "prompt": "Replicate the uploaded paper figure into an editable academic bundle. Preserve the grayscale structure and its single accent highlight, and return the offline bundle plus SVG."
   },
   {
     "id": "import-drawio-to-spec-uncompressed",
