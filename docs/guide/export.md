@@ -12,6 +12,8 @@ Keep these files together whenever the diagram may be edited again:
 
 This bundle supports local iteration without requiring a live session.
 
+For `academic-paper` output, this bundle plus `.svg` is the default delivery set. Add `.png` only when the request is thesis, A4, Word, raster-first, screenshot rebuild, or explicitly asks for PNG, and only when draw.io Desktop export is available.
+
 ## Common Export Commands
 
 ### Generate a `.drawio` file
@@ -62,6 +64,7 @@ That path is optional. The default export model remains local CLI generation.
 |------|-------------|
 | ongoing editing | `.drawio` bundle |
 | paper figure | `.svg` |
+| paper figure + editable source | `.drawio` + `.spec.yaml` + `.arch.json` + `.svg` |
 | slide deck image | `.png` or `.jpg` with Desktop |
 | printable handoff | `.pdf` with Desktop |
 

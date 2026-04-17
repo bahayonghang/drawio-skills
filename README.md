@@ -18,6 +18,7 @@ Draw.io Skill is a YAML-first, offline-first draw.io skill for engineering diagr
 - **3 core routes**: `create`, `edit`, and `replicate`.
 - **6 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast`.
 - **Academic and math guardrails**: IEEE-style output, MathJax-safe delimiters, caption and legend checks.
+- **Academic figure typing**: paper-mode requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows.
 - **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`), Phase B `star/mesh` layout improvements, and automatic link labels from interface/IP/VLAN/bandwidth metadata.
 - **Vendor-aware icon mapping**: explicit AWS/Cisco icon prefixes, alias resolution (for example `aws.alb`, `aws.ec2`, `cisco.ap`), and vendor/device auto-mapping via `network.vendor` + `network.device`.
@@ -148,6 +149,14 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
+Academic-paper bundle flow:
+
+```bash
+node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
+```
+
+This produces the paper-mode default deliverables together: `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`.
+
 Use strict mode for review-grade output:
 
 ```bash
@@ -171,6 +180,8 @@ When the diagram will continue evolving, keep these files together:
 
 This is the preferred edit surface for the offline workflow.
 
+For `academic-paper` requests, treat this editable bundle plus `.svg` as the default delivery set. Add `.png` only for thesis, A4, Word, raster-first, screenshot rebuild, or explicit PNG requests when draw.io Desktop export is available.
+
 ## Network Topology Authoring
 
 The current network-topology workflow supports:
@@ -186,6 +197,9 @@ Representative specs now ship in `skills/drawio/references/examples/`:
 - `aws-vpc-topology.yaml`
 - `onprem-dmz-topology.yaml`
 - `vendor-device-mapping.yaml`
+- `system-architecture-paper.yaml`
+- `research-pipeline.yaml`
+- `technical-roadmap-paper.yaml`
 
 Render one directly:
 

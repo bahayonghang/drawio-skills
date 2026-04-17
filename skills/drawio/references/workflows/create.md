@@ -19,6 +19,7 @@ Determine the route before asking questions:
 3. **Academic Branch**
    - Force-enable when prompt contains `paper`, `academic`, `IEEE`, `journal`, `thesis`, `figure`, `manuscript`, `research`.
    - Default `meta.profile = academic-paper`.
+   - Classify the figure as `architecture`, `roadmap`, or `workflow` before final layout and set `meta.figureType`.
 4. **Math / Formula Branch**
    - Enable when the prompt mentions `formula`, `equation`, `LaTeX`, `AsciiMath`, `MathJax`, `loss function`, `derivation`, `symbol legend`, `公式`, `行内公式`, or `行间公式`.
    - Load `references/docs/math-typesetting.md` as the syntax source of truth.
@@ -42,42 +43,50 @@ Step 2: Determine profile and theme defaults
 ├── engineering-review -> theme tech-blue by default
 └── otherwise -> theme from request or tech-blue
 
-Step 3: Decide Fast Path vs Full Path
-├── Fast Path -> skip AskUserQuestion and skip ASCII confirmation
-└── Full Path -> continue to Step 4
+Step 3: Classify academic figure intent when profile=academic-paper
+├── structure / modules / runtime interaction -> meta.figureType=architecture
+├── stage progression / milestones / study phases -> meta.figureType=roadmap
+└── ordered execution / branching / fallback / loop -> meta.figureType=workflow
 
-Step 4: Design Consultation (Full Path only)
+Step 4: Decide Fast Path vs Full Path
+├── Fast Path -> skip AskUserQuestion and skip ASCII confirmation
+└── Full Path -> continue to Step 5
+
+Step 5: Design Consultation (Full Path only)
 ├── Ask only unresolved questions:
 │   • audience/profile
 │   • theme
 │   • layout
+│   • figureType when academic intent is still ambiguous
 │   • expected complexity
 └── Store decisions in designIntent and pre-fill YAML meta
 
-Step 5: Academic / Math / Stencil references
+Step 6: Academic / Math / Stencil references
 ├── math/formula request -> load math typesetting + formula integration guide
-├── academic-paper -> load IEEE + export checklist + math typesetting
+├── academic-paper -> load academic figure playbook + export checklist + IEEE + math typesetting
 └── stencil-heavy -> decide whether shape search is needed
     ├── if `search_shape_catalog` exists, use it for exact vendor/device lookup
     └── otherwise use design-system icons or semantic fallbacks
 
-Step 6: Build the YAML spec
+Step 7: Build the YAML spec
 ├── Normalize Mermaid/CSV inputs to YAML spec
 ├── Ensure meta.theme, meta.layout, meta.profile are present
+├── Ensure meta.figureType is present when profile=academic-paper
 ├── Use semantic node types and typed connectors
 └── Add manual positions when branching or dense routing requires it
 
-Step 7: ASCII Draft (Full Path only)
+Step 8: ASCII Draft (Full Path only)
 ├── Render semantic ASCII draft
 ├── Include Design Summary:
 │   • theme
 │   • profile
+│   • figureType
 │   • layout
 │   • node/edge/module counts
 │   • validation status
 └── Pause for confirmation only when logic or structure is still ambiguous
 
-Step 8: Validation
+Step 9: Validation
 ├── validateColorScheme()
 ├── validateLayoutConsistency()
 ├── validateConnectionPointPolicy()
@@ -85,7 +94,7 @@ Step 8: Validation
 ├── validateAcademicProfile() when profile=academic-paper
 └── checkComplexity()
 
-Step 9: Edge Audit
+Step 10: Edge Audit
 ├── No corner connection points
 ├── No shared face slots on the same corridor
 ├── Last segment >= 30px
@@ -93,14 +102,15 @@ Step 9: Edge Audit
 ├── No waypoint + explicit connection-point mixing
 └── Prefer straight arrows when alignment allows it
 
-Step 10: Render
+Step 11: Render
 ├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars
 ├── For paper-quality diagrams prefer output.svg --validate --write-sidecars
+├── For thesis / A4 / Word / PNG requests, add a matching PNG only when draw.io Desktop export is available
 ├── Note: standalone SVG (without --use-desktop) is preview-quality (straight-line edges).
 │   For publication-grade vector output, add --use-desktop or export to .drawio and refine in draw.io.
 └── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
 
-Step 11: Preview / Optional Live Handoff
+Step 12: Preview / Optional Live Handoff
 ├── draw.io Desktop available -> open .drawio locally or export preview PNG/SVG
 ├── live backend has `replace_diagram_xml` + user wants browser or inline refinement
 │   └── use the provider-specific tool mapping from `references/docs/mcp-tools.md`
@@ -111,12 +121,15 @@ Step 11: Preview / Optional Live Handoff
 
 When `meta.profile = academic-paper`:
 
+- `meta.figureType` is required and must be exactly `architecture`, `roadmap`, or `workflow`.
 - `meta.title` is required for figure captioning.
 - `meta.description` is recommended for figure context.
 - `meta.legend` is required when icons are used or connector types are mixed.
 - Prefer `academic` theme unless the request explicitly asks for a color paper figure.
-- Prefer `.svg` export over `.drawio` for paper-ready output.
+- Default deliverables are `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`.
+- Add `.png` only for thesis, A4, Word, raster-first, screenshot rebuild, or explicit PNG requests.
 - Do not rely on color alone to distinguish semantics.
+- Treat A4 readability and grayscale print safety as final review gates, not optional polish.
 
 ## Math / Formula Branch Rules
 
@@ -136,3 +149,4 @@ When the request includes formulas, equations, or math-heavy labels:
 - Mermaid and CSV inputs are convenience adapters, not separate rendering pipelines.
 - For formula-bearing labels, use only the three supported syntaxes: `$$...$$`, `\(...\)`, and `` `...` ``.
 - Stencil-heavy requests may use shape search when available, but the create flow must still succeed without it.
+- Academic figures should not blend structure, progression, and control flow into one ambiguous visual grammar.
