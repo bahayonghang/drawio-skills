@@ -1,5 +1,6 @@
 meta:
   profile: academic-paper
+  figureType: architecture
   theme: academic
   layout: vertical
   title: "Fig. 1. Campus Network Topology"

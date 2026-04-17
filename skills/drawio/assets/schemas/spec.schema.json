@@ -28,6 +28,11 @@
           "enum": ["default", "academic-paper", "engineering-review"],
           "description": "Workflow profile that enables domain-specific validation and defaults"
         },
+        "figureType": {
+          "type": "string",
+          "enum": ["architecture", "roadmap", "workflow"],
+          "description": "Academic figure intent used for paper-mode guidance and validation"
+        },
         "source": {
           "type": "string",
           "enum": ["generated", "replicated", "edited"],

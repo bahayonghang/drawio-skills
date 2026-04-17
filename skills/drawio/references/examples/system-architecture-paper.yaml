@@ -1,5 +1,6 @@
 meta:
   profile: academic-paper
+  figureType: architecture
   theme: academic
   layout: horizontal
   title: "System Architecture"

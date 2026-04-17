@@ -963,6 +963,67 @@ export function buildXml(spec, theme, layout) {
 // Spec Validation Functions
 // ============================================================================
 
+const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
+const ACADEMIC_FIGURE_TYPES = ['architecture', 'roadmap', 'workflow']
+
+function normalizeLabelText(label) {
+  return String(label || '').replace(/\s+/g, ' ').trim()
+}
+
+function countManualLabelLines(label) {
+  return String(label || '').split(/\r?\n/).length
+}
+
+function isHexColor(value) {
+  return typeof value === 'string' && HEX_COLOR_REGEX.test(value)
+}
+
+function normalizeHexColor(value) {
+  if (!isHexColor(value)) return null
+  const hex = value.slice(1)
+  if (hex.length === 3) {
+    return `#${hex.split('').map(char => char + char).join('').toUpperCase()}`
+  }
+  return `#${hex.toUpperCase()}`
+}
+
+function isGrayscaleHex(value) {
+  const hex = normalizeHexColor(value)
+  if (!hex) return false
+  return hex.slice(1, 3) === hex.slice(3, 5) && hex.slice(3, 5) === hex.slice(5, 7)
+}
+
+function collectAcademicColorOverrideWarnings(spec, theme) {
+  const offenders = []
+
+  const checkColor = (value, context) => {
+    if (!value) return
+    const resolved = resolveThemeColor(value, theme, value)
+    if (isHexColor(resolved) && !isGrayscaleHex(resolved)) {
+      offenders.push(`${context}=${normalizeHexColor(resolved)}`)
+    }
+  }
+
+  spec.nodes?.forEach(node => {
+    checkColor(node.style?.fillColor, `node "${node.id}" fill`)
+    checkColor(node.style?.strokeColor, `node "${node.id}" stroke`)
+    checkColor(node.style?.fontColor, `node "${node.id}" text`)
+  })
+
+  spec.edges?.forEach(edge => {
+    checkColor(edge.style?.strokeColor, `edge "${edge.from}->${edge.to}" stroke`)
+  })
+
+  spec.modules?.forEach(module => {
+    checkColor(module.color, `module "${module.id}" color`)
+    checkColor(module.style?.fillColor, `module "${module.id}" fill`)
+    checkColor(module.style?.strokeColor, `module "${module.id}" stroke`)
+    checkColor(module.style?.fontColor, `module "${module.id}" text`)
+  })
+
+  return offenders
+}
+
 /**
  * Validate all color values in spec against theme tokens and hex format.
  * Warns on invalid values; does not throw by default.
@@ -973,12 +1034,11 @@ export function buildXml(spec, theme, layout) {
 export function validateColorScheme(spec, theme) {
   const warnings = []
   const validTokens = new Set(Object.keys(theme.colors || {}).map(k => `$${k}`))
-  const hexRegex = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
 
   const checkColor = (value, context) => {
     if (!value) return
     if (validTokens.has(value)) return      // valid theme token
-    if (hexRegex.test(value)) return        // valid hex color
+    if (HEX_COLOR_REGEX.test(value)) return // valid hex color
     const tokenSamples = [...validTokens].slice(0, 3).join(', ')
     warnings.push(
       `Invalid color "${value}" in ${context}. ` +
@@ -1011,7 +1071,7 @@ export function validateColorScheme(spec, theme) {
   checkColor(spec.meta?.replication?.background, 'meta.replication.background')
   spec.meta?.replication?.palette?.forEach((entry, index) => {
     if (!entry?.hex) return
-    if (hexRegex.test(entry.hex)) return
+    if (HEX_COLOR_REGEX.test(entry.hex)) return
     warnings.push(
       `Invalid color "${entry.hex}" in meta.replication.palette[${index}].hex. ` +
       'Use a flat hex code (#RGB or #RRGGBB) for extracted source colors.'
@@ -1287,6 +1347,11 @@ export function validateAcademicProfile(spec) {
   if (!['academic', 'academic-color'].includes(theme)) {
     warnings.push('Academic-paper profile should use academic or academic-color theme.')
   }
+  if (!spec.meta?.figureType) {
+    warnings.push(
+      `Academic-paper profile should set meta.figureType to one of ${ACADEMIC_FIGURE_TYPES.join(', ')}.`
+    )
+  }
   if (!spec.meta?.title) {
     warnings.push('Academic-paper profile requires meta.title for figure captioning.')
   }
@@ -1315,6 +1380,37 @@ export function validateAcademicProfile(spec) {
   }
   if (smallFonts.length > 0) {
     warnings.push(`Academic-paper profile expects 8-10pt labels. Out-of-range overrides found on ${smallFonts.join(', ')}.`)
+  }
+
+  const verboseLabels = []
+  for (const node of spec.nodes || []) {
+    const label = normalizeLabelText(node.label)
+    const lineCount = countManualLabelLines(node.label)
+    if (label.length > 40 || lineCount > 3) {
+      verboseLabels.push(`node "${node.id}"`)
+    }
+  }
+  if (verboseLabels.length > 0) {
+    warnings.push(
+      `Academic-paper labels should stay concise. Labels longer than 40 visible characters or 3 manual lines were found on ${verboseLabels.join(', ')}.`
+    )
+  }
+
+  if (theme === 'academic') {
+    const colorOverrides = collectAcademicColorOverrideWarnings(spec, loadTheme(theme))
+    if (colorOverrides.length > 0) {
+      warnings.push(
+        `Academic theme expects grayscale-safe explicit overrides. Non-grayscale color overrides found on ${colorOverrides.join(', ')}.`
+      )
+    }
+  }
+
+  const nodeCount = spec.nodes?.length || 0
+  const moduleCount = spec.modules?.length || 0
+  if (nodeCount > 18 || (moduleCount === 0 && nodeCount > 12)) {
+    warnings.push(
+      `Academic-paper profile is dense for a single-page figure (${nodeCount} nodes, ${moduleCount} modules). Split the figure or add modules before export.`
+    )
   }
 
   return warnings
@@ -1520,6 +1616,7 @@ export function validateSpec(spec) {
   const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical', 'star', 'mesh']
   const VALID_ROUTINGS = ['orthogonal', 'rounded']
   const VALID_PROFILES = ['default', 'academic-paper', 'engineering-review']
+  const VALID_FIGURE_TYPES = ['architecture', 'roadmap', 'workflow']
   const VALID_SOURCES = ['generated', 'replicated', 'edited']
   const VALID_REPLICATION_MODES = ['preserve-original', 'theme-first']
   const VALID_REPLICATION_TARGETS = ['canvas', 'nodes', 'edges', 'modules', 'mixed']
@@ -1542,6 +1639,11 @@ export function validateSpec(spec) {
   }
   if (spec.meta?.profile != null && !VALID_PROFILES.includes(spec.meta.profile)) {
     throw new Error(`Invalid meta.profile "${spec.meta.profile}": must be one of ${VALID_PROFILES.join(', ')}`)
+  }
+  if (spec.meta?.figureType != null && !VALID_FIGURE_TYPES.includes(spec.meta.figureType)) {
+    throw new Error(
+      `Invalid meta.figureType "${spec.meta.figureType}": must be one of ${VALID_FIGURE_TYPES.join(', ')}`
+    )
   }
   if (spec.meta?.source != null && !VALID_SOURCES.includes(spec.meta.source)) {
     throw new Error(`Invalid meta.source "${spec.meta.source}": must be one of ${VALID_SOURCES.join(', ')}`)

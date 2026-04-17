@@ -5,6 +5,7 @@ import {
   calculateLayout,
   loadTheme,
   validateAcademicProfile,
+  validateSpec,
   validateConnectionPointPolicy,
   validateEdgeQuality
 } from '../skills/drawio/scripts/dsl/spec-to-drawio.js'
@@ -113,6 +114,70 @@ test('validateAcademicProfile requires title and legend for academic-paper', () 
   })
   assert.ok(warnings.some(w => /meta.title/.test(w)))
   assert.ok(warnings.some(w => /meta.legend/.test(w)))
+})
+
+test('validateAcademicProfile warns on missing figureType and dense academic labels', () => {
+  const warnings = validateAcademicProfile({
+    meta: {
+      profile: 'academic-paper',
+      theme: 'academic',
+      title: 'Fig. 2',
+      description: 'Academic workflow'
+    },
+    nodes: [
+      {
+        id: 'A',
+        label: 'This label is intentionally much too long for a paper figure node',
+        style: { fillColor: '#FF0000' }
+      },
+      { id: 'B', label: 'Line 1\nLine 2\nLine 3\nLine 4' }
+    ],
+    edges: [],
+    modules: []
+  })
+  assert.ok(warnings.some(w => /meta\.figureType/.test(w)))
+  assert.ok(warnings.some(w => /labels should stay concise/.test(w)))
+  assert.ok(warnings.some(w => /grayscale-safe explicit overrides/.test(w)))
+})
+
+test('validateAcademicProfile warns on dense single-page academic figures', () => {
+  const warnings = validateAcademicProfile({
+    meta: {
+      profile: 'academic-paper',
+      theme: 'academic-color',
+      figureType: 'workflow',
+      title: 'Fig. 3',
+      description: 'Dense workflow'
+    },
+    nodes: Array.from({ length: 13 }, (_, index) => ({
+      id: `N${index}`,
+      label: `Node ${index}`
+    })),
+    edges: [],
+    modules: []
+  })
+  assert.ok(warnings.some(w => /dense for a single-page figure/.test(w)))
+})
+
+test('validateSpec accepts academic figureType and rejects invalid values', () => {
+  assert.doesNotThrow(() => {
+    validateSpec({
+      meta: { theme: 'academic', profile: 'academic-paper', figureType: 'architecture' },
+      nodes: [],
+      edges: [],
+      modules: []
+    })
+  })
+
+  assert.throws(
+    () => validateSpec({
+      meta: { figureType: 'timeline' },
+      nodes: [],
+      edges: [],
+      modules: []
+    }),
+    /Invalid meta\.figureType/
+  )
 })
 
 test('validateEdgeQuality warns on short final segment', () => {

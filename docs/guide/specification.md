@@ -38,8 +38,9 @@ meta:
   layout: horizontal
   routing: orthogonal
   profile: default
+  figureType: architecture
   title: Example Diagram
-  source: authored
+  source: generated
 ```
 
 Common fields:
@@ -48,7 +49,8 @@ Common fields:
 - `layout`: `horizontal`, `vertical`, `hierarchical`
 - `routing`: `orthogonal`, `rounded`
 - `profile`: `default`, `academic-paper`, `engineering-review`
-- `source`: `authored` or `replicated`
+- `figureType`: `architecture`, `roadmap`, `workflow` when `profile=academic-paper`
+- `source`: `generated`, `replicated`, or `edited`
 
 ### `modules`
 
@@ -136,6 +138,7 @@ The compiler validates:
 
 - schema and ID correctness
 - theme, profile, and layout values
+- academic `figureType` when paper mode is enabled
 - layout consistency
 - edge quality
 - academic-paper requirements when enabled

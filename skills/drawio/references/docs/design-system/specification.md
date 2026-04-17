@@ -53,6 +53,9 @@ meta:
   # Workflow profile
   profile: default  # default | academic-paper | engineering-review
 
+  # Academic intent (required when profile=academic-paper)
+  figureType: architecture  # architecture | roadmap | workflow
+
   # How this spec was produced
   source: generated  # generated | replicated | edited
 
@@ -113,6 +116,16 @@ meta:
 | `default` | Standard diagram workflow |
 | `academic-paper` | Enables paper-facing validation and export checklist |
 | `engineering-review` | Enables stricter routing and readability review |
+
+### Academic Figure Type Options
+
+Use `meta.figureType` whenever `meta.profile = academic-paper`.
+
+| Figure Type | Use When | Avoid |
+|-------------|----------|-------|
+| `architecture` | You are explaining modules, tiers, responsibilities, and interactions | Turning runtime structure into a step-by-step process flow |
+| `roadmap` | You are explaining milestones, study phases, or delivery progression | Mixing detailed runtime dependencies into a milestone timeline |
+| `workflow` | You are explaining ordered execution, branching, loops, or fallback logic | Collapsing system structure and process control into one overloaded figure |
 
 ### Source Options
 
@@ -447,6 +460,7 @@ edges:
 ```yaml
 meta:
   theme: academic
+  figureType: architecture
   layout: vertical
   title: CNN Architecture
 
@@ -515,6 +529,7 @@ Validation checks:
 
 - Required fields present
 - Valid theme reference
+- Valid academic `figureType` when provided
 - Unique node/module IDs
 - Edge references exist
 - Style values valid

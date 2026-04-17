@@ -38,8 +38,9 @@ meta:
   layout: horizontal
   routing: orthogonal
   profile: default
+  figureType: architecture
   title: Example Diagram
-  source: authored
+  source: generated
 ```
 
 常见字段：
@@ -48,7 +49,8 @@ meta:
 - `layout`：`horizontal`、`vertical`、`hierarchical`
 - `routing`：`orthogonal`、`rounded`
 - `profile`：`default`、`academic-paper`、`engineering-review`
-- `source`：`authored` 或 `replicated`
+- `figureType`：当 `profile=academic-paper` 时使用 `architecture`、`roadmap`、`workflow`
+- `source`：`generated`、`replicated` 或 `edited`
 
 ### `modules`
 
@@ -136,6 +138,7 @@ meta:
 
 - schema 与 ID 正确性
 - 主题、profile、布局字段是否合法
+- 开启 paper 模式时 academic `figureType` 是否有效
 - 布局一致性
 - 连线质量
 - 开启 `academic-paper` 时的附加要求

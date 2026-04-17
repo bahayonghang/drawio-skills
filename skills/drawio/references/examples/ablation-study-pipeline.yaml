@@ -1,5 +1,6 @@
 meta:
   profile: academic-paper
+  figureType: workflow
   theme: academic-color
   layout: vertical
   title: "Ablation Study Pipeline"

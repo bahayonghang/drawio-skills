@@ -1,5 +1,6 @@
 meta:
   profile: academic-paper
+  figureType: workflow
   theme: academic-color
   layout: horizontal
   title: "Research Workflow"
@@ -10,18 +11,33 @@ nodes:
   - id: data
     label: Dataset
     type: document
+    position:
+      x: 40
+      y: 96
   - id: preprocess
     label: Preprocess
     type: process
+    position:
+      x: 232
+      y: 96
   - id: train
     label: Train Model
     type: service
+    position:
+      x: 424
+      y: 96
   - id: validate
     label: Validation
     type: decision
+    position:
+      x: 616
+      y: 96
   - id: result
     label: Results
     type: document
+    position:
+      x: 808
+      y: 96
 
 edges:
   - from: data
