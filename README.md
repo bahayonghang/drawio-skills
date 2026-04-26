@@ -10,6 +10,11 @@
 
 Draw.io Skill is a YAML-first, offline-first draw.io skill for engineering diagrams, academic figures, network diagrams, and structured redraws. It accepts natural language, YAML, Mermaid, CSV, and imported `.drawio` files, then normalizes everything into a consistent design-system-backed workflow.
 
+## Skill Variants
+
+- `skills/drawio`: general engineering diagrams, network diagrams, structured redraws, and optional live browser refinement.
+- `skills/drawio-academic-skills`: academic-first fork that absorbs the upstream pure `drawio-skill` workflow, keeps YAML sidecars, and defaults to publication-ready `.drawio + .spec.yaml + .arch.json + .svg` delivery.
+
 ## Features
 
 - **Offline-first artifact bundle**: keep `.drawio`, `.spec.yaml`, and `.arch.json` aligned for repeatable local editing.
@@ -47,6 +52,7 @@ Restart your client after installation so it reloads the skill.
 
 1. Clone the repository.
 2. Copy `skills/drawio` into your client's skill directory.
+   For paper-first workflows, copy `skills/drawio-academic-skills` instead.
 
 Common locations:
 

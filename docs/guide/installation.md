@@ -25,6 +25,11 @@ npx skills add bahayonghang/drawio-skills
 
 This installs the skill into the correct skill directory for the current client integration.
 
+## Skill Variants
+
+- Use `skills/drawio` for general diagrams, network topology, structured redraws, and optional live browser refinement.
+- Use `skills/drawio-academic-skills` for paper-first diagrams. It includes the upstream pure draw.io workflow plus the local YAML/CLI academic bundle flow.
+
 ## Manual Install
 
 ### 1. Clone the repository
@@ -34,7 +39,9 @@ git clone https://github.com/bahayonghang/drawio-skills.git
 cd drawio-skills
 ```
 
-### 2. Copy `skills/drawio` into your client's skill directory
+### 2. Copy the skill folder into your client's skill directory
+
+Copy `skills/drawio` by default. Copy `skills/drawio-academic-skills` when you want academic-paper defaults.
 
 #### Claude
 

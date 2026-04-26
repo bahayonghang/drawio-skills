@@ -10,6 +10,11 @@
 
 Draw.io Skill 是一个 YAML-first、离线优先的 draw.io 技能，适合工程架构图、学术插图、网络图和结构化重绘场景。它支持自然语言、YAML、Mermaid、CSV 以及已有 `.drawio` 文件输入，并把这些输入统一归一化成同一套设计系统驱动的工作流。
 
+## Skill 变体
+
+- `skills/drawio`：通用工程图、网络图、结构化重绘和可选浏览器精修。
+- `skills/drawio-academic-skills`：学术优先版本，吸收上游纯 `drawio-skill` 工作流，保留 YAML sidecars，默认交付出版级 `.drawio + .spec.yaml + .arch.json + .svg`。
+
 ## 功能特性
 
 - **离线优先产物包**：统一维护 `.drawio`、`.spec.yaml`、`.arch.json`，便于本地重复编辑。
@@ -47,6 +52,7 @@ npx skills add bahayonghang/drawio-skills
 
 1. 克隆仓库。
 2. 把 `skills/drawio` 复制到客户端的 skill 目录。
+   如果主要做论文图，复制 `skills/drawio-academic-skills`。
 
 常见路径：
 

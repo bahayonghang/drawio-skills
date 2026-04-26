@@ -25,6 +25,11 @@ npx skills add bahayonghang/drawio-skills
 
 这会把 skill 安装到当前客户端集成对应的技能目录。
 
+## Skill 变体
+
+- `skills/drawio`：通用图、网络拓扑、结构化重绘和可选浏览器精修。
+- `skills/drawio-academic-skills`：论文图优先。它包含上游纯 draw.io 工作流，也包含本仓库的 YAML/CLI 学术产物包流程。
+
 ## 手动安装
 
 ### 1. 克隆仓库
@@ -34,7 +39,9 @@ git clone https://github.com/bahayonghang/drawio-skills.git
 cd drawio-skills
 ```
 
-### 2. 把 `skills/drawio` 复制到客户端 skill 目录
+### 2. 把 skill 目录复制到客户端 skill 目录
+
+默认复制 `skills/drawio`。如果主要做论文图，复制 `skills/drawio-academic-skills`。
 
 #### Claude
 
