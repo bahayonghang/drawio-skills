@@ -1,0 +1,54 @@
+meta:
+  profile: academic-paper
+  figureType: roadmap
+  theme: academic-color
+  layout: horizontal
+  title: "Technical Roadmap"
+  description: "Major study stages from problem framing to submission-ready results."
+  legend: "Primary arrows show stage progression. Document nodes mark major outputs."
+
+nodes:
+  - id: framing
+    label: Framing
+    type: process
+    position:
+      x: 40
+      y: 96
+  - id: prototype
+    label: Prototype
+    type: service
+    position:
+      x: 240
+      y: 96
+  - id: ablation
+    label: Ablation Study
+    type: process
+    position:
+      x: 440
+      y: 96
+  - id: scale
+    label: Scale-Up
+    type: process
+    position:
+      x: 640
+      y: 96
+  - id: submission
+    label: Submission
+    type: document
+    position:
+      x: 840
+      y: 96
+
+edges:
+  - from: framing
+    to: prototype
+    type: primary
+  - from: prototype
+    to: ablation
+    type: primary
+  - from: ablation
+    to: scale
+    type: primary
+  - from: scale
+    to: submission
+    type: primary

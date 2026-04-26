@@ -1,0 +1,180 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "academic",
+  "displayName": "Academic",
+  "description": "High-contrast black/white/gray for IEEE-style publications, optimized for print",
+  "colors": {
+    "primary": "#1E1E1E",
+    "primaryLight": "#F5F5F5",
+    "secondary": "#4B4B4B",
+    "secondaryLight": "#E5E5E5",
+    "accent": "#6B6B6B",
+    "accentLight": "#D4D4D4",
+    "background": "#FFFFFF",
+    "surface": "#FAFAFA",
+    "surfaceAlt": "#F5F5F5",
+    "text": "#1E1E1E",
+    "textMuted": "#6B6B6B",
+    "textInverse": "#FFFFFF",
+    "border": "#D4D4D4",
+    "borderStrong": "#A3A3A3",
+    "success": "#1E1E1E",
+    "successLight": "#E5E5E5",
+    "warning": "#4B4B4B",
+    "warningLight": "#F5F5F5",
+    "error": "#1E1E1E",
+    "errorLight": "#E5E5E5",
+    "info": "#4B4B4B",
+    "infoLight": "#F5F5F5"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Times New Roman, Georgia, serif",
+      "monospace": "Courier New, Courier, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 9,
+      "sm": 10,
+      "md": 11,
+      "lg": 12,
+      "xl": 14,
+      "2xl": 16
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 0,
+    "md": 0,
+    "lg": 0,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "none",
+    "md": "none",
+    "lg": "none"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#1E1E1E",
+      "strokeWidth": 1,
+      "fontColor": "#1E1E1E",
+      "fontSize": 11,
+      "fontFamily": "Times New Roman, Georgia, serif",
+      "rounded": 0
+    },
+    "service": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#1E1E1E",
+      "rounded": 0
+    },
+    "database": {
+      "fillColor": "#F5F5F5",
+      "strokeColor": "#1E1E1E"
+    },
+    "decision": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#1E1E1E"
+    },
+    "terminal": {
+      "fillColor": "#E5E5E5",
+      "strokeColor": "#1E1E1E"
+    },
+    "queue": {
+      "fillColor": "#FAFAFA",
+      "strokeColor": "#1E1E1E"
+    },
+    "user": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#1E1E1E"
+    },
+    "document": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#1E1E1E"
+    },
+    "formula": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#1E1E1E",
+      "strokeWidth": 1
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#1E1E1E",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#1E1E1E",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "6 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#6B6B6B",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "2 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#1E1E1E",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#4B4B4B",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    }
+  },
+  "module": {
+    "fillColor": "#FAFAFA",
+    "strokeColor": "#1E1E1E",
+    "strokeWidth": 1,
+    "rounded": 0,
+    "padding": 24,
+    "labelFontSize": 12,
+    "labelFontWeight": 700,
+    "labelFontColor": "#1E1E1E"
+  },
+  "canvas": {
+    "background": "#FFFFFF",
+    "gridSize": 8,
+    "gridColor": "#E5E5E5"
+  }
+}

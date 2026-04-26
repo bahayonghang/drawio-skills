@@ -1,0 +1,102 @@
+[
+  {
+    "id": "academic-campus-network",
+    "profile": "academic-paper",
+    "prompt": "Create an IEEE-style campus network figure with core, distribution, and access layers in grayscale."
+  },
+  {
+    "id": "academic-research-workflow",
+    "profile": "academic-paper",
+    "prompt": "Create a research workflow figure for a paper showing data collection, preprocessing, modeling, validation, and reporting."
+  },
+  {
+    "id": "academic-system-overview",
+    "profile": "academic-paper",
+    "prompt": "Create a paper-ready system architecture overview with client, API, worker, and storage layers."
+  },
+  {
+    "id": "academic-ablation-pipeline",
+    "profile": "academic-paper",
+    "prompt": "Create an ablation-study figure comparing baseline and two variants before a shared evaluation block."
+  },
+  {
+    "id": "academic-technical-roadmap",
+    "profile": "academic-paper",
+    "prompt": "Create a paper-ready technical roadmap figure showing problem framing, prototype, ablation study, scale-up, and submission milestones."
+  },
+  {
+    "id": "academic-thesis-bundle-delivery",
+    "profile": "academic-paper",
+    "prompt": "Create an A4-safe thesis workflow figure for Word export showing data collection, preprocessing, model training, validation, and chapter outputs. Deliver the editable drawio bundle plus SVG, and include a matching PNG if desktop export is available."
+  },
+  {
+    "id": "engineering-cloud-reference",
+    "profile": "engineering-review",
+    "prompt": "Create a cloud reference architecture using gateway, compute, async queue, and object storage."
+  },
+  {
+    "id": "engineering-microservices",
+    "profile": "engineering-review",
+    "prompt": "Create a microservices architecture with API gateway, auth service, order service, event bus, and PostgreSQL."
+  },
+  {
+    "id": "engineering-network-topology",
+    "profile": "engineering-review",
+    "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs. Include interface or VLAN labels on the links."
+  },
+  {
+    "id": "engineering-aws-vpc-topology",
+    "profile": "engineering-review",
+    "prompt": "Create an AWS VPC topology with internet gateway, application load balancer, two EC2 app servers, and a private RDS subnet. Label the private links."
+  },
+  {
+    "id": "simple-login-fast-path",
+    "profile": "default",
+    "prompt": "Create a horizontal tech-blue login flowchart with Start, Login Form, Validate, Success, and Error."
+  },
+  {
+    "id": "dense-architecture-edge-audit",
+    "profile": "engineering-review",
+    "prompt": "Create a dense architecture diagram with shared event flows, two databases, and cross-service dependencies."
+  },
+  {
+    "id": "paper-figure-with-formula",
+    "profile": "academic-paper",
+    "prompt": "Create a paper figure for a training pipeline including the loss formula $$L = -\\sum y_i \\log(\\hat{y}_i)$$."
+  },
+  {
+    "id": "replicate-warm-approval-palette",
+    "profile": "default",
+    "prompt": "Replicate the uploaded approval-flow image. Keep the warm orange fills, brown connectors, and cream background instead of remapping everything to tech-blue."
+  },
+  {
+    "id": "replicate-brand-architecture-palette",
+    "profile": "default",
+    "prompt": "Recreate the uploaded architecture image and preserve its blue-green brand palette. Keep semantic shapes, but do not normalize colors to the default theme."
+  },
+  {
+    "id": "replicate-academic-highlight-palette",
+    "profile": "academic-paper",
+    "prompt": "Replicate the uploaded paper figure. Keep the grayscale structure and its single accent highlight while remaining publication-safe."
+  },
+  {
+    "id": "academic-replicate-editable-bundle",
+    "profile": "academic-paper",
+    "prompt": "Replicate the uploaded paper figure into an editable academic bundle. Preserve the grayscale structure and its single accent highlight, and return the offline bundle plus SVG."
+  },
+  {
+    "id": "import-drawio-to-spec-uncompressed",
+    "profile": "default",
+    "prompt": "Import the uploaded .drawio file into YAML spec and write sidecars."
+  },
+  {
+    "id": "import-drawio-to-spec-compressed",
+    "profile": "default",
+    "prompt": "Import the uploaded compressed .drawio file into YAML spec and write sidecars."
+  },
+  {
+    "id": "edit-after-import",
+    "profile": "default",
+    "prompt": "Import the uploaded .drawio file into YAML spec, rename API to Auth, and export as SVG."
+  }
+]

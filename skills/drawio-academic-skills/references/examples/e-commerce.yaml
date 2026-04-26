@@ -1,0 +1,141 @@
+# E-Commerce Platform - Medium Complexity Example
+# Demonstrates: 12 nodes, 4 modules, mixed connector types,
+# explicit grid positions, and style overrides with color tokens.
+meta:
+  theme: tech-blue
+  layout: horizontal
+  title: E-Commerce Platform
+
+modules:
+  - id: frontend
+    label: Frontend
+  - id: api
+    label: API Layer
+  - id: services
+    label: Core Services
+  - id: data
+    label: Data Layer
+
+nodes:
+  # Frontend Layer
+  - id: web
+    label: Web App
+    type: service
+    module: frontend
+    position: { x: 80, y: 80 }
+  - id: mobile
+    label: Mobile App
+    type: service
+    module: frontend
+    position: { x: 80, y: 200 }
+
+  # API Layer
+  - id: gateway
+    label: API Gateway
+    type: service
+    module: api
+    position: { x: 280, y: 140 }
+
+  # Core Services
+  - id: auth
+    label: Auth Service
+    type: service
+    module: services
+    position: { x: 480, y: 40 }
+  - id: catalog
+    label: Catalog Service
+    type: service
+    module: services
+    position: { x: 480, y: 160 }
+  - id: cart
+    label: Cart Service
+    type: service
+    module: services
+    position: { x: 480, y: 280 }
+  - id: payment
+    label: Payment Service
+    type: service
+    module: services
+    position: { x: 480, y: 400 }
+    style:
+      fillColor: $accentLight
+      strokeColor: $accent
+  - id: notify
+    label: Notifications
+    type: service
+    module: services
+    position: { x: 480, y: 520 }
+
+  # Data Layer
+  - id: userDb
+    label: User DB
+    type: database
+    module: data
+    position: { x: 680, y: 40 }
+  - id: productDb
+    label: Product DB
+    type: database
+    module: data
+    position: { x: 680, y: 160 }
+  - id: orderDb
+    label: Order DB
+    type: database
+    module: data
+    position: { x: 680, y: 280 }
+  - id: cache
+    label: Redis Cache
+    type: queue
+    module: data
+    position: { x: 680, y: 400 }
+
+edges:
+  # Frontend to API
+  - from: web
+    to: gateway
+    type: primary
+  - from: mobile
+    to: gateway
+    type: primary
+
+  # API to Services
+  - from: gateway
+    to: auth
+    type: primary
+  - from: gateway
+    to: catalog
+    type: primary
+  - from: gateway
+    to: cart
+    type: primary
+
+  # Service to Data
+  - from: auth
+    to: userDb
+    type: data
+    label: CRUD
+  - from: catalog
+    to: productDb
+    type: data
+    label: Query
+  - from: cart
+    to: orderDb
+    type: data
+    label: CRUD
+
+  # Service interactions
+  - from: cart
+    to: payment
+    type: primary
+    label: Checkout
+  - from: payment
+    to: notify
+    type: optional
+    label: Event
+  - from: cart
+    to: cache
+    type: data
+    label: Session
+  - from: catalog
+    to: cache
+    type: data
+    label: Cache

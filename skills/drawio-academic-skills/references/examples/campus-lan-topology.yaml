@@ -1,0 +1,89 @@
+meta:
+  profile: engineering-review
+  theme: tech-blue
+  layout: hierarchical
+  title: "Campus LAN Topology"
+  description: "Core, distribution, access, and wireless segments with structured link metadata."
+
+modules:
+  - id: campus
+    label: Campus Network
+    color: $primaryLight
+
+nodes:
+  - id: internet
+    label: Internet
+    type: internet
+    module: campus
+  - id: firewall
+    label: Edge Firewall
+    type: firewall
+    module: campus
+  - id: core
+    label: Core Switch
+    type: switch
+    module: campus
+    network:
+      device: switch
+      role: core
+  - id: distA
+    label: Distribution A
+    type: switch
+    module: campus
+  - id: distB
+    label: Distribution B
+    type: switch
+    module: campus
+  - id: access
+    label: Access Switch
+    type: switch
+    module: campus
+  - id: ap1
+    label: Wireless AP
+    type: ap
+    module: campus
+  - id: users
+    label: User Segment
+    type: subnet
+    module: campus
+    network:
+      cidr: 10.10.20.0/24
+
+edges:
+  - from: internet
+    to: firewall
+    type: primary
+    bandwidth: 1G
+    linkType: uplink
+  - from: firewall
+    to: core
+    type: primary
+    srcInterface: ge-0/0/0
+    dstInterface: ge-0/0/1
+    vlan: 10
+  - from: core
+    to: distA
+    type: primary
+    bandwidth: 10G
+    linkType: trunk
+  - from: core
+    to: distB
+    type: primary
+    bandwidth: 10G
+    linkType: trunk
+  - from: distA
+    to: access
+    type: primary
+    vlan: 20
+  - from: distB
+    to: access
+    type: data
+    linkType: control
+  - from: access
+    to: ap1
+    type: primary
+    bandwidth: 1G
+  - from: access
+    to: users
+    type: primary
+    ip: 10.10.20.0/24

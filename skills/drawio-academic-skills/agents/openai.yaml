@@ -1,0 +1,20 @@
+interface:
+  display_name: "Draw.io Academic Figures"
+  short_description: "Create publication-ready draw.io figures with YAML sidecars, academic checks, Desktop export, style presets, and optional live refinement"
+  brand_color: "#2563EB"
+
+policy:
+  allow_implicit_invocation: true
+
+capabilities:
+  - Create academic-paper draw.io figures from natural language or YAML specs
+  - Generate .drawio, .spec.yaml, .arch.json, and SVG as the default offline bundle
+  - Export PNG, SVG, PDF, and JPG through draw.io Desktop when available
+  - Generate diagrams.net browser URLs when Desktop export is unavailable
+  - Apply style presets from user and bundled preset directories
+  - Self-check exported images and support targeted refinement loops
+  - Work without MCP through local CLI exports and diagrams.net URL fallback
+
+prerequisites:
+  - Node 20+
+  - draw.io Desktop app for PNG/PDF/JPG and embedded SVG exports

@@ -1,0 +1,45 @@
+meta:
+  profile: academic-paper
+  figureType: architecture
+  theme: academic
+  layout: horizontal
+  title: "System Architecture"
+  description: "Paper-ready overview of client, service, and data tiers."
+  legend: "Rounded boxes are services. Cylinders are persistent storage."
+
+modules:
+  - id: client
+    label: Client Layer
+  - id: compute
+    label: Compute Layer
+  - id: data
+    label: Data Layer
+
+nodes:
+  - id: ui
+    label: Web Client
+    type: user
+    module: client
+  - id: api
+    label: API Service
+    type: service
+    module: compute
+  - id: worker
+    label: Worker
+    type: service
+    module: compute
+  - id: db
+    label: PostgreSQL
+    type: database
+    module: data
+
+edges:
+  - from: ui
+    to: api
+    type: primary
+  - from: api
+    to: worker
+    type: data
+  - from: worker
+    to: db
+    type: primary

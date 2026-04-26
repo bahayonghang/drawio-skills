@@ -1,0 +1,62 @@
+# Neural Network Architecture Example
+# Note: Extended deep-learning types (conv, pool, attention, etc.) are also
+# supported by the converter. This reference example uses standard types only.
+meta:
+  theme: academic
+  layout: horizontal
+
+modules:
+  - id: encoder
+    label: Encoder
+  - id: decoder
+    label: Decoder
+
+nodes:
+  - id: input
+    label: Input Data
+    type: terminal
+    module: encoder
+    position: { x: 80, y: 80 }
+  - id: conv1
+    label: Conv2D Layer
+    type: service
+    module: encoder
+    position: { x: 80, y: 200 }
+  - id: pool1
+    label: Max Pooling
+    type: service
+    module: encoder
+    position: { x: 80, y: 320 }
+  - id: attn
+    label: Self-Attention
+    type: service
+    module: decoder
+    position: { x: 360, y: 80 }
+  - id: fc
+    label: FC Layer
+    type: service
+    module: decoder
+    position: { x: 360, y: 200 }
+  - id: output
+    label: Prediction
+    type: terminal
+    module: decoder
+    position: { x: 360, y: 320 }
+
+edges:
+  - from: input
+    to: conv1
+    type: primary
+  - from: conv1
+    to: pool1
+    type: primary
+  - from: pool1
+    to: attn
+    type: data
+    label: Features
+  - from: attn
+    to: fc
+    type: primary
+  - from: fc
+    to: output
+    type: primary

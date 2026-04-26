@@ -1,0 +1,369 @@
+{
+  "skill_name": "drawio-academic-skills",
+  "version": "0.1.0",
+  "evals": [
+    {
+      "id": "academic-campus-network",
+      "prompt": "Create an IEEE-style campus network figure with core, distribution, and access layers in grayscale.",
+      "expected_output": "A diagram with academic (grayscale) theme showing three network layers in IEEE-compatible styling.",
+      "files": [],
+      "assertions": [
+        "Output uses academic theme with grayscale palette",
+        "Contains core, distribution, and access layer modules",
+        "SVG or drawio output is grayscale-safe (no color-only semantics)",
+        "Node labels are <= 14 characters",
+        "meta.figureType is set to architecture",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-research-workflow",
+      "prompt": "Create a research workflow figure for a paper showing data collection, preprocessing, modeling, validation, and reporting.",
+      "expected_output": "An academic-themed research pipeline diagram with 5 sequential stages.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains all 5 workflow stages as nodes",
+        "Edges use primary connector type for main flow",
+        "SVG export is grayscale-safe",
+        "meta.figureType is set to workflow",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-system-overview",
+      "prompt": "Create a paper-ready system architecture overview with client, API, worker, and storage layers.",
+      "expected_output": "An academic-themed system architecture with 4 layers suitable for publication.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains client, API, worker, and storage layers",
+        "Nodes use semantic types (service, database, user)",
+        "SVG export preserves readability in grayscale",
+        "meta.figureType is set to architecture",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-ablation-pipeline",
+      "prompt": "Create an ablation-study figure comparing baseline and two variants before a shared evaluation block.",
+      "expected_output": "A diagram with branching paths from baseline/variants converging at an evaluation node.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains baseline and at least two variant branches",
+        "Branches converge at a shared evaluation block",
+        "SVG export is grayscale-safe",
+        "meta.figureType is set to workflow",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-technical-roadmap",
+      "prompt": "Create a paper-ready technical roadmap figure showing problem framing, prototype, ablation study, scale-up, and submission milestones.",
+      "expected_output": "An academic roadmap diagram with ordered stages and meta.figureType set to roadmap.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "meta.figureType is set to roadmap",
+        "Contains staged progression for problem framing, prototype, ablation, scale-up, and submission",
+        "The figure emphasizes progression rather than runtime structure",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-thesis-bundle-delivery",
+      "prompt": "Create an A4-safe thesis workflow figure for Word export showing data collection, preprocessing, model training, validation, and chapter outputs. Deliver the editable drawio bundle plus SVG, and include a matching PNG if desktop export is available.",
+      "expected_output": "An academic workflow bundle with figureType workflow, default academic sidecars, and optional PNG companion for thesis use.",
+      "files": [],
+      "assertions": [
+        "meta.figureType is set to workflow",
+        "The response describes `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the default academic deliverables",
+        "PNG is treated as an additional thesis-friendly export when desktop export is available",
+        "The workflow does not require a live session",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "academic-replicate-editable-bundle",
+      "prompt": "Replicate the uploaded paper figure into an editable academic bundle. Preserve the grayscale structure and its single accent highlight, and return the offline bundle plus SVG.",
+      "expected_output": "A replicated academic figure that stays paper-safe while remaining editable through the offline bundle.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.figureType is set for the extracted academic figure",
+        "The output includes `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the editable delivery set",
+        "The grayscale-safe structure remains intact while the single accent highlight is preserved",
+        "The output stays suitable for academic-paper review"
+      ]
+    },
+    {
+      "id": "engineering-cloud-reference",
+      "prompt": "Create a cloud reference architecture using gateway, compute, async queue, and object storage.",
+      "expected_output": "A tech-blue themed cloud architecture diagram with 4 key infrastructure components.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains gateway, compute, queue, and storage nodes",
+        "Nodes use appropriate semantic types (service, queue, database)",
+        "Edge routing follows orthogonal style",
+        "Edge quality: no overlapping arrows, minimum 30px last segment",
+        "The diagram can be produced from the offline bundle workflow without requiring a live session"
+      ]
+    },
+    {
+      "id": "aws-icons-shape-search-optional",
+      "prompt": "Create an AWS reference architecture with API Gateway, Lambda, SQS, and DynamoDB. Use exact provider icons if a shape catalog is available; otherwise fall back to documented icons or semantic shapes without failing.",
+      "expected_output": "A valid architecture diagram that prefers AWS icons when possible but still succeeds without a live shape-search provider.",
+      "files": [],
+      "assertions": [
+        "Contains API Gateway, Lambda, SQS, and DynamoDB components",
+        "The workflow does not require `search_shape_catalog` to succeed",
+        "If exact icons are unavailable, semantic/icon fallback still produces a valid offline bundle",
+        "The response does not claim a single live MCP implementation is required",
+        "The resulting artifact remains editable through `.drawio` plus sidecars"
+      ]
+    },
+    {
+      "id": "engineering-microservices",
+      "prompt": "Create a microservices architecture with API gateway, auth service, order service, event bus, and PostgreSQL.",
+      "expected_output": "A microservices diagram with 5 components and appropriate connectors.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains all 5 specified components",
+        "Database node uses database semantic type",
+        "Service-to-database edges use data connector type",
+        "Edge quality: no overlapping arrows, clear routing"
+      ]
+    },
+    {
+      "id": "engineering-network-topology",
+      "prompt": "Create a network topology with firewall, core switch, access switch, and wireless APs. Include interface or VLAN labels on the links.",
+      "expected_output": "A network topology diagram with hierarchical layout showing 4 network components and labeled links.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains firewall, core switch, access switch, and AP nodes",
+        "Layout shows clear network hierarchy",
+        "Derived link labels include interface, VLAN, bandwidth, or link type metadata",
+        "Edge quality: orthogonal routing, no crossings where avoidable",
+        "meta.profile is set to engineering-review"
+      ]
+    },
+    {
+      "id": "engineering-aws-vpc-topology",
+      "prompt": "Create an AWS VPC topology with internet gateway, application load balancer, two EC2 app servers, and a private RDS subnet. Label the private links.",
+      "expected_output": "An engineering review topology with AWS icons and labeled private links.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains internet gateway, load balancer, app servers, and RDS/private subnet nodes",
+        "Provider icons are used for AWS infrastructure where requested",
+        "Derived link labels include listener/interface or private-link metadata",
+        "meta.profile is set to engineering-review"
+      ]
+    },
+    {
+      "id": "simple-login-fast-path",
+      "prompt": "Create a horizontal tech-blue login flowchart with Start, Login Form, Validate, Success, and Error.",
+      "expected_output": "A simple horizontal flowchart with 5 nodes in tech-blue theme.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue theme",
+        "Contains exactly 5 nodes: Start, Login Form, Validate, Success, Error",
+        "Layout direction is horizontal",
+        "Terminal nodes use terminal semantic type",
+        "Decision/branch is present for validate step"
+      ]
+    },
+    {
+      "id": "dense-architecture-edge-audit",
+      "prompt": "Create a dense architecture diagram with shared event flows, two databases, and cross-service dependencies.",
+      "expected_output": "A complex architecture diagram that passes edge-quality validation.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue or similar engineering theme",
+        "Contains at least two database nodes",
+        "Event flows use data or optional connector types",
+        "Edge quality: no corner connection points, no shared face slots",
+        "Edge quality: last segment >= 30px, labels offset from edges",
+        "meta.profile is set to engineering-review",
+        "The diagram completes without depending on live incremental edit capabilities"
+      ]
+    },
+    {
+      "id": "paper-figure-with-formula",
+      "prompt": "Create a paper figure for a training pipeline including the loss formula $$L = -\\sum y_i \\log(\\hat{y}_i)$$.",
+      "expected_output": "An academic-themed training pipeline diagram with LaTeX formula rendering.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Contains a formula node with the loss function",
+        "LaTeX formula is properly formatted",
+        "SVG export preserves formula readability",
+        "meta.figureType is set to workflow",
+        "meta.profile is set to academic-paper"
+      ]
+    },
+    {
+      "id": "replicate-warm-approval-palette",
+      "prompt": "Replicate the uploaded approval-flow image. Keep the warm orange fills, brown connectors, and cream background instead of remapping everything to tech-blue.",
+      "expected_output": "A replicated spec that preserves the warm source palette with explicit node, edge, and module color overrides.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-warm-approval.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.replication.colorMode is preserve-original",
+        "meta.replication includes a background color and extracted palette entries",
+        "High-confidence nodes, edges, and modules use explicit hex style overrides",
+        "The output does not collapse back to only default tech-blue palette values"
+      ]
+    },
+    {
+      "id": "replicate-brand-architecture-palette",
+      "prompt": "Recreate the uploaded architecture image and preserve its blue-green brand palette. Keep semantic shapes, but do not normalize colors to the default theme.",
+      "expected_output": "A replicated architecture diagram whose dominant colors stay close to the source brand palette.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-brand-architecture.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.replication.palette captures multiple extracted colors with confidence",
+        "Node styles contain explicit brand-blue and brand-green fills or strokes",
+        "Connector colors are preserved when clearly visible in the source",
+        "Low-confidence elements may fall back to theme tokens instead of inventing colors"
+      ]
+    },
+    {
+      "id": "replicate-academic-highlight-palette",
+      "prompt": "Replicate the uploaded paper figure. Keep the grayscale structure and its single accent highlight while remaining publication-safe.",
+      "expected_output": "A replicated academic figure with grayscale-safe structure and one preserved emphasis color.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
+      ],
+      "assertions": [
+        "meta.source is set to replicated",
+        "meta.figureType is set for the extracted academic figure",
+        "meta.replication.colorMode is preserve-original unless the user requests theme-first",
+        "The canvas and neutral elements remain grayscale-safe",
+        "Only the source accent color is preserved as an explicit override",
+        "The output stays suitable for academic-paper review"
+      ]
+    },
+    {
+      "id": "import-drawio-to-spec-uncompressed",
+      "prompt": "Import the uploaded .drawio file into YAML spec and write sidecars.",
+      "expected_output": "A YAML spec bundle (.spec.yaml + .arch.json) that preserves the module, node labels, and basic connector semantics from the .drawio input.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple.drawio"
+      ],
+      "assertions": [
+        "Output spec contains meta.source: edited",
+        "Output spec contains module label Backend",
+        "Output spec contains nodes labeled API and DB",
+        "Node positions are present (x/y) on an 8px grid",
+        "Edge from API to DB imports as dashed/data connector type (or equivalent typed connector)"
+      ]
+    },
+    {
+      "id": "import-drawio-to-spec-compressed",
+      "prompt": "Import the uploaded compressed .drawio file into YAML spec and write sidecars.",
+      "expected_output": "A YAML spec bundle imported from a compressed <diagram> payload that preserves modules, nodes, and connectors.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple-compressed.drawio"
+      ],
+      "assertions": [
+        "Importer decodes compressed diagram content into mxGraphModel XML",
+        "Output spec contains nodes labeled API and DB",
+        "Output spec contains module label Backend",
+        "Edge semantics (dashed/data) are preserved into typed connector fields"
+      ]
+    },
+    {
+      "id": "edit-after-import",
+      "prompt": "Import the uploaded .drawio file into YAML spec, rename API to Auth, and export as SVG.",
+      "expected_output": "A regenerated SVG (and sidecars) reflecting the edited label with a validated structure.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple.drawio"
+      ],
+      "assertions": [
+        "The resulting spec and export rename API -> Auth",
+        "Output SVG is generated and is readable",
+        "Validation passes with --validate and paper-grade strict warnings when requested",
+        "The workflow remains valid without assuming a live session"
+      ]
+    },
+    {
+      "id": "offline-edit-fallback-no-live-session",
+      "prompt": "Edit the uploaded .drawio file offline: import it into YAML sidecars, rename API to Auth Service, and regenerate the bundle and SVG without assuming any live browser session.",
+      "expected_output": "An offline-imported spec bundle and regenerated export that prove the edit path does not depend on live incremental editing.",
+      "files": [
+        "skills/drawio/evals/fixtures/import-simple.drawio"
+      ],
+      "assertions": [
+        "The `.drawio` input is imported into `.spec.yaml` and `.arch.json` before regeneration",
+        "The edited bundle renames API -> Auth Service",
+        "A regenerated SVG or drawio artifact is produced from the offline bundle",
+        "The task does not require `read_diagram_xml` or `patch_diagram_cells` to succeed",
+        "The offline sidecar bundle remains the canonical editable source"
+      ]
+    },
+    {
+      "id": "mermaid-flowchart-input",
+      "prompt": "Convert this Mermaid flowchart to a draw.io diagram:\n\nflowchart LR\n  A[User Request] --> B[API Gateway]\n  B --> C[Auth Service]\n  B --> D[Order Service]\n  C --> E[(User DB)]\n  D --> F[(Order DB)]",
+      "expected_output": "A tech-blue themed diagram with 6 nodes converted from Mermaid input.",
+      "files": [],
+      "assertions": [
+        "Output uses tech-blue theme",
+        "Contains all 6 nodes from Mermaid input",
+        "Database nodes use database semantic type",
+        "Edges preserve connectivity from Mermaid source",
+        "YAML spec is generated as intermediate representation"
+      ]
+    },
+    {
+      "id": "csv-orgchart-input",
+      "prompt": "Convert this CSV into an org chart diagram:\n\nname,parent,type\nCEO,,user\nVP Engineering,CEO,service\nVP Product,CEO,service\nBackend Lead,VP Engineering,service\nFrontend Lead,VP Engineering,service\nPM Lead,VP Product,service",
+      "expected_output": "A vertical org chart with 6 nodes showing hierarchy.",
+      "files": [],
+      "assertions": [
+        "Output uses vertical layout",
+        "Contains all 6 org chart nodes",
+        "CEO node is a user type",
+        "Parent-child edges are correctly generated",
+        "Hierarchy is visually clear"
+      ]
+    },
+    {
+      "id": "dl-neural-network-types",
+      "prompt": "Create a neural network architecture diagram showing: Input Layer → Conv2D → BatchNorm → MaxPool → Attention Block → Dense Layer → Output, using academic theme.",
+      "expected_output": "An academic-themed neural network diagram using deep learning semantic node types.",
+      "files": [],
+      "assertions": [
+        "Output uses academic or academic-color theme",
+        "Conv2D node uses conv semantic type",
+        "BatchNorm node uses norm semantic type",
+        "MaxPool node uses pool semantic type",
+        "Attention Block uses attention semantic type",
+        "Dense Layer uses matrix semantic type"
+      ]
+    },
+    {
+      "id": "dark-theme-presentation",
+      "prompt": "Create a microservices overview with API Gateway, User Service, Order Service, and PostgreSQL DB using dark theme for a presentation.",
+      "expected_output": "A dark-themed microservices diagram suitable for slides.",
+      "files": [],
+      "assertions": [
+        "Output uses dark theme",
+        "Background color is dark (#0F172A or similar)",
+        "Contains all 4 specified components",
+        "Database node uses database semantic type",
+        "Node text colors provide sufficient contrast against dark background"
+      ]
+    }
+  ]
+}

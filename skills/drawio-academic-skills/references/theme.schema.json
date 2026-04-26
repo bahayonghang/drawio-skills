@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://drawio-skills.github.io/schemas/theme.schema.json",
+  "title": "Draw.io Design System Theme",
+  "description": "Schema for Draw.io diagram theme definition files",
+  "type": "object",
+  "required": ["name", "displayName", "colors", "spacing", "typography", "borderRadius", "node", "connector", "module", "canvas"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Machine-readable theme identifier (lowercase, hyphens allowed)"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Human-readable theme name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the theme's purpose and style"
+    },
+    "colors": {
+      "type": "object",
+      "description": "Color token definitions",
+      "required": ["primary", "secondary", "accent", "background", "surface", "text", "textMuted", "border", "success", "warning", "error"],
+      "properties": {
+        "primary": { "$ref": "#/definitions/color" },
+        "primaryLight": { "$ref": "#/definitions/color" },
+        "secondary": { "$ref": "#/definitions/color" },
+        "secondaryLight": { "$ref": "#/definitions/color" },
+        "accent": { "$ref": "#/definitions/color" },
+        "accentLight": { "$ref": "#/definitions/color" },
+        "background": { "$ref": "#/definitions/color" },
+        "surface": { "$ref": "#/definitions/color" },
+        "surfaceAlt": { "$ref": "#/definitions/color" },
+        "text": { "$ref": "#/definitions/color" },
+        "textMuted": { "$ref": "#/definitions/color" },
+        "textInverse": { "$ref": "#/definitions/color" },
+        "border": { "$ref": "#/definitions/color" },
+        "borderStrong": { "$ref": "#/definitions/color" },
+        "success": { "$ref": "#/definitions/color" },
+        "successLight": { "$ref": "#/definitions/color" },
+        "warning": { "$ref": "#/definitions/color" },
+        "warningLight": { "$ref": "#/definitions/color" },
+        "error": { "$ref": "#/definitions/color" },
+        "errorLight": { "$ref": "#/definitions/color" },
+        "info": { "$ref": "#/definitions/color" },
+        "infoLight": { "$ref": "#/definitions/color" }
+      },
+      "additionalProperties": { "$ref": "#/definitions/color" }
+    },
+    "spacing": {
+      "type": "object",
+      "description": "Spacing system configuration",
+      "required": ["unit", "scale"],
+      "properties": {
+        "unit": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 16,
+          "description": "Base unit in pixels (recommended: 8)"
+        },
+        "scale": {
+          "type": "object",
+          "description": "Named spacing values",
+          "properties": {
+            "xs": { "type": "integer" },
+            "sm": { "type": "integer" },
+            "md": { "type": "integer" },
+            "lg": { "type": "integer" },
+            "xl": { "type": "integer" },
+            "2xl": { "type": "integer" },
+            "3xl": { "type": "integer" },
+            "4xl": { "type": "integer" },
+            "5xl": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "description": "Typography system configuration",
+      "required": ["fontFamily", "fontSize", "fontWeight"],
+      "properties": {
+        "fontFamily": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "string" },
+            "monospace": { "type": "string" },
+            "formula": { "type": "string" }
+          }
+        },
+        "fontSize": {
+          "type": "object",
+          "properties": {
+            "xs": { "type": "integer" },
+            "sm": { "type": "integer" },
+            "md": { "type": "integer" },
+            "lg": { "type": "integer" },
+            "xl": { "type": "integer" },
+            "2xl": { "type": "integer" }
+          }
+        },
+        "fontWeight": {
+          "type": "object",
+          "properties": {
+            "normal": { "type": "integer" },
+            "medium": { "type": "integer" },
+            "semibold": { "type": "integer" },
+            "bold": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "borderRadius": {
+      "type": "object",
+      "description": "Border radius tokens",
+      "properties": {
+        "none": { "type": "integer", "const": 0 },
+        "sm": { "type": "integer" },
+        "md": { "type": "integer" },
+        "lg": { "type": "integer" },
+        "full": { "type": "integer" }
+      }
+    },
+    "shadows": {
+      "type": "object",
+      "description": "Shadow/elevation tokens",
+      "properties": {
+        "none": { "type": "string" },
+        "sm": { "type": "string" },
+        "md": { "type": "string" },
+        "lg": { "type": "string" }
+      }
+    },
+    "node": {
+      "type": "object",
+      "description": "Node styling definitions",
+      "required": ["default"],
+      "properties": {
+        "default": { "$ref": "#/definitions/nodeStyle" },
+        "service": { "$ref": "#/definitions/nodeStylePartial" },
+        "database": { "$ref": "#/definitions/nodeStylePartial" },
+        "decision": { "$ref": "#/definitions/nodeStylePartial" },
+        "terminal": { "$ref": "#/definitions/nodeStylePartial" },
+        "queue": { "$ref": "#/definitions/nodeStylePartial" },
+        "user": { "$ref": "#/definitions/nodeStylePartial" },
+        "document": { "$ref": "#/definitions/nodeStylePartial" },
+        "formula": { "$ref": "#/definitions/nodeStylePartial" }
+      },
+      "additionalProperties": { "$ref": "#/definitions/nodeStylePartial" }
+    },
+    "connector": {
+      "type": "object",
+      "description": "Connector styling definitions",
+      "required": ["primary"],
+      "properties": {
+        "primary": { "$ref": "#/definitions/connectorStyle" },
+        "data": { "$ref": "#/definitions/connectorStyle" },
+        "optional": { "$ref": "#/definitions/connectorStyle" },
+        "dependency": { "$ref": "#/definitions/connectorStyle" },
+        "bidirectional": { "$ref": "#/definitions/connectorStyle" }
+      },
+      "additionalProperties": { "$ref": "#/definitions/connectorStyle" }
+    },
+    "module": {
+      "type": "object",
+      "description": "Module/container styling",
+      "properties": {
+        "fillColor": { "$ref": "#/definitions/color" },
+        "strokeColor": { "$ref": "#/definitions/color" },
+        "strokeWidth": { "type": "number" },
+        "rounded": { "type": "integer" },
+        "padding": { "type": "integer" },
+        "labelFontSize": { "type": "integer" },
+        "labelFontWeight": { "type": "integer" },
+        "labelFontColor": { "$ref": "#/definitions/color" },
+        "dashed": { "type": "boolean", "description": "Whether module border is dashed (IEEE style)" },
+        "dashPattern": { "type": ["string", "null"], "description": "Dash pattern (e.g., '8 4')" }
+      }
+    },
+    "canvas": {
+      "type": "object",
+      "description": "Canvas/diagram background settings",
+      "properties": {
+        "background": { "$ref": "#/definitions/color" },
+        "gridSize": { "type": "integer" },
+        "gridColor": { "$ref": "#/definitions/color" }
+      }
+    }
+  },
+  "definitions": {
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$",
+      "description": "Hex color code (e.g., #2563EB)"
+    },
+    "nodeStyle": {
+      "type": "object",
+      "required": ["fillColor", "strokeColor", "fontColor", "fontSize"],
+      "properties": {
+        "fillColor": { "$ref": "#/definitions/color" },
+        "strokeColor": { "$ref": "#/definitions/color" },
+        "strokeWidth": { "type": "number", "minimum": 0.5, "maximum": 5 },
+        "fontColor": { "$ref": "#/definitions/color" },
+        "fontSize": { "type": "integer", "minimum": 8, "maximum": 24 },
+        "fontFamily": { "type": "string" },
+        "rounded": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "nodeStylePartial": {
+      "type": "object",
+      "properties": {
+        "fillColor": { "$ref": "#/definitions/color" },
+        "strokeColor": { "$ref": "#/definitions/color" },
+        "strokeWidth": { "type": "number" },
+        "fontColor": { "$ref": "#/definitions/color" },
+        "fontSize": { "type": "integer" },
+        "fontFamily": { "type": "string" },
+        "rounded": { "type": "integer" }
+      }
+    },
+    "connectorStyle": {
+      "type": "object",
+      "required": ["strokeColor", "strokeWidth"],
+      "properties": {
+        "strokeColor": { "$ref": "#/definitions/color" },
+        "strokeWidth": { "type": "number", "minimum": 0.5, "maximum": 5 },
+        "dashed": { "type": "boolean" },
+        "dashPattern": { "type": ["string", "null"] },
+        "endArrow": { 
+          "type": "string",
+          "enum": ["none", "block", "open", "diamond", "oval", "classic"]
+        },
+        "endFill": { "type": "boolean" },
+        "startArrow": { "type": "string" },
+        "startFill": { "type": "boolean" }
+      }
+    }
+  }
+}

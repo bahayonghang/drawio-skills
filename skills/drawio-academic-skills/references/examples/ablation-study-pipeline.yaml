@@ -1,0 +1,39 @@
+meta:
+  profile: academic-paper
+  figureType: workflow
+  theme: academic-color
+  layout: vertical
+  title: "Ablation Study Pipeline"
+  description: "Compare baseline, variant, and evaluation stages."
+  legend: "Each branch is an ablation configuration. Shared evaluation is shown with dashed input aggregation."
+
+nodes:
+  - id: baseline
+    label: Baseline
+    type: service
+  - id: variantA
+    label: Variant A
+    type: service
+  - id: variantB
+    label: Variant B
+    type: service
+  - id: eval
+    label: Evaluation
+    type: process
+  - id: report
+    label: Report
+    type: document
+
+edges:
+  - from: baseline
+    to: eval
+    type: data
+  - from: variantA
+    to: eval
+    type: data
+  - from: variantB
+    to: eval
+    type: data
+  - from: eval
+    to: report
+    type: primary

@@ -1,0 +1,89 @@
+meta:
+  profile: default
+  source: replicated
+  theme: tech-blue
+  layout: vertical
+  title: "Brand Approval Flow"
+  description: "Replicated redraw that keeps the source brand palette instead of remapping everything to theme defaults."
+  replication:
+    colorMode: preserve-original
+    background: "#FFF7ED"
+    palette:
+      - hex: "#FDBA74"
+        role: primary warm node fill
+        appliesTo: nodes
+        confidence: high
+      - hex: "#EA580C"
+        role: primary warm border
+        appliesTo: nodes
+        confidence: high
+      - hex: "#7C2D12"
+        role: connector and text color
+        appliesTo: mixed
+        confidence: medium
+    confidenceNotes:
+      - "Drop shadows from the source image were flattened into solid fills."
+
+modules:
+  - id: approvals
+    label: Approval Steps
+    style:
+      fillColor: "#FFEDD5"
+      strokeColor: "#FDBA74"
+
+nodes:
+  - id: submit
+    label: Submit
+    type: terminal
+    module: approvals
+    style:
+      fillColor: "#FED7AA"
+      strokeColor: "#EA580C"
+      fontColor: "#7C2D12"
+
+  - id: review
+    label: Review
+    type: service
+    module: approvals
+    style:
+      fillColor: "#FDBA74"
+      strokeColor: "#EA580C"
+      fontColor: "#7C2D12"
+
+  - id: approve
+    label: Approve?
+    type: decision
+    module: approvals
+    style:
+      fillColor: "#FCD34D"
+      strokeColor: "#B45309"
+      fontColor: "#7C2D12"
+
+  - id: archive
+    label: Archive
+    type: document
+    module: approvals
+    style:
+      fillColor: "#FFFBEB"
+      strokeColor: "#F59E0B"
+      fontColor: "#7C2D12"
+
+edges:
+  - from: submit
+    to: review
+    type: primary
+    style:
+      strokeColor: "#7C2D12"
+
+  - from: review
+    to: approve
+    type: primary
+    style:
+      strokeColor: "#7C2D12"
+
+  - from: approve
+    to: archive
+    type: data
+    label: yes
+    style:
+      strokeColor: "#7C2D12"

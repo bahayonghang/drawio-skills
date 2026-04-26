@@ -1,0 +1,54 @@
+meta:
+  profile: academic-paper
+  figureType: workflow
+  theme: academic-color
+  layout: horizontal
+  title: "Research Workflow"
+  description: "Dataset to evaluation pipeline for a manuscript figure."
+  legend: "Primary arrows denote workflow stages. Dashed arrows denote validation or data transfer."
+
+nodes:
+  - id: data
+    label: Dataset
+    type: document
+    position:
+      x: 40
+      y: 96
+  - id: preprocess
+    label: Preprocess
+    type: process
+    position:
+      x: 232
+      y: 96
+  - id: train
+    label: Train Model
+    type: service
+    position:
+      x: 424
+      y: 96
+  - id: validate
+    label: Validation
+    type: decision
+    position:
+      x: 616
+      y: 96
+  - id: result
+    label: Results
+    type: document
+    position:
+      x: 808
+      y: 96
+
+edges:
+  - from: data
+    to: preprocess
+    type: primary
+  - from: preprocess
+    to: train
+    type: primary
+  - from: train
+    to: validate
+    type: data
+  - from: validate
+    to: result
+    type: primary

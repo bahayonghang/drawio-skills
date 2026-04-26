@@ -1,0 +1,43 @@
+meta:
+  profile: academic-paper
+  figureType: architecture
+  theme: academic
+  layout: vertical
+  title: "Fig. 1. Campus Network Topology"
+  description: "Core, distribution, and access layers for an IEEE-style paper figure."
+  legend: "Solid lines are physical links. Dashed lines are management or control links."
+
+nodes:
+  - id: core
+    label: Core Router
+    type: service
+  - id: distA
+    label: Distribution A
+    type: service
+  - id: distB
+    label: Distribution B
+    type: service
+  - id: access
+    label: Access Switch
+    type: service
+  - id: users
+    label: User Segment
+    type: user
+
+edges:
+  - from: core
+    to: distA
+    type: primary
+  - from: core
+    to: distB
+    type: primary
+  - from: distA
+    to: access
+    type: primary
+  - from: distB
+    to: access
+    type: data
+    label: Control
+  - from: access
+    to: users
+    type: primary
