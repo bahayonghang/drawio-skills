@@ -1,0 +1,3 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-04-27T11:15:25+08:00	baseline-agent	drawio-academic-skills	-	82.8	baseline	-	Independent verifier baseline; weakest dimensions were checkpoint design, boundary coverage, and Desktop fallback clarity	dry_run
+2026-04-27T11:15:25+08:00	working-tree	drawio-academic-skills	82.8	89.2	keep	boundary-coverage	Added non-negotiable offline/MCP-free contract, preflight, edit round-trip, Desktop fallback, failure recovery, completion report, and regression assertions	dry_run

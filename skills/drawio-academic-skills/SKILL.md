@@ -17,7 +17,6 @@ metadata:
     - workflow
     - math
     - svg
-argument-hint: [academic-figure-description-or-existing-diagram]
 allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 
@@ -29,6 +28,14 @@ This skill merges two workflows:
 
 1. The upstream pure `drawio-skill` workflow: direct `.drawio` XML generation, Desktop export, self-check, style presets, diagrams.net URL fallback, and diagram-type presets.
 2. This repository's `skills/drawio` workflow: YAML-first authoring, offline sidecars, academic quality gates, formula handling, and SVG conversion.
+
+## Non-Negotiable Contract
+
+- Keep this fork academic-first and offline-first.
+- Never create, require, or route through `.mcp.json` or an MCP backend.
+- Treat the YAML spec plus `.drawio`, `.arch.json`, and `.svg` outputs as the normal editable bundle.
+- Use draw.io Desktop only as an optional export enhancer for PNG/PDF/JPG or embedded `.drawio.svg`.
+- When a requested export cannot be produced locally, still deliver the editable bundle and report the unavailable export clearly.
 
 ## Runtime Decision
 
@@ -42,6 +49,16 @@ Default to the offline academic path.
 | 4 | diagrams.net URL fallback | User cannot install Desktop but can open browser URL |
 
 This skill intentionally ships without `.mcp.json`. Use Desktop CLI or the diagrams.net URL fallback for handoff and refinement.
+
+## Preflight Checklist
+
+Before generating or editing, decide and state:
+
+1. Input type: new prompt, `.spec.yaml`, `.drawio`, image/SVG reference, or style preset.
+2. Route from the table below, then load only the referenced files.
+3. Deliverables needed: default bundle, plus any requested PNG/PDF/JPG.
+4. Whether draw.io Desktop is required for the requested export.
+5. Fallback plan if Desktop or validation is unavailable.
 
 ## Task Routing
 
@@ -100,6 +117,8 @@ Add `<name>.png` only when the user asks for PNG, Word, thesis/A4, raster-first,
   node <skill-dir>/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
   ```
 
+- After import, inspect the generated `.spec.yaml` and `.arch.json`, apply edits to the YAML spec, then regenerate the requested `.drawio` or `.svg` with `--write-sidecars`.
+- Keep all regenerated files on the same basename so the bundle remains round-trippable.
 - For image/SVG replication, extract palette intent first and preserve the source palette unless the user asks for paper-safe recoloring.
 - For major structural changes, show an ASCII logic draft before rendering.
 - Preserve `<name>.drawio`, `<name>.spec.yaml`, and `<name>.arch.json` together.
@@ -131,6 +150,8 @@ node <skill-dir>/scripts/runtime/diagrams-net-url.js figure.drawio
 
 The diagram XML is encoded after `#R` in the URL fragment. The fragment is client-side and is not sent to diagrams.net servers.
 
+If Desktop is unavailable for PNG/PDF/JPG, do not pretend those files exist. Deliver `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`, then include the diagrams.net URL or the exact Desktop command the user can run later.
+
 ## Style Presets
 
 Use user presets from `~/.drawio-academic-skills/styles/` first, then bundled presets from `styles/built-in/`.
@@ -145,6 +166,18 @@ Supported operations:
 
 Never mutate bundled presets. Copy a bundled preset into `~/.drawio-academic-skills/styles/` before making it a default.
 
+## Failure Recovery
+
+Use these fallbacks before stopping:
+
+| Failure | Recovery |
+| --- | --- |
+| YAML validation fails | Fix the YAML spec first, then rerun the same CLI command with `--validate`. |
+| `.drawio` import is incomplete | Preserve the original file, export the partial spec, and report unsupported shapes or styles explicitly. |
+| Desktop export fails or Desktop is missing | Regenerate the offline bundle and SVG, then provide a diagrams.net URL fallback. |
+| Formula rendering is wrong | Recheck delimiters against the math reference, then simplify the label before changing layout. |
+| SVG/PNG self-check finds overlap | Edit labels or routing in YAML/XML and re-render; do not only describe the issue. |
+
 ## Quality Gate
 
 Do not claim completion until:
@@ -156,6 +189,16 @@ Do not claim completion until:
 - connector routing is readable
 - colors are not the only carrier of meaning
 - requested PNG/PDF/JPG exports were attempted through draw.io Desktop or clearly reported as unavailable
+- no MCP config, MCP server, or live backend is required for the result
+
+## Completion Report
+
+End with a concise report:
+
+- Deliverables written, with paths.
+- Commands run for validation/export.
+- Any unavailable exports and the fallback provided.
+- Remaining manual checks, if visual inspection or Desktop export could not run.
 
 ## Reference Files
 

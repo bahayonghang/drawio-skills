@@ -1,0 +1,17 @@
+[
+  {
+    "id": "darwin-academic-workflow-bundle",
+    "prompt": "Create an IEEE-style workflow figure for a paper showing data collection, preprocessing, model training, validation, and reporting. Return the offline editable bundle plus SVG.",
+    "expected": "Routes to academic-create, sets academic-paper workflow metadata, generates .drawio/.spec.yaml/.arch.json/.svg, and validates the bundle."
+  },
+  {
+    "id": "darwin-offline-drawio-edit",
+    "prompt": "Edit an existing .drawio file offline: import it into YAML sidecars, rename API to Auth Service, and regenerate the bundle and SVG without using a live backend.",
+    "expected": "Imports .drawio to sidecars, edits the YAML spec, regenerates aligned artifacts, and keeps the MCP-free offline path."
+  },
+  {
+    "id": "darwin-desktop-export-fallback",
+    "prompt": "Export the final figure as PNG and PDF, but draw.io Desktop may not be installed.",
+    "expected": "Attempts Desktop only when required, still delivers the editable bundle and SVG, and reports missing PNG/PDF with diagrams.net or exact Desktop fallback."
+  }
+]
