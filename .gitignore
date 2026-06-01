@@ -25,7 +25,7 @@ imgs/ref/
 .omc/
 .omx/
 
-# temp 
+# temp
 skills/drawio-official/
 
 ref/
@@ -37,3 +37,6 @@ findings.md
 progress.md
 
 package/
+
+.agents/
+examples/
