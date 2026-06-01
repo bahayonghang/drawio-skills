@@ -75,6 +75,16 @@ When redrawing from an uploaded image, keep theme selection and color extraction
 
 Replicated specs should usually include `meta.source: replicated` and a `meta.replication` block so later edits can tell which colors came from the image and which colors are theme fallbacks.
 
+### Text and Label Fidelity
+
+For ordinary generated diagrams, labels usually live inside their shapes. For screenshot or reference-image replication, text placement can carry meaning and should be preserved explicitly:
+
+- use `type: text` for standalone titles, captions, callouts, legends, and explanatory notes;
+- use `type: formula` for dedicated formula annotations, with official math delimiters;
+- use `bounds: {x, y, width, height}` when exact text-box geometry matters (`bounds` is top-left based);
+- use `position: {x, y}` for center-point placement of ordinary nodes;
+- use `labelOffset: {x, y}` on edges to keep labels 12-20px off the connector instead of sitting on top of the line.
+
 ### Semantic Shapes
 
 Automatic shape selection based on node type:
@@ -89,6 +99,7 @@ Automatic shape selection based on node type:
 | `user` | Ellipse |
 | `document` | Document |
 | `formula` | Rectangle |
+| `text` | Standalone text box |
 
 ### Typed Connectors
 
@@ -172,8 +183,8 @@ edges:
 
 ## Design Principles
 
-1. **Content in Components**: Prefer embedding text and formulas in nodes (shapes) rather than standalone text boxes. Use standalone text only when no suitable shape exists. Exception: edge labels for connector annotations.
-   > 文字、公式等尽量写入形状组件中，而非独立文本框；仅当无合适形状时才使用独立文本框。例外：边标签用于箭头标注。
+1. **Content in Components, Except When Position Matters**: Prefer embedding ordinary labels in nodes, but treat standalone text, formula annotations, captions, callouts, and edge labels as first-class elements during replication when their separate position carries meaning.
+   > 普通图中优先把文字写入形状组件；复刻图时，如果标题、说明、公式或边标签的独立位置本身有意义，就把它们作为一等文本元素处理。
 2. **KISS**: Simple, predictable styling
 3. **DRY**: Reusable tokens and themes
 4. **Consistency**: Same semantic = same visual

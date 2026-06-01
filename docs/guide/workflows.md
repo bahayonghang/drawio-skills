@@ -90,9 +90,19 @@ Use this to redraw an uploaded image into a structured spec.
 
 1. Analyze the diagram structure
 2. Extract the source palette
-3. Build a YAML spec
-4. Present logic and palette summary when needed
-5. Render the offline bundle
+3. Run a text-fidelity pass for labels, captions, formulas, and edge labels
+4. Build a YAML spec
+5. Present logic, palette, and text-placement summary when needed
+6. Render the offline bundle
+
+### Text fidelity
+
+Replication should preserve more than structure and color:
+
+- keep standalone text, captions, legends, and formula annotations as first-class elements when their position matters;
+- prefer explicit `bounds` for exact text boxes and formulas;
+- use `labelOffset` to keep connector labels off the line instead of sitting on top of it;
+- compare the source and export once for title, caption, callout, formula, and edge-label placement.
 
 ### Color modes
 
@@ -117,6 +127,7 @@ See [Replicating Diagrams](./scientific-workflows.md).
 - structure validation
 - layout validation
 - quality validation
+- text-position validation for replication outputs
 
 ### Strict mode
 

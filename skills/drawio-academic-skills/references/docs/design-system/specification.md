@@ -13,6 +13,7 @@ The specification format provides:
 - **Semantic types**: Auto-shape mapping
 - **Typed connectors**: Visual hierarchy
 - **Grid alignment**: 8px grid compliance
+- **Text fidelity**: Explicit bounds for standalone text/formulas and offsets for edge labels
 - **Schema validation**: Structured validation
 
 ---
@@ -167,12 +168,19 @@ nodes:
     module: frontend        # Parent module ID
     size: medium            # small | medium | large | xl
     icon: aws.api-gateway   # Cloud provider icon
-    position:               # Optional manual position
+    position:               # Optional manual position (center point)
       x: 100
       y: 200
+    bounds:                 # Optional explicit bounds (top-left), preferred for high-fidelity text replication
+      x: 64
+      y: 180
+      width: 160
+      height: 48
     style:                  # Style overrides
       fillColor: "#DBEAFE"
       strokeColor: "#2563EB"
+      align: center
+      verticalAlign: middle
 ```
 
 ### Semantic Types
@@ -187,10 +195,39 @@ nodes:
 | `user` | Ellipse | user, actor, client |
 | `document` | Document | doc, file, report |
 | `formula` | Rectangle | $$, equation, formula |
+| `text` | Standalone text box | captions, callouts, legends, annotation text |
 | `cloud` | Cloud | cloud, internet, external |
 | `process` | Rounded rectangle | process, transform, pipeline |
 
 > **Note**: Extended types for deep learning (`conv`, `pool`, `attention`, `embed`, `norm`, `gate`, `tensor3d`, etc.) are also supported by the converter.
+
+### Position vs Bounds
+
+Use `position` for ordinary generated nodes where a center point is enough. It means the center of the rendered node, and the converter derives width/height from `size` or the semantic type.
+
+Use `bounds` for high-fidelity replication. It means exact top-left geometry:
+
+```yaml
+nodes:
+  - id: title
+    label: "World Model"
+    type: text
+    bounds:
+      x: 24
+      y: 32
+      width: 180
+      height: 36
+    style:
+      fontFamily: "Times New Roman, serif"
+      fontSize: 16
+      italic: true
+      align: left
+      verticalAlign: top
+      spacingLeft: 4
+      spacingTop: 2
+```
+
+When both fields are present, `bounds` is the fidelity-preserving geometry and should be treated as authoritative.
 
 ### Size Presets
 
@@ -224,6 +261,9 @@ edges:
     type: data              # Connector semantic type
     label: Query            # Edge label
     labelPosition: center   # start | center | end
+    labelOffset:            # Optional x/y offset from the edge label anchor
+      x: 0
+      y: -16
     bidirectional: false    # Two-way connection
     style:                  # Style overrides
       strokeColor: "#1E293B"
@@ -249,6 +289,35 @@ edges:
 - Mermaid and CSV are supported as CLI input formats.
 - They are normalized into this YAML structure before rendering.
 - YAML remains the canonical intermediate representation.
+
+### Edge Label Placement
+
+`labelPosition` controls where the label anchor sits along the connector. `labelOffset` controls where the label box sits relative to that anchor.
+
+Use explicit offsets for replicated labels such as `h(t)`, `z(t)`, or `s(t)` that must not overlap the line:
+
+```yaml
+edges:
+  - from: hidden
+    to: state
+    label: "s(t)"
+    labelPosition: center
+    labelOffset:
+      x: 0
+      y: -18
+```
+
+Default rule of thumb: horizontal connectors use `y: -12` to `-20` to lift labels above the line; vertical connectors use `x: 12` to `20` to move labels to the side. Flip the sign when the source puts the label on the opposite side.
+
+### Text Fidelity for Replication
+
+When redrawing an image, extract text separately from structure:
+
+- shape labels: keep inside the shape unless the source text floats outside its object;
+- edge labels: record `labelPosition` and `labelOffset` so they do not sit on the connector;
+- standalone text: use `type: text` with explicit `bounds`;
+- formula annotations: use `type: formula` or `type: text` with official math delimiters and explicit `bounds`;
+- style: preserve font family, font size, italic/bold state, alignment, vertical alignment, and spacing when visible.
 
 ---
 
@@ -299,6 +368,24 @@ nodes:
       fontColor: "#991B1B"
       fontSize: 14
       fontWeight: 600
+```
+
+Text and formula nodes can also use typography and padding-style fields:
+
+```yaml
+nodes:
+  - id: formula-note
+    label: "$$z(t)=g(h(t))$$"
+    type: formula
+    bounds: { x: 520, y: 96, width: 220, height: 56 }
+    style:
+      fontFamily: "Times New Roman, serif"
+      fontSize: 15
+      italic: true
+      align: center
+      verticalAlign: middle
+      spacingLeft: 6
+      spacingRight: 6
 ```
 
 ### Edge Style Override

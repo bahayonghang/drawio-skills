@@ -27,10 +27,17 @@ Step 3: Structured Extraction
 │   ├── 3-6 dominant flat colors
 │   ├── node / edge / module color assignments
 │   └── confidence notes for uncertain regions
+├── Text Fidelity Pass:
+│   ├── extract every text-bearing element as shape label, edge label, standalone text, or formula annotation
+│   ├── record text bounds, baseline/anchor, alignment, font family, font size, italic/bold state, and spacing
+│   ├── record relative offset from the nearest arrow, connector, node, module, or canvas boundary
+│   └── preserve math delimiters for formulas (`$$...$$`, `\(...\)`, or AsciiMath backticks)
 ├── Extract to YAML specification format:
 │   ├── nodes with semantic types
 │   ├── edges with connector types
 │   ├── modules for grouping
+│   ├── standalone text/formula nodes with explicit `bounds` when needed
+│   ├── edge labels with `labelPosition` and `labelOffset` when needed
 │   └── explicit style overrides for high-confidence colors
 ├── Apply semantic shape mapping
 └── Mark missing info as "Not specified" (未提及)
@@ -38,6 +45,7 @@ Step 3: Structured Extraction
 Step 4: Logic Verification (Mandatory)
 ├── Translate structural analysis into a pure ASCII logical flow graph
 ├── Summarize the extracted palette and where each color will be applied
+├── Summarize text placement: boxes, formulas, edge-label offsets, and any uncertain baselines
 └── Pause for user's confirmation to ensure no misinterpretation
 
 Step 5: Stencil Decision
@@ -50,21 +58,26 @@ Step 6: Convert to Diagram
 ├── Parse specification via scripts/dsl/spec-to-drawio.js
 ├── Apply selected theme
 ├── Keep `meta.replication.background` as canvas background when provided
-├── Calculate 8px grid positions
+├── Calculate 8px grid positions for structure
+├── Preserve explicit top-left `bounds` for high-fidelity text boxes and formula annotations
+├── Apply `labelOffset` so connector labels sit 12-20px off the line by default
 ├── Generate .drawio + .spec.yaml + .arch.json offline first
 ├── Export standalone SVG or desktop preview if available
 └── Only use a live backend for preview/refinement when the user explicitly wants it
 
 Step 7: Review and Refine
 ├── Compare with original image
+├── Compare text placement: no labels on top of lines, no formulas touching borders, matching relative title/caption/callout positions
 ├── Default to /drawio edit in offline mode
 ├── Live providers with `render_inline_preview` may help review
 └── Providers without `read_diagram_xml + patch_diagram_cells` still do not replace the offline edit path
 
-Step 8: Validate (Optional)
+Step 8: Validate
 ├── Check cell ID uniqueness
 ├── Check edge source/target reference validity
 ├── Check required root cells present
+├── Check text-label clearance: no edge label overlaps its connector, no formula is clipped or pasted to a boundary
+├── For screenshot/academic replication, record at least one original-vs-export visual comparison when vision or a rendered preview is available
 └── Use --validate CLI flag or validateXml() from DSL converter
 ```
 
@@ -95,6 +108,7 @@ During extraction, map visual elements to semantic types:
 | Person/Stick figure | `user` | Circle |
 | Document shape | `document` | Wave rect |
 | Math formula | `formula` | White rect with border |
+| Caption, callout, legend note | `text` | Standalone text box |
 
 ### Connector Type Mapping
 
@@ -113,6 +127,10 @@ During extraction, map visual elements to semantic types:
 3. Keep YAML spec as the canonical result, even if a live preview is opened later.
 4. Preserve the source palette by default and store it in `meta.replication`.
 5. If a live provider is used, treat it as preview/refinement only unless it also satisfies the edit-session capability gate from `/drawio edit`.
+6. Treat standalone text, captions, callouts, legends, and formula annotations as first-class replicated elements; do not force them into nearby shapes when their separate position carries meaning.
+7. Use `bounds: {x, y, width, height}` for high-fidelity text boxes. `bounds` uses top-left coordinates; `position` remains a center-point convenience for ordinary nodes.
+8. For labeled connectors, prefer an off-line offset: horizontal connectors usually use `labelOffset: {x: 0, y: -12}` to `-20`, and vertical connectors usually use `{x: 12, y: 0}` to `{x: 20, y: 0}`. Adjust the sign to match the source side.
+9. Fix failures in this order: (a) wrong/missing text, (b) formula delimiters/font, (c) `bounds` and baselines, (d) `labelOffset`, (e) connector waypoints/routing, (f) color/style polish.
 
 ## Related
 

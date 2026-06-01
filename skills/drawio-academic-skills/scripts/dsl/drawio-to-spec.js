@@ -161,6 +161,7 @@ function closestPreset(width, height) {
 
 function inferTypeFromStyle(style, label) {
   const shape = style.get('shape')
+  if (shape === 'text' || style.has('text')) return 'text'
   if (shape === 'cylinder3' || shape === 'cylinder') return 'database'
   if (shape === 'parallelogram') return 'queue'
   if (shape === 'document') return 'document'
@@ -212,6 +213,10 @@ function extractNodeStyleOverrides(style) {
   const fontColor = hexOrNull(style.get('fontColor'))
   const strokeWidth = numberOrNull(style.get('strokeWidth'))
   const fontSize = numberOrNull(style.get('fontSize'))
+  const fontFamily = style.get('fontFamily') || null
+  const align = style.get('align') || null
+  const verticalAlign = style.get('verticalAlign') || null
+  const fontStyle = numberOrNull(style.get('fontStyle'))
 
   const overrides = {}
   if (fillColor) overrides.fillColor = fillColor
@@ -219,6 +224,14 @@ function extractNodeStyleOverrides(style) {
   if (fontColor) overrides.fontColor = fontColor
   if (strokeWidth != null) overrides.strokeWidth = strokeWidth
   if (fontSize != null) overrides.fontSize = fontSize
+  if (fontFamily) overrides.fontFamily = fontFamily
+  if (['left', 'center', 'right'].includes(align)) overrides.align = align
+  if (['top', 'middle', 'bottom'].includes(verticalAlign)) overrides.verticalAlign = verticalAlign
+  if (fontStyle != null) overrides.fontStyle = fontStyle
+  for (const field of ['spacingLeft', 'spacingRight', 'spacingTop', 'spacingBottom']) {
+    const value = numberOrNull(style.get(field))
+    if (value != null) overrides[field] = value
+  }
   return Object.keys(overrides).length > 0 ? overrides : null
 }
 
@@ -371,7 +384,7 @@ export function drawioToSpec(drawioFileText, options = {}) {
 
     const cx = snapToGrid(x + width / 2, 8)
     const cy = snapToGrid(y + height / 2, 8)
-    return { cx, cy, width, height }
+    return { x, y, cx, cy, width, height }
   }
 
   for (const v of vertices) {
@@ -401,6 +414,9 @@ export function drawioToSpec(drawioFileText, options = {}) {
 
     if (pos) {
       node.position = { x: pos.cx, y: pos.cy }
+      if (pos.width > 0 && pos.height > 0) {
+        node.bounds = { x: pos.x, y: pos.y, width: pos.width, height: pos.height }
+      }
       node.size = closestPreset(pos.width, pos.height)
     }
 
@@ -418,7 +434,8 @@ export function drawioToSpec(drawioFileText, options = {}) {
     if (label) {
       edgeLabelsByParent.set(v.parent, {
         label,
-        labelX: v.geometry?.labelX
+        labelX: v.geometry?.labelX,
+        offset: v.geometry?.offset
       })
     }
   }
@@ -452,6 +469,13 @@ export function drawioToSpec(drawioFileText, options = {}) {
       else if (labelX >= 0.65) edge.labelPosition = 'end'
       else edge.labelPosition = 'center'
     }
+    if (
+      imported?.offset &&
+      Number.isFinite(imported.offset.x) &&
+      Number.isFinite(imported.offset.y)
+    ) {
+      edge.labelOffset = { x: imported.offset.x, y: imported.offset.y }
+    }
 
     specEdges.push(edge)
   }
@@ -475,4 +499,3 @@ export function drawioToSpec(drawioFileText, options = {}) {
     edges: specEdges
   }
 }
-

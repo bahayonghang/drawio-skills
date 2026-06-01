@@ -364,6 +364,47 @@
         "Database node uses database semantic type",
         "Node text colors provide sufficient contrast against dark background"
       ]
+    },
+    {
+      "id": "replicate-world-model-edge-labels",
+      "prompt": "Replicate the uploaded world-model diagram. Preserve the h(t), z(t), and s(t) labels as separate text/edge-label elements and keep every label offset from its arrow instead of sitting on the line.",
+      "expected_output": "A replicated editable bundle whose connector labels have explicit off-line offsets and do not overlap their arrows.",
+      "files": [],
+      "assertions": [
+        "meta.source is set to replicated",
+        "The extraction records h(t), z(t), and s(t) as text-bearing elements with anchor type or equivalent placement notes",
+        "Edge labels use explicit labelOffset values around 12-20px away from their connector lines",
+        "No edge label is placed directly on top of a connector",
+        "The completion report includes a text-position self-check or original-vs-export comparison note"
+      ]
+    },
+    {
+      "id": "replicate-standalone-title-formula-bounds",
+      "prompt": "Recreate the uploaded paper figure with a standalone upper-left title and a right-side formula block. Preserve Times New Roman, italic math, text alignment, and the visible text-box bounds rather than embedding these labels into nearby shapes.",
+      "expected_output": "A replicated spec that uses first-class text/formula nodes with explicit bounds and typography overrides.",
+      "files": [],
+      "assertions": [
+        "Standalone title or caption text is represented as type: text or an equivalent first-class text node",
+        "Formula annotations use official math delimiters and keep their own explicit bounds",
+        "Text/formula nodes include bounds with x, y, width, and height",
+        "Typography preserves Times New Roman or an equivalent serif math family, font size, and italic styling where visible",
+        "Text boxes do not touch diagram borders or overlap nearby shapes"
+      ]
+    },
+    {
+      "id": "academic-replicate-text-comparison",
+      "prompt": "Replicate the uploaded academic figure into the editable bundle and pay special attention to caption, callout, formula, and legend text positions. Return .drawio, .spec.yaml, .arch.json, and .svg, and record the visual comparison used for text-position self-checking.",
+      "expected_output": "An academic replication bundle with aligned sidecars, explicit text placement, and recorded visual/text-position self-check evidence.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
+      ],
+      "assertions": [
+        "The output includes .drawio, .spec.yaml, .arch.json, and .svg as an aligned editable bundle",
+        "Replicated standalone text, formulas, captions, or callouts use explicit bounds when their placement matters",
+        "Connector labels use labelPosition plus labelOffset when they would otherwise overlap a line",
+        "The self-check verifies no label is clipped, pasted to a border, or sitting on a connector",
+        "At least one original-vs-export visual comparison or equivalent screenshot review note is recorded"
+      ]
     }
   ]
 }

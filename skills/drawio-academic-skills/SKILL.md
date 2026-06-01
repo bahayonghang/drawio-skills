@@ -1,7 +1,7 @@
 ---
 name: drawio-academic-skills
 version: "0.1.0"
-description: "Academic-first Draw.io figure skill for papers, theses, IEEE-style diagrams, architecture figures, workflows, roadmaps, formulas, and publication-ready visualizations. Use when users ask to draw, redraw, replicate, edit, or export diagrams for academic papers or technical documents. Creates offline .drawio + .spec.yaml + .arch.json bundles, exports SVG locally, uses draw.io Desktop CLI for embedded SVG/PNG/PDF/JPG, supports style presets, self-check review loops, and diagrams.net URL fallback without requiring MCP."
+description: "Academic-first Draw.io figure skill for papers, theses, IEEE-style diagrams, architecture figures, workflows, roadmaps, formulas, and publication-ready visualizations. Use when users ask to draw, redraw, replicate, edit, or export diagrams for academic papers or technical documents. Creates offline .drawio + .spec.yaml + .arch.json bundles, exports SVG locally, uses draw.io Desktop CLI for embedded SVG/PNG/PDF/JPG, supports style presets, self-check review loops, and diagrams.net URL fallback without requiring MCP. For replication, preserve text boxes, formula annotations, and edge-label placement as publication-critical details."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
 compatibility: "Node 20+ for the YAML/CLI workflow. draw.io Desktop is optional but required for PNG/PDF/JPG and embedded .drawio.svg exports. No MCP server is required."
@@ -69,7 +69,7 @@ Choose one route first, then load only the referenced files.
 | `academic-create` | paper, thesis, IEEE, manuscript, journal figure | `references/docs/academic-figure-playbook.md`, `references/docs/academic-export-checklist.md`, `references/workflows/create.md` |
 | `math-formula` | formula, equation, LaTeX, AsciiMath, MathJax, 公式 | `references/docs/math-typesetting.md`, `references/docs/design-system/formulas.md` |
 | `edit` | modify an existing `.drawio`, YAML bundle, or previous output | `references/workflows/edit.md`, `references/docs/migration-readiness.md` |
-| `replicate` | redraw screenshot, image, SVG, or reference diagram | `references/workflows/replicate.md`, `references/docs/design-system/color-guide.md` |
+| `replicate` | redraw screenshot, image, SVG, or reference diagram | `references/workflows/replicate.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`, `references/docs/design-system/color-guide.md`, `references/docs/math-typesetting.md` |
 | `stencil-heavy` | cloud, network, AWS, Azure, GCP, Cisco, Kubernetes | `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md` |
 | `style-preset` | learn/use/list/delete/rename visual style presets | `references/docs/style-presets.md`, `references/docs/upstream-pure-drawio-skill.md` |
 
@@ -120,6 +120,7 @@ Add `<name>.png` only when the user asks for PNG, Word, thesis/A4, raster-first,
 - After import, inspect the generated `.spec.yaml` and `.arch.json`, apply edits to the YAML spec, then regenerate the requested `.drawio` or `.svg` with `--write-sidecars`.
 - Keep all regenerated files on the same basename so the bundle remains round-trippable.
 - For image/SVG replication, extract palette intent first and preserve the source palette unless the user asks for paper-safe recoloring.
+- Run a text-fidelity pass for image/SVG replication: extract standalone text boxes, formula annotations, edge labels, text bounds, baseline/offset, font family/size/italic state, alignment, and spacing before rendering. Use `bounds` for exact top-left text boxes and `labelOffset` to keep edge labels off connector lines.
 - For major structural changes, show an ASCII logic draft before rendering.
 - Preserve `<name>.drawio`, `<name>.spec.yaml`, and `<name>.arch.json` together.
 
@@ -176,7 +177,7 @@ Use these fallbacks before stopping:
 | `.drawio` import is incomplete | Preserve the original file, export the partial spec, and report unsupported shapes or styles explicitly. |
 | Desktop export fails or Desktop is missing | Regenerate the offline bundle and SVG, then provide a diagrams.net URL fallback. |
 | Formula rendering is wrong | Recheck delimiters against the math reference, then simplify the label before changing layout. |
-| SVG/PNG self-check finds overlap | Edit labels or routing in YAML/XML and re-render; do not only describe the issue. |
+| SVG/PNG self-check finds overlap | Edit labels, `bounds`, `labelOffset`, or routing in YAML/XML and re-render; do not only describe the issue. |
 
 ## Quality Gate
 
@@ -185,6 +186,8 @@ Do not claim completion until:
 - `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` are aligned
 - academic profile has a valid `figureType`
 - labels are readable at paper/A4 scale
+- replicated text boxes/formulas keep their relative source positions and do not touch shape borders
+- edge labels sit off connector lines by an explicit or validated default offset
 - formulas use official delimiters: `$$...$$`, `\(...\)`, or AsciiMath backticks
 - connector routing is readable
 - colors are not the only carrier of meaning

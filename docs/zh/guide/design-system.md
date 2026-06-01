@@ -65,6 +65,16 @@ Draw.io 设计系统为工程图、学术图和演示图提供统一、稳定的
 | `preserve-original` | 把提取到的源图颜色保留为显式覆盖 |
 | `theme-first` | 让重绘结果优先服从目标主题 |
 
+## 复刻中的文字保真
+
+在复刻截图或参考图时，应把文字视为设计元素：
+
+- 独立标题、说明、注释和 callout 用 `type: text`；
+- 公式注释用 `type: formula` 或官方公式分隔符；
+- 源图文本框位置有意义时，使用 `bounds`；
+- 边标签用 `labelOffset`，避免压在线上；
+- 用 `align`、`verticalAlign` 和 `spacing*` 保留可见排版。
+
 ## 学术图注意事项
 
 当输出使用 `academic-paper` 时：

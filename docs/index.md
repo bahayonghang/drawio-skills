@@ -51,8 +51,8 @@ features:
     details: "Use explicit AWS/Cisco icon prefixes, supported aliases such as `aws.alb` and `cisco.ap`, or let `network.vendor` + `network.device` derive documented stencils automatically."
 
   - icon: 🔁
-    title: Replication with Palette Control
-    details: "`/drawio replicate` preserves source colors by default and records extracted palette intent in `meta.replication` for future edits."
+    title: Replication with Palette and Text Control
+    details: "`/drawio replicate` preserves source colors by default, records palette intent in `meta.replication`, and now tracks text-box bounds and label offsets for titles, captions, formulas, and edge labels."
 
   - icon: ✅
     title: Validation Before Claiming Done

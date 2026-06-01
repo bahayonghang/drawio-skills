@@ -13,10 +13,26 @@ Use `/drawio replicate` when you want to recreate an uploaded image, screenshot,
 
 1. Receive the uploaded image and any text hints
 2. Choose domain, theme, and color mode
-3. Extract structure into YAML
-4. Summarize logic and palette when needed
-5. Render the offline bundle
-6. Compare and refine with `/drawio edit`
+3. Run a text-fidelity pass for labels, captions, formulas, and edge labels
+4. Extract structure into YAML
+5. Summarize logic, palette, and text placement when needed
+6. Render the offline bundle
+7. Compare and refine with `/drawio edit`
+
+## Text Fidelity Pass
+
+When the source image depends on typography or placement, replication should capture:
+
+- shape labels, edge labels, standalone text, and formula annotations separately;
+- explicit text-box bounds when the original box position matters;
+- font family, font size, italic/bold state, alignment, and spacing where visible;
+- edge-label offsets so labels sit off the connector line instead of on top of it.
+
+For self-checking, compare the source and export for:
+
+- title, caption, and callout placement;
+- formula spacing and clipping;
+- edge-label clearance from arrows and lines.
 
 ## Color Modes
 
@@ -107,6 +123,10 @@ Stay on `preserve-original` and make sure the extracted palette summary is accep
 ### The source image is too dense
 
 Split the figure into sub-diagrams or reduce the redraw scope before regeneration.
+
+### Text labels sit on connector lines
+
+Add or adjust `labelOffset` for the affected edge labels, then re-render and compare again.
 
 ## Next Steps
 

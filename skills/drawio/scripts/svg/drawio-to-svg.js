@@ -35,6 +35,7 @@ function parseDrawioXml(xml) {
  */
 function classifyShape(style) {
   const shape = style.get('shape')
+  if (shape === 'text' || style.has('text') || style.has('edgeLabel')) return 'text'
   if (shape === 'cylinder3' || shape === 'cylinder') return 'cylinder'
   if (shape === 'parallelogram') return 'parallelogram'
   if (shape === 'document') return 'document'
@@ -129,6 +130,7 @@ function renderVertex(cell, style) {
   const fontColor = style.get('fontColor') || '#000000'
   const fontSize = Number(style.get('fontSize')) || 12
   const fontFamily = style.get('fontFamily') || 'sans-serif'
+  const fontStyleBits = Number(style.get('fontStyle')) || 0
 
   let dashAttr = ''
   if (style.get('dashed') === '1') {
@@ -141,6 +143,10 @@ function renderVertex(cell, style) {
   const baseAttrs = `fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}`
 
   switch (shapeType) {
+    case 'text': {
+      break
+    }
+
     case 'roundedRect': {
       const rx = Number(style.get('arcSize')) || 8
       parts.push(`<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${rx}" ${baseAttrs}/>`)
@@ -312,11 +318,29 @@ function renderVertex(cell, style) {
   // Text label
   const label = decodeEntities(cell.value)
   if (label) {
-    const textX = x + width / 2
-    const textY = y + height / 2
+    const align = style.get('align') || 'center'
+    const verticalAlign = style.get('verticalAlign') || 'middle'
+    const spacingLeft = Number(style.get('spacingLeft')) || 0
+    const spacingRight = Number(style.get('spacingRight')) || 0
+    const spacingTop = Number(style.get('spacingTop')) || 0
+    const spacingBottom = Number(style.get('spacingBottom')) || 0
+    const textX = align === 'left'
+      ? x + spacingLeft
+      : align === 'right'
+        ? x + width - spacingRight
+        : x + width / 2
+    const textY = verticalAlign === 'top'
+      ? y + spacingTop
+      : verticalAlign === 'bottom'
+        ? y + height - spacingBottom
+        : y + height / 2
+    const textAnchor = align === 'left' ? 'start' : align === 'right' ? 'end' : 'middle'
+    const dominantBaseline = verticalAlign === 'top' ? 'hanging' : verticalAlign === 'bottom' ? 'auto' : 'central'
+    const fontWeightAttr = (fontStyleBits & 1) ? ' font-weight="700"' : ''
+    const fontStyleAttr = (fontStyleBits & 2) ? ' font-style="italic"' : ''
     parts.push(
-      `<text x="${textX}" y="${textY}" text-anchor="middle" dominant-baseline="central" ` +
-      `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}">` +
+      `<text x="${textX}" y="${textY}" text-anchor="${textAnchor}" dominant-baseline="${dominantBaseline}" ` +
+      `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}"${fontWeightAttr}${fontStyleAttr}>` +
       `${escapeXml(label)}</text>`
     )
   }
@@ -348,7 +372,7 @@ function cellCenter(cell) {
  * @param {Map<string, object>} cellMap - id → cell lookup
  * @returns {string} SVG markup
  */
-function renderEdge(cell, style, cellMap) {
+function renderEdge(cell, style, cellMap, suppressLabel = false) {
   const strokeColor = style.get('strokeColor') || '#000000'
   const strokeWidth = Number(style.get('strokeWidth')) || 1
   const fontColor = style.get('fontColor') || '#000000'
@@ -392,7 +416,7 @@ function renderEdge(cell, style, cellMap) {
 
   // Edge label
   const label = decodeEntities(cell.value)
-  if (label) {
+  if (label && !suppressLabel) {
     const midX = (x1 + x2) / 2
     const midY = (y1 + y2) / 2
     parts.push(
@@ -402,6 +426,34 @@ function renderEdge(cell, style, cellMap) {
   }
 
   return parts.join('\n')
+}
+
+function renderEdgeLabel(cell, style, cellMap) {
+  const parentEdge = cell.parent ? cellMap.get(cell.parent) : null
+  if (!parentEdge) return ''
+  const sourceCell = parentEdge.source ? cellMap.get(parentEdge.source) : null
+  const targetCell = parentEdge.target ? cellMap.get(parentEdge.target) : null
+  if (!sourceCell || !targetCell) return ''
+
+  const source = cellCenter(sourceCell)
+  const target = cellCenter(targetCell)
+  const rawLabelX = Number(cell.geometry?.labelX)
+  const labelX = Number.isFinite(rawLabelX) ? rawLabelX : 0.5
+  const offset = cell.geometry?.offset || { x: 0, y: -6 }
+  const x = source.x + (target.x - source.x) * labelX + offset.x
+  const y = source.y + (target.y - source.y) * labelX + offset.y
+
+  const label = decodeEntities(cell.value)
+  if (!label) return ''
+  const fontColor = style.get('fontColor') || '#000000'
+  const fontSize = Number(style.get('fontSize')) || 11
+  const fontFamily = style.get('fontFamily') || 'sans-serif'
+
+  return (
+    `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" ` +
+    `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}">` +
+    `${escapeXml(label)}</text>`
+  )
 }
 
 // ============================================================================
@@ -430,13 +482,16 @@ export function drawioToSvg(xmlString) {
   // Separate vertices and edges
   const vertices = cells.filter(c => c.vertex && c.parent !== '0')
   const edges = cells.filter(c => c.edge)
+  const edgeLabels = vertices.filter(v => parseStyle(v.style).has('edgeLabel'))
+  const edgeLabelParents = new Set(edgeLabels.map(v => v.parent).filter(Boolean))
+  const shapeVertices = vertices.filter(v => !edgeLabelParents.has(v.id) && !parseStyle(v.style).has('edgeLabel'))
 
   // Calculate viewBox dimensions from content if default
   let svgWidth = graph.pageWidth
   let svgHeight = graph.pageHeight
 
   // Expand viewBox if any shape extends beyond page bounds
-  for (const v of vertices) {
+  for (const v of shapeVertices) {
     if (v.geometry) {
       svgWidth = Math.max(svgWidth, v.geometry.x + v.geometry.width + 20)
       svgHeight = Math.max(svgHeight, v.geometry.y + v.geometry.height + 20)
@@ -462,14 +517,20 @@ export function drawioToSvg(xmlString) {
   }
 
   // Render vertices first, then edges on top
-  for (const v of vertices) {
+  for (const v of shapeVertices) {
     const style = parseStyle(v.style)
     svgParts.push(renderVertex(v, style))
   }
 
   for (const e of edges) {
     const style = parseStyle(e.style)
-    svgParts.push(renderEdge(e, style, cellMap))
+    svgParts.push(renderEdge(e, style, cellMap, edgeLabelParents.has(e.id)))
+  }
+
+  for (const labelCell of edgeLabels) {
+    const style = parseStyle(labelCell.style)
+    const rendered = renderEdgeLabel(labelCell, style, cellMap)
+    if (rendered) svgParts.push(rendered)
   }
 
   svgParts.push('</svg>')

@@ -98,5 +98,20 @@
     "id": "edit-after-import",
     "profile": "default",
     "prompt": "Import the uploaded .drawio file into YAML spec, rename API to Auth, and export as SVG."
+  },
+  {
+    "id": "replicate-world-model-edge-labels",
+    "profile": "default",
+    "prompt": "Replicate the uploaded world-model diagram. Preserve the h(t), z(t), and s(t) labels as separate text/edge-label elements and keep every label offset from its arrow instead of sitting on the line."
+  },
+  {
+    "id": "replicate-standalone-title-formula-bounds",
+    "profile": "academic-paper",
+    "prompt": "Recreate the uploaded paper figure with a standalone upper-left title and a right-side formula block. Preserve Times New Roman, italic math, text alignment, and the visible text-box bounds rather than embedding these labels into nearby shapes."
+  },
+  {
+    "id": "academic-replicate-text-comparison",
+    "profile": "academic-paper",
+    "prompt": "Replicate the uploaded academic figure into the editable bundle and pay special attention to caption, callout, formula, and legend text positions. Return .drawio, .spec.yaml, .arch.json, and .svg, and record the visual comparison used for text-position self-checking."
   }
 ]

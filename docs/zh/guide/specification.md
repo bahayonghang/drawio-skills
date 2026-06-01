@@ -113,6 +113,18 @@ meta:
 - `preserve-original`
 - `theme-first`
 
+## 文字保真字段
+
+复刻图常常不只需要颜色元数据。只要文字位置有意义，就可以使用这些字段：
+
+- `type: text`：用于独立标题、说明、callout、图例和注释；
+- `bounds`：用于需要精确 top-left 几何的文本框；
+- `type: formula` 或带官方公式分隔符的 `type: text`：用于公式注释；
+- `labelPosition` 和 `labelOffset`：用于需要离开连线的边标签；
+- `align`、`verticalAlign`、`spacing*`：用于可见的排版和内边距覆盖。
+
+当 `position` 和 `bounds` 同时存在时，应该把 `bounds` 视为保真几何。
+
 ## 自动类型检测
 
 当 `type` 省略时，标签仍可能自动映射到：
@@ -142,6 +154,7 @@ meta:
 - 布局一致性
 - 连线质量
 - 开启 `academic-paper` 时的附加要求
+- 复刻标签与公式的文字位置规则
 
 如果你希望 warning 直接阻断输出，启用 strict 模式。
 

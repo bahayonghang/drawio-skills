@@ -65,6 +65,16 @@ Explicit color overrides do **not** change when the theme changes.
 | `preserve-original` | Keep extracted source colors as explicit overrides |
 | `theme-first` | Normalize the redraw to the selected theme |
 
+## Text Fidelity in Replication
+
+When you are recreating a screenshot or reference figure, treat text as a design element:
+
+- use `type: text` for standalone titles, captions, notes, and callouts;
+- use `type: formula` or official math delimiters for formula annotations;
+- use `bounds` when the original text box position matters;
+- use `labelOffset` so edge labels do not sit on the connector line;
+- use `align`, `verticalAlign`, and `spacing*` to preserve visible typography.
+
 ## Academic Notes
 
 For `academic-paper` output:

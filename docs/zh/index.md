@@ -43,8 +43,8 @@ features:
     details: "优先语义形状，需要时再接入 AWS、GCP、Azure、Kubernetes 或网络模板图标。"
 
   - icon: 🔁
-    title: 复刻时保留色彩意图
-    details: "`/drawio replicate` 默认保留源图配色，并把提取到的调色板记录进 `meta.replication`，便于后续编辑。"
+    title: 复刻时保留色彩与文字位置
+    details: "`/drawio replicate` 默认保留源图配色，并把提取到的调色板记录进 `meta.replication`；同时会追踪标题、说明、公式和边标签的文本框边界与偏移。"
 
   - icon: ✅
     title: 先校验再交付

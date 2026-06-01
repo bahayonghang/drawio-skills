@@ -21,6 +21,7 @@ import {
   resolveIconShape,
   deriveNodeIcon,
   validateXml,
+  validateSpec,
   validateColorScheme,
   validateLayoutConsistency
 } from './spec-to-drawio.js'
@@ -1049,6 +1050,114 @@ describe('Phase 2.3: edge labelPosition', () => {
     }
     const xml = specToDrawioXml(spec)
     assert.ok(xml.includes('x="0.5"'), 'should contain x="0.5" for default center labelPosition')
+  })
+})
+
+// ============================================================================
+// Phase 2.3b: Text fidelity
+// ============================================================================
+
+describe('Phase 2.3b: text fidelity', () => {
+  it('should preserve explicit bounds for standalone text nodes and text styling', () => {
+    const spec = {
+      meta: { theme: 'academic' },
+      nodes: [
+        {
+          id: 'title',
+          label: 'World Model',
+          type: 'text',
+          bounds: { x: 24, y: 32, width: 180, height: 36 },
+          style: {
+            fontFamily: 'Times New Roman, serif',
+            fontSize: 16,
+            italic: true,
+            align: 'left',
+            verticalAlign: 'top',
+            spacingLeft: 4,
+            spacingTop: 2
+          }
+        }
+      ]
+    }
+
+    const xml = specToDrawioXml(spec)
+    assert.ok(xml.includes('style="text;'), 'text nodes should use the text shape')
+    assert.ok(xml.includes('x="24" y="32" width="180" height="36"'), 'text nodes should preserve explicit bounds')
+    assert.ok(xml.includes('fontFamily=Times New Roman, serif'), 'text nodes should preserve font family')
+    assert.ok(xml.includes('fontStyle=2'), 'italic text should be exported with the italic fontStyle bit')
+    assert.ok(xml.includes('align=left'), 'text nodes should preserve horizontal alignment')
+    assert.ok(xml.includes('verticalAlign=top'), 'text nodes should preserve vertical alignment')
+    assert.ok(xml.includes('spacingLeft=4'), 'text nodes should preserve left spacing')
+  })
+
+  it('should keep formula nodes as dedicated annotations with explicit font styling', () => {
+    const spec = {
+      meta: { theme: 'academic' },
+      nodes: [
+        {
+          id: 'formula',
+          label: '$$h(t)=f(z(t))$$',
+          type: 'formula',
+          bounds: { x: 260, y: 48, width: 220, height: 56 },
+          style: {
+            fontFamily: 'Times New Roman, serif',
+            fontSize: 15,
+            italic: true,
+            align: 'center',
+            verticalAlign: 'middle'
+          }
+        }
+      ]
+    }
+
+    const xml = specToDrawioXml(spec)
+    assert.ok(xml.includes('shape=text') || xml.includes('rounded=1'), 'formula nodes should remain dedicated annotation nodes')
+    assert.ok(xml.includes('fontFamily=Times New Roman, serif'), 'formula nodes should preserve serif typography')
+    assert.ok(xml.includes('fontStyle=2'), 'formula nodes should preserve italic styling')
+  })
+
+  it('should export explicit edge label offsets away from the connector line', () => {
+    const spec = {
+      meta: { theme: 'tech-blue' },
+      nodes: [
+        { id: 'h', label: 'h(t)', bounds: { x: 48, y: 80, width: 96, height: 40 } },
+        { id: 'z', label: 'z(t)', bounds: { x: 300, y: 80, width: 96, height: 40 } }
+      ],
+      edges: [
+        {
+          from: 'h',
+          to: 'z',
+          label: 's(t)',
+          labelPosition: 'center',
+          labelOffset: { x: 0, y: -18 }
+        }
+      ]
+    }
+
+    const xml = specToDrawioXml(spec)
+    assert.ok(xml.includes('<mxPoint x="0" y="-18" as="offset"/>'), 'edge labels should preserve the explicit offset')
+  })
+
+  it('should validate explicit text bounds and label offsets', () => {
+    assert.throws(
+      () => validateSpec({
+        meta: {},
+        nodes: [{ id: 'n1', label: 'Note', bounds: { x: 10, y: 10, width: 0, height: 20 } }],
+        edges: [],
+        modules: []
+      }),
+      /bounds width and height must be greater than 0/
+    )
+
+    assert.throws(
+      () => validateSpec({
+        meta: {},
+        nodes: [{ id: 'n1', label: 'Note' }],
+        edges: [{ from: 'n1', to: 'n2', label: 'flow', labelOffset: { x: 'bad', y: 8 } }],
+        modules: []
+      }),
+      /labelOffset must have numeric x and y/
+    )
   })
 })
 

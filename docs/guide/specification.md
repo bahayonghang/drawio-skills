@@ -113,6 +113,18 @@ meta:
 - `preserve-original`
 - `theme-first`
 
+## Text Fidelity Fields
+
+Replicated diagrams may need more than color metadata. Use these fields when text placement matters:
+
+- `type: text` for standalone titles, captions, callouts, legends, and notes;
+- `bounds` for exact top-left text-box geometry when the box itself is part of the design;
+- `type: formula` or `type: text` with official math delimiters for dedicated formula annotations;
+- `labelPosition` and `labelOffset` for edge labels that need to sit off the connector line;
+- `align`, `verticalAlign`, and `spacing*` for visible typography and padding overrides.
+
+When both `position` and `bounds` are present, treat `bounds` as the fidelity-preserving geometry.
+
 ## Type Auto-Detection
 
 When `type` is omitted, labels can still map to:
@@ -142,6 +154,7 @@ The compiler validates:
 - layout consistency
 - edge quality
 - academic-paper requirements when enabled
+- text-position rules for replicated labels and formulas
 
 Use strict mode when warnings should fail the build.
 

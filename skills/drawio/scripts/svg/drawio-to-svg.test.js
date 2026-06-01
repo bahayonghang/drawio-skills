@@ -424,6 +424,48 @@ describe('drawioToSvg', () => {
     assert.ok(svg.includes('<line'), 'Edge should render as <line> element')
   })
 
+  it('should render standalone text cells without drawing a surrounding rectangle', () => {
+    const xml = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="World Model" style="text;html=1;align=left;verticalAlign=top;fontFamily=Times New Roman, serif;fontSize=16;fontStyle=2;spacingLeft=4;spacingTop=2;" vertex="1" parent="1">
+      <mxGeometry x="24" y="32" width="180" height="36" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+    const svg = drawioToSvg(xml)
+    assert.ok(!svg.includes('<rect x="24" y="32"'), 'Text-only cells should not draw a shape rectangle')
+    assert.ok(svg.includes('text-anchor="start"'), 'Text-only cells should honor left alignment')
+    assert.ok(svg.includes('font-style="italic"'), 'Text-only cells should honor italic font style')
+  })
+
+  it('should render edgeLabel child cells using their explicit offset', () => {
+    const xml = `
+<mxGraphModel>
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="2" value="h" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="80" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="3" value="z" style="rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="80" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="s(t)" style="endArrow=block;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="5" value="s(t)" style="edgeLabel;html=1;fontSize=11;fontColor=#64748B;" vertex="1" connectable="0" parent="4">
+      <mxGeometry x="0.5" relative="1" as="geometry"><mxPoint x="0" y="-18" as="offset"/></mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>`
+    const svg = drawioToSvg(xml)
+    assert.ok(svg.includes('x="200" y="82"'), 'Edge label should render at midpoint plus explicit offset')
+    assert.equal((svg.match(/s\(t\)/g) || []).length, 1, 'Edge label should not be duplicated')
+  })
+
   it('should render background color from graph attributes', () => {
     const xml = `
 <mxGraphModel background="#E0F2FE">

@@ -141,6 +141,21 @@ export function parsePoints(geometryBody) {
   return points
 }
 
+/**
+ * Parse an offset <mxPoint as="offset"> element from an <mxGeometry> body.
+ * @param {string} geometryBody - inner HTML of <mxGeometry>
+ * @returns {{x: number, y: number}|null}
+ */
+export function parseOffset(geometryBody) {
+  if (!geometryBody) return null
+  const offsetMatch = /<mxPoint\b([^>]*?)\bas="offset"[^>]*\/>/i.exec(geometryBody)
+  if (!offsetMatch) return null
+  const x = Number(attr(offsetMatch[1], 'x'))
+  const y = Number(attr(offsetMatch[1], 'y'))
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null
+  return { x, y }
+}
+
 // ============================================================================
 // mxCell Parsing
 // ============================================================================
@@ -164,7 +179,8 @@ export function buildCell(cellAttrs, cellBody) {
     height: Number(attr(geometryAttrs, 'height')) || 0,
     relative: attr(geometryAttrs, 'relative') === '1',
     labelX: attr(geometryAttrs, 'x'),
-    points: parsePoints(geometryBody)
+    points: parsePoints(geometryBody),
+    offset: parseOffset(geometryBody)
   } : null
 
   return {

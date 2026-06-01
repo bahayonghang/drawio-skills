@@ -158,6 +158,7 @@ const SHAPE_KEYWORDS = {
   user: ['user', 'user icon', 'client', 'person', 'customer', 'human'],
   document: ['document', 'doc', 'file', 'report', 'log'],
   formula: ['formula', 'equation', 'math', '$$'],
+  text: ['standalone text', 'annotation', 'caption', 'legend note', 'title text'],
   cloud: ['cloud', 'internet', 'external', 'web'],
 
   // Deep learning - Input/Output
@@ -209,6 +210,7 @@ const SHAPE_STYLES = {
   user: 'ellipse',
   document: 'shape=document;boundedLbl=1',
   formula: 'rounded=1',
+  text: 'text',
   cloud: 'ellipse;shape=cloud',
   process: 'rounded=1;arcSize=20',
   router: 'ellipse',
@@ -300,6 +302,7 @@ const TYPE_DEFAULT_SIZES = {
   decision: 'medium',
   terminal: 'small',
   user: 'small',
+  text: 'medium',
   router: 'small',
   switch: 'small',
   firewall: 'small',
@@ -336,6 +339,29 @@ export function getNodeSize(size, nodeType = null) {
  */
 export function snapToGrid(value, gridSize = 8) {
   return Math.round(value / gridSize) * gridSize
+}
+
+function isFiniteNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value)
+}
+
+function normalizeNodeBounds(node) {
+  const bounds = node?.bounds
+  if (!bounds) return null
+  if (
+    !isFiniteNumber(bounds.x) ||
+    !isFiniteNumber(bounds.y) ||
+    !isFiniteNumber(bounds.width) ||
+    !isFiniteNumber(bounds.height)
+  ) {
+    return null
+  }
+  return {
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height
+  }
 }
 
 // ============================================================================
@@ -378,7 +404,11 @@ export function calculateLayout(spec, theme) {
   // Handle manually positioned nodes first
   const manuallyPositioned = new Set()
   for (const node of nodes) {
-    if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
+    const explicitBounds = normalizeNodeBounds(node)
+    if (explicitBounds) {
+      positions.set(node.id, explicitBounds)
+      manuallyPositioned.add(node.id)
+    } else if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
       const semanticType = detectSemanticType(node.label, node.type, node.network)
       const size = getNodeSize(node.size, semanticType)
       positions.set(node.id, {
@@ -614,6 +644,41 @@ function resolveThemeColor(value, theme, fallback) {
   return value
 }
 
+function safeStyleText(value, fallback) {
+  if (typeof value !== 'string') return fallback
+  const trimmed = value.trim()
+  if (trimmed === '' || /[;<>"\r\n]/.test(trimmed)) return fallback
+  return trimmed
+}
+
+function resolveFontFamily(node, semanticType, theme) {
+  return safeStyleText(
+    node.style?.fontFamily,
+    theme.typography?.fontFamily?.[semanticType] ||
+      (semanticType === 'formula' ? theme.typography?.fontFamily?.formula : null) ||
+      theme.typography?.fontFamily?.primary ||
+      'Inter, sans-serif'
+  )
+}
+
+function resolveFontStyle(style = {}) {
+  let bits = Number.isInteger(style.fontStyle) ? style.fontStyle : 0
+  if (style.bold || style.fontWeight >= 600) bits |= 1
+  if (style.italic) bits |= 2
+  return bits
+}
+
+function pushNumberStyle(parts, name, value) {
+  if (isFiniteNumber(value)) parts.push(`${name}=${value}`)
+}
+
+function pushTextSpacing(parts, style = {}) {
+  pushNumberStyle(parts, 'spacingLeft', style.spacingLeft)
+  pushNumberStyle(parts, 'spacingRight', style.spacingRight)
+  pushNumberStyle(parts, 'spacingTop', style.spacingTop)
+  pushNumberStyle(parts, 'spacingBottom', style.spacingBottom)
+}
+
 /**
  * Resolve icon name to draw.io shape identifier
  */
@@ -657,13 +722,45 @@ export function generateNodeStyle(node, theme) {
   // Get colors from theme
   const nodeTheme = theme.node?.[semanticType] || theme.node?.default || {}
   const defaultTheme = theme.node?.default || {}
+  const isTextNode = semanticType === 'text'
 
-  const fillColor = resolveThemeColor(node.style?.fillColor, theme, nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
-  const strokeColor = resolveThemeColor(node.style?.strokeColor, theme, nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
-  const strokeWidth = node.style?.strokeWidth || nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5
+  const fillColor = resolveThemeColor(
+    node.style?.fillColor,
+    theme,
+    isTextNode ? 'none' : (nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
+  )
+  const strokeColor = resolveThemeColor(
+    node.style?.strokeColor,
+    theme,
+    isTextNode ? 'none' : (nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
+  )
+  const strokeWidth = node.style?.strokeWidth ?? (isTextNode ? 0 : (nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5))
   const fontColor = resolveThemeColor(node.style?.fontColor, theme, nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B')
   const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
-  const fontFamily = theme.typography?.fontFamily?.primary || 'Inter, sans-serif'
+  const fontFamily = resolveFontFamily(node, semanticType, theme)
+  const align = safeStyleText(node.style?.align, isTextNode ? 'left' : 'center')
+  const verticalAlign = safeStyleText(node.style?.verticalAlign, isTextNode ? 'top' : 'middle')
+  const fontStyle = resolveFontStyle(node.style)
+
+  if (isTextNode) {
+    const parts = [
+      shapeStyle,
+      'html=1',
+      'whiteSpace=wrap',
+      'overflow=hidden',
+      `fillColor=${fillColor}`,
+      `strokeColor=${strokeColor}`,
+      `strokeWidth=${strokeWidth}`,
+      `fontColor=${fontColor}`,
+      `fontSize=${fontSize}`,
+      `fontFamily=${fontFamily}`,
+      `align=${align}`,
+      `verticalAlign=${verticalAlign}`
+    ]
+    if (fontStyle) parts.push(`fontStyle=${fontStyle}`)
+    pushTextSpacing(parts, node.style)
+    return parts.join(';')
+  }
 
   // If node has an icon, override shape to use the icon
   const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
@@ -682,7 +779,7 @@ export function generateNodeStyle(node, theme) {
     parts.push(`fontFamily=${fontFamily}`)
     parts.push('verticalLabelPosition=bottom')
     parts.push('labelBackgroundColor=none')
-    parts.push('align=center')
+    parts.push(`align=${align}`)
   } else {
     parts.push(
       effectiveShapeStyle,
@@ -694,10 +791,13 @@ export function generateNodeStyle(node, theme) {
       `fontColor=${fontColor}`,
       `fontSize=${fontSize}`,
       `fontFamily=${fontFamily}`,
-      'verticalAlign=middle',
-      'align=center'
+      `verticalAlign=${verticalAlign}`,
+      `align=${align}`
     )
   }
+
+  if (fontStyle) parts.push(`fontStyle=${fontStyle}`)
+  pushTextSpacing(parts, node.style)
 
   return parts.join(';')
 }
@@ -814,6 +914,20 @@ function formatNetworkEdgeLabel(edge) {
   return parts.join('\n')
 }
 
+function defaultEdgeLabelOffset(edge) {
+  return edge.__routing?.orientation === 'vertical'
+    ? { x: 12, y: 0 }
+    : { x: 0, y: -12 }
+}
+
+function resolveEdgeLabelOffset(edge) {
+  const explicit = edge.labelOffset
+  if (explicit && isFiniteNumber(explicit.x) && isFiniteNumber(explicit.y)) {
+    return explicit
+  }
+  return defaultEdgeLabelOffset(edge)
+}
+
 // ============================================================================
 // XML Generation
 // ============================================================================
@@ -927,11 +1041,12 @@ export function buildXml(spec, theme, layout) {
       const labelX = edge.labelPosition === 'start' ? '0.2'
         : edge.labelPosition === 'end' ? '0.8'
           : '0.5'  // center (default)
-      const labelOffset = edge.__routing?.orientation === 'vertical'
-        ? '<mxPoint x="12" y="0" as="offset"/>'
-        : '<mxPoint x="0" y="-12" as="offset"/>'
+      const offset = resolveEdgeLabelOffset(edge)
+      const labelOffset = `<mxPoint x="${offset.x}" y="${offset.y}" as="offset"/>`
+      const labelFontSize = edge.style?.fontSize || 11
+      const labelFontColor = resolveThemeColor(edge.style?.fontColor, theme, theme.colors?.textMuted || '#64748B')
       edgeXml += `</mxCell>`
-      edgeXml += `<mxCell id="${labelId}" value="${edgeLabel}" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=11;fontColor=${theme.colors?.textMuted || '#64748B'};" vertex="1" connectable="0" parent="${cellId}">`
+      edgeXml += `<mxCell id="${labelId}" value="${edgeLabel}" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=${labelFontSize};fontColor=${labelFontColor};" vertex="1" connectable="0" parent="${cellId}">`
       edgeXml += `<mxGeometry x="${labelX}" relative="1" as="geometry">${labelOffset}</mxGeometry>`
       edgeXml += `</mxCell>`
     } else {
@@ -1621,6 +1736,54 @@ export function validateSpec(spec) {
   const VALID_REPLICATION_MODES = ['preserve-original', 'theme-first']
   const VALID_REPLICATION_TARGETS = ['canvas', 'nodes', 'edges', 'modules', 'mixed']
   const VALID_CONFIDENCE_LEVELS = ['low', 'medium', 'high']
+  const VALID_LABEL_POSITIONS = ['start', 'center', 'end']
+  const VALID_ALIGN = ['left', 'center', 'right']
+  const VALID_VERTICAL_ALIGN = ['top', 'middle', 'bottom']
+  const SAFE_STYLE_TEXT = /^[^;<>"\r\n]{1,120}$/
+
+  const validateBounds = (bounds, context) => {
+    if (typeof bounds !== 'object' || bounds == null || Array.isArray(bounds)) {
+      throw new Error(`${context} bounds must be an object when provided`)
+    }
+    for (const field of ['x', 'y', 'width', 'height']) {
+      if (!isFiniteNumber(bounds[field])) {
+        throw new Error(`${context} bounds.${field} must be a finite number`)
+      }
+    }
+    if (bounds.width <= 0 || bounds.height <= 0) {
+      throw new Error(`${context} bounds width and height must be greater than 0`)
+    }
+  }
+
+  const validateTextStyle = (style, context) => {
+    if (style == null) return
+    if (typeof style !== 'object' || Array.isArray(style)) {
+      throw new Error(`${context} style must be an object when provided`)
+    }
+    if (style.fontFamily != null && (typeof style.fontFamily !== 'string' || !SAFE_STYLE_TEXT.test(style.fontFamily))) {
+      throw new Error(`${context} style.fontFamily must be a safe font-family string`)
+    }
+    if (style.align != null && !VALID_ALIGN.includes(style.align)) {
+      throw new Error(`${context} style.align must be one of ${VALID_ALIGN.join(', ')}`)
+    }
+    if (style.verticalAlign != null && !VALID_VERTICAL_ALIGN.includes(style.verticalAlign)) {
+      throw new Error(`${context} style.verticalAlign must be one of ${VALID_VERTICAL_ALIGN.join(', ')}`)
+    }
+    if (style.fontStyle != null && (!Number.isInteger(style.fontStyle) || style.fontStyle < 0 || style.fontStyle > 7)) {
+      throw new Error(`${context} style.fontStyle must be an integer between 0 and 7`)
+    }
+    if (style.italic != null && typeof style.italic !== 'boolean') {
+      throw new Error(`${context} style.italic must be a boolean when provided`)
+    }
+    if (style.bold != null && typeof style.bold !== 'boolean') {
+      throw new Error(`${context} style.bold must be a boolean when provided`)
+    }
+    for (const field of ['spacingLeft', 'spacingRight', 'spacingTop', 'spacingBottom']) {
+      if (style[field] != null && !isFiniteNumber(style[field])) {
+        throw new Error(`${context} style.${field} must be a finite number`)
+      }
+    }
+  }
 
   // Hard limits
   const MAX_NODES = 100
@@ -1760,6 +1923,10 @@ export function validateSpec(spec) {
         throw new Error(`Node "${node.id}" position must have numeric x and y`)
       }
     }
+    if (node.bounds != null) {
+      validateBounds(node.bounds, `Node "${node.id}"`)
+    }
+    validateTextStyle(node.style, `Node "${node.id}"`)
   }
 
   // Edge validation
@@ -1772,6 +1939,17 @@ export function validateSpec(spec) {
     }
     if (edge.label != null && typeof edge.label !== 'string') {
       throw new Error(`Edge "${edge.from}->${edge.to}" label must be a string`)
+    }
+    if (edge.labelPosition != null && !VALID_LABEL_POSITIONS.includes(edge.labelPosition)) {
+      throw new Error(`Invalid edge.labelPosition "${edge.labelPosition}": must be one of ${VALID_LABEL_POSITIONS.join(', ')}`)
+    }
+    if (edge.labelOffset != null) {
+      if (typeof edge.labelOffset !== 'object' || Array.isArray(edge.labelOffset)) {
+        throw new Error(`Edge "${edge.from}->${edge.to}" labelOffset must be an object when provided`)
+      }
+      if (!isFiniteNumber(edge.labelOffset.x) || !isFiniteNumber(edge.labelOffset.y)) {
+        throw new Error(`Edge "${edge.from}->${edge.to}" labelOffset must have numeric x and y`)
+      }
     }
     if (edge.srcInterface != null && typeof edge.srcInterface !== 'string') {
       throw new Error(`Edge "${edge.from}->${edge.to}" srcInterface must be a string`)
