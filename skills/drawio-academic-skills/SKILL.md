@@ -18,6 +18,7 @@ metadata:
     - workflow
     - math
     - svg
+argument-hint: [figure-description-or-instruction]
 allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 

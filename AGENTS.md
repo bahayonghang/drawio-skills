@@ -5,7 +5,9 @@
 - `scripts/` contains conversion and CLI logic (`dsl/`, `math/`, `svg/`).
 - `references/` stores format specs and YAML examples used as source-of-truth docs.
 - `assets/` includes theme JSON files and sample `.drawio` diagrams.
-- `workflows/` defines create/edit/replicate operating guides.
+- `references/workflows/` defines create/edit/replicate operating guides.
+
+`skills/drawio-academic-skills/` is the publication overlay: it carries only academic policy (`SKILL.md`, `references/docs/publication-overlay.md`) and academic evals, and depends on the sibling base at `../drawio` for shared CLI, references, themes, schemas, examples, and workflows.
 
 `docs/` hosts the VitePress site (with `docs/zh/` for Chinese content).  
 `tests/` holds repo-level Node tests, while module-level tests also live next to source as `*.test.js`.  

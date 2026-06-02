@@ -3,6 +3,9 @@ name: drawio
 version: "2.2.0"
 description: "General Draw.io Base Skill for creating, editing, replicating, importing, and exporting Draw.io diagrams through a YAML-first offline workflow. Use for general engineering and product diagrams: software and system architecture, network topologies, flowcharts, swimlanes, UML/sequence/state/ER diagrams, org charts, mind maps, cloud-infrastructure diagrams, Mermaid-to-drawio, CSV-to-drawio, existing .drawio import/export, style presets and themes, learning a reusable style preset from an existing diagram, and formula-bearing technical diagrams (LaTeX, AsciiMath, MathJax, 公式, 行内公式, 行间公式) that are not for publication. When the diagram is destined for a paper, thesis, dissertation, journal, conference, IEEE submission, manuscript, or any publication, prefer the sibling drawio-academic-skills overlay instead; this base still provides the shared CLI, references, themes, schemas, styles, and optional live-refinement backend that the overlay builds on, and can render a local bundle as a fallback when the overlay is unavailable (reporting that academic policy was not applied)."
 license: MIT
+homepage: https://github.com/bahayonghang/drawio-skills
+compatibility: "Node 20+ for the YAML/CLI workflow. draw.io Desktop is optional and only needed for PNG/PDF/JPG or embedded .drawio.svg exports. No MCP server is required for offline authoring; the optional live-refinement backend needs a browser/MCP provider."
+platforms: [macos, linux, windows]
 metadata:
   category: visual-design
   tags:
@@ -58,16 +61,19 @@ The optional MCP/live backend is a refinement provider only. Do not treat it as 
 
 Choose the route first, then load only the references needed for that route.
 
-| Route             | When to use                                                                                | Required references                                                                                                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `create`          | New diagram from text, YAML, Mermaid, CSV, or a concise spec                               | `references/workflows/create.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`                                                    |
-| `edit`            | Modify an existing sidecar bundle or imported `.drawio`                                    | `references/workflows/edit.md`, `references/docs/migration-readiness.md`                                                                                                         |
-| `replicate`       | Redraw an uploaded image, screenshot, SVG, or reference diagram                            | `references/workflows/replicate.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`, `references/docs/design-system/color-guide.md` |
-| `math-formula`    | Labels contain formulas, equations, LaTeX, AsciiMath, MathJax, or Chinese formula keywords | `references/docs/math-typesetting.md`, `references/docs/design-system/formulas.md`                                                                                               |
-| `stencil-heavy`   | Cloud, provider icon, network gear, or exact draw.io shape work                            | `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md`, `references/official/style-reference.md`                                                     |
-| `edge-audit`      | Dense diagrams or routing-sensitive diagrams                                               | `references/docs/edge-quality-rules.md`, `references/official/xml-reference.md`                                                                                                  |
-| `live-refinement` | Explicit browser/inline visual refinement                                                  | `references/docs/mcp-tools.md`, `references/docs/migration-readiness.md`                                                                                                         |
-| `direct-xml`      | Tiny XML-only handoff or raw mxGraph edits                                                 | `references/official/xml-reference.md`, `references/official/style-reference.md`, `references/docs/xml-format.md`, `references/upstream/pure-drawio-skill.md`                    |
+| Route              | When to use                                                                                                    | Required references                                                                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `create`           | New diagram from text, YAML, Mermaid, CSV, or a concise spec                                                   | `references/workflows/create.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`                                                    |
+| `edit`             | Modify an existing sidecar bundle or imported `.drawio`                                                        | `references/workflows/edit.md`, `references/docs/migration-readiness.md`                                                                                                         |
+| `replicate`        | Redraw an uploaded image, screenshot, SVG, or reference diagram                                                | `references/workflows/replicate.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`, `references/docs/design-system/color-guide.md` |
+| `math-formula`     | Labels contain formulas, equations, LaTeX, AsciiMath, MathJax, or Chinese formula keywords                     | `references/docs/math-typesetting.md`, `references/docs/design-system/formulas.md`                                                                                               |
+| `stencil-heavy`    | Cloud, provider icon, network gear, or exact draw.io shape work                                                | `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md`, `references/official/style-reference.md`                                                     |
+| `network-topology` | Network topology, VLAN / subnet / gateway, campus / data-center / cloud network maps（拓扑、子网、网关、VLAN） | `references/docs/ieee-network-diagrams.md`, `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md`                                                   |
+| `edge-audit`       | Dense diagrams or routing-sensitive diagrams                                                                   | `references/docs/edge-quality-rules.md`, `references/official/xml-reference.md`                                                                                                  |
+| `live-refinement`  | Explicit browser/inline visual refinement                                                                      | `references/docs/mcp-tools.md`, `references/docs/migration-readiness.md`                                                                                                         |
+| `direct-xml`       | Tiny XML-only handoff or raw mxGraph edits                                                                     | `references/official/xml-reference.md`, `references/official/style-reference.md`, `references/docs/xml-format.md`, `references/upstream/pure-drawio-skill.md`                    |
+
+Use `network-topology` when the diagram **is** a network/infrastructure map; use `stencil-heavy` when the focus is provider icons or exact draw.io shapes in any diagram type.
 
 Academic triggers such as `paper`, `thesis`, `IEEE`, `journal`, `manuscript`, or `publication-ready figure` should route to the sibling `drawio-academic-skills` overlay when that skill is available. If the overlay is not available, this base can still render a local YAML bundle, but report that academic overlay policy was not applied.
 
@@ -174,6 +180,7 @@ End with a concise report containing:
 - `references/docs/math-typesetting.md`: formula delimiters and export guidance
 - `references/docs/edge-quality-rules.md`: routing and label-clearance checks
 - `references/docs/stencil-library-guide.md`: provider-icon and stencil fallback rules
+- `references/docs/ieee-network-diagrams.md`: IEEE-style network topology and infrastructure reference
 - `references/docs/mcp-tools.md`: optional live-refinement capability vocabulary
 - `references/official/xml-reference.md`: upstream XML-generation mirror
 - `references/official/style-reference.md`: upstream style-property mirror
