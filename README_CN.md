@@ -2,7 +2,7 @@
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
-[![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](https://spdx.org/licenses/ISC.html)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
 > **重要说明**：Draw.io Skill 2.2.0 是 **YAML-first、离线优先的 Base 工作流**。默认路径是 `YAML/CLI -> .drawio + sidecars` 本地生成；需要 PNG、PDF、JPG 或 embedded SVG 时再由 draw.io Desktop 增强导出。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）只作为 Base Skill 的可选浏览器精修层，不是硬依赖。
 
@@ -240,7 +240,7 @@ npm run docs:build
 
 ## 许可证
 
-当前仓库在 `package.json` 中声明的是 **ISC**。
+本仓库使用 **MIT** 许可证（详见 `LICENSE`）。
 
 可选上游 next-ai-draw-io MCP 服务使用的是 **Apache-2.0**：
 

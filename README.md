@@ -2,7 +2,7 @@
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
-[![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](https://spdx.org/licenses/ISC.html)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
 > **Important**: Draw.io Skill 2.2.0 is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
 
@@ -240,7 +240,7 @@ The official `@drawio/mcp` server is intentionally **not** the default integrati
 
 ## License
 
-This repository currently declares **ISC** in `package.json`.
+This repository is licensed under **MIT** (see `LICENSE`).
 
 The optional upstream next-ai-draw-io MCP server is licensed under **Apache-2.0**:
 
