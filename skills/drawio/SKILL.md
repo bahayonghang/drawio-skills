@@ -2,6 +2,7 @@
 name: drawio
 version: "2.2.0"
 description: "General Draw.io Base Skill for creating, editing, replicating, importing, and exporting Draw.io diagrams through a YAML-first offline workflow. Use for general engineering and product diagrams: software and system architecture, network topologies, flowcharts, swimlanes, UML/sequence/state/ER diagrams, org charts, mind maps, cloud-infrastructure diagrams, Mermaid-to-drawio, CSV-to-drawio, existing .drawio import/export, style presets and themes, learning a reusable style preset from an existing diagram, and formula-bearing technical diagrams (LaTeX, AsciiMath, MathJax, 公式, 行内公式, 行间公式) that are not for publication. When the diagram is destined for a paper, thesis, dissertation, journal, conference, IEEE submission, manuscript, or any publication, prefer the sibling drawio-academic-skills overlay instead; this base still provides the shared CLI, references, themes, schemas, styles, and optional live-refinement backend that the overlay builds on, and can render a local bundle as a fallback when the overlay is unavailable (reporting that academic policy was not applied)."
+license: MIT
 metadata:
   category: visual-design
   tags:
