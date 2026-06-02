@@ -6,63 +6,74 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { inflateRawSync } from 'node:zlib'
-import { buildDiagramsNetUrl } from '../skills/drawio-academic-skills/scripts/runtime/diagrams-net-url.js'
+import { buildDiagramsNetUrl } from '../skills/drawio/scripts/runtime/diagrams-net-url.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const PROJECT_ROOT = resolve(__dirname, '..')
+const BASE_DIR = resolve(PROJECT_ROOT, 'skills/drawio')
 const SKILL_DIR = resolve(PROJECT_ROOT, 'skills/drawio-academic-skills')
 const logger = { info: () => {} }
 
-test('drawio-academic-skills: copied skill shape is complete and isolated', () => {
+test('drawio-academic-skills: overlay shape depends on sibling base without copied runtime', () => {
   /*
    * ========================================================================
-   * 步骤1：校验新 skill 目录结构
+   * 步骤1：校验 academic overlay 目录结构
    * ========================================================================
-   * 数据源：skills/drawio-academic-skills
+   * 数据源：skills/drawio 与 skills/drawio-academic-skills
    * 操作要点：
-   * 1) 确认上游内容已复制且排除 .git/.mcp.json
-   * 2) 确认融合版 SKILL 使用独立名称和样式目录
+   * 1) 确认 base 拥有共享 runtime 与资源
+   * 2) 确认 academic overlay 不再复制底层 runtime
    */
-  logger.info('开始校验新 skill 目录结构...')
+  logger.info('开始校验 academic overlay 目录结构...')
 
-  // 1.1 确认目录和核心入口存在
+  // 1.1 base 是唯一共享底层能力面
+  assert.equal(existsSync(resolve(BASE_DIR, 'scripts/cli.js')), true)
+  assert.equal(existsSync(resolve(BASE_DIR, 'scripts/runtime/diagrams-net-url.js')), true)
+  assert.equal(existsSync(resolve(BASE_DIR, 'references/docs/design-system/specification.md')), true)
+  assert.equal(existsSync(resolve(BASE_DIR, 'references/workflows/create.md')), true)
+  assert.equal(existsSync(resolve(BASE_DIR, 'references/official/xml-reference.md')), true)
+  assert.equal(existsSync(resolve(BASE_DIR, 'assets/themes/academic.json')), true)
+  assert.equal(existsSync(resolve(BASE_DIR, 'styles/built-in/default.json')), true)
+
+  // 1.2 overlay 保留入口和 academic 专属资源，不携带底层复制件
   assert.equal(existsSync(SKILL_DIR), true)
   assert.equal(existsSync(resolve(SKILL_DIR, 'SKILL.md')), true)
   assert.equal(existsSync(resolve(SKILL_DIR, '.git')), false)
-
-  // 1.2 确认融合后的资源存在且不携带 MCP 配置
-  assert.equal(existsSync(resolve(SKILL_DIR, 'scripts/cli.js')), true)
-  assert.equal(existsSync(resolve(SKILL_DIR, 'references/docs/upstream-pure-drawio-skill.md')), true)
   assert.equal(existsSync(resolve(SKILL_DIR, '.mcp.json')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'scripts/cli.js')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'assets/themes/academic.json')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'assets/schemas/spec.schema.json')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'references/official/xml-reference.md')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'references/workflows/create.md')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'styles/built-in/default.json')), false)
 
-  // 1.3 确认新 SKILL 名称和独立 preset 目录
+  // 1.3 overlay SKILL 明确 sibling base 边界且不引用 live/MCP 文档
   const skillText = readFileSync(resolve(SKILL_DIR, 'SKILL.md'), 'utf8')
   assert.match(skillText, /^name: drawio-academic-skills$/m)
-  assert.match(skillText, /~\/\.drawio-academic-skills\/styles\//)
-  assert.doesNotMatch(skillText, /~\/\.drawio-skill\/styles\//)
-  assert.match(skillText, /## Non-Negotiable Contract/)
-  assert.match(skillText, /Never create, require, or route through `\.mcp\.json` or an MCP backend/)
-  assert.match(skillText, /## Failure Recovery/)
-  assert.match(skillText, /Desktop export fails or Desktop is missing/)
-  assert.match(skillText, /## Completion Report/)
-  assert.match(skillText, /Any unavailable exports and the fallback provided/)
+  assert.match(skillText, /\.\.\/drawio\/scripts\/cli\.js/)
+  assert.match(skillText, /\.\.\/drawio\/assets\/themes\//)
+  assert.match(skillText, /\.\.\/drawio\/styles\/built-in\//)
+  assert.match(skillText, /Never create, require, or route through `\.mcp\.json`/)
   assert.doesNotMatch(skillText, /mcp-tools\.md/)
-  assert.equal(existsSync(resolve(SKILL_DIR, 'test-prompts.json')), true)
-  logger.info('校验新 skill 目录结构完成')
+
+  // 1.4 eval prompt fixtures live under evals, not the overlay root
+  assert.equal(existsSync(resolve(SKILL_DIR, 'test-prompts.json')), false)
+  assert.equal(existsSync(resolve(SKILL_DIR, 'evals/test-prompts.json')), true)
+  logger.info('校验 academic overlay 目录结构完成')
 })
 
-test('drawio-academic-skills: diagrams.net URL helper round-trips drawio XML', () => {
+test('drawio-academic-skills: diagrams.net URL helper round-trips drawio XML from base', () => {
   /*
    * ========================================================================
-   * 步骤2：校验 diagrams.net URL 编码
+   * 步骤2：校验 base diagrams.net URL 编码
    * ========================================================================
    * 数据源：内联 draw.io XML
    * 操作要点：
    * 1) 生成 #R URL 片段
    * 2) 解码并确认 XML 可无损还原
    */
-  logger.info('开始校验 diagrams.net URL 编码...')
+  logger.info('开始校验 base diagrams.net URL 编码...')
 
   // 2.1 构造最小 draw.io XML 并生成 URL
   const xml = '<mxfile host="drawio"><diagram><mxGraphModel><root><mxCell id="0"/></root></mxGraphModel></diagram></mxfile>'
@@ -74,30 +85,30 @@ test('drawio-academic-skills: diagrams.net URL helper round-trips drawio XML', (
   const encoded = decodeURIComponent(url.split('#R')[1])
   const restored = inflateRawSync(Buffer.from(encoded, 'base64')).toString('utf8')
   assert.equal(restored, xml)
-  logger.info('校验 diagrams.net URL 编码完成')
+  logger.info('校验 base diagrams.net URL 编码完成')
 })
 
-test('drawio-academic-skills: CLI renders academic bundle sidecars', () => {
+test('drawio-academic-skills: sibling base CLI renders publication bundle sidecars', () => {
   /*
    * ========================================================================
-   * 步骤3：校验 academic bundle 导出
+   * 步骤3：校验 academic overlay 通过 base CLI 导出
    * ========================================================================
-   * 数据源：system-architecture-paper.yaml 示例
+   * 数据源：base publication 示例
    * 操作要点：
-   * 1) 运行复制后的 CLI 生成 SVG
+   * 1) 使用 sibling base CLI 生成 SVG
    * 2) 校验 .drawio、.spec.yaml、.arch.json sidecars 同步生成
    */
-  logger.info('开始校验 academic bundle 导出...')
+  logger.info('开始校验 sibling base CLI academic bundle 导出...')
 
   // 3.1 准备输入和临时输出路径
-  const tempDir = mkdtempSync(join(tmpdir(), 'drawio-academic-skill-'))
-  const input = resolve(SKILL_DIR, 'references/examples/system-architecture-paper.yaml')
+  const tempDir = mkdtempSync(join(tmpdir(), 'drawio-academic-overlay-'))
+  const input = resolve(BASE_DIR, 'references/examples/system-architecture-paper.yaml')
   const output = resolve(tempDir, 'academic-system.svg')
 
   try {
-    // 3.2 运行 CLI 并写出 sidecars
+    // 3.2 运行 base CLI 并写出 sidecars
     execFileSync(process.execPath, [
-      resolve(SKILL_DIR, 'scripts/cli.js'),
+      resolve(BASE_DIR, 'scripts/cli.js'),
       input,
       output,
       '--validate',
@@ -113,5 +124,42 @@ test('drawio-academic-skills: CLI renders academic bundle sidecars', () => {
     // 3.4 清理临时目录
     rmSync(tempDir, { recursive: true, force: true })
   }
-  logger.info('校验 academic bundle 导出完成')
+  logger.info('校验 sibling base CLI academic bundle 导出完成')
+})
+
+test('drawio evals: base and academic sets encode separate responsibilities', () => {
+  /*
+   * ========================================================================
+   * 步骤4：校验 evals 拆分结果
+   * ========================================================================
+   * 数据源：base 与 academic eval JSON
+   * 操作要点：
+   * 1) base 覆盖通用任务与 live refinement boundary
+   * 2) academic 只覆盖 publication-facing overlay 场景
+   */
+  logger.info('开始校验 evals 拆分结果...')
+
+  const baseEvals = JSON.parse(readFileSync(resolve(BASE_DIR, 'evals/evals.json'), 'utf8'))
+  const academicEvals = JSON.parse(readFileSync(resolve(SKILL_DIR, 'evals/evals.json'), 'utf8'))
+
+  assert.equal(baseEvals.skill_name, 'drawio')
+  assert.equal(academicEvals.skill_name, 'drawio-academic-skills')
+
+  const baseIds = baseEvals.evals.map(item => item.id)
+  const academicIds = academicEvals.evals.map(item => item.id)
+
+  assert.ok(baseIds.includes('base-mermaid-conversion'))
+  assert.ok(baseIds.includes('base-csv-orgchart-conversion'))
+  assert.ok(baseIds.includes('base-import-drawio-export-spec'))
+  assert.ok(baseIds.includes('base-optional-live-refinement-boundary'))
+  assert.ok(baseIds.includes('base-desktop-unavailable-fallback'))
+
+  assert.ok(academicIds.includes('academic-ieee-campus-network'))
+  assert.ok(academicIds.includes('academic-thesis-word-a4-bundle'))
+  assert.ok(academicIds.includes('academic-formula-publication-figure'))
+  assert.ok(academicIds.includes('academic-desktop-png-pdf-unavailable-fallback'))
+
+  assert.equal(baseIds.some(id => id.startsWith('academic-')), false)
+  assert.equal(academicIds.every(id => id.startsWith('academic-')), true)
+  logger.info('校验 evals 拆分结果完成')
 })

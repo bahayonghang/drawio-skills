@@ -1,36 +1,74 @@
-# Draw.io Academic Skill
+# Draw.io Academic Overlay
 
-Academic-first draw.io skill for paper figures, IEEE-style architecture diagrams, research workflows, roadmaps, formula-heavy figures, and publication-ready exports.
+Academic overlay for publication-ready draw.io figures: papers, theses, IEEE diagrams, manuscripts, journal figures, formula-heavy visuals, research workflows, roadmaps, and A4/Word/LaTeX deliverables.
 
-This folder intentionally merges:
+This folder is intentionally thin. It depends on the sibling Draw.io Base Skill at `../drawio` instead of copying base runtime files.
 
-- `ref/drawio-skill`: pure SKILL.md generation, Desktop export, self-check, style presets, diagrams.net URL fallback.
-- `skills/drawio`: YAML DSL, CLI validation, offline sidecars, academic figure checks, and math handling.
+## Required sibling base
+
+Install or copy both folders side by side:
+
+```text
+skills/
+├── drawio/
+└── drawio-academic-skills/
+```
+
+The overlay uses these base paths:
+
+- `../drawio/scripts/cli.js`
+- `../drawio/scripts/runtime/diagrams-net-url.js`
+- `../drawio/references/docs/`
+- `../drawio/references/workflows/`
+- `../drawio/references/examples/`
+- `../drawio/assets/themes/`
+- `../drawio/styles/built-in/`
+
+If `../drawio` is missing, install the base skill next to this overlay. Do not vendor-copy base files into the overlay.
 
 ## Default workflow
 
 ```text
-request -> YAML spec -> CLI validation -> .drawio + .spec.yaml + .arch.json + .svg
+academic request -> preflight -> YAML spec -> sibling base CLI validation -> .drawio + .spec.yaml + .arch.json + .svg
 ```
 
-PNG, PDF, JPG, and embedded `.drawio.svg` use draw.io Desktop through the copied CLI.
+PNG, PDF, JPG, and embedded `.drawio.svg` use draw.io Desktop through the sibling base CLI when Desktop is available.
+
+## Academic preflight
+
+Before rendering, decide:
+
+- venue or audience: paper, thesis, IEEE, journal, manuscript, Word/A4, LaTeX, slides, or draft
+- figure type: `architecture`, `roadmap`, or `workflow`
+- monochrome vs color policy
+- caption, legend, and title needs
+- formula and text-position fidelity
+- requested export formats and Desktop availability
 
 ## Quick export
 
+From inside this overlay directory:
+
 ```bash
-node skills/drawio-academic-skills/scripts/cli.js input.yaml figure.svg --validate --write-sidecars
-node skills/drawio-academic-skills/scripts/cli.js input.yaml figure.png --validate --use-desktop
+node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --strict-warnings
+node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.png --validate --use-desktop
 ```
 
-If draw.io Desktop is unavailable, generate a diagrams.net browser URL:
+From the repository root:
 
 ```bash
-node skills/drawio-academic-skills/scripts/runtime/diagrams-net-url.js figure.drawio
+node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --strict-warnings
+```
+
+If draw.io Desktop is unavailable, generate a diagrams.net browser URL from the `.drawio` artifact:
+
+```bash
+node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 ```
 
 ## MCP position
 
-This skill intentionally does not include `.mcp.json`. Normal create, edit, replicate, and export tasks stay offline-first.
+This overlay intentionally does not include `.mcp.json`. Academic create, edit, replicate, and export tasks stay local and repeatable. Live backend refinement belongs to the base skill only and is not part of the academic default path.
 
 ## Style presets
 
@@ -40,13 +78,20 @@ User presets live under:
 ~/.drawio-academic-skills/styles/
 ```
 
-Bundled upstream presets remain in `styles/built-in/`.
+Bundled presets live in the sibling base:
 
-## Important references
+```text
+../drawio/styles/built-in/
+```
 
-- `SKILL.md`: main fused workflow.
-- `references/docs/upstream-pure-drawio-skill.md`: preserved upstream pure SKILL.md workflow.
-- `references/docs/academic-figure-playbook.md`: academic figure typing and delivery rules.
-- `references/docs/academic-export-checklist.md`: publication-ready checklist.
-- `references/docs/math-typesetting.md`: formula rules.
-- `references/examples/`: reusable YAML examples.
+Never mutate bundled base presets. Copy a bundled preset into the user preset directory before making it default or editing it.
+
+## Overlay-owned files
+
+- `SKILL.md`: academic policy and sibling-base contract.
+- `references/docs/publication-overlay.md`: overlay-only publication notes.
+- `references/docs/upstream-pure-drawio-skill.md`: preserved direct-XML reference for exception paths.
+- `references/style-extraction.md`: style extraction guidance used by overlay preset workflows.
+- `evals/`: academic evaluation set and prompt fixtures.
+
+Shared CLI, schemas, themes, examples, workflows, and official references live in `../drawio`.

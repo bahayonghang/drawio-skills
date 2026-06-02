@@ -1,10 +1,10 @@
 ---
 name: drawio-academic-skills
 version: "0.1.0"
-description: "Academic-first Draw.io figure skill for papers, theses, IEEE-style diagrams, architecture figures, workflows, roadmaps, formulas, and publication-ready visualizations. Use when users ask to draw, redraw, replicate, edit, or export diagrams for academic papers or technical documents. Creates offline .drawio + .spec.yaml + .arch.json bundles, exports SVG locally, uses draw.io Desktop CLI for embedded SVG/PNG/PDF/JPG, supports style presets, self-check review loops, and diagrams.net URL fallback without requiring MCP. For replication, preserve text boxes, formula annotations, and edge-label placement as publication-critical details."
+description: "Academic Draw.io overlay for paper, thesis, IEEE, journal, manuscript, publication-ready figure, academic formula figure, research workflow, system architecture paper figure, roadmap paper figure, A4/Word/LaTeX figure bundle, and scholarly diagram replication requests. Use only for academic or publication-facing diagrams. This overlay depends on the sibling Draw.io Base Skill at ../drawio for CLI execution, references, themes, schemas, reusable examples, style presets, Desktop export, and diagrams.net URL fallback. It never creates, requires, or routes through .mcp.json, MCP, or a live backend."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
-compatibility: "Node 20+ for the YAML/CLI workflow. draw.io Desktop is optional but required for PNG/PDF/JPG and embedded .drawio.svg exports. No MCP server is required."
+compatibility: "Requires sibling ../drawio in the same skills directory. Node 20+ is required for the shared YAML/CLI workflow. draw.io Desktop is optional and only needed for PNG/PDF/JPG or embedded .drawio.svg exports. No MCP server is required."
 platforms: [macos, linux, windows]
 metadata:
   category: visual-design
@@ -13,52 +13,56 @@ metadata:
     - academic
     - paper-figure
     - ieee
-    - architecture
+    - thesis
+    - manuscript
     - workflow
     - math
     - svg
 allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 
-# Draw.io Academic Skill
+# Draw.io Academic Overlay
 
-Create, edit, replicate, validate, and export publication-ready draw.io figures.
+Create, edit, replicate, validate, and export publication-ready draw.io figures by applying academic policy on top of the sibling Draw.io Base Skill.
 
-This skill merges two workflows:
+This overlay is intentionally thin. It does not copy base scripts, themes, schemas, official references, or workflow docs. It calls the sibling base package at `../drawio` for all shared capabilities.
 
-1. The upstream pure `drawio-skill` workflow: direct `.drawio` XML generation, Desktop export, self-check, style presets, diagrams.net URL fallback, and diagram-type presets.
-2. This repository's `skills/drawio` workflow: YAML-first authoring, offline sidecars, academic quality gates, formula handling, and SVG conversion.
+## Required Sibling Base
+
+Resolve shared resources relative to this overlay directory:
+
+| Capability | Use this sibling base path |
+| --- | --- |
+| CLI | `../drawio/scripts/cli.js` |
+| diagrams.net URL fallback | `../drawio/scripts/runtime/diagrams-net-url.js` |
+| YAML schema | `../drawio/assets/schemas/spec.schema.json` |
+| Themes | `../drawio/assets/themes/` |
+| Shared examples | `../drawio/references/examples/` |
+| Shared references | `../drawio/references/docs/` and `../drawio/references/official/` |
+| Workflow guides | `../drawio/references/workflows/` |
+| Built-in style presets | `../drawio/styles/built-in/` |
+
+If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base skill must be installed next to this overlay. Do not silently recreate or vendor-copy base resources into the overlay.
 
 ## Non-Negotiable Contract
 
-- Keep this fork academic-first and offline-first.
-- Never create, require, or route through `.mcp.json` or an MCP backend.
-- Treat the YAML spec plus `.drawio`, `.arch.json`, and `.svg` outputs as the normal editable bundle.
+- Keep academic authoring YAML-first and offline-first.
+- Never create, require, or route through `.mcp.json`, MCP, or a live backend.
+- Treat `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the default academic delivery bundle.
 - Use draw.io Desktop only as an optional export enhancer for PNG/PDF/JPG or embedded `.drawio.svg`.
-- When a requested export cannot be produced locally, still deliver the editable bundle and report the unavailable export clearly.
+- If a requested Desktop export cannot be produced locally, still deliver the editable bundle and SVG, then report the unavailable export clearly.
+- Keep academic-specific policy in this overlay; keep shared execution in `../drawio`.
 
-## Runtime Decision
+## Academic Preflight
 
-Default to the offline academic path.
+Before generating or editing, determine and state:
 
-| Priority | Runtime | Use for |
-| --- | --- | --- |
-| 1 | YAML/CLI offline bundle | New academic figures, paper diagrams, repeatable edits |
-| 2 | draw.io Desktop CLI | PNG/PDF/JPG, embedded `.drawio.svg`, final raster export |
-| 3 | direct XML fallback | Tiny one-off diagrams, CLI unavailable, handoff-only XML |
-| 4 | diagrams.net URL fallback | User cannot install Desktop but can open browser URL |
-
-This skill intentionally ships without `.mcp.json`. Use Desktop CLI or the diagrams.net URL fallback for handoff and refinement.
-
-## Preflight Checklist
-
-Before generating or editing, decide and state:
-
-1. Input type: new prompt, `.spec.yaml`, `.drawio`, image/SVG reference, or style preset.
-2. Route from the table below, then load only the referenced files.
-3. Deliverables needed: default bundle, plus any requested PNG/PDF/JPG.
-4. Whether draw.io Desktop is required for the requested export.
-5. Fallback plan if Desktop or validation is unavailable.
+1. Venue or audience: paper, thesis, IEEE, journal, manuscript, Word/A4, LaTeX, slides, or review draft.
+2. Figure type: exactly one of `architecture`, `roadmap`, or `workflow`.
+3. Color policy: strict monochrome, grayscale-safe with one accent, or color digital/PDF.
+4. Caption, legend, and title needs.
+5. Formula and text-fidelity needs: delimiters, font family, standalone text boxes, edge labels, and callouts.
+6. Export expectations: default bundle plus any requested PNG/PDF/JPG; whether Desktop is required.
 
 ## Task Routing
 
@@ -66,22 +70,27 @@ Choose one route first, then load only the referenced files.
 
 | Route | Trigger | Load |
 | --- | --- | --- |
-| `academic-create` | paper, thesis, IEEE, manuscript, journal figure | `references/docs/academic-figure-playbook.md`, `references/docs/academic-export-checklist.md`, `references/workflows/create.md` |
-| `math-formula` | formula, equation, LaTeX, AsciiMath, MathJax, 公式 | `references/docs/math-typesetting.md`, `references/docs/design-system/formulas.md` |
-| `edit` | modify an existing `.drawio`, YAML bundle, or previous output | `references/workflows/edit.md`, `references/docs/migration-readiness.md` |
-| `replicate` | redraw screenshot, image, SVG, or reference diagram | `references/workflows/replicate.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`, `references/docs/design-system/color-guide.md`, `references/docs/math-typesetting.md` |
-| `stencil-heavy` | cloud, network, AWS, Azure, GCP, Cisco, Kubernetes | `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md` |
-| `style-preset` | learn/use/list/delete/rename visual style presets | `references/docs/style-presets.md`, `references/docs/upstream-pure-drawio-skill.md` |
+| `academic-create` | paper, thesis, IEEE, manuscript, journal, publication-ready figure | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/docs/academic-figure-playbook.md`; base `../drawio/references/docs/academic-export-checklist.md`; base `../drawio/references/workflows/create.md` |
+| `math-formula` | formula, equation, LaTeX, AsciiMath, MathJax, 公式 | base `../drawio/references/docs/math-typesetting.md`; base `../drawio/references/docs/design-system/formulas.md` |
+| `edit` | modify an existing academic bundle or imported `.drawio` | base `../drawio/references/workflows/edit.md`; base `../drawio/references/docs/migration-readiness.md` |
+| `replicate` | redraw screenshot, image, SVG, or reference paper figure | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/workflows/replicate.md`; base `../drawio/references/docs/design-system/specification.md`; base `../drawio/references/docs/design-system/color-guide.md` |
+| `stencil-heavy` | academic cloud, network, AWS, Azure, GCP, Cisco, Kubernetes figure | base `../drawio/references/docs/stencil-library-guide.md`; base `../drawio/references/docs/ieee-network-diagrams.md`; base `../drawio/references/official/xml-reference.md` |
+| `style-preset` | learn/use/list/delete/rename visual style presets | this overlay `references/style-extraction.md`; base `../drawio/references/docs/style-presets.md`; base `../drawio/styles/built-in/` |
+| `direct-xml-exception` | tiny handoff-only XML or exact mxGraph control | overlay `references/docs/upstream-pure-drawio-skill.md`; base `../drawio/references/official/xml-reference.md` |
 
 ## Academic Defaults
 
 For academic-paper requests, set these before rendering:
 
-- `meta.profile: academic-paper`
-- `meta.figureType`: exactly one of `architecture`, `roadmap`, or `workflow`
-- `meta.theme`: `academic` by default, or `academic-color` when color is useful
-- `meta.title`: caption-ready figure title
-- `meta.description`: one sentence explaining the figure intent
+```yaml
+meta:
+  profile: academic-paper
+  figureType: architecture # architecture | roadmap | workflow
+  theme: academic          # or academic-color when color is acceptable
+  title: Caption-ready title
+  description: One sentence explaining the figure intent
+  legend: Required when symbols, colors, line styles, or icons need explanation
+```
 
 Default deliverables:
 
@@ -90,127 +99,92 @@ Default deliverables:
 - `<name>.arch.json`
 - `<name>.svg`
 
-Add `<name>.png` only when the user asks for PNG, Word, thesis/A4, raster-first, or screenshot matching, and draw.io Desktop export is available.
+Add `<name>.png`, `<name>.pdf`, or `<name>.jpg` only when requested or needed for Word/A4/thesis/raster workflows, and only when draw.io Desktop export is available.
 
 ## Create Flow
 
 1. Classify the figure as `architecture`, `roadmap`, or `workflow`.
-2. Draft the YAML spec as the canonical source.
+2. Draft or normalize the YAML spec as the canonical source.
 3. Use concise labels; shorten labels before shrinking fonts.
-4. Validate before rendering:
+4. Validate through the sibling base CLI.
+5. Render the editable bundle and standalone SVG.
+6. Run a paper-readability self-check before reporting completion.
 
-   ```bash
-   node <skill-dir>/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
-   node <skill-dir>/scripts/cli.js input.yaml output.svg --validate --write-sidecars
-   ```
+Commands:
 
-5. Use `--strict` or `--strict-warnings` for publication-grade checks.
-6. Self-check the exported SVG/PNG when vision is available.
-7. Apply targeted edits to YAML or XML, re-render, and repeat until approved.
+```bash
+node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --strict-warnings
+node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --strict-warnings
+```
+
+Use paths relative to the overlay directory, or use absolute paths when running from another working directory.
 
 ## Edit and Replicate Flow
 
 - If a `.spec.yaml` sidecar exists, edit the YAML spec first.
-- If only `.drawio` exists, import it before editing:
+- If only `.drawio` exists, import it through the sibling base CLI:
 
   ```bash
-  node <skill-dir>/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+  node ../drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
   ```
 
-- After import, inspect the generated `.spec.yaml` and `.arch.json`, apply edits to the YAML spec, then regenerate the requested `.drawio` or `.svg` with `--write-sidecars`.
-- Keep all regenerated files on the same basename so the bundle remains round-trippable.
-- For image/SVG replication, extract palette intent first and preserve the source palette unless the user asks for paper-safe recoloring.
-- Run a text-fidelity pass for image/SVG replication: extract standalone text boxes, formula annotations, edge labels, text bounds, baseline/offset, font family/size/italic state, alignment, and spacing before rendering. Use `bounds` for exact top-left text boxes and `labelOffset` to keep edge labels off connector lines.
-- For major structural changes, show an ASCII logic draft before rendering.
-- Preserve `<name>.drawio`, `<name>.spec.yaml`, and `<name>.arch.json` together.
+- For image/SVG replication, preserve text boxes, captions, legends, formulas, edge labels, baseline/offset, font family/size/italic state, alignment, and spacing when visible.
+- Use explicit `bounds` for standalone text/formula blocks and `labelOffset` for connector labels that must sit off the line.
+- Keep all regenerated files on the same basename so the academic bundle remains round-trippable.
 
 ## Export Policy
 
-Use the local CLI for deterministic exports.
+Use the sibling base CLI for deterministic exports.
 
 ```bash
 # Offline SVG and sidecars
-node <skill-dir>/scripts/cli.js input.yaml figure.svg --validate --write-sidecars
+node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --strict-warnings
 
 # Editable .drawio bundle
-node <skill-dir>/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars
+node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --strict-warnings
 
 # Desktop-enhanced exports
-node <skill-dir>/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --use-desktop
-node <skill-dir>/scripts/cli.js input.yaml figure.png --validate --use-desktop
-node <skill-dir>/scripts/cli.js input.yaml figure.pdf --validate --use-desktop
+node ../drawio/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --use-desktop
+node ../drawio/scripts/cli.js input.yaml figure.png --validate --use-desktop
+node ../drawio/scripts/cli.js input.yaml figure.pdf --validate --use-desktop
 ```
 
-Desktop CLI supports PNG/SVG/PDF/JPG. PNG/SVG/PDF exports can embed the editable diagram XML.
-
-If Desktop is unavailable, generate a diagrams.net URL:
+If Desktop is unavailable, generate a diagrams.net URL from the `.drawio` artifact:
 
 ```bash
-node <skill-dir>/scripts/runtime/diagrams-net-url.js figure.drawio
+node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 ```
 
-The diagram XML is encoded after `#R` in the URL fragment. The fragment is client-side and is not sent to diagrams.net servers.
-
-If Desktop is unavailable for PNG/PDF/JPG, do not pretend those files exist. Deliver `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`, then include the diagrams.net URL or the exact Desktop command the user can run later.
+Do not claim PNG/PDF/JPG files exist when Desktop export was unavailable. Report the missing export and provide the editable bundle, SVG, and fallback command or URL.
 
 ## Style Presets
 
-Use user presets from `~/.drawio-academic-skills/styles/` first, then bundled presets from `styles/built-in/`.
+Use overlay-specific user presets first, then sibling base bundled presets:
 
-Supported operations:
+1. User presets: `~/.drawio-academic-skills/styles/`
+2. Bundled presets: `../drawio/styles/built-in/`
 
-- learn a style from `.drawio`, `.xml`, `.svg`, `.png`, `.jpg`, or `.jpeg`
-- preview a generated sample before saving
-- list presets
-- set one user preset as default
-- rename or delete user presets
-
-Never mutate bundled presets. Copy a bundled preset into `~/.drawio-academic-skills/styles/` before making it a default.
-
-## Failure Recovery
-
-Use these fallbacks before stopping:
-
-| Failure | Recovery |
-| --- | --- |
-| YAML validation fails | Fix the YAML spec first, then rerun the same CLI command with `--validate`. |
-| `.drawio` import is incomplete | Preserve the original file, export the partial spec, and report unsupported shapes or styles explicitly. |
-| Desktop export fails or Desktop is missing | Regenerate the offline bundle and SVG, then provide a diagrams.net URL fallback. |
-| Formula rendering is wrong | Recheck delimiters against the math reference, then simplify the label before changing layout. |
-| SVG/PNG self-check finds overlap | Edit labels, `bounds`, `labelOffset`, or routing in YAML/XML and re-render; do not only describe the issue. |
+Never mutate bundled base presets. Copy a bundled preset into the user preset directory before making it a default or editing it.
 
 ## Quality Gate
 
 Do not claim completion until:
 
 - `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` are aligned
-- academic profile has a valid `figureType`
+- `meta.profile` is `academic-paper`
+- `meta.figureType` is one of `architecture`, `roadmap`, or `workflow`
 - labels are readable at paper/A4 scale
-- replicated text boxes/formulas keep their relative source positions and do not touch shape borders
-- edge labels sit off connector lines by an explicit or validated default offset
 - formulas use official delimiters: `$$...$$`, `\(...\)`, or AsciiMath backticks
-- connector routing is readable
+- captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
 - colors are not the only carrier of meaning
-- requested PNG/PDF/JPG exports were attempted through draw.io Desktop or clearly reported as unavailable
+- requested Desktop exports were attempted or clearly reported as unavailable
 - no MCP config, MCP server, or live backend is required for the result
 
 ## Completion Report
 
 End with a concise report:
 
-- Deliverables written, with paths.
-- Commands run for validation/export.
-- Any unavailable exports and the fallback provided.
-- Remaining manual checks, if visual inspection or Desktop export could not run.
-
-## Reference Files
-
-- `references/docs/upstream-pure-drawio-skill.md`: preserved upstream pure SKILL.md workflow
-- `references/docs/academic-figure-playbook.md`: academic figure typing and delivery rules
-- `references/docs/academic-export-checklist.md`: paper-ready checklist
-- `references/docs/math-typesetting.md`: formula syntax and export guidance
-- `references/official/xml-reference.md`: draw.io XML mirror
-- `references/official/style-reference.md`: draw.io style mirror
-- `references/examples/`: reusable YAML examples
-- `styles/built-in/`: upstream pure-skill style presets
-- `assets/themes/`: YAML/CLI design-system themes
+- deliverables written, with paths
+- sibling base CLI commands run for validation/export
+- unavailable Desktop exports and fallback provided
+- remaining visual or venue-specific manual checks, if any

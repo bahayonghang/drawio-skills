@@ -1,0 +1,17 @@
+[
+  {
+    "id": "overlay-sibling-base-required",
+    "prompt": "Use drawio-academic-skills to create a journal figure when ../drawio is installed beside it.",
+    "expected": "Routes through overlay policy and executes shared CLI from ../drawio/scripts/cli.js."
+  },
+  {
+    "id": "overlay-no-mcp",
+    "prompt": "Create a publication-ready figure without configuring MCP.",
+    "expected": "Does not create .mcp.json or require any live backend."
+  },
+  {
+    "id": "overlay-desktop-fallback",
+    "prompt": "Export PDF/PNG if possible, but Desktop may be missing.",
+    "expected": "Delivers .drawio/.spec.yaml/.arch.json/.svg and reports unavailable Desktop exports honestly."
+  }
+]

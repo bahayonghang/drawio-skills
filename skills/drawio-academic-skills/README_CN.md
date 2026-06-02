@@ -1,36 +1,74 @@
-# Draw.io Academic Skill
+# Draw.io Academic Overlay
 
-面向论文图、IEEE 风格架构图、科研流程图、路线图、公式图和出版级导出的 draw.io skill。
+面向出版级 draw.io 图表的 Academic Overlay：论文、学位论文、IEEE 图、manuscript、journal figure、公式图、科研流程图、roadmap，以及 A4/Word/LaTeX 交付。
 
-这个目录融合了两套能力：
+这个目录刻意保持轻量。它依赖 sibling Draw.io Base Skill：`../drawio`，不再复制 base runtime 文件。
 
-- `ref/drawio-skill`：纯 SKILL.md 画图、Desktop 导出、自检、样式预设、diagrams.net URL 兜底。
-- `skills/drawio`：YAML DSL、CLI 校验、离线 sidecars、学术图质量门和公式处理。
+## 必需的 sibling base
+
+请把两个目录并排安装或复制：
+
+```text
+skills/
+├── drawio/
+└── drawio-academic-skills/
+```
+
+Overlay 使用这些 base 路径：
+
+- `../drawio/scripts/cli.js`
+- `../drawio/scripts/runtime/diagrams-net-url.js`
+- `../drawio/references/docs/`
+- `../drawio/references/workflows/`
+- `../drawio/references/examples/`
+- `../drawio/assets/themes/`
+- `../drawio/styles/built-in/`
+
+如果 `../drawio` 缺失，请先把 base skill 安装到 overlay 旁边。不要把 base 文件重新复制进 overlay。
 
 ## 默认链路
 
 ```text
-需求 -> YAML spec -> CLI 校验 -> .drawio + .spec.yaml + .arch.json + .svg
+学术需求 -> preflight -> YAML spec -> sibling base CLI 校验 -> .drawio + .spec.yaml + .arch.json + .svg
 ```
 
-PNG、PDF、JPG 和 embedded `.drawio.svg` 通过 draw.io Desktop 导出。
+PNG、PDF、JPG 和 embedded `.drawio.svg` 在 draw.io Desktop 可用时，通过 sibling base CLI 导出。
+
+## Academic preflight
+
+渲染前先确定：
+
+- venue / audience：paper、thesis、IEEE、journal、manuscript、Word/A4、LaTeX、slides 或 draft
+- figure type：`architecture`、`roadmap` 或 `workflow`
+- 黑白 / 灰度安全 / 彩色策略
+- caption、legend、title 需求
+- 公式和文字位置保真要求
+- 请求的导出格式以及 Desktop 是否可用
 
 ## 快速导出
 
+从 overlay 目录内运行：
+
 ```bash
-node skills/drawio-academic-skills/scripts/cli.js input.yaml figure.svg --validate --write-sidecars
-node skills/drawio-academic-skills/scripts/cli.js input.yaml figure.png --validate --use-desktop
+node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --strict-warnings
+node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.png --validate --use-desktop
 ```
 
-如果没有 draw.io Desktop，可以生成 diagrams.net 浏览器 URL：
+从仓库根目录运行：
 
 ```bash
-node skills/drawio-academic-skills/scripts/runtime/diagrams-net-url.js figure.drawio
+node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --strict-warnings
+```
+
+如果没有 draw.io Desktop，可以从 `.drawio` 产物生成 diagrams.net URL：
+
+```bash
+node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 ```
 
 ## MCP 定位
 
-这个 skill 不携带 `.mcp.json`。日常 create、edit、replicate、export 都走离线优先。
+这个 overlay 不包含 `.mcp.json`。Academic create、edit、replicate、export 都保持本地、可重复。Live backend refinement 只属于 base skill，不是 academic 默认路径。
 
 ## 样式预设
 
@@ -40,13 +78,20 @@ node skills/drawio-academic-skills/scripts/runtime/diagrams-net-url.js figure.dr
 ~/.drawio-academic-skills/styles/
 ```
 
-上游内置预设保留在 `styles/built-in/`。
+内置预设在 sibling base：
 
-## 重要参考
+```text
+../drawio/styles/built-in/
+```
 
-- `SKILL.md`：融合后的主工作流。
-- `references/docs/upstream-pure-drawio-skill.md`：保留的上游纯 SKILL.md 工作流。
-- `references/docs/academic-figure-playbook.md`：学术图类型和交付规则。
-- `references/docs/academic-export-checklist.md`：出版级检查清单。
-- `references/docs/math-typesetting.md`：公式规则。
-- `references/examples/`：可复用 YAML 示例。
+不要修改 base 内置 presets。需要默认或编辑时，先复制到用户预设目录。
+
+## Overlay 自有文件
+
+- `SKILL.md`：学术策略与 sibling-base contract。
+- `references/docs/publication-overlay.md`：overlay-only 出版说明。
+- `references/docs/upstream-pure-drawio-skill.md`：Direct XML 例外路径参考。
+- `references/style-extraction.md`：overlay preset 工作流的 style extraction 指南。
+- `evals/`：academic evaluation set 和 prompt fixtures。
+
+共享 CLI、schemas、themes、examples、workflows 和 official references 都在 `../drawio`。

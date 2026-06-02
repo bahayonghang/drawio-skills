@@ -4,7 +4,7 @@ import { deflateRawSync } from 'node:zlib'
 
 const logger = {
   info: (...args) => {
-    if (process.env.DRAWIO_ACADEMIC_VERBOSE === '1') {
+    if (process.env.DRAWIO_VERBOSE === '1') {
       console.error(...args)
     }
   }
