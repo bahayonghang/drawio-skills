@@ -4,6 +4,8 @@
 
 这个目录刻意保持轻量。它依赖 sibling Draw.io Base Skill：`../drawio`，不再复制 base runtime 文件。
 
+> 版本说明：本 overlay 被有意重置为 `0.1.0`，是「瘦身重生」后的薄层，**不是**旧学术版的降级——共享的作图能力已全部归入 sibling Draw.io Base Skill（仓库版本 `2.2.0`），本 overlay 只保留出版策略。
+
 ## 必需的 sibling base
 
 请把两个目录并排安装或复制：
