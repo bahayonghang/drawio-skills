@@ -76,10 +76,7 @@ test('ensureLatexDelimiters wraps unwrapped math in $$ by default', () => {
 })
 
 test('ensureLatexDelimiters respects inline mode', () => {
-  assert.equal(
-    ensureLatexDelimiters('\\frac{a}{b}', { mode: 'inline' }),
-    '\\(\\frac{a}{b}\\)'
-  )
+  assert.equal(ensureLatexDelimiters('\\frac{a}{b}', { mode: 'inline' }), '\\(\\frac{a}{b}\\)')
 })
 
 test('ensureLatexDelimiters returns already-wrapped text unchanged', () => {
@@ -99,10 +96,7 @@ test('prepareMathLabel auto-wraps and escapes by default', () => {
 })
 
 test('prepareMathLabel throws in strict mode without autoWrap', () => {
-  assert.throws(
-    () => prepareMathLabel('\\frac{a}{b}', { autoWrap: false, strict: true }),
-    /Unwrapped math detected/
-  )
+  assert.throws(() => prepareMathLabel('\\frac{a}{b}', { autoWrap: false, strict: true }), /Unwrapped math detected/)
 })
 
 test('prepareMathLabel escapes XML special characters', () => {
@@ -116,4 +110,3 @@ test('prepareMathLabel handles mixed text and math', () => {
   const result = prepareMathLabel('Model: \\(y=Wx+b\\)')
   assert.equal(result, 'Model: \\(y=Wx+b\\)')
 })
-

@@ -86,11 +86,18 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
   //     防止 themes/scripts/styles/references 等共享资源被复制进 overlay 而长期漂移。
   const baseHashes = new Map()
   for (const rel of listFilesRecursive(BASE_DIR)) {
-    baseHashes.set(createHash('sha256').update(readFileSync(resolve(BASE_DIR, rel))).digest('hex'), rel)
+    baseHashes.set(
+      createHash('sha256')
+        .update(readFileSync(resolve(BASE_DIR, rel)))
+        .digest('hex'),
+      rel
+    )
   }
   for (const sub of ['references', 'assets', 'scripts', 'styles']) {
     for (const rel of listFilesRecursive(resolve(SKILL_DIR, sub))) {
-      const hash = createHash('sha256').update(readFileSync(resolve(SKILL_DIR, sub, rel))).digest('hex')
+      const hash = createHash('sha256')
+        .update(readFileSync(resolve(SKILL_DIR, sub, rel)))
+        .digest('hex')
       assert.equal(
         baseHashes.has(hash),
         false,
@@ -114,7 +121,8 @@ test('drawio-academic-skills: diagrams.net URL helper round-trips drawio XML fro
   logger.info('开始校验 base diagrams.net URL 编码...')
 
   // 2.1 构造最小 draw.io XML 并生成 URL
-  const xml = '<mxfile host="drawio"><diagram><mxGraphModel><root><mxCell id="0"/></root></mxGraphModel></diagram></mxfile>'
+  const xml =
+    '<mxfile host="drawio"><diagram><mxGraphModel><root><mxCell id="0"/></root></mxGraphModel></diagram></mxfile>'
   const url = buildDiagramsNetUrl(xml)
   assert.match(url, /^https:\/\/viewer\.diagrams\.net\//)
   assert.match(url, /#R/)
@@ -145,13 +153,11 @@ test('drawio-academic-skills: sibling base CLI renders publication bundle sideca
 
   try {
     // 3.2 运行 base CLI 并写出 sidecars
-    execFileSync(process.execPath, [
-      resolve(BASE_DIR, 'scripts/cli.js'),
-      input,
-      output,
-      '--validate',
-      '--write-sidecars'
-    ], { cwd: PROJECT_ROOT, stdio: 'pipe' })
+    execFileSync(
+      process.execPath,
+      [resolve(BASE_DIR, 'scripts/cli.js'), input, output, '--validate', '--write-sidecars'],
+      { cwd: PROJECT_ROOT, stdio: 'pipe' }
+    )
 
     // 3.3 校验导出产物存在
     assert.equal(existsSync(output), true)
@@ -183,8 +189,8 @@ test('drawio evals: base and academic sets encode separate responsibilities', ()
   assert.equal(baseEvals.skill_name, 'drawio')
   assert.equal(academicEvals.skill_name, 'drawio-academic-skills')
 
-  const baseIds = baseEvals.evals.map(item => item.id)
-  const academicIds = academicEvals.evals.map(item => item.id)
+  const baseIds = baseEvals.evals.map((item) => item.id)
+  const academicIds = academicEvals.evals.map((item) => item.id)
 
   assert.ok(baseIds.includes('base-mermaid-conversion'))
   assert.ok(baseIds.includes('base-csv-orgchart-conversion'))
@@ -197,7 +203,13 @@ test('drawio evals: base and academic sets encode separate responsibilities', ()
   assert.ok(academicIds.includes('academic-formula-publication-figure'))
   assert.ok(academicIds.includes('academic-desktop-png-pdf-unavailable-fallback'))
 
-  assert.equal(baseIds.some(id => id.startsWith('academic-')), false)
-  assert.equal(academicIds.every(id => id.startsWith('academic-')), true)
+  assert.equal(
+    baseIds.some((id) => id.startsWith('academic-')),
+    false
+  )
+  assert.equal(
+    academicIds.every((id) => id.startsWith('academic-')),
+    true
+  )
   logger.info('校验 evals 拆分结果完成')
 })

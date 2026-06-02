@@ -1,7 +1,8 @@
 const DISCOURAGED_BLOCK_DELIMITER = /\\\[([\s\S]+?)\\\]/g
 const DISCOURAGED_INLINE_DELIMITER = /(^|[^\\$])\$(?!\$)([^$\n]+?)\$(?!\$)/g
 const OFFICIAL_DELIMITER_PATTERN = /\$\$|\\\(|`[^`]+`/
-const MATH_COMMAND_PATTERN = /\\(?:frac|sqrt|sum|prod|int|lim|mathbb|mathcal|text|begin|end|alpha|beta|gamma|delta|theta|lambda|sigma|phi|omega|pi|mu|epsilon|times|div|pm|leq|geq|neq|approx|infty|partial|nabla|rightarrow|vec|hat|mathbf)\b/i
+const MATH_COMMAND_PATTERN =
+  /\\(?:frac|sqrt|sum|prod|int|lim|mathbb|mathcal|text|begin|end|alpha|beta|gamma|delta|theta|lambda|sigma|phi|omega|pi|mu|epsilon|times|div|pm|leq|geq|neq|approx|infty|partial|nabla|rightarrow|vec|hat|mathbf)\b/i
 const RELATION_OPERATOR_PATTERN = /[=≈≤≥<>∈→⇒]/
 const MATH_OPERATOR_PATTERN = /[+\-*/^]|\\(?:cdot|times|log|ln|exp|sin|cos|tan|sum|prod|int|lim)\b/i
 const FUNCTION_LIKE_PATTERN = /\b[a-zA-Z]+\s*\([^)]*\)/
@@ -94,7 +95,7 @@ export function validateMathText(text) {
   if (discouraged.length > 0) {
     throw new Error(
       `Unsupported math delimiters detected: ${discouraged.join(', ')}. ` +
-      'Use $$...$$ for standalone LaTeX, \\(...\\) for inline LaTeX, or `...` for AsciiMath.'
+        'Use $$...$$ for standalone LaTeX, \\(...\\) for inline LaTeX, or `...` for AsciiMath.'
     )
   }
 
@@ -121,11 +122,7 @@ export function escapeXmlAttr(value) {
   if (typeof value !== 'string') {
     throw new TypeError('XML attribute value must be a string')
   }
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
 export function toMxCellValue(text, { validate = true } = {}) {
@@ -176,7 +173,10 @@ export function looksLikeMathExpression(text) {
     return false
   }
 
-  const parts = trimmed.split(/[=≈≤≥<>∈→⇒]/).map(part => part.trim()).filter(Boolean)
+  const parts = trimmed
+    .split(/[=≈≤≥<>∈→⇒]/)
+    .map((part) => part.trim())
+    .filter(Boolean)
   if (parts.length < 2) {
     return false
   }
@@ -304,7 +304,7 @@ export function prepareMathLabel(text, { autoWrap = true, mode = 'auto', strict 
     if (strict && !autoWrap) {
       throw new Error(
         `Unwrapped math detected: ${detected.join(', ') || 'expression heuristic'}. ` +
-        'Use $$ for block math, \\(...\\) for inline math, or `...` for AsciiMath.'
+          'Use $$ for block math, \\(...\\) for inline math, or `...` for AsciiMath.'
       )
     }
     if (autoWrap) {

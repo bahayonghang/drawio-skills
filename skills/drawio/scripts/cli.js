@@ -16,10 +16,7 @@ import {
   deriveArtifactPaths,
   serializeSpecYaml
 } from './runtime/artifacts.js'
-import {
-  exportWithDrawioDesktop,
-  isDesktopExportFormat
-} from './runtime/desktop.js'
+import { exportWithDrawioDesktop, isDesktopExportFormat } from './runtime/desktop.js'
 
 /** draw.io format compatibility version */
 const DRAWIO_COMPAT_VERSION = '21.0.0'
@@ -31,7 +28,8 @@ const DRAWIO_COMPAT_VERSION = '21.0.0'
 const args = process.argv.slice(2)
 
 if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
-  console.log(`
+  console.log(
+    `
 draw.io YAML → XML/SVG Converter
 
 Usage:
@@ -58,7 +56,8 @@ Options:
   --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
   --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
   --help, -h          Show this help message
-`.trim())
+`.trim()
+  )
   process.exit(0)
 }
 
@@ -159,12 +158,12 @@ try {
   } else if (doValidate) {
     const result = specToDrawioXml(spec, { strict, returnWarnings: true, silent: true })
     xml = result.xml
-    const problems = (result.warnings || []).filter(w => w.level && w.level !== 'fatal')
+    const problems = (result.warnings || []).filter((w) => w.level && w.level !== 'fatal')
     if (problems.length === 0) {
       console.error('Spec validation: PASSED (no warnings)')
     } else {
       console.error(`Spec validation: WARNINGS (${problems.length})`)
-      problems.forEach(w => console.error(`  • [${w.level}] ${w.message}`))
+      problems.forEach((w) => console.error(`  • [${w.level}] ${w.message}`))
     }
   } else {
     xml = specToDrawioXml(spec, { strict })
@@ -191,7 +190,12 @@ if (doValidate && !exportSpec) {
   }
 }
 
-if (!exportSpec && spec.meta?.profile === 'academic-paper' && outputFile && extname(outputFile).toLowerCase() !== '.svg') {
+if (
+  !exportSpec &&
+  spec.meta?.profile === 'academic-paper' &&
+  outputFile &&
+  extname(outputFile).toLowerCase() !== '.svg'
+) {
   console.error('Validation: academic-paper profile recommends SVG export for paper-ready vector output.')
 }
 
@@ -230,9 +234,7 @@ if (exportSpec) {
     }
 
     if (archPath) {
-      const drawioPath = /\.arch\.json$/i.test(archPath)
-        ? archPath.replace(/\.arch\.json$/i, '.drawio')
-        : null
+      const drawioPath = /\.arch\.json$/i.test(archPath) ? archPath.replace(/\.arch\.json$/i, '.drawio') : null
       try {
         writeFileSync(
           resolve(archPath),
@@ -338,8 +340,7 @@ try {
     }
   } else {
     console.error(
-      `Error: Unsupported output extension "${ext || '(none)'}". ` +
-      'Use .drawio, .svg, .png, .pdf, or .jpg/.jpeg.'
+      `Error: Unsupported output extension "${ext || '(none)'}". ` + 'Use .drawio, .svg, .png, .pdf, or .jpg/.jpeg.'
     )
     exitCode = 1
   }

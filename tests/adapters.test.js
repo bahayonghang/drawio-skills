@@ -72,10 +72,7 @@ Task 2 :active, 2024-01-02, 1d
 })
 
 test('parseMermaidToSpec rejects unsupported diagram type', () => {
-  assert.throws(
-    () => parseMermaidToSpec('journey\n  title Demo'),
-    /Unsupported Mermaid diagram type/
-  )
+  assert.throws(() => parseMermaidToSpec('journey\n  title Demo'), /Unsupported Mermaid diagram type/)
 })
 
 test('parseCsvToSpec builds parent-child edges', () => {
@@ -112,8 +109,8 @@ test('validateAcademicProfile requires title and legend for academic-paper', () 
     edges: [{ from: 'A', to: 'B', type: 'data' }],
     modules: []
   })
-  assert.ok(warnings.some(w => /meta.title/.test(w)))
-  assert.ok(warnings.some(w => /meta.legend/.test(w)))
+  assert.ok(warnings.some((w) => /meta.title/.test(w)))
+  assert.ok(warnings.some((w) => /meta.legend/.test(w)))
 })
 
 test('validateAcademicProfile warns on missing figureType and dense academic labels', () => {
@@ -135,9 +132,9 @@ test('validateAcademicProfile warns on missing figureType and dense academic lab
     edges: [],
     modules: []
   })
-  assert.ok(warnings.some(w => /meta\.figureType/.test(w)))
-  assert.ok(warnings.some(w => /labels should stay concise/.test(w)))
-  assert.ok(warnings.some(w => /grayscale-safe explicit overrides/.test(w)))
+  assert.ok(warnings.some((w) => /meta\.figureType/.test(w)))
+  assert.ok(warnings.some((w) => /labels should stay concise/.test(w)))
+  assert.ok(warnings.some((w) => /grayscale-safe explicit overrides/.test(w)))
 })
 
 test('validateAcademicProfile warns on dense single-page academic figures', () => {
@@ -156,7 +153,7 @@ test('validateAcademicProfile warns on dense single-page academic figures', () =
     edges: [],
     modules: []
   })
-  assert.ok(warnings.some(w => /dense for a single-page figure/.test(w)))
+  assert.ok(warnings.some((w) => /dense for a single-page figure/.test(w)))
 })
 
 test('validateSpec accepts academic figureType and rejects invalid values', () => {
@@ -170,12 +167,13 @@ test('validateSpec accepts academic figureType and rejects invalid values', () =
   })
 
   assert.throws(
-    () => validateSpec({
-      meta: { figureType: 'timeline' },
-      nodes: [],
-      edges: [],
-      modules: []
-    }),
+    () =>
+      validateSpec({
+        meta: { figureType: 'timeline' },
+        nodes: [],
+        edges: [],
+        modules: []
+      }),
     /Invalid meta\.figureType/
   )
 })
@@ -192,5 +190,5 @@ test('validateEdgeQuality warns on short final segment', () => {
   }
   const layout = calculateLayout(spec, loadTheme('tech-blue'))
   const warnings = validateEdgeQuality(spec, layout)
-  assert.ok(warnings.some(w => /short final segment/.test(w)))
+  assert.ok(warnings.some((w) => /short final segment/.test(w)))
 })

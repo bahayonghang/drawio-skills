@@ -79,8 +79,22 @@ try {
     },
     connector: {
       primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
-      data: { strokeColor: '#1E293B', strokeWidth: 2, dashed: true, dashPattern: '6 4', endArrow: 'block', endFill: true },
-      optional: { strokeColor: '#64748B', strokeWidth: 1, dashed: true, dashPattern: '2 2', endArrow: 'open', endFill: false },
+      data: {
+        strokeColor: '#1E293B',
+        strokeWidth: 2,
+        dashed: true,
+        dashPattern: '6 4',
+        endArrow: 'block',
+        endFill: true
+      },
+      optional: {
+        strokeColor: '#64748B',
+        strokeWidth: 1,
+        dashed: true,
+        dashPattern: '2 2',
+        endArrow: 'open',
+        endFill: false
+      },
       dependency: { strokeColor: '#1E293B', strokeWidth: 1, dashed: false, endArrow: 'diamond', endFill: true },
       bidirectional: { strokeColor: '#64748B', strokeWidth: 1.5, dashed: false, endArrow: 'none', endFill: false }
     },
@@ -179,25 +193,77 @@ const SHAPE_KEYWORDS = {
   temporal: ['lstm', 'rnn', 'gru', 'temporal', 'recurrent', 'sequence', 'seq2seq', 'bilstm', 'bigru', 'hidden state'],
 
   // Deep learning - Attention & Transformer
-  attention: ['attention', 'attn', 'softmax', 'transformer', 'self-attention', 'multi-head', 'mha', 'cross-attention', 'qkv'],
+  attention: [
+    'attention',
+    'attn',
+    'softmax',
+    'transformer',
+    'self-attention',
+    'multi-head',
+    'mha',
+    'cross-attention',
+    'qkv'
+  ],
 
   // Deep learning - Normalization & Regularization
   norm: ['batchnorm', 'layernorm', 'groupnorm', 'instancenorm', 'normalization', 'batch norm', 'layer norm', 'dropout'],
 
   // Deep learning - Gate & Activation
-  gate: ['gating', 'gate mechanism', 'multiply gate', 'sigmoid gate', 'tanh gate', 'forget gate', 'input gate', 'output gate'],
+  gate: [
+    'gating',
+    'gate mechanism',
+    'multiply gate',
+    'sigmoid gate',
+    'tanh gate',
+    'forget gate',
+    'input gate',
+    'output gate'
+  ],
 
   // Deep learning - Graph Neural Network
-  graph: ['graph conv', 'gcn', 'gnn', 'graph attention', 'adjacency', 'node feature', 'edge feature', 'message passing', 'aggregation'],
+  graph: [
+    'graph conv',
+    'gcn',
+    'gnn',
+    'graph attention',
+    'adjacency',
+    'node feature',
+    'edge feature',
+    'message passing',
+    'aggregation'
+  ],
 
   // Deep learning - Matrix operations & Linear layers
-  matrix: ['matmul', 'linear layer', 'fc layer', 'dense layer', 'mlp', 'weight matrix', 'fully connected', 'projection'],
+  matrix: [
+    'matmul',
+    'linear layer',
+    'fc layer',
+    'dense layer',
+    'mlp',
+    'weight matrix',
+    'fully connected',
+    'projection'
+  ],
 
   // Deep learning - Operators (for small circular nodes)
   operator: ['⊕', '⊗', '⊙', 'concat', 'element-wise', 'hadamard', 'residual add', 'skip add', '⊞'],
 
   // Deep learning - 3D Feature Maps / Tensors (for CNN visualizations)
-  tensor3d: ['tensor', 'feature map', '3d feature', 'activation map', 'channel', 'h×w×c', 'hwc', 'chw', 'nchw', 'nhwc', 'cube', '3d block', 'volume']
+  tensor3d: [
+    'tensor',
+    'feature map',
+    '3d feature',
+    'activation map',
+    'channel',
+    'h×w×c',
+    'hwc',
+    'chw',
+    'nchw',
+    'nhwc',
+    'cube',
+    '3d block',
+    'volume'
+  ]
 }
 
 const SHAPE_STYLES = {
@@ -271,7 +337,7 @@ export function detectSemanticType(label, explicitType, network = null) {
 
   // Check keywords by type
   for (const [type, keywords] of Object.entries(SHAPE_KEYWORDS)) {
-    if (keywords.some(kw => lowerLabel.includes(kw))) {
+    if (keywords.some((kw) => lowerLabel.includes(kw))) {
       return type
     }
   }
@@ -284,16 +350,16 @@ export function detectSemanticType(label, explicitType, network = null) {
 // ============================================================================
 
 const SIZE_PRESETS = {
-  tiny: { width: 32, height: 32 },      // For operators (⊕⊗)
+  tiny: { width: 32, height: 32 }, // For operators (⊕⊗)
   small: { width: 80, height: 40 },
   medium: { width: 120, height: 60 },
   large: { width: 160, height: 80 },
   xl: { width: 200, height: 100 },
   // 3D Feature Map sizes (cube-like proportions)
-  tensor_sm: { width: 40, height: 48 },   // Small feature map
-  tensor_md: { width: 60, height: 72 },   // Medium feature map
-  tensor_lg: { width: 80, height: 96 },   // Large feature map
-  tensor_xl: { width: 100, height: 120 }  // Extra large feature map
+  tensor_sm: { width: 40, height: 48 }, // Small feature map
+  tensor_md: { width: 60, height: 72 }, // Medium feature map
+  tensor_lg: { width: 80, height: 96 }, // Large feature map
+  tensor_xl: { width: 100, height: 120 } // Extra large feature map
 }
 
 // Default sizes for specific node types
@@ -494,18 +560,19 @@ export function calculateLayout(spec, theme) {
       currentY += maxHeight + containerPadding * 2 + moduleHeaderHeight + nodeMargin
     }
   } else if (layout === 'star') {
-    const autoNodes = nodes.filter(node => !manuallyPositioned.has(node.id))
+    const autoNodes = nodes.filter((node) => !manuallyPositioned.has(node.id))
     if (autoNodes.length > 0) {
-      const centerNode = autoNodes.find(node => {
-        const type = detectSemanticType(node.label, node.type, node.network)
-        return ['router', 'switch', 'load_balancer', 'firewall'].includes(type)
-      }) || autoNodes[0]
+      const centerNode =
+        autoNodes.find((node) => {
+          const type = detectSemanticType(node.label, node.type, node.network)
+          return ['router', 'switch', 'load_balancer', 'firewall'].includes(type)
+        }) || autoNodes[0]
 
       const centerX = 360
       const centerY = 180
       placeNode(centerNode, centerX, centerY)
 
-      const spokes = autoNodes.filter(node => node.id !== centerNode.id)
+      const spokes = autoNodes.filter((node) => node.id !== centerNode.id)
       const radiusX = 220
       const radiusY = 140
       spokes.forEach((node, index) => {
@@ -519,7 +586,7 @@ export function calculateLayout(spec, theme) {
       })
     }
   } else if (layout === 'mesh') {
-    const autoNodes = nodes.filter(node => !manuallyPositioned.has(node.id))
+    const autoNodes = nodes.filter((node) => !manuallyPositioned.has(node.id))
     const centerX = 340
     const centerY = 180
     const radius = Math.max(140, autoNodes.length * 18)
@@ -564,16 +631,14 @@ export function calculateLayout(spec, theme) {
   for (const [moduleId, moduleNodes] of moduleGroups) {
     if (moduleId === '__default__' || moduleNodes.length === 0) continue
 
-    const nodePositions = moduleNodes
-      .map(node => positions.get(node.id))
-      .filter(Boolean)
+    const nodePositions = moduleNodes.map((node) => positions.get(node.id)).filter(Boolean)
 
     if (nodePositions.length === 0) continue
 
-    const minX = Math.min(...nodePositions.map(pos => pos.x))
-    const minY = Math.min(...nodePositions.map(pos => pos.y))
-    const maxX = Math.max(...nodePositions.map(pos => pos.x + pos.width))
-    const maxY = Math.max(...nodePositions.map(pos => pos.y + pos.height))
+    const minX = Math.min(...nodePositions.map((pos) => pos.x))
+    const minY = Math.min(...nodePositions.map((pos) => pos.y))
+    const maxX = Math.max(...nodePositions.map((pos) => pos.x + pos.width))
+    const maxY = Math.max(...nodePositions.map((pos) => pos.y + pos.height))
 
     const x = snapDown(minX - containerPadding)
     const y = snapDown(minY - containerPadding - moduleHeaderHeight)
@@ -597,7 +662,7 @@ const ICON_PREFIXES = {
   'k8s.': 'mxgraph.kubernetes.',
   'cisco.': 'mxgraph.cisco.',
   'cisco19.': 'mxgraph.cisco19.',
-  'mxgraph.': 'mxgraph.'  // pass-through for direct mxgraph references
+  'mxgraph.': 'mxgraph.' // pass-through for direct mxgraph references
 }
 
 const ICON_ALIASES = {
@@ -727,15 +792,20 @@ export function generateNodeStyle(node, theme) {
   const fillColor = resolveThemeColor(
     node.style?.fillColor,
     theme,
-    isTextNode ? 'none' : (nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
+    isTextNode ? 'none' : nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE'
   )
   const strokeColor = resolveThemeColor(
     node.style?.strokeColor,
     theme,
-    isTextNode ? 'none' : (nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
+    isTextNode ? 'none' : nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB'
   )
-  const strokeWidth = node.style?.strokeWidth ?? (isTextNode ? 0 : (nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5))
-  const fontColor = resolveThemeColor(node.style?.fontColor, theme, nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B')
+  const strokeWidth =
+    node.style?.strokeWidth ?? (isTextNode ? 0 : nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5)
+  const fontColor = resolveThemeColor(
+    node.style?.fontColor,
+    theme,
+    nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
+  )
   const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
   const fontFamily = resolveFontFamily(node, semanticType, theme)
   const align = safeStyleText(node.style?.align, isTextNode ? 'left' : 'center')
@@ -863,7 +933,11 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
 export function generateModuleStyle(module, theme) {
   const moduleTheme = theme.module || {}
 
-  const fillColor = resolveThemeColor(module.style?.fillColor || module.color, theme, moduleTheme.fillColor || '#F8FAFC')
+  const fillColor = resolveThemeColor(
+    module.style?.fillColor || module.color,
+    theme,
+    moduleTheme.fillColor || '#F8FAFC'
+  )
   const strokeColor = resolveThemeColor(module.style?.strokeColor, theme, moduleTheme.strokeColor || '#E2E8F0')
   const strokeWidth = moduleTheme.strokeWidth || 1
   const rounded = moduleTheme.rounded || 12
@@ -915,9 +989,7 @@ function formatNetworkEdgeLabel(edge) {
 }
 
 function defaultEdgeLabelOffset(edge) {
-  return edge.__routing?.orientation === 'vertical'
-    ? { x: 12, y: 0 }
-    : { x: 0, y: -12 }
+  return edge.__routing?.orientation === 'vertical' ? { x: 12, y: 0 } : { x: 0, y: -12 }
 }
 
 function resolveEdgeLabelOffset(edge) {
@@ -965,7 +1037,7 @@ export function buildXml(spec, theme, layout) {
   for (const [moduleId, pos] of modulePositions) {
     if (moduleId === '__default__') continue
 
-    const module = spec.modules?.find(m => m.id === moduleId)
+    const module = spec.modules?.find((m) => m.id === moduleId)
     if (!module) continue
 
     const cellId = allocId()
@@ -976,8 +1048,8 @@ export function buildXml(spec, theme, layout) {
 
     cells.push(
       `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="1">` +
-      `<mxGeometry x="${pos.x}" y="${pos.y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
-      `</mxCell>`
+        `<mxGeometry x="${pos.x}" y="${pos.y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
+        `</mxCell>`
     )
   }
 
@@ -991,9 +1063,7 @@ export function buildXml(spec, theme, layout) {
 
     const style = generateNodeStyle(node, theme)
     const label = prepareMathLabel(node.label)
-    const parentId = node.module && moduleIdMap.has(node.module)
-      ? moduleIdMap.get(node.module)
-      : '1'
+    const parentId = node.module && moduleIdMap.has(node.module) ? moduleIdMap.get(node.module) : '1'
 
     // Adjust position relative to parent if in module
     let x = pos.x
@@ -1008,8 +1078,8 @@ export function buildXml(spec, theme, layout) {
 
     cells.push(
       `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="${parentId}">` +
-      `<mxGeometry x="${x}" y="${y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
-      `</mxCell>`
+        `<mxGeometry x="${x}" y="${y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
+        `</mxCell>`
     )
   }
 
@@ -1038,9 +1108,7 @@ export function buildXml(spec, theme, layout) {
     // Add label if present
     if (rawEdgeLabel) {
       const labelId = allocId()
-      const labelX = edge.labelPosition === 'start' ? '0.2'
-        : edge.labelPosition === 'end' ? '0.8'
-          : '0.5'  // center (default)
+      const labelX = edge.labelPosition === 'start' ? '0.2' : edge.labelPosition === 'end' ? '0.8' : '0.5' // center (default)
       const offset = resolveEdgeLabelOffset(edge)
       const labelOffset = `<mxPoint x="${offset.x}" y="${offset.y}" as="offset"/>`
       const labelFontSize = edge.style?.fontSize || 11
@@ -1082,7 +1150,9 @@ const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
 const ACADEMIC_FIGURE_TYPES = ['architecture', 'roadmap', 'workflow']
 
 function normalizeLabelText(label) {
-  return String(label || '').replace(/\s+/g, ' ').trim()
+  return String(label || '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 function countManualLabelLines(label) {
@@ -1097,7 +1167,11 @@ function normalizeHexColor(value) {
   if (!isHexColor(value)) return null
   const hex = value.slice(1)
   if (hex.length === 3) {
-    return `#${hex.split('').map(char => char + char).join('').toUpperCase()}`
+    return `#${hex
+      .split('')
+      .map((char) => char + char)
+      .join('')
+      .toUpperCase()}`
   }
   return `#${hex.toUpperCase()}`
 }
@@ -1119,17 +1193,17 @@ function collectAcademicColorOverrideWarnings(spec, theme) {
     }
   }
 
-  spec.nodes?.forEach(node => {
+  spec.nodes?.forEach((node) => {
     checkColor(node.style?.fillColor, `node "${node.id}" fill`)
     checkColor(node.style?.strokeColor, `node "${node.id}" stroke`)
     checkColor(node.style?.fontColor, `node "${node.id}" text`)
   })
 
-  spec.edges?.forEach(edge => {
+  spec.edges?.forEach((edge) => {
     checkColor(edge.style?.strokeColor, `edge "${edge.from}->${edge.to}" stroke`)
   })
 
-  spec.modules?.forEach(module => {
+  spec.modules?.forEach((module) => {
     checkColor(module.color, `module "${module.id}" color`)
     checkColor(module.style?.fillColor, `module "${module.id}" fill`)
     checkColor(module.style?.strokeColor, `module "${module.id}" stroke`)
@@ -1148,38 +1222,38 @@ function collectAcademicColorOverrideWarnings(spec, theme) {
  */
 export function validateColorScheme(spec, theme) {
   const warnings = []
-  const validTokens = new Set(Object.keys(theme.colors || {}).map(k => `$${k}`))
+  const validTokens = new Set(Object.keys(theme.colors || {}).map((k) => `$${k}`))
 
   const checkColor = (value, context) => {
     if (!value) return
-    if (validTokens.has(value)) return      // valid theme token
+    if (validTokens.has(value)) return // valid theme token
     if (HEX_COLOR_REGEX.test(value)) return // valid hex color
     const tokenSamples = [...validTokens].slice(0, 3).join(', ')
     warnings.push(
       `Invalid color "${value}" in ${context}. ` +
-      `Use a hex code (#RGB or #RRGGBB) or a theme token (${tokenSamples}...)`
+        `Use a hex code (#RGB or #RRGGBB) or a theme token (${tokenSamples}...)`
     )
   }
 
   // Validate node style overrides
-  spec.nodes?.forEach(node => {
+  spec.nodes?.forEach((node) => {
     const ctx = `node "${node.id}"`
-    checkColor(node.style?.fillColor,   `${ctx}.style.fillColor`)
+    checkColor(node.style?.fillColor, `${ctx}.style.fillColor`)
     checkColor(node.style?.strokeColor, `${ctx}.style.strokeColor`)
-    checkColor(node.style?.fontColor,   `${ctx}.style.fontColor`)
+    checkColor(node.style?.fontColor, `${ctx}.style.fontColor`)
   })
 
   // Validate edge style overrides
-  spec.edges?.forEach(edge => {
+  spec.edges?.forEach((edge) => {
     const ctx = `edge "${edge.from}→${edge.to}"`
     checkColor(edge.style?.strokeColor, `${ctx}.style.strokeColor`)
   })
 
   // Validate module style overrides
-  spec.modules?.forEach(mod => {
+  spec.modules?.forEach((mod) => {
     const ctx = `module "${mod.id}"`
-    checkColor(mod.color,                `${ctx}.color`)
-    checkColor(mod.style?.fillColor,   `${ctx}.style.fillColor`)
+    checkColor(mod.color, `${ctx}.color`)
+    checkColor(mod.style?.fillColor, `${ctx}.style.fillColor`)
     checkColor(mod.style?.strokeColor, `${ctx}.style.strokeColor`)
   })
 
@@ -1189,7 +1263,7 @@ export function validateColorScheme(spec, theme) {
     if (HEX_COLOR_REGEX.test(entry.hex)) return
     warnings.push(
       `Invalid color "${entry.hex}" in meta.replication.palette[${index}].hex. ` +
-      'Use a flat hex code (#RGB or #RRGGBB) for extracted source colors.'
+        'Use a flat hex code (#RGB or #RRGGBB) for extracted source colors.'
     )
   })
 
@@ -1206,27 +1280,27 @@ export function validateLayoutConsistency(spec) {
   const warnings = []
   const layout = spec.meta?.layout || 'horizontal'
   const nodesWithPos = (spec.nodes || []).filter(
-    n => n.position && typeof n.position.x === 'number' && typeof n.position.y === 'number'
+    (n) => n.position && typeof n.position.x === 'number' && typeof n.position.y === 'number'
   )
 
   if (nodesWithPos.length < 2) return warnings // not enough data
 
-  const xs = nodesWithPos.map(n => n.position.x)
-  const ys = nodesWithPos.map(n => n.position.y)
+  const xs = nodesWithPos.map((n) => n.position.x)
+  const ys = nodesWithPos.map((n) => n.position.y)
   const xRange = Math.max(...xs) - Math.min(...xs)
   const yRange = Math.max(...ys) - Math.min(...ys)
 
   if (layout === 'horizontal' && yRange > xRange * 1.5) {
     warnings.push(
       `Layout is "horizontal" but nodes span ${yRange}px vertically vs ${xRange}px horizontally. ` +
-      `Consider switching meta.layout to "vertical", or recalculate node positions.`
+        `Consider switching meta.layout to "vertical", or recalculate node positions.`
     )
   }
 
   if (layout === 'vertical' && xRange > yRange * 1.5) {
     warnings.push(
       `Layout is "vertical" but nodes span ${xRange}px horizontally vs ${yRange}px vertically. ` +
-      `Consider switching meta.layout to "horizontal", or recalculate node positions.`
+        `Consider switching meta.layout to "horizontal", or recalculate node positions.`
     )
   }
 
@@ -1243,7 +1317,7 @@ export function validateLayoutConsistency(spec) {
           const dist = Math.round(Math.hypot(dx, dy))
           warnings.push(
             `Nodes "${a.id}" and "${b.id}" may overlap ` +
-            `(center distance ${dist}px < ${MIN_CLEARANCE}px minimum clearance)`
+              `(center distance ${dist}px < ${MIN_CLEARANCE}px minimum clearance)`
           )
         }
       }
@@ -1331,10 +1405,10 @@ function getSlot(index) {
 function buildRoutedEdges(spec, layout) {
   const { positions } = layout
   const declaredLayout = spec.meta?.layout || 'horizontal'
-  const edges = (spec.edges || []).map(edge => ({
+  const edges = (spec.edges || []).map((edge) => ({
     ...edge,
     style: { ...(edge.style || {}) },
-    waypoints: edge.waypoints ? edge.waypoints.map(point => ({ ...point })) : undefined
+    waypoints: edge.waypoints ? edge.waypoints.map((point) => ({ ...point })) : undefined
   }))
 
   const sourceGroups = new Map()
@@ -1431,8 +1505,8 @@ export function validateConnectionPointPolicy(spec) {
     const hasWaypoints = Array.isArray(edge.waypoints) && edge.waypoints.length > 0
     const cpFields = ['exitX', 'exitY', 'entryX', 'entryY']
     const dxdyFields = ['exitDx', 'exitDy', 'entryDx', 'entryDy']
-    const cpCount = cpFields.filter(field => style[field] !== undefined).length
-    const dxdyCount = dxdyFields.filter(field => style[field] !== undefined).length
+    const cpCount = cpFields.filter((field) => style[field] !== undefined).length
+    const dxdyCount = dxdyFields.filter((field) => style[field] !== undefined).length
 
     if (hasWaypoints && (cpCount > 0 || dxdyCount > 0)) {
       warnings.push(
@@ -1463,9 +1537,7 @@ export function validateAcademicProfile(spec) {
     warnings.push('Academic-paper profile should use academic or academic-color theme.')
   }
   if (!spec.meta?.figureType) {
-    warnings.push(
-      `Academic-paper profile should set meta.figureType to one of ${ACADEMIC_FIGURE_TYPES.join(', ')}.`
-    )
+    warnings.push(`Academic-paper profile should set meta.figureType to one of ${ACADEMIC_FIGURE_TYPES.join(', ')}.`)
   }
   if (!spec.meta?.title) {
     warnings.push('Academic-paper profile requires meta.title for figure captioning.')
@@ -1474,8 +1546,8 @@ export function validateAcademicProfile(spec) {
     warnings.push('Academic-paper profile should include meta.description for figure context.')
   }
 
-  const usesIcons = (spec.nodes || []).some(node => node.icon)
-  const connectorTypes = new Set((spec.edges || []).map(edge => edge.type || 'primary'))
+  const usesIcons = (spec.nodes || []).some((node) => node.icon)
+  const connectorTypes = new Set((spec.edges || []).map((edge) => edge.type || 'primary'))
   if ((usesIcons || connectorTypes.size > 1) && !spec.meta?.legend) {
     warnings.push('Academic-paper profile should include meta.legend when icons or multiple connector styles are used.')
   }
@@ -1494,7 +1566,9 @@ export function validateAcademicProfile(spec) {
     }
   }
   if (smallFonts.length > 0) {
-    warnings.push(`Academic-paper profile expects 8-10pt labels. Out-of-range overrides found on ${smallFonts.join(', ')}.`)
+    warnings.push(
+      `Academic-paper profile expects 8-10pt labels. Out-of-range overrides found on ${smallFonts.join(', ')}.`
+    )
   }
 
   const verboseLabels = []
@@ -1553,7 +1627,9 @@ export function validateEdgeQuality(spec, layout) {
       if (x === undefined || y === undefined) continue
       const corner = (x === 0 || x === 1) && (y === 0 || y === 1)
       if (corner) {
-        warnings.push(`Edge "${edge.from}->${edge.to}" uses corner connection point ${xKey}/${yKey}. Use face midpoints or distributed face slots.`)
+        warnings.push(
+          `Edge "${edge.from}->${edge.to}" uses corner connection point ${xKey}/${yKey}. Use face midpoints or distributed face slots.`
+        )
       }
     }
 
@@ -1566,7 +1642,9 @@ export function validateEdgeQuality(spec, layout) {
       const verticalGap = Math.abs(targetCenterY - sourceCenterY) - sourcePos.height / 2 - targetPos.height / 2
       const finalSegment = edge.__routing?.orientation === 'horizontal' ? horizontalGap : verticalGap
       if (finalSegment < 30) {
-        warnings.push(`Edge "${edge.from}->${edge.to}" has a short final segment (${Math.round(finalSegment)}px). Keep the last segment at least 30px.`)
+        warnings.push(
+          `Edge "${edge.from}->${edge.to}" has a short final segment (${Math.round(finalSegment)}px). Keep the last segment at least 30px.`
+        )
       }
     }
 
@@ -1575,35 +1653,45 @@ export function validateEdgeQuality(spec, layout) {
         const prev = edge.waypoints[i - 1]
         const curr = edge.waypoints[i]
         if (Math.abs(prev.x - curr.x) < 1 && Math.abs(prev.y - curr.y) < 1) {
-          warnings.push(`Edge "${edge.from}->${edge.to}" contains degenerate waypoint ${i}. Consecutive waypoints must differ by at least 1px.`)
+          warnings.push(
+            `Edge "${edge.from}->${edge.to}" contains degenerate waypoint ${i}. Consecutive waypoints must differ by at least 1px.`
+          )
         }
       }
     }
 
     if (edge.__routing) {
-      const faceAxis = edge.__routing.orientation === 'horizontal'
-        ? `${edge.from}:${edge.__routing.sourceFace}:${style.exitY}`
-        : `${edge.from}:${edge.__routing.sourceFace}:${style.exitX}`
+      const faceAxis =
+        edge.__routing.orientation === 'horizontal'
+          ? `${edge.from}:${edge.__routing.sourceFace}:${style.exitY}`
+          : `${edge.from}:${edge.__routing.sourceFace}:${style.exitX}`
       if (!corridorMap.has(faceAxis)) corridorMap.set(faceAxis, [])
       corridorMap.get(faceAxis).push(edge)
     }
 
     if (edge.label && !hasWaypoints) {
-      const gap = edge.__routing?.orientation === 'horizontal'
-        ? Math.abs((targetPos.x + targetPos.width / 2) - (sourcePos.x + sourcePos.width / 2))
-        : Math.abs((targetPos.y + targetPos.height / 2) - (sourcePos.y + sourcePos.height / 2))
+      const gap =
+        edge.__routing?.orientation === 'horizontal'
+          ? Math.abs(targetPos.x + targetPos.width / 2 - (sourcePos.x + sourcePos.width / 2))
+          : Math.abs(targetPos.y + targetPos.height / 2 - (sourcePos.y + sourcePos.height / 2))
       if (gap < 60) {
-        warnings.push(`Edge "${edge.from}->${edge.to}" is short for a labeled connector. Increase spacing or offset the label further from the line.`)
+        warnings.push(
+          `Edge "${edge.from}->${edge.to}" is short for a labeled connector. Increase spacing or offset the label further from the line.`
+        )
       }
     }
   }
 
   for (const [corridor, group] of corridorMap.entries()) {
     if (group.length < 2) continue
-    const slots = group.map(edge => edge.__routing?.orientation === 'horizontal' ? edge.style.exitY : edge.style.exitX)
-    const uniqueSlots = new Set(slots.map(slot => Number(slot).toFixed(2)))
+    const slots = group.map((edge) =>
+      edge.__routing?.orientation === 'horizontal' ? edge.style.exitY : edge.style.exitX
+    )
+    const uniqueSlots = new Set(slots.map((slot) => Number(slot).toFixed(2)))
     if (uniqueSlots.size !== group.length) {
-      warnings.push(`Edges sharing corridor "${corridor}" overlap on the same face position. Distribute them across 0.25/0.5/0.75 slots.`)
+      warnings.push(
+        `Edges sharing corridor "${corridor}" overlap on the same face position. Distribute them across 0.25/0.5/0.75 slots.`
+      )
     }
   }
 
@@ -1633,16 +1721,16 @@ export function specToDrawioXml(spec, options = {}) {
   const warnings = checkComplexity(spec)
 
   // Security: always throw on fatal-level warnings regardless of strict mode
-  const fatals = warnings.filter(w => w.level === 'fatal')
+  const fatals = warnings.filter((w) => w.level === 'fatal')
   if (fatals.length > 0) {
-    throw new Error('Safety limit exceeded: ' + fatals.map(e => e.message).join('; '))
+    throw new Error('Safety limit exceeded: ' + fatals.map((e) => e.message).join('; '))
   }
 
   // Strict mode: throw on error-level warnings
   if (options.strict) {
-    const errors = warnings.filter(w => w.level === 'error')
+    const errors = warnings.filter((w) => w.level === 'error')
     if (errors.length > 0) {
-      throw new Error('Complexity check failed: ' + errors.map(e => e.message).join('; '))
+      throw new Error('Complexity check failed: ' + errors.map((e) => e.message).join('; '))
     }
   }
 
@@ -1668,18 +1756,18 @@ export function specToDrawioXml(spec, options = {}) {
   if (allValidationWarnings.length > 0) {
     if (!options.silent) {
       console.warn('\n⚠️  drawio spec validation warnings:')
-      allValidationWarnings.forEach(w => console.warn(`  • ${w}`))
+      allValidationWarnings.forEach((w) => console.warn(`  • ${w}`))
     }
     if (options.strict) {
       throw new Error(
         `Spec validation failed with ${allValidationWarnings.length} warning(s):\n` +
-        allValidationWarnings.map(w => `  • ${w}`).join('\n')
+          allValidationWarnings.map((w) => `  • ${w}`).join('\n')
       )
     }
   }
 
   // Merge all warnings for callers that requested them
-  warnings.push(...allValidationWarnings.map(msg => ({ level: 'warning', message: msg })))
+  warnings.push(...allValidationWarnings.map((msg) => ({ level: 'warning', message: msg })))
 
   // Build XML
   const xml = buildXml(spec, theme, layout)
@@ -1815,19 +1903,13 @@ export function validateSpec(spec) {
     if (typeof spec.meta.replication !== 'object' || Array.isArray(spec.meta.replication)) {
       throw new Error('meta.replication must be an object when provided')
     }
-    if (
-      spec.meta.replication.colorMode != null &&
-      !VALID_REPLICATION_MODES.includes(spec.meta.replication.colorMode)
-    ) {
+    if (spec.meta.replication.colorMode != null && !VALID_REPLICATION_MODES.includes(spec.meta.replication.colorMode)) {
       throw new Error(
         `Invalid meta.replication.colorMode "${spec.meta.replication.colorMode}": ` +
-        `must be one of ${VALID_REPLICATION_MODES.join(', ')}`
+          `must be one of ${VALID_REPLICATION_MODES.join(', ')}`
       )
     }
-    if (
-      spec.meta.replication.background != null &&
-      typeof spec.meta.replication.background !== 'string'
-    ) {
+    if (spec.meta.replication.background != null && typeof spec.meta.replication.background !== 'string') {
       throw new Error('meta.replication.background must be a string when provided')
     }
     if (spec.meta.replication.palette != null) {
@@ -1844,22 +1926,16 @@ export function validateSpec(spec) {
         if (entry.role != null && typeof entry.role !== 'string') {
           throw new Error(`meta.replication.palette[${index}].role must be a string when provided`)
         }
-        if (
-          entry.appliesTo != null &&
-          !VALID_REPLICATION_TARGETS.includes(entry.appliesTo)
-        ) {
+        if (entry.appliesTo != null && !VALID_REPLICATION_TARGETS.includes(entry.appliesTo)) {
           throw new Error(
             `Invalid meta.replication.palette[${index}].appliesTo "${entry.appliesTo}": ` +
-            `must be one of ${VALID_REPLICATION_TARGETS.join(', ')}`
+              `must be one of ${VALID_REPLICATION_TARGETS.join(', ')}`
           )
         }
-        if (
-          entry.confidence != null &&
-          !VALID_CONFIDENCE_LEVELS.includes(entry.confidence)
-        ) {
+        if (entry.confidence != null && !VALID_CONFIDENCE_LEVELS.includes(entry.confidence)) {
           throw new Error(
             `Invalid meta.replication.palette[${index}].confidence "${entry.confidence}": ` +
-            `must be one of ${VALID_CONFIDENCE_LEVELS.join(', ')}`
+              `must be one of ${VALID_CONFIDENCE_LEVELS.join(', ')}`
           )
         }
         if (entry.notes != null && typeof entry.notes !== 'string') {
@@ -1899,7 +1975,9 @@ export function validateSpec(spec) {
       throw new Error(`Node "${node.id}" is missing a required string label`)
     }
     if (node.type != null && !SHAPE_STYLES[node.type]) {
-      throw new Error(`Node "${node.id}" has unknown type "${node.type}": must be one of ${Object.keys(SHAPE_STYLES).join(', ')}`)
+      throw new Error(
+        `Node "${node.id}" has unknown type "${node.type}": must be one of ${Object.keys(SHAPE_STYLES).join(', ')}`
+      )
     }
     if (node.icon != null && !VALID_ICON.test(node.icon)) {
       throw new Error(`Node "${node.id}" has invalid icon "${node.icon}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`)
@@ -1915,7 +1993,9 @@ export function validateSpec(spec) {
         }
       }
       if (node.network.device != null && !VALID_ICON.test(node.network.device)) {
-        throw new Error(`Node "${node.id}" has invalid network.device "${node.network.device}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`)
+        throw new Error(
+          `Node "${node.id}" has invalid network.device "${node.network.device}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`
+        )
       }
     }
     if (node.position != null) {
@@ -1941,7 +2021,9 @@ export function validateSpec(spec) {
       throw new Error(`Edge "${edge.from}->${edge.to}" label must be a string`)
     }
     if (edge.labelPosition != null && !VALID_LABEL_POSITIONS.includes(edge.labelPosition)) {
-      throw new Error(`Invalid edge.labelPosition "${edge.labelPosition}": must be one of ${VALID_LABEL_POSITIONS.join(', ')}`)
+      throw new Error(
+        `Invalid edge.labelPosition "${edge.labelPosition}": must be one of ${VALID_LABEL_POSITIONS.join(', ')}`
+      )
     }
     if (edge.labelOffset != null) {
       if (typeof edge.labelOffset !== 'object' || Array.isArray(edge.labelOffset)) {

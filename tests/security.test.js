@@ -206,7 +206,10 @@ test('validateSpec rejects invalid edge.to', () => {
 test('validateSpec rejects non-string edge label', () => {
   const spec = {
     meta: {},
-    nodes: [{ id: 'A', label: 'Test' }, { id: 'B', label: 'Test2' }],
+    nodes: [
+      { id: 'A', label: 'Test' },
+      { id: 'B', label: 'Test2' }
+    ],
     edges: [{ from: 'A', to: 'B', label: 42 }],
     modules: []
   }
@@ -216,7 +219,10 @@ test('validateSpec rejects non-string edge label', () => {
 test('validateSpec rejects malformed edge waypoints', () => {
   const spec = {
     meta: {},
-    nodes: [{ id: 'A', label: 'Test' }, { id: 'B', label: 'Test2' }],
+    nodes: [
+      { id: 'A', label: 'Test' },
+      { id: 'B', label: 'Test2' }
+    ],
     edges: [{ from: 'A', to: 'B', waypoints: [{ x: 'bad', y: 10 }] }],
     modules: []
   }
@@ -264,7 +270,7 @@ test('validateSpec accepts valid spec', () => {
 test('checkComplexity returns fatal for > 100 nodes', () => {
   const nodes = Array.from({ length: 101 }, (_, i) => ({ id: `n${i}`, label: `N${i}` }))
   const warnings = checkComplexity({ nodes, edges: [], modules: [] })
-  const fatals = warnings.filter(w => w.level === 'fatal')
+  const fatals = warnings.filter((w) => w.level === 'fatal')
   assert.ok(fatals.length > 0, 'Should have fatal warning for > 100 nodes')
   assert.match(fatals[0].message, /safety limit/)
 })
@@ -272,14 +278,14 @@ test('checkComplexity returns fatal for > 100 nodes', () => {
 test('checkComplexity returns fatal for > 200 edges', () => {
   const edges = Array.from({ length: 201 }, (_, i) => ({ from: 'A', to: 'B' }))
   const warnings = checkComplexity({ nodes: [], edges, modules: [] })
-  const fatals = warnings.filter(w => w.level === 'fatal')
+  const fatals = warnings.filter((w) => w.level === 'fatal')
   assert.ok(fatals.length > 0, 'Should have fatal warning for > 200 edges')
 })
 
 test('checkComplexity returns fatal for > 20 modules', () => {
   const modules = Array.from({ length: 21 }, (_, i) => ({ id: `m${i}`, label: `M${i}` }))
   const warnings = checkComplexity({ nodes: [], edges: [], modules })
-  const fatals = warnings.filter(w => w.level === 'fatal')
+  const fatals = warnings.filter((w) => w.level === 'fatal')
   assert.ok(fatals.length > 0, 'Should have fatal warning for > 20 modules')
 })
 
@@ -290,7 +296,7 @@ test('checkComplexity returns fatal for label > 200 chars', () => {
     edges: [],
     modules: []
   })
-  const fatals = warnings.filter(w => w.level === 'fatal')
+  const fatals = warnings.filter((w) => w.level === 'fatal')
   assert.ok(fatals.length > 0, 'Should have fatal warning for long label')
   assert.match(fatals[0].message, /200 characters/)
 })
@@ -300,10 +306,7 @@ test('specToDrawioXml throws on fatal complexity', () => {
     id: `N${i}`,
     label: `Node ${i}`
   }))
-  assert.throws(
-    () => specToDrawioXml({ nodes, edges: [], modules: [] }),
-    /Safety limit exceeded/
-  )
+  assert.throws(() => specToDrawioXml({ nodes, edges: [], modules: [] }), /Safety limit exceeded/)
 })
 
 // ============================================================================
@@ -412,9 +415,7 @@ nodes:
 })
 
 test('validateSpec enforces hard limits via parseSpecYaml', () => {
-  const nodesYaml = Array.from({ length: 101 }, (_, i) =>
-    `  - id: N${i}\n    label: "Node ${i}"`
-  ).join('\n')
+  const nodesYaml = Array.from({ length: 101 }, (_, i) => `  - id: N${i}\n    label: "Node ${i}"`).join('\n')
   const yamlText = `nodes:\n${nodesYaml}`
   assert.throws(() => parseSpecYaml(yamlText), /Too many nodes/)
 })

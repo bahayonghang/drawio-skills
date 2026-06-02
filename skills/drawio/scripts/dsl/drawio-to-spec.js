@@ -92,9 +92,7 @@ function decodeDiagramContent(content) {
     }
   }
 
-  const message = errors.length > 0
-    ? errors.map(e => e.message).join(' | ')
-    : 'Unknown decode failure'
+  const message = errors.length > 0 ? errors.map((e) => e.message).join(' | ') : 'Unknown decode failure'
   throw new Error(`Could not decode <diagram> content into mxGraphModel XML. ${message}`)
 }
 
@@ -127,11 +125,11 @@ function pickDiagram(diagrams, selector) {
     return diagrams[index]
   }
 
-  const exact = diagrams.find(d => d.name === raw)
+  const exact = diagrams.find((d) => d.name === raw)
   if (exact) return exact
-  const ci = diagrams.find(d => (d.name || '').toLowerCase() === raw.toLowerCase())
+  const ci = diagrams.find((d) => (d.name || '').toLowerCase() === raw.toLowerCase())
   if (ci) return ci
-  const names = diagrams.map(d => d.name || '(unnamed)').join(', ')
+  const names = diagrams.map((d) => d.name || '(unnamed)').join(', ')
   throw new Error(`--page "${raw}" not found. Available page names: ${names}`)
 }
 
@@ -245,10 +243,7 @@ function extractEdgeStyleOverrides(style) {
   const startArrow = style.get('startArrow') || null
   const startFill = style.get('startFill')
 
-  const numericFields = [
-    'exitX', 'exitY', 'exitDx', 'exitDy',
-    'entryX', 'entryY', 'entryDx', 'entryDy'
-  ]
+  const numericFields = ['exitX', 'exitY', 'exitDx', 'exitDy', 'entryX', 'entryY', 'entryDx', 'entryDy']
 
   const overrides = {}
   if (strokeColor) overrides.strokeColor = strokeColor
@@ -314,8 +309,8 @@ export function drawioToSpec(drawioFileText, options = {}) {
     if (cell.id) cellMap.set(cell.id, cell)
   }
 
-  const vertices = cells.filter(c => c.vertex && c.id !== '0' && c.id !== '1')
-  const edges = cells.filter(c => c.edge)
+  const vertices = cells.filter((c) => c.vertex && c.id !== '0' && c.id !== '1')
+  const edges = cells.filter((c) => c.edge)
 
   const verticesByParent = new Map()
   for (const v of vertices) {
@@ -332,7 +327,7 @@ export function drawioToSpec(drawioFileText, options = {}) {
   const moduleCells = new Set()
   for (const v of vertices) {
     const children = verticesByParent.get(v.id)
-    if (children && children.some(child => child.vertex && !isEdgeLabelCell(child))) {
+    if (children && children.some((child) => child.vertex && !isEdgeLabelCell(child))) {
       moduleCells.add(v)
     }
   }
@@ -469,11 +464,7 @@ export function drawioToSpec(drawioFileText, options = {}) {
       else if (labelX >= 0.65) edge.labelPosition = 'end'
       else edge.labelPosition = 'center'
     }
-    if (
-      imported?.offset &&
-      Number.isFinite(imported.offset.x) &&
-      Number.isFinite(imported.offset.y)
-    ) {
+    if (imported?.offset && Number.isFinite(imported.offset.x) && Number.isFinite(imported.offset.y)) {
       edge.labelOffset = { x: imported.offset.x, y: imported.offset.y }
     }
 

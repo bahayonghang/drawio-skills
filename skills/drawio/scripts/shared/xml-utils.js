@@ -27,10 +27,7 @@ const HTML_ENTITIES = {
  */
 export function decodeEntities(str) {
   if (!str) return ''
-  return String(str).replace(
-    /&(?:amp|lt|gt|quot|#39|apos|nbsp);/g,
-    (match) => HTML_ENTITIES[match] || match
-  )
+  return String(str).replace(/&(?:amp|lt|gt|quot|#39|apos|nbsp);/g, (match) => HTML_ENTITIES[match] || match)
 }
 
 /**
@@ -40,11 +37,7 @@ export function decodeEntities(str) {
  */
 export function escapeXml(str) {
   if (!str) return ''
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
 /**
@@ -172,16 +165,18 @@ export function buildCell(cellAttrs, cellBody) {
   const geometryAttrs = geometryMatch ? geometryMatch[1] : geometrySelfMatch ? geometrySelfMatch[1] : null
   const geometryBody = geometryMatch ? geometryMatch[2] : ''
 
-  const geometry = geometryAttrs ? {
-    x: Number(attr(geometryAttrs, 'x')) || 0,
-    y: Number(attr(geometryAttrs, 'y')) || 0,
-    width: Number(attr(geometryAttrs, 'width')) || 0,
-    height: Number(attr(geometryAttrs, 'height')) || 0,
-    relative: attr(geometryAttrs, 'relative') === '1',
-    labelX: attr(geometryAttrs, 'x'),
-    points: parsePoints(geometryBody),
-    offset: parseOffset(geometryBody)
-  } : null
+  const geometry = geometryAttrs
+    ? {
+        x: Number(attr(geometryAttrs, 'x')) || 0,
+        y: Number(attr(geometryAttrs, 'y')) || 0,
+        width: Number(attr(geometryAttrs, 'width')) || 0,
+        height: Number(attr(geometryAttrs, 'height')) || 0,
+        relative: attr(geometryAttrs, 'relative') === '1',
+        labelX: attr(geometryAttrs, 'x'),
+        points: parsePoints(geometryBody),
+        offset: parseOffset(geometryBody)
+      }
+    : null
 
   return {
     id: attr(cellAttrs, 'id'),
@@ -216,7 +211,7 @@ export function extractCells(xml) {
 
   while ((m = selfRegex.exec(xml)) !== null) {
     const pos = m.index
-    const overlaps = matchedRanges.some(r => pos >= r.start && pos < r.end)
+    const overlaps = matchedRanges.some((r) => pos >= r.start && pos < r.end)
     if (overlaps) continue
     cells.push(buildCell(m[1], ''))
   }

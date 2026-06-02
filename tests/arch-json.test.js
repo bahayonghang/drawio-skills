@@ -48,9 +48,7 @@ test('buildArchMetadata omits raw xml/style fields and keeps stable graph metada
       { id: 'api', label: 'API Gateway', type: 'service', style: { fillColor: '#fff' } },
       { id: 'db', label: 'PostgreSQL', type: 'database', module: 'data' }
     ],
-    edges: [
-      { from: 'api', to: 'db', type: 'data', label: 'queries', style: { strokeWidth: 2 } }
-    ],
+    edges: [{ from: 'api', to: 'db', type: 'data', label: 'queries', style: { strokeWidth: 2 } }],
     modules: [{ id: 'data', label: 'Data Layer', color: '$accent' }]
   }
 
@@ -95,9 +93,7 @@ test('buildArchMetadata keeps sanitized replication metadata for replicated spec
         confidenceNotes: ['Footer gradient flattened to a solid cream background']
       }
     },
-    nodes: [
-      { id: 'api', label: 'API Gateway', type: 'service', style: { fillColor: '#FDBA74' } }
-    ],
+    nodes: [{ id: 'api', label: 'API Gateway', type: 'service', style: { fillColor: '#FDBA74' } }],
     edges: [],
     modules: []
   }

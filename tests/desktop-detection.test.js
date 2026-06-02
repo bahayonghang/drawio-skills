@@ -28,7 +28,7 @@ test('detectDrawioDesktop rejects suspicious DRAWIO_CMD values', () => {
       DRAWIO_CMD: 'C:\\tmp\\drawio.exe";--malicious',
       ProgramFiles: 'C:\\Program Files'
     },
-    exists: candidate => candidate === 'C:\\Program Files\\draw.io\\draw.io.exe'
+    exists: (candidate) => candidate === 'C:\\Program Files\\draw.io\\draw.io.exe'
   })
 
   assert.equal(detection.executable, 'C:\\Program Files\\draw.io\\draw.io.exe')

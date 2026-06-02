@@ -48,9 +48,9 @@ function parseMermaidNodeToken(token) {
   const id = normalizeId(rawId)
   const label = decoration
     ? decoration
-      .replace(/^[\[\(\{>:"]+/, '')
-      .replace(/[\]\)\}"]+$/, '')
-      .trim()
+        .replace(/^[\[\(\{>:"]+/, '')
+        .replace(/[\]\)\}"]+$/, '')
+        .trim()
     : rawId
 
   let type = inferNodeType(label)
@@ -85,25 +85,22 @@ function pushNode(nodeMap, nodes, node) {
  * engine matches them before shorter prefixes.
  */
 const ARROW_TYPE_MAP = [
-  { pattern: '-.->',  type: 'data' },
-  { pattern: '===>',  type: 'primary' },
-  { pattern: '==>',   type: 'primary' },
-  { pattern: '-->>',  type: 'primary' },
-  { pattern: '->>',   type: 'primary' },
-  { pattern: '--x',   type: 'optional' },
-  { pattern: '-->',   type: 'primary' },
-  { pattern: '---',   type: 'bidirectional' },
-  { pattern: '->',    type: 'primary' },
+  { pattern: '-.->', type: 'data' },
+  { pattern: '===>', type: 'primary' },
+  { pattern: '==>', type: 'primary' },
+  { pattern: '-->>', type: 'primary' },
+  { pattern: '->>', type: 'primary' },
+  { pattern: '--x', type: 'optional' },
+  { pattern: '-->', type: 'primary' },
+  { pattern: '---', type: 'bidirectional' },
+  { pattern: '->', type: 'primary' }
 ]
 
 function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-const ARROW_SPLIT_RE = new RegExp(
-  ARROW_TYPE_MAP.map(a => escapeRegex(a.pattern)).join('|'),
-  'g'
-)
+const ARROW_SPLIT_RE = new RegExp(ARROW_TYPE_MAP.map((a) => escapeRegex(a.pattern)).join('|'), 'g')
 
 function splitMermaidArrow(line) {
   const cleaned = line.replace(/\|[^|]+\|/g, ' ')
@@ -113,11 +110,14 @@ function splitMermaidArrow(line) {
   let m
   const re = new RegExp(ARROW_SPLIT_RE.source, 'g')
   while ((m = re.exec(cleaned)) !== null) {
-    const mapped = ARROW_TYPE_MAP.find(a => a.pattern === m[0])
+    const mapped = ARROW_TYPE_MAP.find((a) => a.pattern === m[0])
     arrows.push(mapped ? mapped.type : 'primary')
   }
 
-  const parts = cleaned.split(ARROW_SPLIT_RE).map(part => part.trim()).filter(Boolean)
+  const parts = cleaned
+    .split(ARROW_SPLIT_RE)
+    .map((part) => part.trim())
+    .filter(Boolean)
   return { parts, arrows }
 }
 
@@ -227,7 +227,10 @@ function parseClassDiagram(text, profile = 'default') {
     const line = rawLine.trim()
     if (!line || /^classdiagram$/i.test(line) || line === '}') continue
     if (/^class\s+/i.test(line)) {
-      const name = line.replace(/^class\s+/i, '').replace(/\s*\{.*/, '').trim()
+      const name = line
+        .replace(/^class\s+/i, '')
+        .replace(/\s*\{.*/, '')
+        .trim()
       const id = normalizeId(name)
       pushNode(nodeMap, nodes, { id, label: name, type: 'service' })
       continue
@@ -262,7 +265,8 @@ function parseStateDiagram(text, profile = 'default') {
     const rel = line.match(/^(.+?)\s*-->\s*(.+?)(?:\s*:\s*(.+))?$/)
     if (!rel) continue
     const [, rawFrom, rawTo, label] = rel
-    const fromToken = rawFrom === '[*]' ? { id: 'Start', label: 'Start', type: 'terminal' } : parseMermaidNodeToken(rawFrom)
+    const fromToken =
+      rawFrom === '[*]' ? { id: 'Start', label: 'Start', type: 'terminal' } : parseMermaidNodeToken(rawFrom)
     const toToken = rawTo === '[*]' ? { id: 'End', label: 'End', type: 'terminal' } : parseMermaidNodeToken(rawTo)
     pushNode(nodeMap, nodes, fromToken)
     pushNode(nodeMap, nodes, toToken)
@@ -346,7 +350,7 @@ function parseGantt(text, profile = 'default') {
 export function parseMermaidToSpec(text, { profile = 'default' } = {}) {
   const firstLine = text
     .split(/\r?\n/)
-    .map(line => line.trim())
+    .map((line) => line.trim())
     .find(Boolean)
 
   if (!firstLine) {
@@ -398,14 +402,14 @@ function splitCsvLine(line) {
 export function parseCsvToSpec(text, { profile = 'default' } = {}) {
   const rows = text
     .split(/\r?\n/)
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith('#'))
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'))
 
   if (rows.length < 2) {
     throw new Error('CSV input must include a header row and at least one data row')
   }
 
-  const headers = splitCsvLine(rows[0]).map(cell => cell.trim())
+  const headers = splitCsvLine(rows[0]).map((cell) => cell.trim())
   if (!headers.includes('name') || !headers.includes('parent')) {
     throw new Error('CSV input must include "name" and "parent" columns')
   }

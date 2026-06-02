@@ -28,10 +28,7 @@ test('ahToDrawioXml emits numeric mxCell ids and numeric edge references', () =>
     'all mxCell ids should be numeric'
   )
 
-  const edgeRefs = [...xml.matchAll(/source="([^"]+)" target="([^"]+)"/g)].flatMap((m) => [
-    m[1],
-    m[2]
-  ])
+  const edgeRefs = [...xml.matchAll(/source="([^"]+)" target="([^"]+)"/g)].flatMap((m) => [m[1], m[2]])
   assert.ok(edgeRefs.length > 0)
   assert.deepEqual(
     edgeRefs.filter((v) => !/^\d+$/.test(v)),

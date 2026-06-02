@@ -241,11 +241,14 @@ describe('generateNodeStyle', () => {
   })
 
   it('should allow style overrides', () => {
-    const style = generateNodeStyle({
-      id: 'n3',
-      label: 'Custom',
-      style: { fillColor: '#FF0000' }
-    }, theme)
+    const style = generateNodeStyle(
+      {
+        id: 'n3',
+        label: 'Custom',
+        style: { fillColor: '#FF0000' }
+      },
+      theme
+    )
     assert.ok(style.includes('fillColor=#FF0000'), 'should contain custom fillColor')
   })
 })
@@ -254,8 +257,22 @@ describe('generateConnectorStyle', () => {
   const theme = {
     connector: {
       primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
-      data: { strokeColor: '#1E293B', strokeWidth: 2, dashed: true, dashPattern: '6 4', endArrow: 'block', endFill: true },
-      optional: { strokeColor: '#64748B', strokeWidth: 1, dashed: true, dashPattern: '2 2', endArrow: 'open', endFill: false }
+      data: {
+        strokeColor: '#1E293B',
+        strokeWidth: 2,
+        dashed: true,
+        dashPattern: '6 4',
+        endArrow: 'block',
+        endFill: true
+      },
+      optional: {
+        strokeColor: '#64748B',
+        strokeWidth: 1,
+        dashed: true,
+        dashPattern: '2 2',
+        endArrow: 'open',
+        endFill: false
+      }
     }
   }
 
@@ -350,15 +367,18 @@ describe('generateModuleStyle', () => {
         labelFontColor: '#111827'
       }
     }
-    const style = generateModuleStyle({
-      id: 'm1',
-      label: 'Token Module',
-      color: '$accentLight',
-      style: {
-        strokeColor: '$accent',
-        fontColor: '$text'
-      }
-    }, theme)
+    const style = generateModuleStyle(
+      {
+        id: 'm1',
+        label: 'Token Module',
+        color: '$accentLight',
+        style: {
+          strokeColor: '$accent',
+          fontColor: '$text'
+        }
+      },
+      theme
+    )
     assert.ok(style.includes('fillColor=#EDE9FE'), 'module fill should resolve token values')
     assert.ok(style.includes('strokeColor=#7C3AED'), 'module stroke should resolve token values')
     assert.ok(style.includes('fontColor=#1E293B'), 'module font color should resolve token values')
@@ -426,8 +446,8 @@ describe('calculateLayout', () => {
     const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
     const { positions } = calculateLayout(spec, theme)
 
-    const xs = [...positions.values()].map(pos => pos.x)
-    const ys = [...positions.values()].map(pos => pos.y)
+    const xs = [...positions.values()].map((pos) => pos.x)
+    const ys = [...positions.values()].map((pos) => pos.y)
     assert.ok(new Set(xs).size > 2, 'mesh layout should spread x positions')
     assert.ok(new Set(ys).size > 2, 'mesh layout should spread y positions')
   })
@@ -447,11 +467,11 @@ describe('calculateLayout', () => {
 
     assert.ok(modulePositions.has('vpc'), 'star layout should include module bounds')
     const modulePos = modulePositions.get('vpc')
-    const nodeBounds = ['internet', 'core', 'app'].map(id => positions.get(id))
+    const nodeBounds = ['internet', 'core', 'app'].map((id) => positions.get(id))
     assert.ok(modulePos.width > 0, 'module width should be positive')
     assert.ok(modulePos.height > 0, 'module height should be positive')
-    assert.ok(modulePos.x <= Math.min(...nodeBounds.map(pos => pos.x)), 'module should start before child nodes')
-    assert.ok(modulePos.y <= Math.min(...nodeBounds.map(pos => pos.y)), 'module should start above child nodes')
+    assert.ok(modulePos.x <= Math.min(...nodeBounds.map((pos) => pos.x)), 'module should start before child nodes')
+    assert.ok(modulePos.y <= Math.min(...nodeBounds.map((pos) => pos.y)), 'module should start above child nodes')
   })
 
   it('should calculate module containers for mesh layouts with manual nodes', () => {
@@ -487,24 +507,28 @@ describe('calculateLayout', () => {
 describe('checkComplexity', () => {
   it('should warn when node count exceeds threshold', () => {
     const spec = {
-      nodes: Array(25).fill(null).map((_, i) => ({ id: `n${i}`, label: `Node ${i}` })),
+      nodes: Array(25)
+        .fill(null)
+        .map((_, i) => ({ id: `n${i}`, label: `Node ${i}` })),
       edges: []
     }
     const warnings = checkComplexity(spec)
     assert.ok(
-      warnings.some(w => w.level === 'warning' && w.message.includes('nodes')),
+      warnings.some((w) => w.level === 'warning' && w.message.includes('nodes')),
       'should have warning about nodes'
     )
   })
 
   it('should error when node count is very high', () => {
     const spec = {
-      nodes: Array(35).fill(null).map((_, i) => ({ id: `n${i}`, label: `Node ${i}` })),
+      nodes: Array(35)
+        .fill(null)
+        .map((_, i) => ({ id: `n${i}`, label: `Node ${i}` })),
       edges: []
     }
     const warnings = checkComplexity(spec)
     assert.ok(
-      warnings.some(w => w.level === 'error' && w.message.includes('nodes')),
+      warnings.some((w) => w.level === 'error' && w.message.includes('nodes')),
       'should have error about nodes'
     )
   })
@@ -516,7 +540,7 @@ describe('checkComplexity', () => {
     }
     const warnings = checkComplexity(spec)
     assert.ok(
-      warnings.some(w => w.level === 'info' && w.message.includes('long')),
+      warnings.some((w) => w.level === 'info' && w.message.includes('long')),
       'should have info about long labels'
     )
   })
@@ -546,9 +570,7 @@ describe('specToDrawioXml', () => {
         { id: 'n1', label: 'API Gateway', type: 'service' },
         { id: 'n2', label: 'Database', type: 'database' }
       ],
-      edges: [
-        { from: 'n1', to: 'n2', type: 'data', label: 'Query' }
-      ]
+      edges: [{ from: 'n1', to: 'n2', type: 'data', label: 'Query' }]
     }
 
     const xml = specToDrawioXml(spec)
@@ -648,15 +670,20 @@ describe('specToDrawioXml', () => {
 
   it('should generate vendor-derived icon shapes when icon field is absent', () => {
     const theme = {
-      node: { default: { fillColor: '#DBEAFE', strokeColor: '#2563EB', strokeWidth: 1.5, fontColor: '#1E293B', fontSize: 13 } },
+      node: {
+        default: { fillColor: '#DBEAFE', strokeColor: '#2563EB', strokeWidth: 1.5, fontColor: '#1E293B', fontSize: 13 }
+      },
       typography: { fontFamily: { primary: 'Inter, sans-serif' } }
     }
-    const style = generateNodeStyle({
-      id: 'fw',
-      label: 'Cisco Firewall',
-      type: 'firewall',
-      network: { vendor: 'cisco', device: 'firewall' }
-    }, theme)
+    const style = generateNodeStyle(
+      {
+        id: 'fw',
+        label: 'Cisco Firewall',
+        type: 'firewall',
+        network: { vendor: 'cisco', device: 'firewall' }
+      },
+      theme
+    )
     assert.ok(style.includes('shape=mxgraph.cisco.firewalls.firewall'), 'should use vendor-derived stencil shape')
   })
 
@@ -675,7 +702,10 @@ describe('specToDrawioXml', () => {
       () => specToDrawioXml(spec, { strict: true }),
       (err) => {
         assert.ok(err instanceof Error)
-        assert.ok(err.message.includes('Complexity check failed'), `Expected "Complexity check failed" in: ${err.message}`)
+        assert.ok(
+          err.message.includes('Complexity check failed'),
+          `Expected "Complexity check failed" in: ${err.message}`
+        )
         return true
       }
     )
@@ -701,7 +731,10 @@ describe('specToDrawioXml', () => {
     assert.ok(typeof result.xml === 'string', 'result.xml should be a string')
     assert.ok(Array.isArray(result.warnings), 'result.warnings should be an array')
     assert.ok(result.warnings.length > 0, 'should have at least one warning')
-    assert.ok(result.warnings.every(w => w.level === 'warning' || w.level === 'error'), 'warnings should have level field')
+    assert.ok(
+      result.warnings.every((w) => w.level === 'warning' || w.level === 'error'),
+      'warnings should have level field'
+    )
   })
 
   it('returnWarnings with 2 nodes: returns { xml, warnings } where warnings.length === 0', () => {
@@ -945,10 +978,15 @@ describe('Phase 2.1: startArrow/startFill rendering', () => {
 
   it('edge with style override for startArrow should use it', () => {
     const theme = loadTheme('tech-blue')
-    const style = generateConnectorStyle({
-      from: 'a', to: 'b', type: 'primary',
-      style: { startArrow: 'oval', startFill: false }
-    }, theme)
+    const style = generateConnectorStyle(
+      {
+        from: 'a',
+        to: 'b',
+        type: 'primary',
+        style: { startArrow: 'oval', startFill: false }
+      },
+      theme
+    )
     assert.ok(style.includes('startArrow=oval'), 'should contain startArrow=oval')
     assert.ok(style.includes('startFill=0'), 'should contain startFill=0')
   })
@@ -962,9 +1000,7 @@ describe('Phase 2.2: manual node positioning', () => {
   it('node with position should be snapped to grid at specified coordinates', () => {
     const spec = {
       meta: { layout: 'horizontal' },
-      nodes: [
-        { id: 'n1', label: 'Manual Node', position: { x: 100, y: 200 } }
-      ]
+      nodes: [{ id: 'n1', label: 'Manual Node', position: { x: 100, y: 200 } }]
     }
     const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
     const { positions } = calculateLayout(spec, theme)
@@ -996,9 +1032,7 @@ describe('Phase 2.2: manual node positioning', () => {
   it('node without position property is auto-laid out as usual', () => {
     const spec = {
       meta: { layout: 'horizontal' },
-      nodes: [
-        { id: 'n1', label: 'Auto Only' }
-      ]
+      nodes: [{ id: 'n1', label: 'Auto Only' }]
     }
     const theme = { canvas: { gridSize: 8 }, module: { padding: 24 } }
     const { positions } = calculateLayout(spec, theme)
@@ -1111,7 +1145,10 @@ describe('Phase 2.3b: text fidelity', () => {
     }
 
     const xml = specToDrawioXml(spec)
-    assert.ok(xml.includes('shape=text') || xml.includes('rounded=1'), 'formula nodes should remain dedicated annotation nodes')
+    assert.ok(
+      xml.includes('shape=text') || xml.includes('rounded=1'),
+      'formula nodes should remain dedicated annotation nodes'
+    )
     assert.ok(xml.includes('fontFamily=Times New Roman, serif'), 'formula nodes should preserve serif typography')
     assert.ok(xml.includes('fontStyle=2'), 'formula nodes should preserve italic styling')
   })
@@ -1140,22 +1177,24 @@ describe('Phase 2.3b: text fidelity', () => {
 
   it('should validate explicit text bounds and label offsets', () => {
     assert.throws(
-      () => validateSpec({
-        meta: {},
-        nodes: [{ id: 'n1', label: 'Note', bounds: { x: 10, y: 10, width: 0, height: 20 } }],
-        edges: [],
-        modules: []
-      }),
+      () =>
+        validateSpec({
+          meta: {},
+          nodes: [{ id: 'n1', label: 'Note', bounds: { x: 10, y: 10, width: 0, height: 20 } }],
+          edges: [],
+          modules: []
+        }),
       /bounds width and height must be greater than 0/
     )
 
     assert.throws(
-      () => validateSpec({
-        meta: {},
-        nodes: [{ id: 'n1', label: 'Note' }],
-        edges: [{ from: 'n1', to: 'n2', label: 'flow', labelOffset: { x: 'bad', y: 8 } }],
-        modules: []
-      }),
+      () =>
+        validateSpec({
+          meta: {},
+          nodes: [{ id: 'n1', label: 'Note' }],
+          edges: [{ from: 'n1', to: 'n2', label: 'flow', labelOffset: { x: 'bad', y: 8 } }],
+          modules: []
+        }),
       /labelOffset must have numeric x and y/
     )
   })
@@ -1269,8 +1308,14 @@ describe('validateXml', () => {
       '</mxGraphModel>'
     const result = validateXml(xml)
     assert.strictEqual(result.valid, false, 'should be invalid')
-    assert.ok(result.errors.some(e => e.includes('id="0"')), 'should report missing id=0 cell')
-    assert.ok(result.errors.some(e => e.includes('id="1"')), 'should report missing id=1 cell')
+    assert.ok(
+      result.errors.some((e) => e.includes('id="0"')),
+      'should report missing id=0 cell'
+    )
+    assert.ok(
+      result.errors.some((e) => e.includes('id="1"')),
+      'should report missing id=1 cell'
+    )
   })
 
   it('should return errors for duplicate cell IDs', () => {
@@ -1285,7 +1330,10 @@ describe('validateXml', () => {
       '</mxGraphModel>'
     const result = validateXml(xml)
     assert.strictEqual(result.valid, false, 'should be invalid')
-    assert.ok(result.errors.some(e => e.includes('Duplicate') && e.includes('"2"')), 'should report duplicate ID 2')
+    assert.ok(
+      result.errors.some((e) => e.includes('Duplicate') && e.includes('"2"')),
+      'should report duplicate ID 2'
+    )
   })
 
   it('should return errors when edge references nonexistent source', () => {
@@ -1303,7 +1351,7 @@ describe('validateXml', () => {
     const result = validateXml(xml)
     assert.strictEqual(result.valid, false, 'should be invalid')
     assert.ok(
-      result.errors.some(e => e.includes('source') && e.includes('"999"')),
+      result.errors.some((e) => e.includes('source') && e.includes('"999"')),
       'should report nonexistent source ID'
     )
   })
@@ -1358,7 +1406,11 @@ describe('calculateLayout additional layouts', () => {
     assert.ok(pos1, 'should have position for n1')
     assert.ok(pos2, 'should have position for n2')
     // In vertical layout, modules are stacked: Y values differ between modules
-    assert.notStrictEqual(pos1.y, pos2.y, 'vertical layout nodes in different modules should have different Y positions')
+    assert.notStrictEqual(
+      pos1.y,
+      pos2.y,
+      'vertical layout nodes in different modules should have different Y positions'
+    )
   })
 
   it('hierarchical layout: 4 nodes are arranged in a grid pattern', () => {
@@ -1386,8 +1438,8 @@ describe('calculateLayout additional layouts', () => {
     }
 
     // Should have at least 2 distinct X or Y values (grid pattern)
-    const xs = new Set([...positions.values()].map(p => p.x))
-    const ys = new Set([...positions.values()].map(p => p.y))
+    const xs = new Set([...positions.values()].map((p) => p.x))
+    const ys = new Set([...positions.values()].map((p) => p.y))
     assert.ok(xs.size > 1 || ys.size > 1, 'hierarchical layout should use multiple X or Y positions')
   })
 })
@@ -1414,9 +1466,7 @@ describe('specToDrawioXml additional integration tests', () => {
   it('dark theme produces XML with dark background color (#0F172A)', () => {
     const spec = {
       meta: { theme: 'dark' },
-      nodes: [
-        { id: 'n1', label: 'Service A', type: 'service' }
-      ],
+      nodes: [{ id: 'n1', label: 'Service A', type: 'service' }],
       edges: []
     }
     const xml = specToDrawioXml(spec)
@@ -1427,9 +1477,7 @@ describe('specToDrawioXml additional integration tests', () => {
     const spec = {
       meta: { theme: 'tech-blue' },
       modules: [{ id: 'm1', label: 'MyBackend' }],
-      nodes: [
-        { id: 'n1', label: 'Service', module: 'm1' }
-      ],
+      nodes: [{ id: 'n1', label: 'Service', module: 'm1' }],
       edges: []
     }
     const xml = specToDrawioXml(spec)
@@ -1456,10 +1504,7 @@ describe('specToDrawioXml additional integration tests', () => {
         edges: [{ from: 'n1', to: 'n2', type }]
       }
       const xml = specToDrawioXml(spec)
-      assert.ok(
-        xml.includes(expectedArrow),
-        `edge type "${type}" should produce "${expectedArrow}" in XML`
-      )
+      assert.ok(xml.includes(expectedArrow), `edge type "${type}" should produce "${expectedArrow}" in XML`)
     }
   })
 })
@@ -1553,7 +1598,10 @@ describe('validateColorScheme', () => {
 
   it('returns a warning for an invalid strokeColor on an edge', () => {
     const spec = {
-      nodes: [{ id: 'n1', label: 'A' }, { id: 'n2', label: 'B' }],
+      nodes: [
+        { id: 'n1', label: 'A' },
+        { id: 'n2', label: 'B' }
+      ],
       edges: [{ from: 'n1', to: 'n2', style: { strokeColor: 'red' } }],
       modules: []
     }
@@ -1584,9 +1632,7 @@ describe('validateColorScheme', () => {
 
   it('returns multiple warnings for multiple invalid values', () => {
     const spec = {
-      nodes: [
-        { id: 'n1', label: 'A', style: { fillColor: 'bad1', strokeColor: 'bad2' } }
-      ],
+      nodes: [{ id: 'n1', label: 'A', style: { fillColor: 'bad1', strokeColor: 'bad2' } }],
       edges: [],
       modules: []
     }
@@ -1715,7 +1761,7 @@ describe('validateLayoutConsistency', () => {
       ]
     }
     const warnings = validateLayoutConsistency(spec)
-    const overlapWarning = warnings.find(w => w.includes('overlap'))
+    const overlapWarning = warnings.find((w) => w.includes('overlap'))
     assert.ok(overlapWarning, 'should warn about node overlap')
     assert.ok(overlapWarning.includes('"n1"') && overlapWarning.includes('"n2"'))
   })
@@ -1729,17 +1775,18 @@ describe('validateLayoutConsistency', () => {
       ]
     }
     // distance = 200px — well above MIN_CLEARANCE
-    const warnings = validateLayoutConsistency(spec).filter(w => w.includes('overlap'))
+    const warnings = validateLayoutConsistency(spec).filter((w) => w.includes('overlap'))
     assert.deepStrictEqual(warnings, [])
   })
 
   it('skips overlap check when nodes exceed 30 (performance guard)', () => {
     const nodes = Array.from({ length: 31 }, (_, i) => ({
-      id: `n${i}`, label: `N${i}`,
-      position: { x: i * 5, y: i * 5 }  // would overlap if checked
+      id: `n${i}`,
+      label: `N${i}`,
+      position: { x: i * 5, y: i * 5 } // would overlap if checked
     }))
     const spec = { meta: { layout: 'horizontal' }, nodes }
-    const warnings = validateLayoutConsistency(spec).filter(w => w.includes('overlap'))
+    const warnings = validateLayoutConsistency(spec).filter((w) => w.includes('overlap'))
     assert.deepStrictEqual(warnings, [], 'overlap check should be skipped for > 30 nodes')
   })
 })
@@ -1759,7 +1806,7 @@ describe('specToDrawioXml validation integration', () => {
     }
     const result = specToDrawioXml(spec, { returnWarnings: true, silent: true })
     assert.ok(result.xml, 'should still produce XML despite warnings')
-    const colorWarning = result.warnings.find(w => w.message?.includes('invalid-color'))
+    const colorWarning = result.warnings.find((w) => w.message?.includes('invalid-color'))
     assert.ok(colorWarning, 'should include color warning in returned warnings')
   })
 

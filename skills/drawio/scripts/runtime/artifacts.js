@@ -28,17 +28,13 @@ function getDrawioPath(outputFile) {
 }
 
 function stripDrawioSuffix(drawioPath) {
-  return drawioPath.toLowerCase().endsWith('.drawio')
-    ? drawioPath.slice(0, -'.drawio'.length)
-    : drawioPath
+  return drawioPath.toLowerCase().endsWith('.drawio') ? drawioPath.slice(0, -'.drawio'.length) : drawioPath
 }
 
 function compactObject(value) {
   return Object.fromEntries(
-    Object.entries(value).filter(([, fieldValue]) =>
-      fieldValue !== undefined &&
-      fieldValue !== null &&
-      fieldValue !== ''
+    Object.entries(value).filter(
+      ([, fieldValue]) => fieldValue !== undefined && fieldValue !== null && fieldValue !== ''
     )
   )
 }
@@ -50,18 +46,20 @@ function buildReplicationMetadata(replication) {
 
   const palette = Array.isArray(replication.palette)
     ? replication.palette
-        .map(entry => compactObject({
-          hex: entry?.hex,
-          role: entry?.role,
-          appliesTo: entry?.appliesTo,
-          confidence: entry?.confidence,
-          notes: entry?.notes
-        }))
-        .filter(entry => Object.keys(entry).length > 0)
+        .map((entry) =>
+          compactObject({
+            hex: entry?.hex,
+            role: entry?.role,
+            appliesTo: entry?.appliesTo,
+            confidence: entry?.confidence,
+            notes: entry?.notes
+          })
+        )
+        .filter((entry) => Object.keys(entry).length > 0)
     : []
 
   const confidenceNotes = Array.isArray(replication.confidenceNotes)
-    ? replication.confidenceNotes.filter(note => typeof note === 'string' && note.trim() !== '')
+    ? replication.confidenceNotes.filter((note) => typeof note === 'string' && note.trim() !== '')
     : []
 
   const summary = compactObject({
@@ -104,9 +102,7 @@ export function serializeSpecYaml(spec) {
 
 export function buildArchMetadata(spec, { outputFile } = {}) {
   const artifactPaths = outputFile ? deriveArtifactPaths(outputFile) : null
-  const fallbackTitle = artifactPaths
-    ? basename(artifactPaths.stem)
-    : 'diagram'
+  const fallbackTitle = artifactPaths ? basename(artifactPaths.stem) : 'diagram'
   const replication = buildReplicationMetadata(spec.meta?.replication)
 
   const arch = {
@@ -122,27 +118,33 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
       edges: spec.edges?.length || 0,
       modules: spec.modules?.length || 0
     },
-    nodes: (spec.nodes || []).map(node => compactObject({
-      id: node.id,
-      label: node.label,
-      type: node.type || 'service',
-      module: node.module,
-      icon: node.icon,
-      size: node.size
-    })),
-    edges: (spec.edges || []).map((edge, index) => compactObject({
-      id: edge.id || `edge-${index + 1}`,
-      from: edge.from,
-      to: edge.to,
-      type: edge.type || 'primary',
-      label: edge.label,
-      bidirectional: edge.bidirectional ? true : undefined
-    })),
-    modules: (spec.modules || []).map(module => compactObject({
-      id: module.id,
-      label: module.label,
-      color: module.color
-    }))
+    nodes: (spec.nodes || []).map((node) =>
+      compactObject({
+        id: node.id,
+        label: node.label,
+        type: node.type || 'service',
+        module: node.module,
+        icon: node.icon,
+        size: node.size
+      })
+    ),
+    edges: (spec.edges || []).map((edge, index) =>
+      compactObject({
+        id: edge.id || `edge-${index + 1}`,
+        from: edge.from,
+        to: edge.to,
+        type: edge.type || 'primary',
+        label: edge.label,
+        bidirectional: edge.bidirectional ? true : undefined
+      })
+    ),
+    modules: (spec.modules || []).map((module) =>
+      compactObject({
+        id: module.id,
+        label: module.label,
+        color: module.color
+      })
+    )
   }
 
   if (replication) {

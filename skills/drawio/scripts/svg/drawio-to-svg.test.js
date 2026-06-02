@@ -269,10 +269,7 @@ describe('drawioToSvg', () => {
 
   it('should render edges between nodes', () => {
     const svg = drawioToSvg(BASIC_TWO_NODES_ONE_EDGE)
-    assert.ok(
-      svg.includes('<line') || svg.includes('<path'),
-      'Edge should produce a <line or <path element'
-    )
+    assert.ok(svg.includes('<line') || svg.includes('<path'), 'Edge should produce a <line or <path element')
   })
 
   it('should include arrow marker definition for endArrow=block', () => {
@@ -306,10 +303,7 @@ describe('drawioToSvg', () => {
 
   it('should include marker-start when startArrow is specified', () => {
     const svg = drawioToSvg(EDGE_WITH_START_ARROW)
-    assert.ok(
-      svg.includes('marker-start'),
-      'Output should contain marker-start attribute when startArrow is set'
-    )
+    assert.ok(svg.includes('marker-start'), 'Output should contain marker-start attribute when startArrow is set')
   })
 
   // --- Multi-edge and arrow type tests ---
@@ -478,10 +472,7 @@ describe('drawioToSvg', () => {
   </root>
 </mxGraphModel>`
     const svg = drawioToSvg(xml)
-    assert.ok(
-      svg.includes('fill="#E0F2FE"'),
-      'Background color should render as <rect> with matching fill'
-    )
+    assert.ok(svg.includes('fill="#E0F2FE"'), 'Background color should render as <rect> with matching fill')
   })
 
   it('should throw Error on null input', () => {

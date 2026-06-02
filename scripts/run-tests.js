@@ -57,10 +57,7 @@ function main() {
   logger.info('开始运行项目测试集...')
 
   // 2.1 收集仓库级和 skill 级测试
-  const files = [
-    ...collectTestFiles('tests'),
-    ...collectTestFiles('skills')
-  ].sort()
+  const files = [...collectTestFiles('tests'), ...collectTestFiles('skills')].sort()
 
   // 2.2 缩短输出路径，便于失败时定位
   for (const file of files) {

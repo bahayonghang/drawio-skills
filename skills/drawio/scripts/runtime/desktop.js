@@ -46,19 +46,9 @@ export function listDrawioDesktopCandidates({ platform = process.platform, env =
     }
     candidates.push('draw.io.exe', 'drawio.exe')
   } else if (platform === 'darwin') {
-    candidates.push(
-      '/Applications/draw.io.app/Contents/MacOS/draw.io',
-      'draw.io',
-      'drawio'
-    )
+    candidates.push('/Applications/draw.io.app/Contents/MacOS/draw.io', 'draw.io', 'drawio')
   } else {
-    candidates.push(
-      '/usr/bin/drawio',
-      '/usr/local/bin/drawio',
-      '/snap/bin/drawio',
-      'drawio',
-      'draw.io'
-    )
+    candidates.push('/usr/bin/drawio', '/usr/local/bin/drawio', '/snap/bin/drawio', 'drawio', 'draw.io')
   }
 
   return uniq(candidates)
@@ -93,13 +83,7 @@ export function isDesktopExportFormat(format) {
   return EXPORTABLE_FORMATS.has(String(format || '').toLowerCase())
 }
 
-export function buildDrawioExportArgs({
-  inputFile,
-  outputFile,
-  format,
-  embedDiagram = true,
-  border = 10
-}) {
+export function buildDrawioExportArgs({ inputFile, outputFile, format, embedDiagram = true, border = 10 }) {
   const normalizedFormat = String(format).toLowerCase()
   const args = ['-x', '-f', normalizedFormat]
 
@@ -141,18 +125,14 @@ export function exportWithDrawioDesktop({
         failures.push(executable)
         continue
       }
-      throw new Error(
-        `draw.io Desktop export failed via "${executable}": ${error.message}`
-      )
+      throw new Error(`draw.io Desktop export failed via "${executable}": ${error.message}`)
     }
   }
 
-  const checked = failures.length > 0
-    ? failures.join(', ')
-    : listDrawioDesktopCandidates({ platform, env }).join(', ')
+  const checked = failures.length > 0 ? failures.join(', ') : listDrawioDesktopCandidates({ platform, env }).join(', ')
   throw new Error(
     `draw.io Desktop CLI was not found. Checked: ${checked}. ` +
-    'Install draw.io Desktop or set DRAWIO_CMD to an absolute executable path.'
+      'Install draw.io Desktop or set DRAWIO_CMD to an absolute executable path.'
   )
 }
 
@@ -164,9 +144,7 @@ export function openWithDrawioDesktop({
 }) {
   const desktop = detectDrawioDesktop({ env, platform, exists })
   if (!desktop) {
-    throw new Error(
-      'draw.io Desktop CLI was not found. Install draw.io Desktop or set DRAWIO_CMD.'
-    )
+    throw new Error('draw.io Desktop CLI was not found. Install draw.io Desktop or set DRAWIO_CMD.')
   }
 
   execFile(desktop.executable, [filePath], {

@@ -126,7 +126,8 @@ function patchPackageLockText(text, version) {
   let updated = text
 
   const topLevelRe = /("name"\s*:\s*"drawio-skills"\s*,\s*\r?\n\s*)"version"\s*:\s*"[^"]+"/m
-  const packagesRootRe = /("packages"\s*:\s*\{\s*\r?\n\s*"":\s*\{\s*\r?\n\s*"name"\s*:\s*"drawio-skills"\s*,\s*\r?\n\s*)"version"\s*:\s*"[^"]+"/m
+  const packagesRootRe =
+    /("packages"\s*:\s*\{\s*\r?\n\s*"":\s*\{\s*\r?\n\s*"name"\s*:\s*"drawio-skills"\s*,\s*\r?\n\s*)"version"\s*:\s*"[^"]+"/m
 
   let replacements = 0
   updated = updated.replace(topLevelRe, (_m, prefix) => {
@@ -157,7 +158,10 @@ function readAllVersions() {
 
   const lockText = readText(PATHS.packageLock)
   const lockTop = /"name"\s*:\s*"drawio-skills"\s*,\s*\r?\n\s*"version"\s*:\s*"([^"]+)"/m.exec(lockText)?.[1] || null
-  const lockPackages = /"packages"\s*:\s*\{\s*\r?\n\s*"":\s*\{\s*\r?\n\s*"name"\s*:\s*"drawio-skills"\s*,\s*\r?\n\s*"version"\s*:\s*"([^"]+)"/m.exec(lockText)?.[1] || null
+  const lockPackages =
+    /"packages"\s*:\s*\{\s*\r?\n\s*"":\s*\{\s*\r?\n\s*"name"\s*:\s*"drawio-skills"\s*,\s*\r?\n\s*"version"\s*:\s*"([^"]+)"/m.exec(
+      lockText
+    )?.[1] || null
 
   const skillText = readText(PATHS.skillMd)
   const skillVersion = getSkillVersion(skillText)
@@ -185,16 +189,21 @@ function main() {
   const versions = readAllVersions()
   const mismatches = []
 
-  if (versions.packageVersion !== targetVersion) mismatches.push(`package.json: ${versions.packageVersion} != ${targetVersion}`)
-  if (versions.lockTop !== targetVersion) mismatches.push(`package-lock.json (root): ${versions.lockTop} != ${targetVersion}`)
-  if (versions.lockPackages !== targetVersion) mismatches.push(`package-lock.json (packages[""]): ${versions.lockPackages} != ${targetVersion}`)
-  if (versions.skillVersion !== targetVersion) mismatches.push(`skills/drawio/SKILL.md: ${versions.skillVersion} != ${targetVersion}`)
-  if (versions.evalsVersion !== targetVersion) mismatches.push(`skills/drawio/evals/evals.json: ${versions.evalsVersion} != ${targetVersion}`)
+  if (versions.packageVersion !== targetVersion)
+    mismatches.push(`package.json: ${versions.packageVersion} != ${targetVersion}`)
+  if (versions.lockTop !== targetVersion)
+    mismatches.push(`package-lock.json (root): ${versions.lockTop} != ${targetVersion}`)
+  if (versions.lockPackages !== targetVersion)
+    mismatches.push(`package-lock.json (packages[""]): ${versions.lockPackages} != ${targetVersion}`)
+  if (versions.skillVersion !== targetVersion)
+    mismatches.push(`skills/drawio/SKILL.md: ${versions.skillVersion} != ${targetVersion}`)
+  if (versions.evalsVersion !== targetVersion)
+    mismatches.push(`skills/drawio/evals/evals.json: ${versions.evalsVersion} != ${targetVersion}`)
 
   if (check) {
     if (mismatches.length > 0) {
       // eslint-disable-next-line no-console
-      console.error('Version mismatch detected:\n' + mismatches.map(m => `- ${m}`).join('\n'))
+      console.error('Version mismatch detected:\n' + mismatches.map((m) => `- ${m}`).join('\n'))
       process.exit(1)
     }
     // eslint-disable-next-line no-console
@@ -234,13 +243,9 @@ function main() {
   }
 
   const post = readAllVersions()
-  const stillBad = [
-    post.packageVersion,
-    post.lockTop,
-    post.lockPackages,
-    post.skillVersion,
-    post.evalsVersion
-  ].some(v => v !== targetVersion)
+  const stillBad = [post.packageVersion, post.lockTop, post.lockPackages, post.skillVersion, post.evalsVersion].some(
+    (v) => v !== targetVersion
+  )
 
   if (stillBad) {
     throw new Error('Version sync did not converge; please inspect files manually')
@@ -254,4 +259,3 @@ try {
   console.error(`Error: ${err.message}`)
   process.exit(1)
 }
-

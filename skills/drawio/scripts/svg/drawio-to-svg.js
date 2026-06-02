@@ -4,14 +4,7 @@
  * Uses shared XML utilities from ../shared/xml-utils.js
  */
 
-import {
-  attr,
-  decodeEntities,
-  escapeXml,
-  extractCells,
-  extractGraphAttrs,
-  parseStyle
-} from '../shared/xml-utils.js'
+import { attr, decodeEntities, escapeXml, extractCells, extractGraphAttrs, parseStyle } from '../shared/xml-utils.js'
 
 /**
  * Parse mxGraphModel XML into a structured object
@@ -162,14 +155,24 @@ function renderVertex(cell, style) {
     case 'cylinder': {
       const ellipseRY = Math.min(12, height * 0.15)
       // Body rectangle
-      parts.push(`<rect x="${x}" y="${y + ellipseRY}" width="${width}" height="${height - ellipseRY * 2}" ${baseAttrs}/>`)
+      parts.push(
+        `<rect x="${x}" y="${y + ellipseRY}" width="${width}" height="${height - ellipseRY * 2}" ${baseAttrs}/>`
+      )
       // Bottom ellipse
-      parts.push(`<ellipse cx="${x + width / 2}" cy="${y + height - ellipseRY}" rx="${width / 2}" ry="${ellipseRY}" ${baseAttrs}/>`)
+      parts.push(
+        `<ellipse cx="${x + width / 2}" cy="${y + height - ellipseRY}" rx="${width / 2}" ry="${ellipseRY}" ${baseAttrs}/>`
+      )
       // Top ellipse (drawn last so it's on top)
-      parts.push(`<ellipse cx="${x + width / 2}" cy="${y + ellipseRY}" rx="${width / 2}" ry="${ellipseRY}" ${baseAttrs}/>`)
+      parts.push(
+        `<ellipse cx="${x + width / 2}" cy="${y + ellipseRY}" rx="${width / 2}" ry="${ellipseRY}" ${baseAttrs}/>`
+      )
       // Side lines connecting top and bottom ellipses
-      parts.push(`<line x1="${x}" y1="${y + ellipseRY}" x2="${x}" y2="${y + height - ellipseRY}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
-      parts.push(`<line x1="${x + width}" y1="${y + ellipseRY}" x2="${x + width}" y2="${y + height - ellipseRY}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(
+        `<line x1="${x}" y1="${y + ellipseRY}" x2="${x}" y2="${y + height - ellipseRY}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`
+      )
+      parts.push(
+        `<line x1="${x + width}" y1="${y + ellipseRY}" x2="${x + width}" y2="${y + height - ellipseRY}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`
+      )
       break
     }
 
@@ -223,8 +226,12 @@ function renderVertex(cell, style) {
       const portY1 = y + height * 0.35
       const portY2 = y + height * 0.65
       parts.push(`<path d="${d}" ${baseAttrs}/>`)
-      parts.push(`<line x1="${x + inset}" y1="${portY1}" x2="${x + width - inset}" y2="${portY1}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
-      parts.push(`<line x1="${x + inset}" y1="${portY2}" x2="${x + width - inset}" y2="${portY2}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(
+        `<line x1="${x + inset}" y1="${portY1}" x2="${x + width - inset}" y2="${portY1}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`
+      )
+      parts.push(
+        `<line x1="${x + inset}" y1="${portY2}" x2="${x + width - inset}" y2="${portY2}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`
+      )
       break
     }
 
@@ -284,7 +291,9 @@ function renderVertex(cell, style) {
         `M ${x} ${bodyTop + brickHeight * 2} L ${x + width} ${bodyTop + brickHeight * 2}`
       ].join(' ')
       parts.push(`<path d="${outer}" ${baseAttrs}/>`)
-      parts.push(`<path d="${mortar}" fill="none" stroke="${strokeColor}" stroke-width="${Math.max(strokeWidth * 0.8, 1)}"/>`)
+      parts.push(
+        `<path d="${mortar}" fill="none" stroke="${strokeColor}" stroke-width="${Math.max(strokeWidth * 0.8, 1)}"/>`
+      )
       break
     }
 
@@ -302,7 +311,9 @@ function renderVertex(cell, style) {
         `Q ${cx} ${cy - height * 0.32} ${cx + width * 0.28} ${cy + height * 0.1}`
       ].join(' ')
       parts.push(`<ellipse cx="${cx}" cy="${baseY}" rx="${width * 0.16}" ry="${baseRy}" ${baseAttrs}/>`)
-      parts.push(`<line x1="${cx}" y1="${baseY - baseRy}" x2="${cx}" y2="${cy + height * 0.12}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
+      parts.push(
+        `<line x1="${cx}" y1="${baseY - baseRy}" x2="${cx}" y2="${cy + height * 0.12}" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`
+      )
       parts.push(`<path d="${arc1}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
       parts.push(`<path d="${arc2}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
       break
@@ -324,24 +335,21 @@ function renderVertex(cell, style) {
     const spacingRight = Number(style.get('spacingRight')) || 0
     const spacingTop = Number(style.get('spacingTop')) || 0
     const spacingBottom = Number(style.get('spacingBottom')) || 0
-    const textX = align === 'left'
-      ? x + spacingLeft
-      : align === 'right'
-        ? x + width - spacingRight
-        : x + width / 2
-    const textY = verticalAlign === 'top'
-      ? y + spacingTop
-      : verticalAlign === 'bottom'
-        ? y + height - spacingBottom
-        : y + height / 2
+    const textX = align === 'left' ? x + spacingLeft : align === 'right' ? x + width - spacingRight : x + width / 2
+    const textY =
+      verticalAlign === 'top'
+        ? y + spacingTop
+        : verticalAlign === 'bottom'
+          ? y + height - spacingBottom
+          : y + height / 2
     const textAnchor = align === 'left' ? 'start' : align === 'right' ? 'end' : 'middle'
     const dominantBaseline = verticalAlign === 'top' ? 'hanging' : verticalAlign === 'bottom' ? 'auto' : 'central'
-    const fontWeightAttr = (fontStyleBits & 1) ? ' font-weight="700"' : ''
-    const fontStyleAttr = (fontStyleBits & 2) ? ' font-style="italic"' : ''
+    const fontWeightAttr = fontStyleBits & 1 ? ' font-weight="700"' : ''
+    const fontStyleAttr = fontStyleBits & 2 ? ' font-style="italic"' : ''
     parts.push(
       `<text x="${textX}" y="${textY}" text-anchor="${textAnchor}" dominant-baseline="${dominantBaseline}" ` +
-      `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}"${fontWeightAttr}${fontStyleAttr}>` +
-      `${escapeXml(label)}</text>`
+        `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}"${fontWeightAttr}${fontStyleAttr}>` +
+        `${escapeXml(label)}</text>`
     )
   }
 
@@ -387,7 +395,10 @@ function renderEdge(cell, style, cellMap, suppressLabel = false) {
   const sourceCell = cell.source ? cellMap.get(cell.source) : null
   const targetCell = cell.target ? cellMap.get(cell.target) : null
 
-  let x1 = 0, y1 = 0, x2 = 100, y2 = 100
+  let x1 = 0,
+    y1 = 0,
+    x2 = 100,
+    y2 = 100
   if (sourceCell) {
     const c = cellCenter(sourceCell)
     x1 = c.x
@@ -410,8 +421,8 @@ function renderEdge(cell, style, cellMap, suppressLabel = false) {
 
   parts.push(
     `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ` +
-    `stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}` +
-    `${endRef}${startRef}${colorStyle} fill="none"/>`
+      `stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}` +
+      `${endRef}${startRef}${colorStyle} fill="none"/>`
   )
 
   // Edge label
@@ -421,7 +432,7 @@ function renderEdge(cell, style, cellMap, suppressLabel = false) {
     const midY = (y1 + y2) / 2
     parts.push(
       `<text x="${midX}" y="${midY - 6}" text-anchor="middle" dominant-baseline="auto" ` +
-      `font-size="${fontSize}" fill="${fontColor}">${escapeXml(label)}</text>`
+        `font-size="${fontSize}" fill="${fontColor}">${escapeXml(label)}</text>`
     )
   }
 
@@ -480,11 +491,11 @@ export function drawioToSvg(xmlString) {
   }
 
   // Separate vertices and edges
-  const vertices = cells.filter(c => c.vertex && c.parent !== '0')
-  const edges = cells.filter(c => c.edge)
-  const edgeLabels = vertices.filter(v => parseStyle(v.style).has('edgeLabel'))
-  const edgeLabelParents = new Set(edgeLabels.map(v => v.parent).filter(Boolean))
-  const shapeVertices = vertices.filter(v => !edgeLabelParents.has(v.id) && !parseStyle(v.style).has('edgeLabel'))
+  const vertices = cells.filter((c) => c.vertex && c.parent !== '0')
+  const edges = cells.filter((c) => c.edge)
+  const edgeLabels = vertices.filter((v) => parseStyle(v.style).has('edgeLabel'))
+  const edgeLabelParents = new Set(edgeLabels.map((v) => v.parent).filter(Boolean))
+  const shapeVertices = vertices.filter((v) => !edgeLabelParents.has(v.id) && !parseStyle(v.style).has('edgeLabel'))
 
   // Calculate viewBox dimensions from content if default
   let svgWidth = graph.pageWidth
@@ -505,7 +516,7 @@ export function drawioToSvg(xmlString) {
   const svgParts = []
   svgParts.push(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" ` +
-    `viewBox="0 0 ${svgWidth} ${svgHeight}" data-drawio="${base64Xml}">`
+      `viewBox="0 0 ${svgWidth} ${svgHeight}" data-drawio="${base64Xml}">`
   )
 
   // Defs (arrow markers)
