@@ -1,7 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,6 +15,21 @@ const PROJECT_ROOT = resolve(__dirname, '..')
 const BASE_DIR = resolve(PROJECT_ROOT, 'skills/drawio')
 const SKILL_DIR = resolve(PROJECT_ROOT, 'skills/drawio-academic-skills')
 const logger = { info: () => {} }
+
+function listFilesRecursive(rootDir) {
+  // 返回相对 rootDir 的 POSIX 风格文件路径列表（目录不存在时返回空数组）
+  const out = []
+  const walk = (absDir, relPrefix) => {
+    for (const entry of readdirSync(absDir)) {
+      const abs = join(absDir, entry)
+      const rel = relPrefix ? `${relPrefix}/${entry}` : entry
+      if (statSync(abs).isDirectory()) walk(abs, rel)
+      else out.push(rel)
+    }
+  }
+  if (existsSync(rootDir)) walk(rootDir, '')
+  return out.sort()
+}
 
 test('drawio-academic-skills: overlay shape depends on sibling base without copied runtime', () => {
   /*
@@ -60,6 +76,28 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
   // 1.4 eval prompt fixtures live under evals, not the overlay root
   assert.equal(existsSync(resolve(SKILL_DIR, 'test-prompts.json')), false)
   assert.equal(existsSync(resolve(SKILL_DIR, 'evals/test-prompts.json')), true)
+
+  // 1.5 overlay references/ 是不变量白名单：修复后只应保留 publication 专属指南。
+  //     枚举式黑名单会漏掉新混入的副本，所以这里断言“恰好等于”白名单。
+  const overlayRefs = listFilesRecursive(resolve(SKILL_DIR, 'references'))
+  assert.deepEqual(overlayRefs, ['docs/publication-overlay.md'])
+
+  // 1.6 overlay 的资源子树不得出现与 base 字节相同的文件，
+  //     防止 themes/scripts/styles/references 等共享资源被复制进 overlay 而长期漂移。
+  const baseHashes = new Map()
+  for (const rel of listFilesRecursive(BASE_DIR)) {
+    baseHashes.set(createHash('sha256').update(readFileSync(resolve(BASE_DIR, rel))).digest('hex'), rel)
+  }
+  for (const sub of ['references', 'assets', 'scripts', 'styles']) {
+    for (const rel of listFilesRecursive(resolve(SKILL_DIR, sub))) {
+      const hash = createHash('sha256').update(readFileSync(resolve(SKILL_DIR, sub, rel))).digest('hex')
+      assert.equal(
+        baseHashes.has(hash),
+        false,
+        `overlay ${sub}/${rel} 与 base ${baseHashes.get(hash)} 字节相同，应改为引用 ../drawio`
+      )
+    }
+  }
   logger.info('校验 academic overlay 目录结构完成')
 })
 

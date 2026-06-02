@@ -90,8 +90,6 @@ Never mutate bundled base presets. Copy a bundled preset into the user preset di
 
 - `SKILL.md`: academic policy and sibling-base contract.
 - `references/docs/publication-overlay.md`: overlay-only publication notes.
-- `references/docs/upstream-pure-drawio-skill.md`: preserved direct-XML reference for exception paths.
-- `references/style-extraction.md`: style extraction guidance used by overlay preset workflows.
 - `evals/`: academic evaluation set and prompt fixtures.
 
-Shared CLI, schemas, themes, examples, workflows, and official references live in `../drawio`.
+Shared CLI, schemas, themes, examples, workflows, official references, style-extraction guidance, and the vendored direct-XML reference all live in `../drawio`.

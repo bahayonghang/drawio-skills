@@ -1,7 +1,7 @@
 ---
 name: drawio-academic-skills
 version: "0.1.0"
-description: "Academic Draw.io overlay for paper, thesis, IEEE, journal, manuscript, publication-ready figure, academic formula figure, research workflow, system architecture paper figure, roadmap paper figure, A4/Word/LaTeX figure bundle, and scholarly diagram replication requests. Use only for academic or publication-facing diagrams. This overlay depends on the sibling Draw.io Base Skill at ../drawio for CLI execution, references, themes, schemas, reusable examples, style presets, Desktop export, and diagrams.net URL fallback. It never creates, requires, or routes through .mcp.json, MCP, or a live backend."
+description: "Publication-figure overlay for Draw.io: use this skill, in preference to the general drawio skill, whenever a diagram is meant for a paper, thesis, dissertation, journal, conference, IEEE or ACM submission, manuscript, camera-ready, or any publication, even when the user does not say the word 'academic'. Produces publication-ready system-architecture figures, research and method workflows, ablation pipelines, roadmaps, IEEE-style network topology figures, formula-bearing figures (LaTeX, AsciiMath, MathJax, 公式), A4/Word/LaTeX figure bundles, grayscale or monochrome color policy, captions and legends, and faithful replication of paper figures that preserves caption, legend, formula, text-box, and edge-label placement. Applies academic policy (venue, figure-type, and color gates plus paper-readability checks) on top of the sibling Draw.io Base Skill at ../drawio, which it calls for CLI execution, references, themes, schemas, examples, style presets, and Desktop export. Stays fully offline and YAML-first; never creates, requires, or routes through .mcp.json, MCP, or a live backend."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
 compatibility: "Requires sibling ../drawio in the same skills directory. Node 20+ is required for the shared YAML/CLI workflow. draw.io Desktop is optional and only needed for PNG/PDF/JPG or embedded .drawio.svg exports. No MCP server is required."
@@ -31,16 +31,16 @@ This overlay is intentionally thin. It does not copy base scripts, themes, schem
 
 Resolve shared resources relative to this overlay directory:
 
-| Capability | Use this sibling base path |
-| --- | --- |
-| CLI | `../drawio/scripts/cli.js` |
-| diagrams.net URL fallback | `../drawio/scripts/runtime/diagrams-net-url.js` |
-| YAML schema | `../drawio/assets/schemas/spec.schema.json` |
-| Themes | `../drawio/assets/themes/` |
-| Shared examples | `../drawio/references/examples/` |
-| Shared references | `../drawio/references/docs/` and `../drawio/references/official/` |
-| Workflow guides | `../drawio/references/workflows/` |
-| Built-in style presets | `../drawio/styles/built-in/` |
+| Capability                | Use this sibling base path                                        |
+| ------------------------- | ----------------------------------------------------------------- |
+| CLI                       | `../drawio/scripts/cli.js`                                        |
+| diagrams.net URL fallback | `../drawio/scripts/runtime/diagrams-net-url.js`                   |
+| YAML schema               | `../drawio/assets/schemas/spec.schema.json`                       |
+| Themes                    | `../drawio/assets/themes/`                                        |
+| Shared examples           | `../drawio/references/examples/`                                  |
+| Shared references         | `../drawio/references/docs/` and `../drawio/references/official/` |
+| Workflow guides           | `../drawio/references/workflows/`                                 |
+| Built-in style presets    | `../drawio/styles/built-in/`                                      |
 
 If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base skill must be installed next to this overlay. Do not silently recreate or vendor-copy base resources into the overlay.
 
@@ -68,15 +68,15 @@ Before generating or editing, determine and state:
 
 Choose one route first, then load only the referenced files.
 
-| Route | Trigger | Load |
-| --- | --- | --- |
-| `academic-create` | paper, thesis, IEEE, manuscript, journal, publication-ready figure | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/docs/academic-figure-playbook.md`; base `../drawio/references/docs/academic-export-checklist.md`; base `../drawio/references/workflows/create.md` |
-| `math-formula` | formula, equation, LaTeX, AsciiMath, MathJax, 公式 | base `../drawio/references/docs/math-typesetting.md`; base `../drawio/references/docs/design-system/formulas.md` |
-| `edit` | modify an existing academic bundle or imported `.drawio` | base `../drawio/references/workflows/edit.md`; base `../drawio/references/docs/migration-readiness.md` |
-| `replicate` | redraw screenshot, image, SVG, or reference paper figure | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/workflows/replicate.md`; base `../drawio/references/docs/design-system/specification.md`; base `../drawio/references/docs/design-system/color-guide.md` |
-| `stencil-heavy` | academic cloud, network, AWS, Azure, GCP, Cisco, Kubernetes figure | base `../drawio/references/docs/stencil-library-guide.md`; base `../drawio/references/docs/ieee-network-diagrams.md`; base `../drawio/references/official/xml-reference.md` |
-| `style-preset` | learn/use/list/delete/rename visual style presets | this overlay `references/style-extraction.md`; base `../drawio/references/docs/style-presets.md`; base `../drawio/styles/built-in/` |
-| `direct-xml-exception` | tiny handoff-only XML or exact mxGraph control | overlay `references/docs/upstream-pure-drawio-skill.md`; base `../drawio/references/official/xml-reference.md` |
+| Route                  | Trigger                                                            | Load                                                                                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `academic-create`      | paper, thesis, IEEE, manuscript, journal, publication-ready figure | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/docs/academic-figure-playbook.md`; base `../drawio/references/docs/academic-export-checklist.md`; base `../drawio/references/workflows/create.md`       |
+| `math-formula`         | formula, equation, LaTeX, AsciiMath, MathJax, 公式                 | base `../drawio/references/docs/math-typesetting.md`; base `../drawio/references/docs/design-system/formulas.md`                                                                                                                          |
+| `edit`                 | modify an existing academic bundle or imported `.drawio`           | base `../drawio/references/workflows/edit.md`; base `../drawio/references/docs/migration-readiness.md`                                                                                                                                    |
+| `replicate`            | redraw screenshot, image, SVG, or reference paper figure           | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/workflows/replicate.md`; base `../drawio/references/docs/design-system/specification.md`; base `../drawio/references/docs/design-system/color-guide.md` |
+| `stencil-heavy`        | academic cloud, network, AWS, Azure, GCP, Cisco, Kubernetes figure | base `../drawio/references/docs/stencil-library-guide.md`; base `../drawio/references/docs/ieee-network-diagrams.md`; base `../drawio/references/official/xml-reference.md`                                                               |
+| `style-preset`         | learn/use/list/delete/rename visual style presets                  | base `../drawio/references/docs/style-extraction.md`; base `../drawio/references/docs/style-presets.md`; base `../drawio/styles/built-in/`                                                                                                |
+| `direct-xml-exception` | tiny handoff-only XML or exact mxGraph control                     | base `../drawio/references/upstream/pure-drawio-skill.md`; base `../drawio/references/official/xml-reference.md`                                                                                                                          |
 
 ## Academic Defaults
 
@@ -86,7 +86,7 @@ For academic-paper requests, set these before rendering:
 meta:
   profile: academic-paper
   figureType: architecture # architecture | roadmap | workflow
-  theme: academic          # or academic-color when color is acceptable
+  theme: academic # or academic-color when color is acceptable
   title: Caption-ready title
   description: One sentence explaining the figure intent
   legend: Required when symbols, colors, line styles, or icons need explanation

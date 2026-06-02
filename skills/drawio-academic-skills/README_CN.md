@@ -90,8 +90,6 @@ node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 
 - `SKILL.md`：学术策略与 sibling-base contract。
 - `references/docs/publication-overlay.md`：overlay-only 出版说明。
-- `references/docs/upstream-pure-drawio-skill.md`：Direct XML 例外路径参考。
-- `references/style-extraction.md`：overlay preset 工作流的 style extraction 指南。
 - `evals/`：academic evaluation set 和 prompt fixtures。
 
-共享 CLI、schemas、themes、examples、workflows 和 official references 都在 `../drawio`。
+共享 CLI、schemas、themes、examples、workflows、official references、style-extraction 指南和 vendored direct-XML 参考都在 `../drawio`。
