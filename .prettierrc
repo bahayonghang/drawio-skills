@@ -2,5 +2,13 @@
   "singleQuote": true,
   "semi": false,
   "printWidth": 120,
-  "trailingComma": "none"
+  "trailingComma": "none",
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
 }
