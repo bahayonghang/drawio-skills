@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Draw.io Skill"
-  text: "适用于 Claude、Gemini 和 Codex"
-  tagline: 桌面优先、离线优先的 draw.io 图表工作流，基于 YAML 规格、本地 sidecar、可选浏览器精调，以及论文级校验护栏。
+  text: "Base + Academic Overlay"
+  tagline: YAML-first、离线优先的 draw.io 图表工作流，使用共享 base skill、sibling academic overlay、Desktop 增强导出，以及仅 Base 可选的 live refinement。
   actions:
     - theme: brand
       text: 快速开始
@@ -15,66 +15,84 @@ hero:
 
 features:
   - icon: 🧭
-    title: 默认离线优先
-    details: "默认本地生成 `.drawio`，并维护 `.spec.yaml` 与 `.arch.json`；只有在确实需要实时浏览器精调时才进入 MCP 路径。"
+    title: 共享 Base Skill
+    details: "`skills/drawio` 拥有 CLI、schemas、references、themes、examples、style presets、Desktop 辅助、diagrams.net URL fallback 和可选 live refinement。"
 
-  - icon: 🖥️
-    title: 桌面增强导出
-    details: "draw.io Desktop 可用于 PNG、PDF、JPG 和 embedded `.drawio.svg`；独立 SVG 仍可完全离线生成。"
+  - icon: 🎓
+    title: Academic Overlay
+    details: "`skills/drawio-academic-skills` 是面向 paper、thesis、IEEE、manuscript、A4/Word/LaTeX 图和出版 bundle 的轻量 sibling overlay。"
 
   - icon: 📝
     title: YAML 作为规范源
     details: "自然语言、Mermaid、CSV 和导入的 `.drawio` 都会先归一化为统一 YAML 规格，再进入渲染与校验。"
+
+  - icon: 🖥️
+    title: Desktop 增强导出
+    details: "draw.io Desktop 可用于 PNG、PDF、JPG 和 embedded `.drawio.svg`；独立 SVG 仍可完全离线生成。"
 
   - icon: 🚀
     title: 3 条核心路线
     details: "新建图表、编辑现有 bundle、复刻上传图像三条主链路分别对应不同的 reference 与校验规则。"
 
   - icon: 🎨
-    title: 6 个内置主题
-    details: "Tech Blue、Academic、Academic Color、Nature、Dark、High Contrast 覆盖工程评审、论文插图、演示和无障碍输出。"
+    title: 共享主题和预设
+    details: "6 个内置主题和 bundled style presets 都归 Base 维护，避免 overlay 漂移。"
 
   - icon: 🧮
     title: 学术与公式护栏
-    details: "内置 IEEE 风格、MathJax 兼容分隔符、caption/legend 要求与灰度安全约束。"
+    details: "Overlay 增加 venue preflight、figure taxonomy、caption/legend 校验、公式保真和 paper/A4 可读性规则。"
 
   - icon: ☁️
-    title: 云图标与模板支持
-    details: "优先语义形状，需要时再接入 AWS、GCP、Azure、Kubernetes 或网络模板图标。"
+    title: 网络与模板工作流
+    details: "通过 Base references 建模 campus LAN、AWS VPC、DMZ、UML、ER、sequence、state 和 provider icon 工作流。"
 
   - icon: 🔁
     title: 复刻时保留色彩与文字位置
-    details: "`/drawio replicate` 默认保留源图配色，并把提取到的调色板记录进 `meta.replication`；同时会追踪标题、说明、公式和边标签的文本框边界与偏移。"
+    details: "复刻默认保留源图配色，并记录标题、说明、公式和边标签的文本框边界与偏移。"
 
   - icon: ✅
     title: 先校验再交付
-    details: "结构、布局和质量三层校验会在导出前发现规格错误、重叠风险、连线路由问题和 academic profile 缺项。"
+    details: "结构、布局、质量、公式和文字位置校验会在导出前发现问题。"
 
   - icon: 🔌
-    title: 可选 Live MCP
-    details: "next-ai MCP 仍被支持，但它只是浏览器精调增强层，不再是默认主运行时。"
+    title: 仅 Base 可选 Live Refinement
+    details: "next-ai MCP 仍可用于 Base 的浏览器会话，但不是默认运行时，Academic Overlay 不使用它。"
 ---
+
+## Skill 变体
+
+- `skills/drawio`：Draw.io Base Skill，用于通用图、转换、导入/导出、共享资源、Desktop 导出、diagrams.net fallback 和可选 live refinement。
+- `skills/drawio-academic-skills`：Academic Overlay，用于出版场景。它依赖 sibling `../drawio`，不复制 base scripts、themes、schemas 或 official references。
 
 ## 运行模型
 
-除非你明确需要浏览器会话，否则按这个顺序使用：
+除非明确需要浏览器会话，否则按这个顺序使用：
 
-1. **离线优先**：本地生成 `.drawio` 并维护 sidecar。
-2. **桌面增强**：需要 PNG、PDF、JPG 或 embedded SVG 时再接入 draw.io Desktop。
-3. **可选 Live MCP**：只有在需要会话内可视化精修时才启动浏览器。
+1. **Offline Authoring Path**：本地生成 `.drawio` 并维护 sidecars。
+2. **Desktop-Enhanced Export**：需要 PNG、PDF、JPG 或 embedded SVG 时接入 draw.io Desktop。
+3. **Live Refinement Backend**：仅 Base 浏览器精修；离线 bundle 仍是规范源。
+4. **Direct XML Exception**：很小的 XML-only 或精确 mxGraph handoff。
+
+Academic Overlay 只使用离线和 Desktop 增强路径。
 
 ## 快速开始
 
-安装 skill：
+安装 skills：
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
-创建第一张图：
+创建第一张 Base 图：
 
 ```text
 /drawio create 生成一个横向 tech-blue 登录流程图，共 6 个节点
+```
+
+创建 Academic Overlay 图：
+
+```text
+/drawio-academic-skills create 生成一个 IEEE 风格 manuscript workflow figure，交付 .drawio + .spec.yaml + .arch.json + .svg
 ```
 
 在仓库中做本地校验与导出：
@@ -84,16 +102,16 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-把现有 `.drawio` 导入为离线 bundle：
+生成 diagrams.net URL fallback：
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
 ```
 
 ## 站点内容
 
 - **Guide**：安装、路线、设计系统、YAML 规格、CLI 与导出流程
-- **API**：可选 MCP 工具、XML 说明、独立 SVG 转换器
+- **API**：仅 Base 可选 MCP 工具、XML 说明、独立 SVG 转换器
 - **Examples**：prompt 示例与 `skills/drawio/references/examples/` 下的 YAML 规格样例
 
 ## 事实源
@@ -101,6 +119,7 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 本网站以以下文件为准：
 
 - `skills/drawio/SKILL.md`
+- `skills/drawio-academic-skills/SKILL.md`
 - `skills/drawio/references/workflows/*.md`
 - `skills/drawio/references/docs/**`
 

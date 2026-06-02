@@ -4,39 +4,43 @@
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
 [![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](https://spdx.org/licenses/ISC.html)
 
-> **重要说明**：Draw.io Skill 2.2.0 采用 **桌面优先的混合工作流**。默认路径是通过 `YAML/CLI -> .drawio + sidecars` 在本地生成图表；当需要 PNG、PDF、JPG 或 embedded SVG 时，再由 draw.io Desktop 增强导出。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）现在只是 **可选的浏览器实时编辑层**，不再是硬依赖。
+> **重要说明**：Draw.io Skill 2.2.0 是 **YAML-first、离线优先的 Base 工作流**。默认路径是 `YAML/CLI -> .drawio + sidecars` 本地生成；需要 PNG、PDF、JPG 或 embedded SVG 时再由 draw.io Desktop 增强导出。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）只作为 Base Skill 的可选浏览器精修层，不是硬依赖。
 
 [English](./README.md) | [中文文档](./README_CN.md) | [在线文档](https://bahayonghang.github.io/drawio-skills/zh/)
 
-Draw.io Skill 是一个 YAML-first、离线优先的 draw.io 技能，适合工程架构图、学术插图、网络图和结构化重绘场景。它支持自然语言、YAML、Mermaid、CSV 以及已有 `.drawio` 文件输入，并把这些输入统一归一化成同一套设计系统驱动的工作流。
+Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、网络拓扑、结构化重绘、Mermaid/CSV 转换和已有 `.drawio` 导入。论文或出版场景由 Academic Overlay 处理；它依赖 sibling Base，而不是复制一份底层 runtime。
 
 ## Skill 变体
 
-- `skills/drawio`：通用工程图、网络图、结构化重绘和可选浏览器精修。
-- `skills/drawio-academic-skills`：学术优先版本，吸收上游纯 `drawio-skill` 工作流，保留 YAML sidecars，默认交付出版级 `.drawio + .spec.yaml + .arch.json + .svg`。
+- `skills/drawio`：**Draw.io Base Skill**。拥有共享 CLI、schemas、references、themes、examples、style presets、Desktop 导出辅助、diagrams.net URL fallback 和可选 live refinement backend。
+- `skills/drawio-academic-skills`：**Academic Overlay**。只保留学术策略、README、evals 和出版专属 references；执行时依赖 sibling `../drawio`，并且不需要 MCP/live backend。
+
+源码结构刻意只维护一份底层能力。后续如果需要独立 academic 安装包，可以由 packaging workflow 生成；本仓库源码模型是 base + overlay。
 
 ## 功能特性
 
-- **离线优先产物包**：统一维护 `.drawio`、`.spec.yaml`、`.arch.json`，便于本地重复编辑。
+- **YAML-first 产物包**：统一维护 `.drawio`、`.spec.yaml`、`.arch.json`，便于本地重复编辑。
 - **桌面感知导出**：有 draw.io Desktop 时，可额外导出 PNG、PDF、JPG 和 embedded `.drawio.svg`。
-- **可选浏览器精调**：只有在确实需要实时会话时，才配置 next-ai MCP。
+- **可选浏览器精修**：只在 Base Skill 需要浏览器精修时配置 next-ai MCP；Academic Overlay 保持离线。
 - **3 条核心路线**：`create`、`edit`、`replicate`。
 - **6 个内置主题**：`tech-blue`、`academic`、`academic-color`、`nature`、`dark`、`high-contrast`。
-- **学术与公式护栏**：支持 IEEE 风格、MathJax 安全分隔符、caption/legend 校验。
-- **学术图类型分流**：paper 模式请求会先归类成 `architecture`、`roadmap` 或 `workflow`，再决定布局与导出。
-- **云图标与模板支持**：AWS、GCP、Azure、Kubernetes 以及网络 / provider icon 工作流。
-- **网络拓扑支持**：支持 `router`、`switch`、`firewall`、`server`、`load_balancer`、`subnet`、`internet`、`ap` 等语义节点，支持 `star/mesh` 布局增强，以及基于接口/IP/VLAN/带宽元数据自动生成链路标签。
-- **厂商图标精细映射**：支持 AWS/Cisco 显式图标前缀、常用 alias（如 `aws.alb`、`aws.ec2`、`cisco.ap`）以及基于 `network.vendor + network.device` 的自动图标推导。
-- **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把现有 `.drawio` 转成 YAML-first bundle。
-- **导出前校验**：结构、布局和质量校验齐全，严格模式适合论文级输出。
+- **Academic Overlay 策略**：venue/audience preflight、caption/legend 校验、公式保真、A4/Word/LaTeX 预期和 figure typing。
+- **学术图类型分流**：出版请求先归类成 `architecture`、`roadmap` 或 `workflow`，再决定布局与导出。
+- **云图标与模板支持**：AWS、GCP、Azure、Kubernetes 以及网络 / provider icon 工作流由 Base references 提供。
+- **网络拓扑支持**：支持 `router`、`switch`、`firewall`、`server`、`load_balancer`、`subnet`、`internet`、`ap` 等语义节点，以及基于接口/IP/VLAN/带宽元数据自动生成链路标签。
+- **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle。
+- **导出前校验**：结构、布局、质量、公式和复刻文字位置校验齐全。
 
 ## 运行模型
 
-除非用户明确要求浏览器实时编辑，否则按这个顺序使用：
+除非用户明确需要浏览器会话，否则按这个顺序使用：
 
-1. **离线优先**：本地生成 `.drawio` 并维护 sidecar。
-2. **桌面增强**：draw.io Desktop 可用时，用它处理位图 / PDF 导出和 embedded SVG。
-3. **可选 Live MCP**：仅在需要浏览器内精修时启用 next-ai MCP。
+1. **Offline Authoring Path**：本地生成 `.drawio` 并维护 sidecars。
+2. **Desktop-Enhanced Export**：需要位图/PDF 或 embedded SVG 时使用 draw.io Desktop。
+3. **Live Refinement Backend**：仅 Base Skill 可选浏览器精修；离线 bundle 仍是规范源。
+4. **Direct XML Exception**：只在很小的 XML handoff 或精确 mxGraph 控制时使用。
+
+Academic Overlay 只使用前两条路径。它不创建、不要求、不路由 `.mcp.json`、MCP 或 live backend。
 
 ## 安装
 
@@ -51,8 +55,8 @@ npx skills add bahayonghang/drawio-skills
 ### 手动安装
 
 1. 克隆仓库。
-2. 把 `skills/drawio` 复制到客户端的 skill 目录。
-   如果主要做论文图，复制 `skills/drawio-academic-skills`。
+2. 默认把 `skills/drawio` 复制到客户端 skill 目录。
+3. 如果需要论文/出版工作流，也把 `skills/drawio-academic-skills` 复制到 `drawio` 旁边，这样 overlay 可以解析 sibling `../drawio`。
 
 常见路径：
 
@@ -70,7 +74,9 @@ npx skills add bahayonghang/drawio-skills
 
 ## 可选：配置 Live Editing MCP
 
-日常 create/edit/export **不需要** MCP。只有在你明确要浏览器会话时，才配置 `@next-ai-drawio/mcp-server`。
+日常 create/edit/export **不需要** MCP。只有在 Base Skill 需要浏览器精修时，才配置 `@next-ai-drawio/mcp-server`。
+
+Academic Overlay 不需要这一步。
 
 ### Claude / Gemini 的 JSON 配置
 
@@ -134,12 +140,10 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 /drawio create 生成一个 tech-blue 网络拓扑图，包含防火墙、核心交换机、两台应用服务器和私有数据库子网，并在链路上标注接口与 VLAN
 ```
 
-复刻上传图片：
+使用 Academic Overlay 创建出版图：
 
 ```text
-/drawio replicate
-颜色模式：preserve-original
-[上传截图]
+/drawio-academic-skills create 生成一个 IEEE 风格 manuscript workflow figure，交付 .drawio + .spec.yaml + .arch.json + .svg
 ```
 
 把已有 `.drawio` 导入成离线 bundle：
@@ -155,18 +159,10 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-academic-paper bundle 工作流：
+Academic Overlay 仍然调用 sibling Base CLI：
 
 ```bash
 node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
-```
-
-这会一次生成论文模式默认交付物：`.drawio`、`.spec.yaml`、`.arch.json` 和 `.svg`。
-
-论文或正式评审建议开启严格模式：
-
-```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
 ```
 
 当你需要位图或 PDF 时，改走 Desktop 路径：
@@ -176,7 +172,13 @@ node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
 node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop
 ```
 
-## 规范产物三件套
+从 `.drawio` 生成 diagrams.net URL fallback：
+
+```bash
+node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
+```
+
+## 规范产物包
 
 只要图表后续还会继续演化，就尽量把这些文件放在一起：
 
@@ -184,9 +186,11 @@ node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-这是离线工作流的首选编辑面。
+Academic Overlay 默认还会交付独立 SVG：
 
-对于 `academic-paper` 请求，默认交付物应视为这套可编辑 bundle 加 `.svg`。只有当需求是 thesis、A4、Word、raster-first、截图重绘，或者明确要求 PNG 时，才额外补一个 `.png`，并且需要 draw.io Desktop 可用。
+- `<name>.svg`
+
+PNG/PDF/JPG 是 Desktop-enhanced 可选产物；如果 draw.io Desktop 不可用，必须如实说明未生成。
 
 ## 网络拓扑编写
 
@@ -197,15 +201,7 @@ node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop
 - `hierarchical`、`star`、`mesh` 三种拓扑布局意图
 - 通过显式 `icon` 或 `network.vendor + network.device` 进行厂商图标映射
 
-仓库已内置代表性 YAML 示例：
-
-- `campus-lan-topology.yaml`
-- `aws-vpc-topology.yaml`
-- `onprem-dmz-topology.yaml`
-- `vendor-device-mapping.yaml`
-- `system-architecture-paper.yaml`
-- `research-pipeline.yaml`
-- `technical-roadmap-paper.yaml`
+代表性 YAML 示例位于 `skills/drawio/references/examples/`。
 
 直接渲染其中一个：
 
@@ -231,13 +227,14 @@ npm run docs:build
 
 仓库结构：
 
-- `skills/drawio/`：skill、CLI、references、themes、examples
+- `skills/drawio/`：base skill、CLI、references、themes、schemas、examples、style presets
+- `skills/drawio-academic-skills/`：academic overlay、README、evals、publication references
 - `docs/`：VitePress 文档站
 - `tests/`：仓库级集成测试
 
 ## 与上游项目的关系
 
-本 skill 基于 **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** 能力构建，但在其上增加了 YAML-first 工作流、离线 sidecar、设计系统 reference，以及分路线的操作指导。
+本仓库基于 draw.io 与可选的 **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** MCP 服务构建，但共享能力被封装为 YAML-first workflow、离线 sidecars、设计系统 references 和路线化指导。
 
 本仓库刻意不把官方 `@drawio/mcp` 作为默认集成面，因为它的工具模型不适合这里的离线优先 edit/replicate 工作流。
 

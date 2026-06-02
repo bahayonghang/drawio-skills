@@ -1,13 +1,14 @@
 # 可选 MCP 工具
 
-这些 MCP 工具用于浏览器内实时编辑。它们**不是** Draw.io Skill 2.2.0 的默认运行时。
+这些 MCP 工具用于 Base Skill 浏览器内实时精修。它们**不是** Draw.io Skill 2.2.0 的默认运行时。
 
 只有在以下条件成立时才使用：
 
 - 已配置 next-ai MCP
 - 用户明确需要浏览器实时精调
+- 当前任务使用 Base `drawio` skill，而不是 Academic Overlay
 
-默认工作流仍然是离线优先的 `.drawio` + sidecar 模型。
+默认工作流仍然是离线优先的 `.drawio` + sidecar 模型。`drawio-academic-skills` 不创建、不要求、不路由 `.mcp.json`、MCP 或 live backend。
 
 ## `start_session`
 
@@ -26,7 +27,7 @@
 ### 说明
 
 - 其他 MCP 图表调用前必须先执行
-- 只用于实时精调场景
+- 只用于 Base Skill 实时精修场景
 
 ## `create_new_diagram`
 
@@ -35,7 +36,7 @@
 ### 参数
 
 | 名称 | 必需 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `xml` | 是 | 完整 `mxGraphModel` XML 字符串 |
 
 ### 说明
@@ -58,13 +59,13 @@
 ### 参数
 
 | 名称 | 必需 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `operations` | 是 | `update`、`add`、`delete` 操作数组 |
 
 ### 操作结构
 
 | 字段 | 必需 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `operation` | 是 | `update`、`add` 或 `delete` |
 | `cell_id` | 是 | update/delete 用现有 ID，add 用新 ID |
 | `new_xml` | add/update 时必需 | 完整 `<mxCell>`，包含 `<mxGeometry>` |
@@ -76,7 +77,7 @@
 ### 参数
 
 | 名称 | 必需 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `path` | 是 | 输出路径 |
 | `format` | 否 | `drawio`、`png` 或 `svg`；不写时根据扩展名推断 |
 
@@ -96,6 +97,7 @@
 - 需要版本化维护编辑过程
 - 需要可重复执行的导出命令
 - 运行在 CI 或脚本环境中
+- 使用 Academic Overlay
 
 ## 相关
 

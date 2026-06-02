@@ -1,15 +1,22 @@
 # Getting Started
 
-Draw.io Skill is a desktop-first, offline-first workflow for producing professional draw.io diagrams from natural language, YAML, Mermaid, CSV, or imported `.drawio` files.
+Draw.io Skill is a YAML-first, offline-first workflow for producing professional draw.io diagrams from natural language, YAML, Mermaid, CSV, or imported `.drawio` files.
+
+## Pick a Skill Variant
+
+- Use `skills/drawio` for general diagrams, network topology, UML/ER/sequence/state diagrams, Mermaid/CSV conversion, import/export, style presets, and optional live refinement.
+- Use `skills/drawio-academic-skills` for paper, thesis, IEEE, journal, manuscript, A4/Word/LaTeX, and publication-ready figure requests.
+
+The academic overlay requires sibling `../drawio`. It does not copy base CLI, schemas, themes, examples, or workflow references.
 
 ## What You Need
 
 - One supported client: Claude, Gemini, or Codex
 - [Node.js](https://nodejs.org/) for `npx` and the local CLI
 - Optional: draw.io Desktop for PNG, PDF, JPG, or embedded SVG export
-- Optional: next-ai MCP only when you want real-time browser refinement
+- Optional: next-ai MCP only when you want base-skill real-time browser refinement
 
-## Install the Skill
+## Install the Skills
 
 Recommended:
 
@@ -17,21 +24,21 @@ Recommended:
 npx skills add bahayonghang/drawio-skills
 ```
 
-Then restart your client so it reloads the skill.
+Then restart your client so it reloads the skills.
 
-See [Installation](./installation.md) for client-specific paths and optional MCP configuration.
+Manual academic installs must copy both `drawio` and `drawio-academic-skills` side by side.
 
 ## Choose the Runtime Path
 
-### Offline-first
+### Offline Authoring Path
 
-Use this for normal create, edit, validate, and export work.
+Use this for normal create, edit, validate, replicate, import, and export work.
 
 - Generate `.drawio`
 - Keep `.spec.yaml` and `.arch.json` beside it
 - Re-run the CLI after edits
 
-### Desktop-enhanced
+### Desktop-Enhanced Export
 
 Use this when draw.io Desktop is installed and you need:
 
@@ -39,15 +46,13 @@ Use this when draw.io Desktop is installed and you need:
 - embedded `.drawio.svg`
 - a quick local preview in the desktop app
 
-### Optional live MCP
+### Live Refinement Backend
 
-Use this only when you explicitly want in-session browser editing.
+Use this only for base-skill browser refinement when explicitly requested.
 
-- Configure `@next-ai-drawio/mcp-server`
-- open a session with `start_session`
-- use `get_diagram` before `edit_diagram`
+Academic overlay does not use MCP/live backend.
 
-## Your First Diagram
+## Your First Base Diagram
 
 ### Route from natural language
 
@@ -88,6 +93,14 @@ Render it:
 node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
 ```
 
+## Your First Academic Figure
+
+```text
+/drawio-academic-skills create a publication-ready system architecture figure for an IEEE paper. Use grayscale-safe styling and deliver .drawio + .spec.yaml + .arch.json + .svg.
+```
+
+The overlay should preflight venue, figure type (`architecture`, `roadmap`, or `workflow`), color policy, caption/legend, formula fidelity, and export expectations, then execute through sibling `../drawio/scripts/cli.js`.
+
 ## First Edit
 
 If the skill created the diagram, edit the sidecar bundle:
@@ -114,6 +127,12 @@ Use draw.io Desktop when you need raster or PDF export:
 
 ```bash
 node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
+```
+
+If Desktop is unavailable, use the editable bundle plus SVG and optionally generate a diagrams.net URL:
+
+```bash
+node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
 ```
 
 ## Where to Go Next

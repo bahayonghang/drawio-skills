@@ -1,18 +1,20 @@
 # 工作流概览
 
-Draw.io Skill 暴露三条核心路线：
+Draw.io Skill 暴露三条 Base 路线和一个 Academic Overlay 策略层：
 
 - `/drawio create`
 - `/drawio edit`
 - `/drawio replicate`
+- `/drawio-academic-skills` 用于上述路线的出版场景变体
 
-三条路线共享同一套 YAML-first 模型、设计系统和校验栈。
+所有路线共享同一套 YAML-first 模型、设计系统、Base CLI 和校验栈。
 
 ## 共同运行规则
 
-1. 默认 **离线优先**
-2. draw.io Desktop 可用时走 **桌面增强**
-3. 只有明确需要时才启用 **可选 Live MCP**
+1. 默认 **Offline Authoring Path**
+2. draw.io Desktop 可用时走 **Desktop-Enhanced Export**
+3. 只有明确需要 Base Skill 浏览器精修时才启用 **Live Refinement Backend**
+4. **Direct XML Exception** 只用于很小的 XML handoff 或精确 mxGraph 控制
 
 只要图表可能继续演化，就尽量把这组三件套放在一起：
 
@@ -20,17 +22,20 @@ Draw.io Skill 暴露三条核心路线：
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
+Academic Overlay 默认还会把 `<name>.svg` 加入出版交付集。
+
 ## 路线对比
 
 | 路线 | 主要输入 | 默认输出 | 适用场景 |
-|------|----------|----------|----------|
-| `create` | 文本、YAML、Mermaid、CSV | 新 `.drawio` bundle | 新建图表 |
+| --- | --- | --- | --- |
+| `create` | 文本、YAML、Mermaid、CSV | 新 `.drawio` bundle | 新建通用图表 |
 | `edit` | 现有 bundle 或 `.drawio` 文件 | 更新后的 bundle | 修改或重构图表 |
 | `replicate` | 上传图片或截图 | 重绘后的 `.drawio` bundle | 复刻参考图 |
+| `academic overlay` | paper/thesis/manuscript prompt | `.drawio + .spec.yaml + .arch.json + .svg` | 出版级图表 |
 
 ## `/drawio create`
 
-用于新建图表。
+用于新建通用图表。
 
 ### 输入模式
 
@@ -38,6 +43,7 @@ Draw.io Skill 暴露三条核心路线：
 - YAML 规格
 - Mermaid
 - CSV 层级 / 组织结构输入
+- 配合 `--input-format drawio` 导入已有 `.drawio`
 
 ### Fast path
 
@@ -49,17 +55,33 @@ Draw.io Skill 暴露三条核心路线：
 
 - 含糊
 - 稠密
-- 学术投稿敏感
 - stencil-heavy
 - 连线对路由质量敏感
+- 复刻或重大编辑
 
 ### 自动分支
 
-- **Academic**：启用论文级校验与默认值
 - **Math / Formula**：强制只用官方公式分隔符
 - **Stencil-heavy**：加载云图标与网络模板规则
+- **Edge audit**：加载路由与标签间距规则
+- **Academic trigger**：需要出版策略时使用 sibling Academic Overlay
 
 详见 [创建图表](./creating-diagrams.md)。
+
+## Academic Overlay
+
+当请求涉及 paper、thesis、IEEE、journal、manuscript、publication-ready、A4/Word/LaTeX 或学术公式图时，使用 `drawio-academic-skills`。
+
+Overlay 会执行 academic preflight：
+
+- venue 或 audience
+- `figureType`：`architecture`、`roadmap` 或 `workflow`
+- 黑白 / 灰度安全 / 彩色策略
+- caption、title、legend 需求
+- 公式与文字位置保真
+- 请求的导出格式和 Desktop 可用性
+
+之后它通过 sibling `../drawio/scripts/cli.js` 执行。它不使用 MCP/live backend。
 
 ## `/drawio edit`
 
@@ -69,7 +91,7 @@ Draw.io Skill 暴露三条核心路线：
 
 1. 已有离线 bundle
 2. 先把 `.drawio` 导入为 bundle 再编辑
-3. 只有明确要求时才用 live browser session
+3. 只有明确要求 Base Skill 精修时才用 live browser session
 
 ### 常见编辑类型
 
@@ -107,7 +129,7 @@ Draw.io Skill 暴露三条核心路线：
 ### 颜色模式
 
 | 模式 | 默认 | 效果 |
-|------|------|------|
+| --- | --- | --- |
 | `preserve-original` | 是 | 通过显式样式覆盖保留源图主配色 |
 | `theme-first` | 否 | 让重绘结果优先服从所选主题 |
 
@@ -118,6 +140,7 @@ Draw.io Skill 暴露三条核心路线：
 ### 设计系统
 
 - 6 个内置主题
+- `skills/drawio/styles/built-in/` 下的共享 style presets
 - 语义节点类型
 - 类型化连接器
 - 8px 网格默认值
@@ -127,6 +150,7 @@ Draw.io Skill 暴露三条核心路线：
 - 结构校验
 - 布局校验
 - 质量校验
+- 公式分隔符校验
 - 复刻输出的文字位置校验
 
 ### 严格模式

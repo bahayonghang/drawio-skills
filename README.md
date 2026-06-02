@@ -4,39 +4,43 @@
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
 [![License: ISC](https://img.shields.io/badge/license-ISC-blue.svg)](https://spdx.org/licenses/ISC.html)
 
-> **Important**: Draw.io Skill 2.2.0 is a **desktop-first hybrid workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is now an **optional live-editing layer**, not a hard dependency.
+> **Important**: Draw.io Skill 2.2.0 is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
 
 [English](./README.md) | [中文文档](./README_CN.md) | [Documentation](https://bahayonghang.github.io/drawio-skills/)
 
-Draw.io Skill is a YAML-first, offline-first draw.io skill for engineering diagrams, academic figures, network diagrams, and structured redraws. It accepts natural language, YAML, Mermaid, CSV, and imported `.drawio` files, then normalizes everything into a consistent design-system-backed workflow.
+Draw.io Skill is a YAML-first draw.io authoring system for engineering diagrams, network diagrams, structured redraws, Mermaid/CSV conversion, and imported `.drawio` files. Publication-facing work is handled by an Academic Overlay that depends on the sibling base skill instead of copying its runtime.
 
 ## Skill Variants
 
-- `skills/drawio`: general engineering diagrams, network diagrams, structured redraws, and optional live browser refinement.
-- `skills/drawio-academic-skills`: academic-first fork that absorbs the upstream pure `drawio-skill` workflow, keeps YAML sidecars, and defaults to publication-ready `.drawio + .spec.yaml + .arch.json + .svg` delivery.
+- `skills/drawio`: **Draw.io Base Skill**. Owns the shared CLI, schemas, references, themes, examples, style presets, Desktop export helpers, diagrams.net URL fallback, and optional live refinement backend.
+- `skills/drawio-academic-skills`: **Academic Overlay**. Keeps academic policy, README, evals, and publication-specific references. It requires sibling `../drawio` for execution and never requires MCP/live backend.
+
+The source tree intentionally keeps shared capability in one place. A standalone academic package can be generated later by a packaging workflow, but the repository model is base plus overlay.
 
 ## Features
 
-- **Offline-first artifact bundle**: keep `.drawio`, `.spec.yaml`, and `.arch.json` aligned for repeatable local editing.
+- **YAML-first artifact bundle**: keep `.drawio`, `.spec.yaml`, and `.arch.json` aligned for repeatable local editing.
 - **Desktop-aware export**: use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` when available.
-- **Optional live browser refinement**: configure next-ai MCP only when you need a real-time browser session.
+- **Optional live refinement**: configure next-ai MCP only for base-skill browser refinement; academic overlay stays offline.
 - **3 core routes**: `create`, `edit`, and `replicate`.
 - **6 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast`.
-- **Academic and math guardrails**: IEEE-style output, MathJax-safe delimiters, caption and legend checks.
-- **Academic figure typing**: paper-mode requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
-- **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows.
-- **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`), Phase B `star/mesh` layout improvements, and automatic link labels from interface/IP/VLAN/bandwidth metadata.
-- **Vendor-aware icon mapping**: explicit AWS/Cisco icon prefixes, alias resolution (for example `aws.alb`, `aws.ec2`, `cisco.ap`), and vendor/device auto-mapping via `network.vendor` + `network.device`.
+- **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
+- **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
+- **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.
+- **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`) and automatic link labels from interface/IP/VLAN/bandwidth metadata.
 - **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec`.
-- **Validation before export**: structure, layout, and quality checks, plus strict mode for paper-grade output.
+- **Validation before export**: structure, layout, quality, formula, and replication text-position checks.
 
 ## Runtime Model
 
-Use the skill in this order unless the user explicitly wants live browser editing:
+Use this order unless the request explicitly needs a browser session:
 
-1. **Offline-first**: generate `.drawio` locally and keep sidecars in sync.
-2. **Desktop-enhanced**: when draw.io Desktop is available, use it for raster/PDF export and embedded SVG.
-3. **Optional live MCP**: use next-ai MCP only for real-time browser refinement.
+1. **Offline Authoring Path**: generate `.drawio` locally and keep sidecars in sync.
+2. **Desktop-Enhanced Export**: use draw.io Desktop for raster/PDF and embedded SVG exports.
+3. **Live Refinement Backend**: base-skill browser refinement only; the offline bundle remains canonical.
+4. **Direct XML Exception**: tiny XML-only handoff or exact mxGraph control when YAML is not the right tool.
+
+Academic overlay uses the first two paths only. It does not create, require, or route through `.mcp.json`, MCP, or live backend.
 
 ## Install
 
@@ -46,13 +50,13 @@ Use the skill in this order unless the user explicitly wants live browser editin
 npx skills add bahayonghang/drawio-skills
 ```
 
-Restart your client after installation so it reloads the skill.
+Restart your client after installation so it reloads the skills.
 
 ### Manual
 
 1. Clone the repository.
 2. Copy `skills/drawio` into your client's skill directory.
-   For paper-first workflows, copy `skills/drawio-academic-skills` instead.
+3. For publication-facing workflows, also copy `skills/drawio-academic-skills` next to `drawio` so the overlay can resolve sibling `../drawio`.
 
 Common locations:
 
@@ -70,7 +74,9 @@ Common locations:
 
 ## Optional Live Editing Setup
 
-Normal create/edit/export work does **not** require MCP. Configure `@next-ai-drawio/mcp-server` only if you want browser sessions.
+Normal create/edit/export work does **not** require MCP. Configure `@next-ai-drawio/mcp-server` only when you want base-skill browser refinement.
+
+Academic overlay does not need this setup.
 
 ### Claude / Gemini JSON config
 
@@ -134,12 +140,10 @@ Create a network topology with structured metadata:
 /drawio create a tech-blue network topology with a firewall, core switch, two app servers, and a private database subnet. Label interfaces and VLANs on the links.
 ```
 
-Replicate an uploaded image:
+Create a publication figure with the overlay:
 
 ```text
-/drawio replicate
-Color mode: preserve-original
-[upload screenshot]
+/drawio-academic-skills create an IEEE-style workflow figure for a manuscript. Deliver .drawio + .spec.yaml + .arch.json + .svg.
 ```
 
 Import an existing `.drawio` file into the offline bundle:
@@ -155,18 +159,10 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-Academic-paper bundle flow:
+Academic overlay still uses the sibling base CLI:
 
 ```bash
 node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
-```
-
-This produces the paper-mode default deliverables together: `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`.
-
-Use strict mode for review-grade output:
-
-```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
 ```
 
 Use draw.io Desktop when you need raster or PDF export:
@@ -174,6 +170,12 @@ Use draw.io Desktop when you need raster or PDF export:
 ```bash
 node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
 node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop
+```
+
+Generate a diagrams.net URL fallback from a `.drawio` file:
+
+```bash
+node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
 ```
 
 ## Canonical Artifact Bundle
@@ -184,9 +186,11 @@ When the diagram will continue evolving, keep these files together:
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-This is the preferred edit surface for the offline workflow.
+Academic overlay adds standalone SVG as part of the default publication bundle:
 
-For `academic-paper` requests, treat this editable bundle plus `.svg` as the default delivery set. Add `.png` only for thesis, A4, Word, raster-first, screenshot rebuild, or explicit PNG requests when draw.io Desktop export is available.
+- `<name>.svg`
+
+PNG/PDF/JPG are Desktop-enhanced optional outputs and should be reported as unavailable if draw.io Desktop is missing.
 
 ## Network Topology Authoring
 
@@ -197,15 +201,7 @@ The current network-topology workflow supports:
 - layout intents `hierarchical`, `star`, and `mesh`
 - provider-aware icon mapping through explicit `icon` fields or `network.vendor` + `network.device`
 
-Representative specs now ship in `skills/drawio/references/examples/`:
-
-- `campus-lan-topology.yaml`
-- `aws-vpc-topology.yaml`
-- `onprem-dmz-topology.yaml`
-- `vendor-device-mapping.yaml`
-- `system-architecture-paper.yaml`
-- `research-pipeline.yaml`
-- `technical-roadmap-paper.yaml`
+Representative specs ship in `skills/drawio/references/examples/`.
 
 Render one directly:
 
@@ -231,13 +227,14 @@ npm run docs:build
 
 Repository layout:
 
-- `skills/drawio/`: skill, CLI, references, themes, examples
+- `skills/drawio/`: base skill, CLI, references, themes, schemas, examples, style presets
+- `skills/drawio-academic-skills/`: academic overlay, README, evals, publication references
 - `docs/`: VitePress site
 - `tests/`: repo-level integration tests
 
 ## Upstream Relationship
 
-This skill builds on top of **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)**, but wraps it in a YAML-first workflow with offline sidecars, design-system references, and route-specific guidance.
+This repository builds on draw.io and the optional **[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io)** MCP server, but wraps shared behavior in a YAML-first workflow with offline sidecars, design-system references, and route-specific guidance.
 
 The official `@drawio/mcp` server is intentionally **not** the default integration surface for this repository because its tool model does not match the offline-first edit/replicate workflow.
 

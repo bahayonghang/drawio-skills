@@ -1,13 +1,14 @@
 # Optional MCP Tools
 
-These MCP tools support live browser editing. They are **not** the default runtime for Draw.io Skill 2.2.0.
+These MCP tools support base-skill live browser refinement. They are **not** the default runtime for Draw.io Skill 2.2.0.
 
 Use them only when:
 
 - next-ai MCP is configured
-- the user wants real-time browser refinement
+- the user explicitly wants real-time browser refinement
+- the task is using the base `drawio` skill, not the academic overlay
 
-The default workflow is still offline-first with `.drawio` + sidecars.
+The default workflow is still offline-first with `.drawio` + sidecars. `drawio-academic-skills` does not create, require, or route through `.mcp.json`, MCP, or a live backend.
 
 ## `start_session`
 
@@ -26,7 +27,7 @@ None.
 ### Notes
 
 - required before any other MCP diagram calls
-- intended only for live refinement workflows
+- intended only for base-skill live refinement workflows
 
 ## `create_new_diagram`
 
@@ -35,7 +36,7 @@ Create a new diagram from full `mxGraphModel` XML.
 ### Parameters
 
 | Name | Required | Description |
-|------|----------|-------------|
+| --- | --- | --- |
 | `xml` | Yes | Full `mxGraphModel` XML string |
 
 ### Notes
@@ -58,13 +59,13 @@ Update, add, or delete cells by ID.
 ### Parameters
 
 | Name | Required | Description |
-|------|----------|-------------|
+| --- | --- | --- |
 | `operations` | Yes | Array of `update`, `add`, or `delete` operations |
 
 ### Operation shape
 
 | Field | Required | Description |
-|-------|----------|-------------|
+| --- | --- | --- |
 | `operation` | Yes | `update`, `add`, or `delete` |
 | `cell_id` | Yes | Existing ID for update/delete, new ID for add |
 | `new_xml` | For add/update | Full `<mxCell>` element including `<mxGeometry>` |
@@ -76,7 +77,7 @@ Export the current live diagram to disk.
 ### Parameters
 
 | Name | Required | Description |
-|------|----------|-------------|
+| --- | --- | --- |
 | `path` | Yes | Output file path |
 | `format` | No | `drawio`, `png`, or `svg`; inferred from extension when omitted |
 
@@ -96,6 +97,7 @@ Prefer the local CLI and sidecar bundle when:
 - you want version-controlled edits
 - you need repeatable export commands
 - you are working in CI or scripted environments
+- you are using the academic overlay
 
 ## Related
 

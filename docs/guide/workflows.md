@@ -1,18 +1,20 @@
 # Workflows Overview
 
-Draw.io Skill exposes three core routes:
+Draw.io Skill exposes three base routes and an academic overlay policy:
 
 - `/drawio create`
 - `/drawio edit`
 - `/drawio replicate`
+- `/drawio-academic-skills` for publication-facing variants of those routes
 
-All three routes share the same YAML-first model, design system, and validation stack.
+All routes share the same YAML-first model, design system, base CLI, and validation stack.
 
 ## Shared Runtime Rules
 
-1. **Offline-first** by default
-2. **Desktop-enhanced** when draw.io Desktop is available
-3. **Optional live MCP** only for real-time browser refinement
+1. **Offline Authoring Path** by default
+2. **Desktop-Enhanced Export** when draw.io Desktop is available
+3. **Live Refinement Backend** only for explicit base-skill browser refinement
+4. **Direct XML Exception** only for tiny XML-only handoff or exact mxGraph control
 
 The skill keeps this editable bundle together whenever possible:
 
@@ -20,17 +22,20 @@ The skill keeps this editable bundle together whenever possible:
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
+Academic overlay adds `<name>.svg` to the default publication delivery set.
+
 ## Route Comparison
 
 | Route | Primary input | Default output | When to use |
-|------|---------------|----------------|-------------|
-| `create` | Text, YAML, Mermaid, CSV | New `.drawio` bundle | Build a new diagram |
+| --- | --- | --- | --- |
+| `create` | Text, YAML, Mermaid, CSV | New `.drawio` bundle | Build a new general diagram |
 | `edit` | Existing bundle or `.drawio` file | Updated bundle | Modify or restyle a diagram |
 | `replicate` | Uploaded image or screenshot | Redrawn `.drawio` bundle | Recreate a reference diagram |
+| `academic overlay` | Paper/thesis/manuscript prompt | `.drawio + .spec.yaml + .arch.json + .svg` | Publication-ready figures |
 
 ## `/drawio create`
 
-Use this for brand-new diagrams.
+Use this for brand-new general diagrams.
 
 ### Input modes
 
@@ -38,6 +43,7 @@ Use this for brand-new diagrams.
 - YAML spec
 - Mermaid
 - CSV hierarchy / org-chart style input
+- Existing `.drawio` import when paired with `--input-format drawio`
 
 ### Fast path
 
@@ -49,17 +55,33 @@ The skill slows down and drafts the logic first when the request is:
 
 - ambiguous
 - dense
-- academic
 - stencil-heavy
 - routing-sensitive
+- a replication or major edit
 
 ### Automatic branches
 
-- **Academic**: enables paper-quality validation and academic defaults
 - **Math / Formula**: enforces official delimiters only
 - **Stencil-heavy**: loads cloud and network icon guidance
+- **Edge audit**: loads routing and label-clearance rules
+- **Academic trigger**: use the sibling academic overlay when publication policy matters
 
 See [Creating Diagrams](./creating-diagrams.md).
+
+## Academic Overlay
+
+Use `drawio-academic-skills` for paper, thesis, IEEE, journal, manuscript, publication-ready, A4/Word/LaTeX, or formula-heavy scholarly figures.
+
+The overlay performs academic preflight:
+
+- venue or audience
+- `figureType`: `architecture`, `roadmap`, or `workflow`
+- monochrome vs color policy
+- caption, title, and legend needs
+- formula and text-position fidelity
+- requested exports and Desktop availability
+
+It then executes through sibling `../drawio/scripts/cli.js`. It does not use MCP/live backend.
 
 ## `/drawio edit`
 
@@ -69,7 +91,7 @@ Use this for incremental changes, imports, restructures, or theme switches.
 
 1. Existing offline bundle
 2. Existing `.drawio` imported into a bundle
-3. Live browser session only when explicitly requested
+3. Live browser session only when explicitly requested for base-skill refinement
 
 ### Common edit types
 
@@ -107,7 +129,7 @@ Replication should preserve more than structure and color:
 ### Color modes
 
 | Mode | Default | Effect |
-|------|---------|--------|
+| --- | --- | --- |
 | `preserve-original` | Yes | Preserve source palette with explicit style overrides |
 | `theme-first` | No | Normalize the redraw to the selected theme |
 
@@ -118,6 +140,7 @@ See [Replicating Diagrams](./scientific-workflows.md).
 ### Design system
 
 - 6 built-in themes
+- shared style presets in `skills/drawio/styles/built-in/`
 - semantic node types
 - typed connectors
 - 8px grid defaults
@@ -127,6 +150,7 @@ See [Replicating Diagrams](./scientific-workflows.md).
 - structure validation
 - layout validation
 - quality validation
+- formula delimiter validation
 - text-position validation for replication outputs
 
 ### Strict mode

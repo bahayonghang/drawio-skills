@@ -1,6 +1,6 @@
 # Installation
 
-Install the Draw.io Skill itself first. Add optional live-edit MCP only if you want browser sessions.
+Install the Draw.io Base Skill first. Add the Academic Overlay beside it only when you need publication-facing defaults. Add optional live-edit MCP only if you want base-skill browser sessions.
 
 ## Prerequisites
 
@@ -23,12 +23,12 @@ npx --version
 npx skills add bahayonghang/drawio-skills
 ```
 
-This installs the skill into the correct skill directory for the current client integration.
+This installs the repository skill set into the correct skill directory for the current client integration.
 
 ## Skill Variants
 
-- Use `skills/drawio` for general diagrams, network topology, structured redraws, and optional live browser refinement.
-- Use `skills/drawio-academic-skills` for paper-first diagrams. It includes the upstream pure draw.io workflow plus the local YAML/CLI academic bundle flow.
+- `skills/drawio`: Draw.io Base Skill for general diagrams, network topology, structured redraws, import/export, shared styles, and optional live refinement.
+- `skills/drawio-academic-skills`: Academic Overlay for paper-first diagrams. It depends on sibling `../drawio`; it does not include copied base runtime files and does not require MCP.
 
 ## Manual Install
 
@@ -39,9 +39,19 @@ git clone https://github.com/bahayonghang/drawio-skills.git
 cd drawio-skills
 ```
 
-### 2. Copy the skill folder into your client's skill directory
+### 2. Copy skill folders into your client's skill directory
 
-Copy `skills/drawio` by default. Copy `skills/drawio-academic-skills` when you want academic-paper defaults.
+Copy `skills/drawio` by default.
+
+For academic-paper defaults, copy both folders side by side:
+
+```text
+skills/
+├── drawio/
+└── drawio-academic-skills/
+```
+
+The overlay resolves `../drawio/scripts/cli.js`, `../drawio/references/`, `../drawio/assets/themes/`, and `../drawio/styles/built-in/` at runtime.
 
 #### Claude
 
@@ -60,11 +70,13 @@ Copy `skills/drawio` by default. Copy `skills/drawio-academic-skills` when you w
 - macOS / Linux: `~/.codex/skills/`
 - Windows: `%USERPROFILE%\.codex\skills\`
 
-Restart the client after copying the folder.
+Restart the client after copying the folders.
 
 ## Optional Live Editing Setup
 
-Normal create/edit/export work does **not** require MCP. Configure `@next-ai-drawio/mcp-server` only if you want live browser editing.
+Normal create/edit/export work does **not** require MCP. Configure `@next-ai-drawio/mcp-server` only if you want base-skill live browser refinement.
+
+Academic overlay does not need MCP and should not route through a live backend.
 
 ### Claude / Gemini JSON config
 
@@ -126,13 +138,21 @@ The standalone SVG path does **not** require draw.io Desktop.
 
 ## Verify the Installation
 
-### Verify the skill is reachable
+### Verify the base skill is reachable
 
 Try a simple request in your client:
 
 ```text
 /drawio create a small high-contrast flowchart with 4 nodes
 ```
+
+### Verify the academic overlay is reachable
+
+```text
+/drawio-academic-skills create a grayscale-safe IEEE workflow figure with 4 stages
+```
+
+If the overlay reports missing `../drawio`, copy the base skill beside it.
 
 ### Verify the local CLI
 
@@ -150,7 +170,11 @@ npm view @next-ai-drawio/mcp-server version
 
 ### The skill loads, but no browser opens
 
-That is expected in the default runtime. Browser sessions happen only when you configured optional MCP and explicitly use live editing.
+That is expected in the default runtime. Browser sessions happen only when you configured optional MCP and explicitly use base-skill live refinement.
+
+### Academic overlay cannot find `../drawio`
+
+Install `skills/drawio` next to `skills/drawio-academic-skills`. The overlay is not a standalone copied package in the source tree.
 
 ### `No active session`
 

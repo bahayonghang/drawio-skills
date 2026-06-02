@@ -2,12 +2,15 @@
 
 当你要把上传图片、截图或参考图重绘成结构化 draw.io bundle 时，使用 `/drawio replicate`。
 
+当参考图是 paper/thesis/manuscript figure，或有出版约束时，使用 `drawio-academic-skills`。
+
 ## 复刻要解决什么问题
 
 - 比直接截图描边更干净
 - 输出可编辑的 YAML-first 产物
 - 控制是否保留原图配色
-- 在需要时满足论文级导出要求
+- 保留 caption、callout、公式和边标签等文字位置
+- 在需要时通过 overlay 满足论文级导出要求
 
 ## 复刻流程
 
@@ -18,6 +21,19 @@
 5. 在必要时展示逻辑、配色和文字位置摘要
 6. 渲染离线 bundle
 7. 通过 `/drawio edit` 做后续微调
+
+## Academic Replication Overlay
+
+当源图是出版场景时，overlay 增加：
+
+- venue/audience preflight
+- `meta.profile: academic-paper`
+- `meta.figureType`：`architecture`、`roadmap` 或 `workflow`
+- caption、legend 和 A4/Word/LaTeX 导出检查
+- 默认 `.drawio + .spec.yaml + .arch.json + .svg` 交付
+- 不需要 MCP/live backend
+
+Overlay 仍然通过 sibling Base CLI：`../drawio/scripts/cli.js` 执行。
 
 ## 文字保真抽取
 
@@ -37,7 +53,7 @@
 ## 颜色模式
 
 | 模式 | 默认 | 行为 |
-|------|------|------|
+| --- | --- | --- |
 | `preserve-original` | 是 | 通过显式样式覆盖保留源图背景和主配色 |
 | `theme-first` | 否 | 让重绘结果优先服从所选主题，源图颜色只作为提示 |
 
@@ -51,7 +67,7 @@
 ## 按领域选择主题
 
 | 领域 | 推荐主题 |
-|------|----------|
+| --- | --- |
 | 软件架构 | `tech-blue` |
 | 商业流程 | `tech-blue` |
 | 科研流程 | `academic` |
@@ -81,12 +97,12 @@
 尽量保留暖色节点和深色连线，不要全部归一到 tech-blue
 ```
 
-### 归一到论文主题
+### 使用 Academic Overlay
 
 ```text
-/drawio replicate with academic theme
+/drawio-academic-skills replicate
 [上传论文配图]
-请按 IEEE 投稿要求重绘，并确保灰度打印可读
+请按 IEEE 投稿要求重绘，确保灰度打印可读，并交付 .drawio + .spec.yaml + .arch.json + .svg
 ```
 
 ### 归一到演示主题
@@ -99,16 +115,20 @@
 
 ## 输出产物
 
-复刻路线也应生成和其他路线一致的三件套：
+Base 复刻应生成三件套：
 
 - `.drawio`
 - `.spec.yaml`
 - `.arch.json`
 
-可按需额外生成：
+Academic Overlay 默认还会交付：
 
 - 独立 SVG
+
+可选产物：
+
 - 当 draw.io Desktop 可用时生成 PNG / PDF / JPG
+- 从 `.drawio` 文件生成 diagrams.net URL fallback
 
 ## 故障排除
 

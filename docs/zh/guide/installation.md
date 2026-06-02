@@ -1,6 +1,6 @@
 # 安装
 
-先安装 Draw.io Skill 本体。只有在你明确需要浏览器实时编辑时，才额外配置 live-edit MCP。
+先安装 Draw.io Base Skill。只有需要出版级默认策略时，才把 Academic Overlay 放在旁边。只有需要 Base Skill 浏览器会话时，才额外配置 live-edit MCP。
 
 ## 前置要求
 
@@ -23,12 +23,12 @@ npx --version
 npx skills add bahayonghang/drawio-skills
 ```
 
-这会把 skill 安装到当前客户端集成对应的技能目录。
+这会把仓库 skill set 安装到当前客户端集成对应的技能目录。
 
 ## Skill 变体
 
-- `skills/drawio`：通用图、网络拓扑、结构化重绘和可选浏览器精修。
-- `skills/drawio-academic-skills`：论文图优先。它包含上游纯 draw.io 工作流，也包含本仓库的 YAML/CLI 学术产物包流程。
+- `skills/drawio`：Draw.io Base Skill，用于通用图、网络拓扑、结构化重绘、导入/导出、共享 styles 和可选 live refinement。
+- `skills/drawio-academic-skills`：Academic Overlay，用于论文图优先场景。它依赖 sibling `../drawio`；不包含复制的 base runtime，也不需要 MCP。
 
 ## 手动安装
 
@@ -41,7 +41,17 @@ cd drawio-skills
 
 ### 2. 把 skill 目录复制到客户端 skill 目录
 
-默认复制 `skills/drawio`。如果主要做论文图，复制 `skills/drawio-academic-skills`。
+默认复制 `skills/drawio`。
+
+如果需要学术论文默认策略，请把两个目录并排复制：
+
+```text
+skills/
+├── drawio/
+└── drawio-academic-skills/
+```
+
+Overlay 运行时会解析 `../drawio/scripts/cli.js`、`../drawio/references/`、`../drawio/assets/themes/` 和 `../drawio/styles/built-in/`。
 
 #### Claude
 
@@ -64,7 +74,9 @@ cd drawio-skills
 
 ## 可选：配置 Live Editing MCP
 
-日常 create/edit/export **不需要** MCP。只有在你想用浏览器进行实时精调时，才需要配置 `@next-ai-drawio/mcp-server`。
+日常 create/edit/export **不需要** MCP。只有在你想使用 Base Skill live browser refinement 时，才需要配置 `@next-ai-drawio/mcp-server`。
+
+Academic Overlay 不需要 MCP，也不应路由到 live backend。
 
 ### Claude / Gemini 的 JSON 配置
 
@@ -126,13 +138,21 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 
 ## 验证安装
 
-### 验证 skill 能被调用
+### 验证 Base Skill 能被调用
 
 在客户端里试一个简单请求：
 
 ```text
 /drawio create 生成一个 high-contrast 4 节点流程图
 ```
+
+### 验证 Academic Overlay 能被调用
+
+```text
+/drawio-academic-skills create 生成一个灰度安全的 IEEE 4 阶段 workflow figure
+```
+
+如果 overlay 报告缺少 `../drawio`，请把 base skill 复制到它旁边。
 
 ### 验证本地 CLI
 
@@ -150,7 +170,11 @@ npm view @next-ai-drawio/mcp-server version
 
 ### skill 能用，但没有自动打开浏览器
 
-这是默认行为。默认运行时就是离线优先；只有配置了可选 MCP 并明确走 live editing 才会打开浏览器。
+这是默认行为。浏览器会话只会在配置了可选 MCP 并明确使用 Base Skill live refinement 时发生。
+
+### Academic Overlay 找不到 `../drawio`
+
+把 `skills/drawio` 安装到 `skills/drawio-academic-skills` 旁边。源码树里的 overlay 不是独立复制包。
 
 ### 出现 `No active session`
 

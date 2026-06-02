@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: "Draw.io Skill"
-  text: "for Claude, Gemini, and Codex"
-  tagline: Desktop-first, offline-first draw.io authoring with YAML specs, local sidecars, optional live editing, and academic-quality guardrails.
+  text: "Base + Academic Overlay"
+  tagline: YAML-first, offline-first draw.io authoring with a shared base skill, sibling academic overlay, Desktop-enhanced export, and optional base-only live refinement.
   actions:
     - theme: brand
       text: Get Started
@@ -15,80 +15,84 @@ hero:
 
 features:
   - icon: 🧭
-    title: Offline-First by Default
-    details: "Generate `.drawio` locally, keep `.spec.yaml` and `.arch.json` beside it, and use live MCP only when real-time browser refinement is genuinely needed."
+    title: Shared Base Skill
+    details: "`skills/drawio` owns the CLI, schemas, references, themes, examples, style presets, Desktop helpers, diagrams.net URL fallback, and optional live refinement."
 
-  - icon: 🖥️
-    title: Desktop-Enhanced Export
-    details: "Use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` artifacts when available. Standalone SVG still works fully offline."
+  - icon: 🎓
+    title: Academic Overlay
+    details: "`skills/drawio-academic-skills` is a thin sibling overlay for papers, theses, IEEE, manuscripts, A4/Word/LaTeX figures, and publication bundles."
 
   - icon: 📝
     title: YAML as Canonical Source
     details: "Normalize natural language, Mermaid, CSV, or imported `.drawio` files into one structured YAML spec before rendering."
+
+  - icon: 🖥️
+    title: Desktop-Enhanced Export
+    details: "Use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` artifacts when available. Standalone SVG still works fully offline."
 
   - icon: 🚀
     title: 3 Core Routes
     details: "Create new diagrams, edit existing bundles, or replicate uploaded diagrams with route-specific references and validation rules."
 
   - icon: 🎨
-    title: 6 Built-In Themes
-    details: "Tech Blue, Academic, Academic Color, Nature, Dark, and High Contrast cover engineering review, paper figures, presentations, and accessibility-first output."
+    title: Shared Themes and Presets
+    details: "Six built-in themes and bundled style presets live in the base skill so overlays do not drift."
 
   - icon: 🧮
     title: Academic and Math Guardrails
-    details: "Built-in support for IEEE-style figures, MathJax-safe delimiters, caption metadata, legend checks, and grayscale-safe exports."
+    details: "The overlay adds venue preflight, figure taxonomy, caption and legend checks, formula fidelity, and paper/A4 readability rules."
 
   - icon: ☁️
-    title: Stencil and Cloud Support
-    details: "Use semantic shapes first, then opt into AWS, GCP, Azure, Kubernetes, or network stencils when provider-specific visuals matter."
-
-  - icon: ☁️
-    title: Network Topology Workflows
-    details: "Model campus LANs, AWS VPCs, and DMZ layouts with semantic network node types, `hierarchical` / `star` / `mesh` layouts, and automatic interface/IP/VLAN link labels."
-
-  - icon: 🧩
-    title: Vendor-Aware Icon Mapping
-    details: "Use explicit AWS/Cisco icon prefixes, supported aliases such as `aws.alb` and `cisco.ap`, or let `network.vendor` + `network.device` derive documented stencils automatically."
+    title: Network and Stencil Workflows
+    details: "Model campus LANs, AWS VPCs, DMZ layouts, UML, ER, sequence, state, and provider-specific icon workflows through the base references."
 
   - icon: 🔁
     title: Replication with Palette and Text Control
-    details: "`/drawio replicate` preserves source colors by default, records palette intent in `meta.replication`, and now tracks text-box bounds and label offsets for titles, captions, formulas, and edge labels."
+    details: "Replication preserves source colors by default and tracks text-box bounds plus label offsets for titles, captions, formulas, and edge labels."
 
   - icon: ✅
     title: Validation Before Claiming Done
-    details: "Structure, layout, and quality validators catch spec errors, overlap risk, edge routing issues, and academic profile omissions before export."
+    details: "Structure, layout, quality, formula, and text-position validators catch problems before export."
 
   - icon: 🔌
-    title: Optional Live MCP
-    details: "next-ai MCP remains supported for browser sessions, but it is an enhancement layer rather than the default authoring runtime."
+    title: Optional Base-Only Live Refinement
+    details: "next-ai MCP remains supported for browser sessions in the base skill, but it is not the default runtime and is not used by the academic overlay."
 ---
+
+## Skill Variants
+
+- `skills/drawio`: Draw.io Base Skill for general diagrams, conversion, import/export, shared resources, Desktop export, diagrams.net fallback, and optional live refinement.
+- `skills/drawio-academic-skills`: Academic Overlay for publication-facing figures. It requires sibling `../drawio` and does not copy base scripts, themes, schemas, or official references.
 
 ## Runtime Model
 
-Use the skill in this order unless you explicitly need a browser session:
+Use this order unless you explicitly need a browser session:
 
-1. **Offline-first**: generate `.drawio` locally and keep the sidecars in sync.
-2. **Desktop-enhanced**: add draw.io Desktop when you need PNG, PDF, JPG, or embedded SVG exports.
-3. **Optional live MCP**: start a browser session only for in-session visual refinement.
+1. **Offline Authoring Path**: generate `.drawio` locally and keep sidecars in sync.
+2. **Desktop-Enhanced Export**: add draw.io Desktop for PNG, PDF, JPG, or embedded SVG.
+3. **Live Refinement Backend**: base-only browser refinement; the offline bundle remains canonical.
+4. **Direct XML Exception**: tiny XML-only or exact mxGraph handoff.
+
+Academic overlay uses the offline and Desktop-enhanced paths only.
 
 ## Quick Start
 
-Install the skill:
+Install the skills:
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
-Create a first diagram:
+Create a first base diagram:
 
 ```text
 /drawio create a horizontal tech-blue login flow with 6 nodes
 ```
 
-Create a network topology bundle:
+Create an academic overlay figure:
 
 ```text
-/drawio create a tech-blue AWS VPC topology with an internet gateway, an application load balancer, two app servers, and a private RDS subnet. Label the private links.
+/drawio-academic-skills create an IEEE-style workflow figure for a manuscript and deliver .drawio + .spec.yaml + .arch.json + .svg
 ```
 
 Validate and export from the repo:
@@ -98,16 +102,16 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-Import an existing `.drawio` file into the offline bundle:
+Generate a diagrams.net URL fallback:
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
 ```
 
 ## What the Site Covers
 
 - **Guide**: installation, routes, design system, YAML specification, CLI, and export workflow.
-- **API**: optional MCP tools, XML format notes, and the standalone SVG converter.
+- **API**: optional base-only MCP tools, XML format notes, and the standalone SVG converter.
 - **Examples**: prompt-first examples plus reusable YAML specs under `skills/drawio/references/examples/`.
 
 ## Source of Truth
@@ -115,6 +119,7 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 This documentation tracks the current runtime model defined in:
 
 - `skills/drawio/SKILL.md`
+- `skills/drawio-academic-skills/SKILL.md`
 - `skills/drawio/references/workflows/*.md`
 - `skills/drawio/references/docs/**`
 

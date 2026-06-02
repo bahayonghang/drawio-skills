@@ -2,12 +2,15 @@
 
 Use `/drawio replicate` when you want to recreate an uploaded image, screenshot, or reference diagram as a structured draw.io bundle.
 
+Use `drawio-academic-skills` when the reference is a paper/thesis/manuscript figure or publication constraints matter.
+
 ## What Replication Optimizes For
 
 - cleaner redraws than raw screenshot tracing
 - editable YAML-first artifacts
 - palette-aware restyling
-- academic-safe exports when needed
+- text-position fidelity for captions, callouts, formulas, and edge labels
+- academic-safe exports through the overlay when needed
 
 ## Replication Flow
 
@@ -18,6 +21,19 @@ Use `/drawio replicate` when you want to recreate an uploaded image, screenshot,
 5. Summarize logic, palette, and text placement when needed
 6. Render the offline bundle
 7. Compare and refine with `/drawio edit`
+
+## Academic Replication Overlay
+
+When the source is publication-facing, the overlay adds:
+
+- venue/audience preflight
+- `meta.profile: academic-paper`
+- `meta.figureType`: `architecture`, `roadmap`, or `workflow`
+- caption, legend, and A4/Word/LaTeX export checks
+- default `.drawio + .spec.yaml + .arch.json + .svg` delivery
+- no MCP/live backend requirement
+
+The overlay still executes through the sibling base CLI at `../drawio/scripts/cli.js`.
 
 ## Text Fidelity Pass
 
@@ -37,7 +53,7 @@ For self-checking, compare the source and export for:
 ## Color Modes
 
 | Mode | Default | Behavior |
-|------|---------|----------|
+| --- | --- | --- |
 | `preserve-original` | Yes | Preserve source background and dominant palette through explicit style overrides |
 | `theme-first` | No | Normalize the redraw to the selected theme and treat source colors as hints |
 
@@ -51,7 +67,7 @@ Replicated specs should usually record:
 ## Theme Defaults by Domain
 
 | Domain | Recommended theme |
-|--------|-------------------|
+| --- | --- |
 | software architecture | `tech-blue` |
 | business process | `tech-blue` |
 | research workflow | `academic` |
@@ -81,12 +97,12 @@ Color mode: preserve-original
 Keep the warm nodes and dark connectors instead of normalizing everything to tech-blue
 ```
 
-### Normalize to an academic paper palette
+### Use the academic overlay
 
 ```text
-/drawio replicate with academic theme
+/drawio-academic-skills replicate
 [upload paper figure]
-Redraw this for IEEE submission and keep it grayscale-safe
+Redraw this for IEEE submission, keep it grayscale-safe, and deliver .drawio + .spec.yaml + .arch.json + .svg
 ```
 
 ### Normalize to a presentation theme
@@ -99,16 +115,20 @@ Redraw this for a keynote slide
 
 ## Output Artifacts
 
-Replication should produce the same editable trio as other routes:
+Base replication should produce the editable trio:
 
 - `.drawio`
 - `.spec.yaml`
 - `.arch.json`
 
-Optionally add:
+Academic overlay also defaults to:
 
 - standalone SVG
+
+Optional outputs:
+
 - desktop PNG / PDF / JPG when draw.io Desktop is available
+- diagrams.net URL fallback generated from the `.drawio` file
 
 ## Troubleshooting
 
