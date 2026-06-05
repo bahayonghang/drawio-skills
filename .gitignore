@@ -24,6 +24,9 @@ openspec/
 imgs/ref/
 .omc/
 .omx/
+.trellis/
+.codex/
+
 
 # temp
 skills/drawio-official/
