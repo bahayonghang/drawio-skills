@@ -58,6 +58,14 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 
 但这是可选路径；默认导出模型仍然是本地 CLI 生成。
 
+## 视觉验证顺序
+
+视觉检查优先使用导出产物，而不是浏览器截图：
+
+1. 当前环境能查看 SVG 时，先检查生成的 SVG。
+2. 如果需要栅格或最终保真检查，且 draw.io Desktop 可用，检查 Desktop 导出的 PNG、PDF、JPG 或 embedded `.drawio.svg`。
+3. 只有在用户明确要求 live refinement，且没有可检查的导出产物时，才把浏览器或 Playwright 截图作为兜底。
+
 ## 如何选导出格式
 
 | 需求 | 推荐输出 |
