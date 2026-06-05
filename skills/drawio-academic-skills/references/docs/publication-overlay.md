@@ -33,6 +33,15 @@ Default academic delivery is:
 
 PNG/PDF/JPG are optional Desktop-enhanced exports. If Desktop is unavailable, report the missing export and provide the editable bundle plus SVG.
 
+## Visual Verification
+
+Use exported artifacts for paper-readability checks before any browser path:
+
+1. Inspect the generated SVG when the current environment can view it.
+2. If a raster or final-fidelity check is needed and draw.io Desktop is available, inspect the Desktop-exported PNG/PDF/JPG or embedded `.drawio.svg`.
+3. Do not substitute browser or Playwright screenshots when an exported artifact exists.
+4. Use live/browser screenshots only as a last-resort review aid when the user explicitly requested live review and no exported artifact can be inspected.
+
 ## Base References
 
 Load the sibling base references for detailed rules:

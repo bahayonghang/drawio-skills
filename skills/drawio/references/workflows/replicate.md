@@ -62,14 +62,15 @@ Step 6: Convert to Diagram
 ├── Preserve explicit top-left `bounds` for high-fidelity text boxes and formula annotations
 ├── Apply `labelOffset` so connector labels sit 12-20px off the line by default
 ├── Generate .drawio + .spec.yaml + .arch.json offline first
-├── Export standalone SVG or desktop preview if available
+├── Export standalone SVG first; if a raster/final-fidelity check is needed and draw.io Desktop is available, export PNG/PDF/JPG or embedded SVG through the CLI
+├── Do not create browser or Playwright screenshots when an exported SVG/PNG/PDF/JPG exists
 └── Only use a live backend for preview/refinement when the user explicitly wants it
 
 Step 7: Review and Refine
-├── Compare with original image
+├── Compare the original image with the exported SVG or Desktop-exported image when a viewer or vision path can inspect it
 ├── Compare text placement: no labels on top of lines, no formulas touching borders, matching relative title/caption/callout positions
 ├── Default to /drawio edit in offline mode
-├── Live providers with `render_inline_preview` may help review
+├── Live providers with `render_inline_preview` may help review only after exported-artifact verification is unavailable or insufficient
 └── Providers without `read_diagram_xml + patch_diagram_cells` still do not replace the offline edit path
 
 Step 8: Validate
@@ -77,7 +78,8 @@ Step 8: Validate
 ├── Check edge source/target reference validity
 ├── Check required root cells present
 ├── Check text-label clearance: no edge label overlaps its connector, no formula is clipped or pasted to a boundary
-├── For screenshot/academic replication, record at least one original-vs-export visual comparison when vision or a rendered preview is available
+├── For screenshot/academic replication, record at least one original-vs-export visual comparison from exported SVG/PNG/PDF/JPG when vision or a viewer can inspect it
+├── Use browser/live screenshots only as a last-resort review aid when the user explicitly requested live review and no exported artifact can be inspected
 └── Use --validate CLI flag or validateXml() from DSL converter
 ```
 

@@ -98,4 +98,5 @@ Do not consider the figure complete until all of these are true:
 - labels are concise and readable
 - connector routing is clean enough that the reading order is obvious
 - the offline bundle and SVG are aligned
+- any visual self-check used the exported SVG or Desktop-exported final artifact before any browser/live screenshot
 - any requested PNG companion matches the final diagram state

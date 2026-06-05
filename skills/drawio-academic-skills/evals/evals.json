@@ -89,7 +89,8 @@
         "Sets meta.profile to academic-paper",
         "Uses explicit bounds for standalone text, captions, formulas, or callouts when placement matters",
         "Uses labelOffset for connector labels that would otherwise sit on lines",
-        "Records a visual/text-position self-check before completion"
+        "Records a visual/text-position self-check before completion",
+        "Uses exported SVG or Desktop-exported artifacts for visual verification before any browser screenshot"
       ]
     },
     {
@@ -102,7 +103,8 @@
         "Does not require MCP or a live backend",
         "Does not claim PNG/PDF files exist when Desktop is unavailable",
         "Still delivers .drawio, .spec.yaml, .arch.json, and .svg",
-        "Provides a diagrams.net URL or exact Desktop command fallback"
+        "Provides a diagrams.net URL or exact Desktop command fallback",
+        "Does not substitute Playwright screenshots for unavailable Desktop exports"
       ]
     }
   ]

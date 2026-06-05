@@ -12,7 +12,8 @@
         "Normalizes the request into a YAML spec before rendering",
         "Outputs .drawio, .spec.yaml, .arch.json, and .svg when a persistent bundle is requested",
         "Uses tech-blue or another non-academic engineering theme",
-        "Does not require a live backend to complete"
+        "Does not require a live backend to complete",
+        "Uses exported SVG or Desktop-exported artifacts for visual verification before any browser screenshot"
       ]
     },
     {
@@ -113,7 +114,8 @@
         "Preserves source palette unless the user asks for theme-first",
         "Uses bounds for position-sensitive standalone text",
         "Uses labelOffset when edge labels must sit off connector lines",
-        "Does not force academic-paper metadata"
+        "Does not force academic-paper metadata",
+        "Compares against exported SVG or Desktop-exported artifacts before any browser screenshot"
       ]
     },
     {
@@ -125,7 +127,8 @@
         "Attempts PNG/PDF only through Desktop-enhanced export when available",
         "Does not claim PNG/PDF files exist if Desktop is unavailable",
         "Still delivers .drawio, .spec.yaml, .arch.json, and .svg when possible",
-        "Provides an exact Desktop command or diagrams.net URL fallback"
+        "Provides an exact Desktop command or diagrams.net URL fallback",
+        "Does not substitute Playwright screenshots for unavailable Desktop exports"
       ]
     },
     {

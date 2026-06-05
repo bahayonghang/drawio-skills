@@ -58,6 +58,14 @@ If you are already in a live browser session, `export_diagram` can still save `.
 
 That path is optional. The default export model remains local CLI generation.
 
+## Visual Verification Order
+
+Use exported artifacts for visual checks before any browser screenshot:
+
+1. Check the generated SVG when the environment can view SVG.
+2. If a raster or final-fidelity check is needed and draw.io Desktop is available, check the Desktop-exported PNG/PDF/JPG or embedded `.drawio.svg`.
+3. Use browser or Playwright screenshots only as a live-refinement fallback when explicitly requested and no exported artifact can be inspected.
+
 ## Recommended Export Choices
 
 | Need | Best output |

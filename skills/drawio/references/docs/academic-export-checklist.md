@@ -10,6 +10,7 @@ Use this checklist for `meta.profile: academic-paper`.
 - Output bundle includes `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`.
 - All formulas use the math typesetting guidance.
 - Colors are not the only carrier of meaning.
+- Visual checks use the exported SVG or Desktop-exported final artifact before any browser/live screenshot.
 
 ## Recommended
 

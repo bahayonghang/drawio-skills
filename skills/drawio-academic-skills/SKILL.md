@@ -52,6 +52,7 @@ If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base 
 - Treat `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the default academic delivery bundle.
 - Use draw.io Desktop only as an optional export enhancer for PNG/PDF/JPG or embedded `.drawio.svg`.
 - If a requested Desktop export cannot be produced locally, still deliver the editable bundle and SVG, then report the unavailable export clearly.
+- Perform paper-readability and visual self-checks on exported SVG first, or on Desktop-exported PNG/PDF/JPG/embedded SVG when available. Do not substitute browser or Playwright screenshots when an exported artifact exists.
 - Keep academic-specific policy in this overlay; keep shared execution in `../drawio`.
 
 ## Academic Preflight
@@ -178,6 +179,7 @@ Do not claim completion until:
 - formulas use official delimiters: `$$...$$`, `\(...\)`, or AsciiMath backticks
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
 - colors are not the only carrier of meaning
+- any visual self-check used the exported SVG or Desktop-exported final artifact before any live/browser preview
 - requested Desktop exports were attempted or clearly reported as unavailable
 - no MCP config, MCP server, or live backend is required for the result
 

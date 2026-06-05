@@ -110,11 +110,14 @@ Step 11: Render
 │   For publication-grade vector output, add --use-desktop or export to .drawio and refine in draw.io.
 └── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
 
-Step 12: Preview / Optional Live Handoff
-├── draw.io Desktop available -> open .drawio locally or export preview PNG/SVG
+Step 12: Exported-Artifact Verification / Optional Live Handoff
+├── Inspect the exported SVG first when it is available and readable by the current environment
+├── If a raster/final-fidelity check is needed and draw.io Desktop is available -> export PNG/PDF/JPG or embedded SVG through the CLI
+├── Do not create browser or Playwright screenshots when an exported SVG/PNG/PDF/JPG exists
 ├── live backend has `replace_diagram_xml` + user wants browser or inline refinement
 │   └── use the provider-specific tool mapping from `references/docs/mcp-tools.md`
-└── otherwise present .drawio + standalone SVG and continue offline
+├── browser/live screenshots are a last-resort review aid only when the user explicitly requested live review and no exported artifact can be inspected
+└── otherwise present .drawio + standalone SVG and report any remaining manual visual check
 ```
 
 ## Academic Branch Rules
