@@ -2,30 +2,32 @@
 
 Draw.io Skill 把导出视为离线 bundle 工作流的一部分，而不是浏览器会话里的附属动作。
 
-## 规范产物三件套
+## 最终产物与工作目录 Sidecars
 
-只要图表后面还会改，就尽量把这些文件放在一起：
+最终交付目录默认只放用户通常需要保留的文件：
 
 - `<name>.drawio`
+- `<name>.svg`
+
+除非用户明确要求 sidecar bundle 放在输出旁边，否则把中间 sidecars 放在 `.drawio-tmp/<name>/` 这类项目工作目录：
+
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-这样可以在不依赖 live session 的前提下持续本地迭代。
-
-对于 `academic-paper` 输出，默认交付物是这套 bundle 加 `.svg`。只有当请求是 thesis、A4、Word、raster-first、截图重绘或明确要求 PNG 时，才额外补一个 `.png`，并且需要 draw.io Desktop 可用。
+这样可以在不依赖 live session 的前提下持续本地迭代，同时保持最终目录干净。只有当请求是 thesis、A4、Word、raster-first、截图重绘或明确要求 PNG 时，才额外补一个 `.png`，并且需要 draw.io Desktop 可用。
 
 ## 常用导出命令
 
 ### 生成 `.drawio`
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ### 生成独立 SVG
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ### 借助 draw.io Desktop 生成 PNG、PDF 或 JPG
@@ -70,9 +72,9 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 
 | 需求 | 推荐输出 |
 |------|----------|
-| 后续继续编辑 | `.drawio` bundle |
+| 后续继续编辑 | `.drawio` + 工作目录 sidecars |
 | 论文插图 | `.svg` |
-| 论文插图 + 可编辑源 | `.drawio` + `.spec.yaml` + `.arch.json` + `.svg` |
+| 论文插图 + 可编辑源 | 最终 `.drawio` + `.svg`，sidecars 放在 `.drawio-tmp/<name>/` |
 | 幻灯片图片 | 配合 Desktop 的 `.png` 或 `.jpg` |
 | 可打印交付 | 配合 Desktop 的 `.pdf` |
 
@@ -80,7 +82,7 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 
 - 论文级输出建议启用 `--strict-warnings`
 - 需要矢量质量时优先保留 SVG
-- 只要图表未来还会演化，就保留 sidecar
+- 只要图表未来还会演化，就保留工作目录 sidecars
 
 ## 下一步
 

@@ -36,3 +36,23 @@ test('drawio visual verification policy prefers exported artifacts over screensh
   assert.match(publicationOverlay, /Use exported artifacts for paper-readability checks before any browser path/)
   assert.match(exportGuide, /Use exported artifacts for visual checks before any browser screenshot/)
 })
+
+test('drawio skills keep final deliverables separate from intermediate sidecars', () => {
+  const baseSkill = readProjectFile('skills/drawio/SKILL.md')
+  const academicSkill = readProjectFile('skills/drawio-academic-skills/SKILL.md')
+
+  assert.match(baseSkill, /deliver `<name>\.drawio` and `<name>\.svg`/)
+  assert.match(baseSkill, /`\.drawio-tmp\/<name>\/`/)
+  assert.match(baseSkill, /--sidecar-dir \.drawio-tmp\/output/)
+  assert.match(baseSkill, /Do not create or modify scratch JS scripts under a user's project-local `\.agents\/skills\/drawio`/)
+
+  assert.match(academicSkill, /default academic final deliverables/)
+  assert.match(academicSkill, /`\.drawio-tmp\/<name>\/`/)
+  assert.match(academicSkill, /--sidecar-dir \.drawio-tmp\/figure/)
+  assert.match(academicSkill, /Do not create or modify scratch JS scripts under a user's project-local `\.agents\/skills\/drawio`/)
+
+  const defaultDeliverables = academicSkill.match(/Default deliverables:\s*\n\n([\s\S]*?)\n\nIntermediate work directory:/)
+  assert.ok(defaultDeliverables, 'academic skill should separate final deliverables from intermediate work')
+  assert.doesNotMatch(defaultDeliverables[1], /<name>\.spec\.yaml/)
+  assert.doesNotMatch(defaultDeliverables[1], /<name>\.arch\.json/)
+})

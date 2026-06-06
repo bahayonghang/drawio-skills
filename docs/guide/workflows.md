@@ -16,22 +16,20 @@ All routes share the same YAML-first model, design system, base CLI, and validat
 3. **Live Refinement Backend** only for explicit base-skill browser refinement
 4. **Direct XML Exception** only for tiny XML-only handoff or exact mxGraph control
 
-The skill keeps this editable bundle together whenever possible:
+The skill keeps final delivery directories focused on:
 
 - `<name>.drawio`
-- `<name>.spec.yaml`
-- `<name>.arch.json`
 
-Academic overlay adds `<name>.svg` to the default publication delivery set.
+Canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` should live in a project-local work directory such as `.drawio-tmp/<name>/` unless the user explicitly asks for a beside-output bundle. Academic overlay adds `<name>.svg` to the default publication final delivery set.
 
 ## Route Comparison
 
 | Route | Primary input | Default output | When to use |
 | --- | --- | --- | --- |
-| `create` | Text, YAML, Mermaid, CSV | New `.drawio` bundle | Build a new general diagram |
-| `edit` | Existing bundle or `.drawio` file | Updated bundle | Modify or restyle a diagram |
-| `replicate` | Uploaded image or screenshot | Redrawn `.drawio` bundle | Recreate a reference diagram |
-| `academic overlay` | Paper/thesis/manuscript prompt | `.drawio + .spec.yaml + .arch.json + .svg` | Publication-ready figures |
+| `create` | Text, YAML, Mermaid, CSV | New `.drawio` plus work-dir sidecars | Build a new general diagram |
+| `edit` | Existing bundle or `.drawio` file | Updated `.drawio` plus work-dir sidecars | Modify or restyle a diagram |
+| `replicate` | Uploaded image or screenshot | Redrawn `.drawio` plus work-dir sidecars | Recreate a reference diagram |
+| `academic overlay` | Paper/thesis/manuscript prompt | final `.drawio + .svg`, sidecars in work dir | Publication-ready figures |
 
 ## `/drawio create`
 
@@ -115,7 +113,7 @@ Use this to redraw an uploaded image into a structured spec.
 3. Run a text-fidelity pass for labels, captions, formulas, and edge labels
 4. Build a YAML spec
 5. Present logic, palette, and text-placement summary when needed
-6. Render the offline bundle
+6. Render final artifacts and work-dir sidecars
 
 ### Text fidelity
 

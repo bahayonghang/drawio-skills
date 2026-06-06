@@ -112,6 +112,6 @@
   {
     "id": "academic-replicate-text-comparison",
     "profile": "academic-paper",
-    "prompt": "Replicate the uploaded academic figure into the editable bundle and pay special attention to caption, callout, formula, and legend text positions. Return .drawio, .spec.yaml, .arch.json, and .svg, and record the visual comparison used for text-position self-checking."
+    "prompt": "Replicate the uploaded academic figure into final .drawio and .svg, keep .spec.yaml and .arch.json in a work directory, and pay special attention to caption, callout, formula, and legend text positions. Record the visual comparison used for text-position self-checking."
   }
 ]

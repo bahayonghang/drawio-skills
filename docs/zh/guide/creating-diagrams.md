@@ -112,19 +112,19 @@ Fast path 适合较小图表，通常在 12 个节点以内。
 生成 `.drawio` bundle：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 生成独立 SVG：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 论文或正式评审建议启用严格模式：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output --strict-warnings
 ```
 
 ## 好用的 Prompt 模式

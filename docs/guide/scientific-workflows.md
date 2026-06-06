@@ -30,7 +30,7 @@ When the source is publication-facing, the overlay adds:
 - `meta.profile: academic-paper`
 - `meta.figureType`: `architecture`, `roadmap`, or `workflow`
 - caption, legend, and A4/Word/LaTeX export checks
-- default `.drawio + .spec.yaml + .arch.json + .svg` delivery
+- default final `.drawio + .svg` delivery, with `.spec.yaml + .arch.json` in a project-local work directory
 - no MCP/live backend requirement
 
 The overlay still executes through the sibling base CLI at `../drawio/scripts/cli.js`.
@@ -102,7 +102,7 @@ Keep the warm nodes and dark connectors instead of normalizing everything to tec
 ```text
 /drawio-academic-skills replicate
 [upload paper figure]
-Redraw this for IEEE submission, keep it grayscale-safe, and deliver .drawio + .spec.yaml + .arch.json + .svg
+Redraw this for IEEE submission, keep it grayscale-safe, and deliver final .drawio + .svg with sidecars in a work directory
 ```
 
 ### Normalize to a presentation theme
@@ -115,13 +115,16 @@ Redraw this for a keynote slide
 
 ## Output Artifacts
 
-Base replication should produce the editable trio:
+Base replication should produce the final editable artifact:
 
 - `.drawio`
+
+Work-dir sidecars:
+
 - `.spec.yaml`
 - `.arch.json`
 
-Academic overlay also defaults to:
+Academic overlay final delivery also defaults to:
 
 - standalone SVG
 

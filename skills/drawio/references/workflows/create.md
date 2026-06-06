@@ -103,8 +103,8 @@ Step 10: Edge Audit
 └── Prefer straight arrows when alignment allows it
 
 Step 11: Render
-├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars
-├── For paper-quality diagrams prefer output.svg --validate --write-sidecars
+├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
+├── For paper-quality diagrams prefer output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ├── For thesis / A4 / Word / PNG requests, add a matching PNG only when draw.io Desktop export is available
 ├── Note: standalone SVG (without --use-desktop) is preview-quality (straight-line edges).
 │   For publication-grade vector output, add --use-desktop or export to .drawio and refine in draw.io.
@@ -129,7 +129,7 @@ When `meta.profile = academic-paper`:
 - `meta.description` is recommended for figure context.
 - `meta.legend` is required when icons are used or connector types are mixed.
 - Prefer `academic` theme unless the request explicitly asks for a color paper figure.
-- Default deliverables are `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`.
+- Default final deliverables are `.drawio` and `.svg`; keep `.spec.yaml` and `.arch.json` in a project-local work directory unless a sidecar bundle is explicitly requested.
 - Add `.png` only for thesis, A4, Word, raster-first, screenshot rebuild, or explicit PNG requests.
 - Do not rely on color alone to distinguish semantics.
 - Treat A4 readability and grayscale print safety as final review gates, not optional polish.
@@ -148,7 +148,7 @@ When the request includes formulas, equations, or math-heavy labels:
 ## Notes
 
 - YAML remains the canonical intermediate representation.
-- `.drawio`, `.spec.yaml`, and `.arch.json` together form the editable offline bundle.
+- `.drawio` is the editable final artifact; `.spec.yaml` and `.arch.json` remain the canonical offline sidecars in the work directory unless the user explicitly requests a beside-output bundle.
 - Mermaid and CSV inputs are convenience adapters, not separate rendering pipelines.
 - For formula-bearing labels, use only the three supported syntaxes: `$$...$$`, `\(...\)`, and `` `...` ``.
 - Stencil-heavy requests may use shape search when available, but the create flow must still succeed without it.

@@ -2,7 +2,7 @@
   {
     "id": "academic-ieee-campus-network",
     "profile": "academic-paper",
-    "prompt": "Create an IEEE-style campus network paper figure with core, distribution, and access layers in grayscale. Return the publication bundle."
+    "prompt": "Create an IEEE-style campus network paper figure with core, distribution, and access layers in grayscale. Return final .drawio and .svg, with sidecars in a work directory."
   },
   {
     "id": "academic-research-workflow-paper",

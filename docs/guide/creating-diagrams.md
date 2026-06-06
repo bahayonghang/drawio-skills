@@ -104,26 +104,26 @@ Prefer semantic shapes first, then add provider icons only when the diagram bene
 1. Define type, theme, layout, and complexity in the prompt when possible.
 2. Let the skill normalize the request into YAML.
 3. Validate before claiming the output is ready.
-4. Keep the sidecars if the diagram will evolve later.
+4. Keep sidecars in a project-local work directory if the diagram will evolve later.
 
 ## Validation Commands
 
 Generate a `.drawio` bundle:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 Generate a standalone SVG:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 Use strict mode for publication or review:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output --strict-warnings
 ```
 
 ## Good Prompt Patterns

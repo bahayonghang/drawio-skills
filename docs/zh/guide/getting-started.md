@@ -35,7 +35,7 @@ npx skills add bahayonghang/drawio-skills
 这是默认路径，适合大多数 create、edit、validate、replicate、import、export 场景。
 
 - 生成 `.drawio`
-- 维护 `.spec.yaml` 和 `.arch.json`
+- 在 `.drawio-tmp/<name>/` 这类项目工作目录中维护 `.spec.yaml` 和 `.arch.json`
 - 每次编辑后重新运行 CLI
 
 ### Desktop-Enhanced Export
@@ -90,29 +90,29 @@ edges:
 渲染命令：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ## 第一张 Academic Figure
 
 ```text
-/drawio-academic-skills create 生成一个 IEEE paper 的 publication-ready system architecture figure。使用灰度安全样式，交付 .drawio + .spec.yaml + .arch.json + .svg。
+/drawio-academic-skills create 生成一个 IEEE paper 的 publication-ready system architecture figure。使用灰度安全样式，交付最终 .drawio + .svg，sidecars 放在工作目录。
 ```
 
 Overlay 会先做 venue、figure type（`architecture`、`roadmap` 或 `workflow`）、颜色策略、caption/legend、公式保真和导出预期 preflight，然后通过 sibling `../drawio/scripts/cli.js` 执行。
 
 ## 第一次编辑
 
-如果图表是由 skill 创建的，优先编辑 sidecar bundle：
+如果图表是由 skill 创建的，优先编辑工作目录中的 sidecar：
 
-1. 修改 `output.spec.yaml`
+1. 修改 `.drawio-tmp/output/output.spec.yaml`
 2. 重新生成 `output.drawio`
-3. 用 `--write-sidecars` 保持 `output.arch.json` 同步
+3. 用 `--write-sidecars --sidecar-dir .drawio-tmp/output` 保持 `.drawio-tmp/output/output.arch.json` 同步
 
 如果你手上只有 `.drawio` 文件，先导入：
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
 ## 第一次导出
@@ -120,7 +120,7 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 生成独立 SVG：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 如果需要位图或 PDF，改走 Desktop 路径：
@@ -129,7 +129,7 @@ node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidec
 node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
 ```
 
-如果 Desktop 不可用，交付 editable bundle + SVG，并可生成 diagrams.net URL：
+如果 Desktop 不可用，交付 editable `.drawio` + SVG，并可生成 diagrams.net URL：
 
 ```bash
 node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio

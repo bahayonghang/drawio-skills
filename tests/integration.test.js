@@ -7,7 +7,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { existsSync, mkdtempSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
@@ -266,6 +266,22 @@ test('CLI: --write-sidecars creates drawio, spec, and arch files for drawio outp
   assert.equal(arch.nodes[0].label, 'Sidecar Node')
 })
 
+test('CLI: --sidecar-dir keeps drawio output directory free of sidecars', () => {
+  const tempDir = createTempDir()
+  const finalDir = resolve(tempDir, 'final')
+  const sidecarDir = resolve(tempDir, '.drawio-tmp', 'hybrid-flow')
+  const outputFile = resolve(finalDir, 'hybrid-flow.drawio')
+  const yamlInput = 'meta:\n  theme: dark\nnodes:\n  - id: A\n    label: Clean Final Node\n'
+  mkdirSync(finalDir)
+
+  runCli(['-', outputFile, '--write-sidecars', '--sidecar-dir', sidecarDir], { input: yamlInput })
+
+  assert.ok(existsSync(outputFile), 'drawio output file should exist')
+  assert.deepEqual(readdirSync(finalDir).sort(), ['hybrid-flow.drawio'])
+  assert.ok(existsSync(resolve(sidecarDir, 'hybrid-flow.spec.yaml')), 'spec sidecar should exist in sidecar dir')
+  assert.ok(existsSync(resolve(sidecarDir, 'hybrid-flow.arch.json')), 'arch sidecar should exist in sidecar dir')
+})
+
 test('CLI: --write-sidecars with svg output writes drawio companion and sidecars', () => {
   const tempDir = createTempDir()
   const outputFile = resolve(tempDir, 'paper-figure.svg')
@@ -277,6 +293,37 @@ test('CLI: --write-sidecars with svg output writes drawio companion and sidecars
   assert.ok(existsSync(resolve(tempDir, 'paper-figure.drawio')), 'drawio companion should exist')
   assert.ok(existsSync(resolve(tempDir, 'paper-figure.spec.yaml')), 'spec sidecar should exist')
   assert.ok(existsSync(resolve(tempDir, 'paper-figure.arch.json')), 'arch sidecar should exist')
+})
+
+test('CLI: --sidecar-dir keeps svg output directory to svg and drawio companion', () => {
+  const tempDir = createTempDir()
+  const finalDir = resolve(tempDir, 'final')
+  const sidecarDir = resolve(tempDir, '.drawio-tmp', 'paper-figure')
+  const outputFile = resolve(finalDir, 'paper-figure.svg')
+  const yamlInput = 'meta:\n  profile: academic-paper\nnodes:\n  - id: A\n    label: Clean Figure Node\n'
+  mkdirSync(finalDir)
+
+  runCli(['-', outputFile, '--write-sidecars', '--sidecar-dir', sidecarDir], { input: yamlInput })
+
+  assert.ok(existsSync(outputFile), 'SVG output file should exist')
+  assert.ok(existsSync(resolve(finalDir, 'paper-figure.drawio')), 'drawio companion should exist')
+  assert.deepEqual(readdirSync(finalDir).sort(), ['paper-figure.drawio', 'paper-figure.svg'])
+  assert.ok(existsSync(resolve(sidecarDir, 'paper-figure.spec.yaml')), 'spec sidecar should exist in sidecar dir')
+  assert.ok(existsSync(resolve(sidecarDir, 'paper-figure.arch.json')), 'arch sidecar should exist in sidecar dir')
+})
+
+test('CLI: --export-spec writes spec and arch to sidecar dir when requested', () => {
+  const tempDir = createTempDir()
+  const finalDir = resolve(tempDir, 'final')
+  const sidecarDir = resolve(tempDir, '.drawio-tmp', 'imported')
+  const inputFile = resolve(PROJECT_ROOT, 'skills/drawio/evals/fixtures/import-simple.drawio')
+  const specFile = resolve(finalDir, 'imported.spec.yaml')
+
+  runCli([inputFile, specFile, '--input-format', 'drawio', '--export-spec', '--write-sidecars', '--sidecar-dir', sidecarDir])
+
+  assert.equal(existsSync(specFile), false, 'exported spec should not be written to final dir')
+  assert.ok(existsSync(resolve(sidecarDir, 'imported.spec.yaml')), 'spec should be written to sidecar dir')
+  assert.ok(existsSync(resolve(sidecarDir, 'imported.arch.json')), 'arch should be written to sidecar dir')
 })
 
 test('CLI: replicated specs preserve source background and replication metadata in sidecars', () => {

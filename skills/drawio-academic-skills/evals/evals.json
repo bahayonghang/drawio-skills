@@ -4,8 +4,8 @@
   "evals": [
     {
       "id": "academic-ieee-campus-network",
-      "prompt": "Create an IEEE-style campus network paper figure with core, distribution, and access layers in grayscale. Return the publication bundle.",
-      "expected_output": "A grayscale-safe IEEE campus network figure generated through the sibling base CLI.",
+      "prompt": "Create an IEEE-style campus network paper figure with core, distribution, and access layers in grayscale. Return the final .drawio and .svg, with sidecars in a work directory.",
+      "expected_output": "A grayscale-safe IEEE campus network figure generated through the sibling base CLI with clean final outputs.",
       "files": [],
       "assertions": [
         "Uses drawio-academic-skills overlay policy",
@@ -18,12 +18,12 @@
     {
       "id": "academic-research-workflow-paper",
       "prompt": "Create a research workflow figure for a manuscript showing data collection, preprocessing, modeling, validation, and reporting.",
-      "expected_output": "A publication-ready workflow figure with default academic bundle outputs.",
+      "expected_output": "A publication-ready workflow figure with default final .drawio and .svg outputs.",
       "files": [],
       "assertions": [
         "Sets meta.figureType to workflow",
         "Uses academic or academic-color theme based on color policy",
-        "Default deliverables are .drawio, .spec.yaml, .arch.json, and .svg",
+        "Default final deliverables are .drawio and .svg, with .spec.yaml and .arch.json in a work directory",
         "Does not require MCP or live backend"
       ]
     },
@@ -60,7 +60,7 @@
       "files": [],
       "assertions": [
         "Performs venue/audience preflight for thesis or Word",
-        "Default bundle includes .drawio, .spec.yaml, .arch.json, and .svg",
+        "Default final deliverables include .drawio and .svg, with sidecars in a work directory",
         "Treats PNG as optional Desktop-enhanced export",
         "Reports missing PNG clearly if Desktop is unavailable"
       ]
@@ -102,7 +102,7 @@
         "Attempts PNG/PDF only through sibling base Desktop-enhanced export",
         "Does not require MCP or a live backend",
         "Does not claim PNG/PDF files exist when Desktop is unavailable",
-        "Still delivers .drawio, .spec.yaml, .arch.json, and .svg",
+        "Still delivers final .drawio and .svg, with sidecars in a work directory",
         "Provides a diagrams.net URL or exact Desktop command fallback",
         "Does not substitute Playwright screenshots for unavailable Desktop exports"
       ]

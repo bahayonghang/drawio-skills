@@ -31,7 +31,7 @@ If `../drawio` is missing, install the base skill next to this overlay. Do not v
 ## Default workflow
 
 ```text
-academic request -> preflight -> YAML spec -> sibling base CLI validation -> .drawio + .spec.yaml + .arch.json + .svg
+academic request -> preflight -> YAML spec -> sibling base CLI validation -> final .drawio + .svg, sidecars in .drawio-tmp/<name>/
 ```
 
 PNG, PDF, JPG, and embedded `.drawio.svg` use draw.io Desktop through the sibling base CLI when Desktop is available.
@@ -52,14 +52,14 @@ Before rendering, decide:
 From inside this overlay directory:
 
 ```bash
-node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --strict-warnings
+node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
 node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.png --validate --use-desktop
 ```
 
 From the repository root:
 
 ```bash
-node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --strict-warnings
+node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
 ```
 
 If draw.io Desktop is unavailable, generate a diagrams.net browser URL from the `.drawio` artifact:

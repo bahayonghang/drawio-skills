@@ -2,30 +2,32 @@
 
 Draw.io Skill treats export as part of the offline bundle workflow, not as a browser-only step.
 
-## Canonical Artifact Bundle
+## Final Artifacts And Work Sidecars
 
-Keep these files together whenever the diagram may be edited again:
+Keep final delivery directories focused on the files users normally keep:
 
 - `<name>.drawio`
+- `<name>.svg`
+
+Keep sidecars in a project-local work directory such as `.drawio-tmp/<name>/` unless the user explicitly asks for a persistent sidecar bundle beside the output:
+
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-This bundle supports local iteration without requiring a live session.
-
-For `academic-paper` output, this bundle plus `.svg` is the default delivery set. Add `.png` only when the request is thesis, A4, Word, raster-first, screenshot rebuild, or explicitly asks for PNG, and only when draw.io Desktop export is available.
+This split supports local iteration without polluting final figure directories. Add `.png` only when the request is thesis, A4, Word, raster-first, screenshot rebuild, or explicitly asks for PNG, and only when draw.io Desktop export is available.
 
 ## Common Export Commands
 
 ### Generate a `.drawio` file
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ### Generate a standalone SVG
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ### Generate PNG, PDF, or JPG with draw.io Desktop
@@ -70,9 +72,9 @@ Use exported artifacts for visual checks before any browser screenshot:
 
 | Need | Best output |
 |------|-------------|
-| ongoing editing | `.drawio` bundle |
+| ongoing editing | `.drawio` + work-dir sidecars |
 | paper figure | `.svg` |
-| paper figure + editable source | `.drawio` + `.spec.yaml` + `.arch.json` + `.svg` |
+| paper figure + editable source | final `.drawio` + `.svg`, sidecars in `.drawio-tmp/<name>/` |
 | slide deck image | `.png` or `.jpg` with Desktop |
 | printable handoff | `.pdf` with Desktop |
 

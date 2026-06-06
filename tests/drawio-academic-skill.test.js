@@ -134,7 +134,7 @@ test('drawio-academic-skills: diagrams.net URL helper round-trips drawio XML fro
   logger.info('校验 base diagrams.net URL 编码完成')
 })
 
-test('drawio-academic-skills: sibling base CLI renders publication bundle sidecars', () => {
+test('drawio-academic-skills: sibling base CLI separates final artifacts from sidecars', () => {
   /*
    * ========================================================================
    * 步骤3：校验 academic overlay 通过 base CLI 导出
@@ -142,33 +142,45 @@ test('drawio-academic-skills: sibling base CLI renders publication bundle sideca
    * 数据源：base publication 示例
    * 操作要点：
    * 1) 使用 sibling base CLI 生成 SVG
-   * 2) 校验 .drawio、.spec.yaml、.arch.json sidecars 同步生成
+   * 2) 校验最终目录只包含 .svg 和 .drawio
+   * 3) 校验 .spec.yaml、.arch.json sidecars 写入工作目录
    */
-  logger.info('开始校验 sibling base CLI academic bundle 导出...')
+  logger.info('开始校验 sibling base CLI academic clean-final 导出...')
 
   // 3.1 准备输入和临时输出路径
   const tempDir = mkdtempSync(join(tmpdir(), 'drawio-academic-overlay-'))
+  const sidecarDir = resolve(tempDir, '.drawio-tmp', 'academic-system')
   const input = resolve(BASE_DIR, 'references/examples/system-architecture-paper.yaml')
   const output = resolve(tempDir, 'academic-system.svg')
 
   try {
-    // 3.2 运行 base CLI 并写出 sidecars
+    // 3.2 运行 base CLI 并将 sidecars 写入工作目录
     execFileSync(
       process.execPath,
-      [resolve(BASE_DIR, 'scripts/cli.js'), input, output, '--validate', '--write-sidecars'],
+      [
+        resolve(BASE_DIR, 'scripts/cli.js'),
+        input,
+        output,
+        '--validate',
+        '--write-sidecars',
+        '--sidecar-dir',
+        sidecarDir
+      ],
       { cwd: PROJECT_ROOT, stdio: 'pipe' }
     )
 
     // 3.3 校验导出产物存在
     assert.equal(existsSync(output), true)
     assert.equal(existsSync(resolve(tempDir, 'academic-system.drawio')), true)
-    assert.equal(existsSync(resolve(tempDir, 'academic-system.spec.yaml')), true)
-    assert.equal(existsSync(resolve(tempDir, 'academic-system.arch.json')), true)
+    assert.equal(existsSync(resolve(tempDir, 'academic-system.spec.yaml')), false)
+    assert.equal(existsSync(resolve(tempDir, 'academic-system.arch.json')), false)
+    assert.equal(existsSync(resolve(sidecarDir, 'academic-system.spec.yaml')), true)
+    assert.equal(existsSync(resolve(sidecarDir, 'academic-system.arch.json')), true)
   } finally {
     // 3.4 清理临时目录
     rmSync(tempDir, { recursive: true, force: true })
   }
-  logger.info('校验 sibling base CLI academic bundle 导出完成')
+  logger.info('校验 sibling base CLI academic clean-final 导出完成')
 })
 
 test('drawio evals: base and academic sets encode separate responsibilities', () => {

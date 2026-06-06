@@ -68,7 +68,7 @@ features:
 
 除非明确需要浏览器会话，否则按这个顺序使用：
 
-1. **Offline Authoring Path**：本地生成 `.drawio` 并维护 sidecars。
+1. **Offline Authoring Path**：本地生成最终 `.drawio`，并把 sidecars 维护在项目工作目录。
 2. **Desktop-Enhanced Export**：需要 PNG、PDF、JPG 或 embedded SVG 时接入 draw.io Desktop。
 3. **Live Refinement Backend**：仅 Base 浏览器精修；离线 bundle 仍是规范源。
 4. **Direct XML Exception**：很小的 XML-only 或精确 mxGraph handoff。
@@ -92,14 +92,14 @@ npx skills add bahayonghang/drawio-skills
 创建 Academic Overlay 图：
 
 ```text
-/drawio-academic-skills create 生成一个 IEEE 风格 manuscript workflow figure，交付 .drawio + .spec.yaml + .arch.json + .svg
+/drawio-academic-skills create 生成一个 IEEE 风格 manuscript workflow figure，交付最终 .drawio + .svg，sidecars 放在工作目录
 ```
 
 在仓库中做本地校验与导出：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 生成 diagrams.net URL fallback：

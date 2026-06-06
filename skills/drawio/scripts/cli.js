@@ -4,9 +4,9 @@
  * Usage: node cli.js input.yaml [output.drawio|output.svg] [--theme name] [--strict] [--validate]
  */
 
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { extname, join, resolve } from 'node:path'
+import { basename, extname, join, resolve } from 'node:path'
 import { parseSpecYaml, specToDrawioXml, validateSpec, validateXml } from './dsl/spec-to-drawio.js'
 import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
 import { drawioToSpec } from './dsl/drawio-to-spec.js'
@@ -54,6 +54,7 @@ Options:
   --strict-warnings   Alias of --strict (recommended for paper-grade validation)
   --validate          Run XML validation and print results (also summarizes spec warnings)
   --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
+  --sidecar-dir <dir> Emit sidecars in this directory when --write-sidecars is set
   --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
   --help, -h          Show this help message
 `.trim()
@@ -62,7 +63,7 @@ Options:
 }
 
 // Extract positional arguments (non-flag args, excluding values of --flags)
-const flagsWithValues = new Set(['--theme', '--input-format', '--page'])
+const flagsWithValues = new Set(['--theme', '--input-format', '--page', '--sidecar-dir'])
 const positional = []
 for (let i = 0; i < args.length; i++) {
   if (flagsWithValues.has(args[i])) {
@@ -86,6 +87,28 @@ const useDesktop = args.includes('--use-desktop')
 const exportSpec = args.includes('--export-spec')
 const pageIndex = args.indexOf('--page')
 const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
+const sidecarDirIndex = args.indexOf('--sidecar-dir')
+const sidecarDir = sidecarDirIndex !== -1 ? args[sidecarDirIndex + 1] : null
+const resolvedSidecarDir = sidecarDir ? resolve(sidecarDir) : null
+
+if (sidecarDirIndex !== -1 && (!sidecarDir || sidecarDir.startsWith('--'))) {
+  console.error('Error: --sidecar-dir requires a directory path.')
+  process.exit(1)
+}
+
+if (sidecarDir && !writeSidecars) {
+  console.error('Error: --sidecar-dir requires --write-sidecars.')
+  process.exit(1)
+}
+
+if (resolvedSidecarDir) {
+  try {
+    mkdirSync(resolvedSidecarDir, { recursive: true })
+  } catch (err) {
+    console.error(`Error: Could not create sidecar directory "${sidecarDir}": ${err.message}`)
+    process.exit(1)
+  }
+}
 
 // ---------------------------------------------------------------------------
 // SVG module (optional)
@@ -210,6 +233,10 @@ if (exportSpec) {
     specPath = deriveArtifactPaths(inputFile).specPath
   }
 
+  if (specPath && resolvedSidecarDir) {
+    specPath = resolve(resolvedSidecarDir, basename(specPath))
+  }
+
   if (!specPath) {
     process.stdout.write(yamlOut)
     if (!yamlOut.endsWith('\n')) process.stdout.write('\n')
@@ -234,6 +261,9 @@ if (exportSpec) {
     }
 
     if (archPath) {
+      if (resolvedSidecarDir) {
+        archPath = resolve(resolvedSidecarDir, basename(archPath))
+      }
       const drawioPath = /\.arch\.json$/i.test(archPath) ? archPath.replace(/\.arch\.json$/i, '.drawio') : null
       try {
         writeFileSync(
@@ -261,6 +291,9 @@ if (!outputFile) {
 const ext = extname(outputFile).toLowerCase()
 const drawioContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
 const artifactPaths = deriveArtifactPaths(outputFile)
+const sidecarArtifactPaths = resolvedSidecarDir
+  ? deriveArtifactPaths(resolve(resolvedSidecarDir, basename(artifactPaths.drawioPath)))
+  : artifactPaths
 const needsDesktopExport = isDesktopExportFormat(ext.slice(1)) && (ext !== '.svg' || useDesktop)
 let tempDir = null
 let desktopInputPath = null
@@ -268,9 +301,9 @@ let desktopInputPath = null
 function writeCanonicalSidecars() {
   if (!writeSidecars) return
 
-  writeFileSync(resolve(artifactPaths.specPath), serializeSpecYaml(spec), 'utf-8')
+  writeFileSync(resolve(sidecarArtifactPaths.specPath), serializeSpecYaml(spec), 'utf-8')
   writeFileSync(
-    resolve(artifactPaths.archPath),
+    resolve(sidecarArtifactPaths.archPath),
     JSON.stringify(buildArchMetadata(spec, { outputFile }), null, 2) + '\n',
     'utf-8'
   )

@@ -35,7 +35,7 @@ Manual academic installs must copy both `drawio` and `drawio-academic-skills` si
 Use this for normal create, edit, validate, replicate, import, and export work.
 
 - Generate `.drawio`
-- Keep `.spec.yaml` and `.arch.json` beside it
+- Keep `.spec.yaml` and `.arch.json` in a project-local work directory such as `.drawio-tmp/<name>/`
 - Re-run the CLI after edits
 
 ### Desktop-Enhanced Export
@@ -90,29 +90,29 @@ edges:
 Render it:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ## Your First Academic Figure
 
 ```text
-/drawio-academic-skills create a publication-ready system architecture figure for an IEEE paper. Use grayscale-safe styling and deliver .drawio + .spec.yaml + .arch.json + .svg.
+/drawio-academic-skills create a publication-ready system architecture figure for an IEEE paper. Use grayscale-safe styling and deliver final .drawio + .svg with sidecars in a work directory.
 ```
 
 The overlay should preflight venue, figure type (`architecture`, `roadmap`, or `workflow`), color policy, caption/legend, formula fidelity, and export expectations, then execute through sibling `../drawio/scripts/cli.js`.
 
 ## First Edit
 
-If the skill created the diagram, edit the sidecar bundle:
+If the skill created the diagram, edit the sidecar in the work directory:
 
-1. Update `output.spec.yaml`
+1. Update `.drawio-tmp/output/output.spec.yaml`
 2. Re-render `output.drawio`
-3. Keep `output.arch.json` in sync with `--write-sidecars`
+3. Keep `.drawio-tmp/output/output.arch.json` in sync with `--write-sidecars --sidecar-dir .drawio-tmp/output`
 
 If you only have a `.drawio` file, import it first:
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
 ## First Export
@@ -120,7 +120,7 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export
 Generate a standalone SVG:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 Use draw.io Desktop when you need raster or PDF export:
@@ -129,7 +129,7 @@ Use draw.io Desktop when you need raster or PDF export:
 node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
 ```
 
-If Desktop is unavailable, use the editable bundle plus SVG and optionally generate a diagrams.net URL:
+If Desktop is unavailable, use the editable `.drawio` plus SVG and optionally generate a diagrams.net URL:
 
 ```bash
 node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio

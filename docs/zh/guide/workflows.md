@@ -16,22 +16,20 @@ Draw.io Skill 暴露三条 Base 路线和一个 Academic Overlay 策略层：
 3. 只有明确需要 Base Skill 浏览器精修时才启用 **Live Refinement Backend**
 4. **Direct XML Exception** 只用于很小的 XML handoff 或精确 mxGraph 控制
 
-只要图表可能继续演化，就尽量把这组三件套放在一起：
+最终交付目录默认只放：
 
 - `<name>.drawio`
-- `<name>.spec.yaml`
-- `<name>.arch.json`
 
-Academic Overlay 默认还会把 `<name>.svg` 加入出版交付集。
+`.spec.yaml` 和 `.arch.json` 这类 sidecars 默认放在 `.drawio-tmp/<name>/` 这样的项目工作目录；只有用户明确要求 sidecar bundle 时才放到输出旁边。Academic Overlay 默认还会把 `<name>.svg` 加入出版最终交付集。
 
 ## 路线对比
 
 | 路线 | 主要输入 | 默认输出 | 适用场景 |
 | --- | --- | --- | --- |
-| `create` | 文本、YAML、Mermaid、CSV | 新 `.drawio` bundle | 新建通用图表 |
-| `edit` | 现有 bundle 或 `.drawio` 文件 | 更新后的 bundle | 修改或重构图表 |
-| `replicate` | 上传图片或截图 | 重绘后的 `.drawio` bundle | 复刻参考图 |
-| `academic overlay` | paper/thesis/manuscript prompt | `.drawio + .spec.yaml + .arch.json + .svg` | 出版级图表 |
+| `create` | 文本、YAML、Mermaid、CSV | 新 `.drawio` + 工作目录 sidecars | 新建通用图表 |
+| `edit` | 现有 bundle 或 `.drawio` 文件 | 更新后的 `.drawio` + 工作目录 sidecars | 修改或重构图表 |
+| `replicate` | 上传图片或截图 | 重绘后的 `.drawio` + 工作目录 sidecars | 复刻参考图 |
+| `academic overlay` | paper/thesis/manuscript prompt | 最终 `.drawio + .svg`，sidecars 在工作目录 | 出版级图表 |
 
 ## `/drawio create`
 
@@ -115,7 +113,7 @@ Overlay 会执行 academic preflight：
 3. 对标签、标题、公式和边标签执行文字位置抽取
 4. 构造 YAML 规格
 5. 必要时展示逻辑、配色和文字位置摘要
-6. 生成离线 bundle
+6. 生成最终产物和工作目录 sidecars
 
 ### 文字保真
 

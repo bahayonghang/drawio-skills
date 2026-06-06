@@ -49,11 +49,13 @@ If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base 
 
 - Keep academic authoring YAML-first and offline-first.
 - Never create, require, or route through `.mcp.json`, MCP, or a live backend.
-- Treat `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` as the default academic delivery bundle.
+- Treat `.drawio` and `.svg` as the default academic final deliverables.
+- Keep `.spec.yaml`, `.arch.json`, raw YAML, and diagnostics in a project-local work directory such as `.drawio-tmp/<name>/`, unless the user explicitly asks for a reproducible sidecar bundle beside the final output.
 - Use draw.io Desktop only as an optional export enhancer for PNG/PDF/JPG or embedded `.drawio.svg`.
-- If a requested Desktop export cannot be produced locally, still deliver the editable bundle and SVG, then report the unavailable export clearly.
+- If a requested Desktop export cannot be produced locally, still deliver the editable `.drawio` and SVG, then report the unavailable export clearly.
 - Perform paper-readability and visual self-checks on exported SVG first, or on Desktop-exported PNG/PDF/JPG/embedded SVG when available. Do not substitute browser or Playwright screenshots when an exported artifact exists.
 - Keep academic-specific policy in this overlay; keep shared execution in `../drawio`.
+- Do not create or modify scratch JS scripts under a user's project-local `.agents/skills/drawio`; port durable fixes to the sibling base skill source instead.
 
 ## Academic Preflight
 
@@ -64,7 +66,7 @@ Before generating or editing, determine and state:
 3. Color policy: strict monochrome, grayscale-safe with one accent, or color digital/PDF.
 4. Caption, legend, and title needs.
 5. Formula and text-fidelity needs: delimiters, font family, standalone text boxes, edge labels, and callouts.
-6. Export expectations: default bundle plus any requested PNG/PDF/JPG; whether Desktop is required.
+6. Export expectations: default final `.drawio` and `.svg`, the intermediate work directory, plus any requested PNG/PDF/JPG; whether Desktop is required.
 
 ## Task Routing
 
@@ -97,9 +99,13 @@ meta:
 Default deliverables:
 
 - `<name>.drawio`
+- `<name>.svg`
+
+Intermediate work directory:
+
 - `<name>.spec.yaml`
 - `<name>.arch.json`
-- `<name>.svg`
+- raw or normalized YAML and diagnostics
 
 Add `<name>.png`, `<name>.pdf`, or `<name>.jpg` only when requested or needed for Word/A4/thesis/raster workflows, and only when draw.io Desktop export is available.
 
@@ -109,14 +115,14 @@ Add `<name>.png`, `<name>.pdf`, or `<name>.jpg` only when requested or needed fo
 2. Draft or normalize the YAML spec as the canonical source.
 3. Use concise labels; shorten labels before shrinking fonts.
 4. Validate through the sibling base CLI.
-5. Render the editable bundle and standalone SVG.
+5. Render the editable `.drawio` and standalone SVG in the final directory, with sidecars in the work directory.
 6. Run a paper-readability self-check before reporting completion.
 
 Commands:
 
 ```bash
-node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --strict-warnings
-node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --strict-warnings
+node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
+node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
 ```
 
 Use paths relative to the overlay directory, or use absolute paths when running from another working directory.
@@ -127,26 +133,26 @@ Use paths relative to the overlay directory, or use absolute paths when running 
 - If only `.drawio` exists, import it through the sibling base CLI:
 
   ```bash
-  node ../drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+  node ../drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
   ```
 
 - For image/SVG replication, preserve text boxes, captions, legends, formulas, edge labels, baseline/offset, font family/size/italic state, alignment, and spacing when visible.
 - Use explicit `bounds` for standalone text/formula blocks and `labelOffset` for connector labels that must sit off the line.
-- Keep all regenerated files on the same basename so the academic bundle remains round-trippable.
+- Keep all regenerated files on the same basename so final artifacts and work-dir sidecars remain round-trippable.
 
 ## Export Policy
 
 Use the sibling base CLI for deterministic exports.
 
 ```bash
-# Offline SVG and sidecars
-node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --strict-warnings
+# Offline SVG and work-dir sidecars
+node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
 
-# Editable .drawio bundle
-node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --strict-warnings
+# Editable .drawio final artifact
+node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
 
 # Desktop-enhanced exports
-node ../drawio/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --use-desktop
+node ../drawio/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --use-desktop
 node ../drawio/scripts/cli.js input.yaml figure.png --validate --use-desktop
 node ../drawio/scripts/cli.js input.yaml figure.pdf --validate --use-desktop
 ```
@@ -157,7 +163,7 @@ If Desktop is unavailable, generate a diagrams.net URL from the `.drawio` artifa
 node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 ```
 
-Do not claim PNG/PDF/JPG files exist when Desktop export was unavailable. Report the missing export and provide the editable bundle, SVG, and fallback command or URL.
+Do not claim PNG/PDF/JPG files exist when Desktop export was unavailable. Report the missing export and provide the editable `.drawio`, SVG, work-dir sidecars, and fallback command or URL.
 
 ## Style Presets
 
@@ -172,7 +178,7 @@ Never mutate bundled base presets. Copy a bundled preset into the user preset di
 
 Do not claim completion until:
 
-- `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg` are aligned
+- final `.drawio` and `.svg` are aligned with work-dir `.spec.yaml` and `.arch.json`
 - `meta.profile` is `academic-paper`
 - `meta.figureType` is one of `architecture`, `roadmap`, or `workflow`
 - labels are readable at paper/A4 scale
@@ -188,6 +194,7 @@ Do not claim completion until:
 End with a concise report:
 
 - deliverables written, with paths
+- intermediate work directory, when sidecars or diagnostics were generated
 - sibling base CLI commands run for validation/export
 - unavailable Desktop exports and fallback provided
 - remaining visual or venue-specific manual checks, if any

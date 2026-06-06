@@ -26,7 +26,8 @@ node skills/drawio/scripts/cli.js <input> [output] [options]
 | `--theme <name>` | 覆盖主题：`tech-blue`、`academic`、`academic-color`、`nature`、`dark`、`high-contrast` |
 | `--page <selector>` | 导入 `.drawio` 时按索引或页面名选择页面 |
 | `--export-spec` | 导出规范 YAML，而不是直接渲染 XML/SVG |
-| `--write-sidecars` | 在输出旁边写出 `.spec.yaml` 和 `.arch.json` |
+| `--write-sidecars` | 写出 `.spec.yaml` 和 `.arch.json`；如果提供 `--sidecar-dir`，则写入该目录 |
+| `--sidecar-dir <dir>` | 把 sidecars 写到单独工作目录，而不是最终输出目录 |
 | `--use-desktop` | 借助 draw.io Desktop 生成 PNG、PDF、JPG 或 embedded SVG |
 | `--validate` | 打印规格 warning 并执行 XML 校验 |
 | `--strict` | 把 warning 和严格复杂度错误都视为失败 |
@@ -45,16 +46,16 @@ node skills/drawio/scripts/cli.js <input> [output] [options]
 
 ## 示例
 
-### 生成 `.drawio` bundle
+### 生成干净的 `.drawio` 最终产物和工作目录 sidecars
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 ### 生成严格校验 SVG
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --strict-warnings
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output --strict-warnings
 ```
 
 ### 覆盖主题
@@ -66,7 +67,7 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --theme high-contrast
 ### 导入现有 `.drawio`
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
 ### 转换 Mermaid

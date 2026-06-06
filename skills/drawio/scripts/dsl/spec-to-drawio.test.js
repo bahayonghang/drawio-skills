@@ -1173,6 +1173,8 @@ describe('Phase 2.3b: text fidelity', () => {
 
     const xml = specToDrawioXml(spec)
     assert.ok(xml.includes('<mxPoint x="0" y="-18" as="offset"/>'), 'edge labels should preserve the explicit offset')
+    assert.match(xml, /<mxCell id="\d+" value="" style="[^"]*" edge="1"/, 'parent edge cell should not store duplicate label text')
+    assert.equal((xml.match(/value="s\(t\)"/g) || []).length, 1, 'edge label text should be stored once')
   })
 
   it('should validate explicit text bounds and label offsets', () => {
@@ -1525,6 +1527,8 @@ describe('edge label in XML', () => {
     }
     const xml = specToDrawioXml(spec)
     assert.ok(xml.includes('MyEdgeLabel'), 'XML should contain edge label text "MyEdgeLabel"')
+    assert.match(xml, /<mxCell id="\d+" value="" style="[^"]*" edge="1"/, 'parent edge cell should keep value empty')
+    assert.equal((xml.match(/value="MyEdgeLabel"/g) || []).length, 1, 'edge label should not be duplicated in XML')
   })
 
   it('edge without label does NOT produce edgeLabel cell in XML', () => {

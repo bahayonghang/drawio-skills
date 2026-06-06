@@ -8,7 +8,7 @@ Use them only when:
 - the user explicitly wants real-time browser refinement
 - the task is using the base `drawio` skill, not the academic overlay
 
-The default workflow is still offline-first with `.drawio` + sidecars. `drawio-academic-skills` does not create, require, or route through `.mcp.json`, MCP, or a live backend.
+The default workflow is still offline-first with final `.drawio` plus work-dir sidecars. `drawio-academic-skills` does not create, require, or route through `.mcp.json`, MCP, or a live backend.
 
 ## `start_session`
 

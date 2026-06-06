@@ -92,14 +92,14 @@ Create a first base diagram:
 Create an academic overlay figure:
 
 ```text
-/drawio-academic-skills create an IEEE-style workflow figure for a manuscript and deliver .drawio + .spec.yaml + .arch.json + .svg
+/drawio-academic-skills create an IEEE-style workflow figure for a manuscript and deliver final .drawio + .svg with sidecars in a work directory
 ```
 
 Validate and export from the repo:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
+node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
+node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ```
 
 Generate a diagrams.net URL fallback:
