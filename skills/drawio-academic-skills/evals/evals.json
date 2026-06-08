@@ -54,6 +54,19 @@
       ]
     },
     {
+      "id": "academic-paper-evidence-chain-preview",
+      "prompt": "I have a draft optimization paper about traffic-signal control. Build a publication figure from the paper logic, not just a list of sections: problem gap, sensor data, assumptions, multi-agent controller, simulation scenarios, metrics, results, and contribution. Use an image-generation concept preview if appropriate, but don't send raw unpublished text externally without asking.",
+      "expected_output": "A paper-derived academic figure workflow that extracts the research evidence chain, confirms a diagram plan, optionally uses privacy-gated image preview, then renders editable draw.io artifacts.",
+      "files": [],
+      "assertions": [
+        "Identifies the source as a paper-derived figure and extracts a research evidence chain",
+        "Maps the figure to an existing meta.figureType value rather than inventing a new schema field",
+        "Presents a diagram plan for confirmation before rendering",
+        "Uses optional image-generation preview only after plan confirmation and privacy approval",
+        "Keeps YAML as the canonical source and final .drawio/.svg as the authoritative artifacts"
+      ]
+    },
+    {
       "id": "academic-thesis-word-a4-bundle",
       "prompt": "Create an A4-safe thesis figure for Word export. Deliver the editable bundle plus SVG, and include PNG only if draw.io Desktop is available.",
       "expected_output": "An academic bundle with Word/A4 export policy and honest Desktop fallback.",
@@ -91,6 +104,21 @@
         "Uses labelOffset for connector labels that would otherwise sit on lines",
         "Records a visual/text-position self-check before completion",
         "Uses exported SVG or Desktop-exported artifacts for visual verification before any browser screenshot"
+      ]
+    },
+    {
+      "id": "academic-image-improvement-preview-gate",
+      "prompt": "Redraw the uploaded framework screenshot as a cleaner journal figure. Improve the hierarchy and academic tone, but preserve the visible caption, legend, callouts, and edge labels. Use a visual concept preview before final draw.io if that helps, then deliver editable .drawio and .svg with sidecars in a work directory.",
+      "expected_output": "An academic image-improvement workflow that confirms extracted structure, uses optional image preview for layout approval, then verifies exported draw.io artifacts.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
+      ],
+      "assertions": [
+        "Confirms ambiguous source text or extracted structure before final rendering",
+        "Uses optional image-generation preview for academic improvement or layout exploration when available",
+        "Falls back to local YAML/SVG preview when image generation is unavailable or declined",
+        "Uses explicit bounds or labelOffset for captions, callouts, formulas, or connector labels when placement matters",
+        "Performs one exported-artifact QA pass and rerenders once if visible defects are found"
       ]
     },
     {

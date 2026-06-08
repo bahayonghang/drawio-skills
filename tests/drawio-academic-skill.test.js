@@ -66,12 +66,24 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
 
   // 1.3 overlay SKILL 明确 sibling base 边界且不引用 live/MCP 文档
   const skillText = readFileSync(resolve(SKILL_DIR, 'SKILL.md'), 'utf8')
+  const publicationOverlayText = readFileSync(
+    resolve(SKILL_DIR, 'references/docs/publication-overlay.md'),
+    'utf8'
+  )
   assert.match(skillText, /^name: drawio-academic-skills$/m)
   assert.match(skillText, /\.\.\/drawio\/scripts\/cli\.js/)
   assert.match(skillText, /\.\.\/drawio\/assets\/themes\//)
   assert.match(skillText, /\.\.\/drawio\/styles\/built-in\//)
   assert.match(skillText, /Never create, require, or route through `\.mcp\.json`/)
   assert.doesNotMatch(skillText, /mcp-tools\.md/)
+  assert.match(skillText, /## Source Understanding/)
+  assert.match(skillText, /## Diagram Plan Gate/)
+  assert.match(skillText, /## Optional Image Preview/)
+  assert.match(skillText, /external image-generation previews as optional concept previews only/)
+  assert.match(publicationOverlayText, /## Research Evidence Chain/)
+  assert.match(publicationOverlayText, /## Optional Image Preview/)
+  assert.match(publicationOverlayText, /Ask before sending unpublished papers/)
+  assert.match(publicationOverlayText, /adjust the YAML spec and rerender once/)
 
   // 1.4 eval prompt fixtures live under evals, not the overlay root
   assert.equal(existsSync(resolve(SKILL_DIR, 'test-prompts.json')), false)
@@ -213,6 +225,8 @@ test('drawio evals: base and academic sets encode separate responsibilities', ()
   assert.ok(academicIds.includes('academic-ieee-campus-network'))
   assert.ok(academicIds.includes('academic-thesis-word-a4-bundle'))
   assert.ok(academicIds.includes('academic-formula-publication-figure'))
+  assert.ok(academicIds.includes('academic-paper-evidence-chain-preview'))
+  assert.ok(academicIds.includes('academic-image-improvement-preview-gate'))
   assert.ok(academicIds.includes('academic-desktop-png-pdf-unavailable-fallback'))
 
   assert.equal(

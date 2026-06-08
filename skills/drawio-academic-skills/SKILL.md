@@ -54,6 +54,7 @@ If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base 
 - Use draw.io Desktop only as an optional export enhancer for PNG/PDF/JPG or embedded `.drawio.svg`.
 - If a requested Desktop export cannot be produced locally, still deliver the editable `.drawio` and SVG, then report the unavailable export clearly.
 - Perform paper-readability and visual self-checks on exported SVG first, or on Desktop-exported PNG/PDF/JPG/embedded SVG when available. Do not substitute browser or Playwright screenshots when an exported artifact exists.
+- Treat external image-generation previews as optional concept previews only. They never replace YAML, `.drawio`, SVG, sidecars, or exported-artifact verification.
 - Keep academic-specific policy in this overlay; keep shared execution in `../drawio`.
 - Do not create or modify scratch JS scripts under a user's project-local `.agents/skills/drawio`; port durable fixes to the sibling base skill source instead.
 
@@ -67,6 +68,39 @@ Before generating or editing, determine and state:
 4. Caption, legend, and title needs.
 5. Formula and text-fidelity needs: delimiters, font family, standalone text boxes, edge labels, and callouts.
 6. Export expectations: default final `.drawio` and `.svg`, the intermediate work directory, plus any requested PNG/PDF/JPG; whether Desktop is required.
+
+## Source Understanding
+
+For paper, thesis, report, or proposal sources, extract only the information needed to build a figure:
+
+- paper type or source type
+- research problem, gap, and objective
+- inputs, data, variables, assumptions, or constraints
+- method, model, mechanism, workflow, or system components
+- actors, scenarios, validation, metrics, findings, and contribution
+
+For uploaded reference images, extract visible structure, labels, grouping, color roles, arrows, captions, legends, formulas, and ambiguous text. For text-only prompts, infer the likely academic figure shape, then keep uncertainties explicit.
+
+## Diagram Plan Gate
+
+Before rendering complex paper-derived figures or academic image-replication work, present a concise diagram plan and wait for confirmation or revision. Include:
+
+- source summary and paper/source type
+- `meta.figureType` choice and why it maps to `architecture`, `roadmap`, or `workflow`
+- primary research chain or visual reading path
+- major sections, supporting nodes, and compressed labels
+- key arrows, feedback, assumptions, validation, and contribution
+- color/export policy and any uncertain terms
+
+Simple, straightforward academic diagrams can skip the external preview and proceed directly to YAML/SVG when the figure type, labels, and layout are already clear.
+
+## Optional Image Preview
+
+Use an available external image-generation tool by default for complex paper-derived figures or reference-image redraws that need academic improvement. Use it only after the diagram plan is confirmed.
+
+Before sending unpublished, confidential, proprietary, or sensitive academic content to an external model, ask for approval. Prefer sending the confirmed plan, short labels, layout intent, and style constraints instead of raw source documents.
+
+Treat the generated image as a concept preview for structure, hierarchy, and academic tone. Image-model text may be wrong; correct final labels, formulas, metadata, and geometry in YAML before exporting draw.io artifacts. If no image-generation tool is available, the call fails, or the user declines external processing, fall back to local YAML/SVG preview through the sibling base CLI.
 
 ## Task Routing
 
@@ -112,11 +146,13 @@ Add `<name>.png`, `<name>.pdf`, or `<name>.jpg` only when requested or needed fo
 ## Create Flow
 
 1. Classify the figure as `architecture`, `roadmap`, or `workflow`.
-2. Draft or normalize the YAML spec as the canonical source.
-3. Use concise labels; shorten labels before shrinking fonts.
-4. Validate through the sibling base CLI.
-5. Render the editable `.drawio` and standalone SVG in the final directory, with sidecars in the work directory.
-6. Run a paper-readability self-check before reporting completion.
+2. For complex paper-derived requests, extract the research evidence chain and confirm the diagram plan before rendering.
+3. When the optional image-preview trigger applies, generate or request a concept preview after confirmation, then revise the plan if needed.
+4. Draft or normalize the YAML spec as the canonical source.
+5. Use concise labels; shorten labels before shrinking fonts.
+6. Validate through the sibling base CLI.
+7. Render the editable `.drawio` and standalone SVG in the final directory, with sidecars in the work directory.
+8. Run an exported-artifact self-check before reporting completion.
 
 Commands:
 
@@ -137,6 +173,7 @@ Use paths relative to the overlay directory, or use absolute paths when running 
   ```
 
 - For image/SVG replication, preserve text boxes, captions, legends, formulas, edge labels, baseline/offset, font family/size/italic state, alignment, and spacing when visible.
+- For academic improvement of a reference image, confirm the extracted structure and optionally create an image-generation concept preview before writing final YAML.
 - Use explicit `bounds` for standalone text/formula blocks and `labelOffset` for connector labels that must sit off the line.
 - Keep all regenerated files on the same basename so final artifacts and work-dir sidecars remain round-trippable.
 
@@ -186,6 +223,8 @@ Do not claim completion until:
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
 - colors are not the only carrier of meaning
 - any visual self-check used the exported SVG or Desktop-exported final artifact before any live/browser preview
+- the first exported artifact was inspected for overlap, clipped text, connector-label clearance, arrows crossing text or nodes, missing modules, and mismatch from the confirmed plan or source
+- if a visible defect was found, the YAML spec was corrected and rerendered once before final reporting
 - requested Desktop exports were attempted or clearly reported as unavailable
 - no MCP config, MCP server, or live backend is required for the result
 
