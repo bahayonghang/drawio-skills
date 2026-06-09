@@ -67,7 +67,7 @@ meta:
   layout: horizontal  # horizontal | vertical | hierarchical
   
   # Canvas sizing
-  canvas: auto  # auto | 800x600 | 1200x800
+  canvas: auto  # auto | WIDTHxHEIGHT, e.g. 800x600 or 1200x800
   
   # Connector routing
   routing: orthogonal  # orthogonal | rounded
@@ -117,6 +117,17 @@ meta:
 | `default` | Standard diagram workflow |
 | `academic-paper` | Enables paper-facing validation and export checklist |
 | `engineering-review` | Enables stricter routing and readability review |
+
+### Canvas Sizing
+
+Use `meta.canvas` to control the draw.io page size:
+
+- `auto` or an omitted field preserves content-derived sizing.
+- `WIDTHxHEIGHT` sets an explicit minimum page size, for example `1200x800`.
+- Width and height must be positive integers.
+- The renderer expands beyond the explicit canvas when content exceeds it, so native shapes are not hidden or cropped.
+
+For reference-image replication, set `meta.canvas` to the source image dimensions when top-left `bounds`, connector waypoints, or panel regions are copied from the reference coordinate system.
 
 ### Academic Figure Type Options
 
@@ -420,6 +431,7 @@ Use `meta.replication` to capture source-palette intent without turning the whol
 ```yaml
 meta:
   source: replicated
+  canvas: 1200x800
   theme: tech-blue
   replication:
     colorMode: preserve-original
@@ -442,6 +454,7 @@ Recommended usage:
 - Write explicit `style.fillColor`, `style.strokeColor`, and `style.fontColor` on nodes/edges/modules when color extraction is high-confidence.
 - Keep low-confidence or non-essential elements on theme tokens so theme changes and accessibility refinements still work.
 - Use `theme-first` only when the user explicitly wants palette normalization.
+- Rebuild the main diagram with native draw.io cells; do not use a full-page embedded reference image as the final result.
 
 ---
 

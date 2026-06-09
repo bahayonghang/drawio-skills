@@ -10,6 +10,7 @@ Use `drawio-academic-skills` when the reference is a paper/thesis/manuscript fig
 - editable YAML-first artifacts
 - palette-aware restyling
 - text-position fidelity for captions, callouts, formulas, and edge labels
+- native editable draw.io shapes instead of a full-page embedded reference image
 - academic-safe exports through the overlay when needed
 
 ## Replication Flow
@@ -17,10 +18,11 @@ Use `drawio-academic-skills` when the reference is a paper/thesis/manuscript fig
 1. Receive the uploaded image and any text hints
 2. Choose domain, theme, and color mode
 3. Run a text-fidelity pass for labels, captions, formulas, and edge labels
-4. Extract structure into YAML
-5. Summarize logic, palette, and text placement when needed
-6. Render the offline bundle
-7. Compare and refine with `/drawio edit`
+4. Write a native reference inventory for source canvas, regions, shapes, connectors, palette, and approximations
+5. Extract structure into YAML with `meta.source: replicated` and `meta.canvas` when source coordinates matter
+6. Summarize logic, palette, and text placement when needed
+7. Render the offline bundle
+8. Compare and refine with `/drawio edit`
 
 ## Academic Replication Overlay
 
@@ -40,9 +42,12 @@ The overlay still executes through the sibling base CLI at `../drawio/scripts/cl
 When the source image depends on typography or placement, replication should capture:
 
 - shape labels, edge labels, standalone text, and formula annotations separately;
+- source canvas size as `meta.canvas: WIDTHxHEIGHT` when coordinates are copied from the reference;
 - explicit text-box bounds when the original box position matters;
 - font family, font size, italic/bold state, alignment, and spacing where visible;
 - edge-label offsets so labels sit off the connector line instead of on top of it.
+
+Do not satisfy a rebuild by placing the whole reference image as the final draw.io page. The final `.drawio` should use native editable shapes, text, connectors, modules/groups, waypoints, and styles. Validation flags full-page embedded image cells; small icons or motif images are still allowed when they are not the whole diagram.
 
 For self-checking, compare the source and export for:
 
@@ -60,6 +65,7 @@ For self-checking, compare the source and export for:
 Replicated specs should usually record:
 
 - `meta.source: replicated`
+- `meta.canvas` when source coordinates matter
 - `meta.replication.colorMode`
 - `meta.replication.background`
 - `meta.replication.palette`
@@ -115,18 +121,15 @@ Redraw this for a keynote slide
 
 ## Output Artifacts
 
-Base replication should produce the final editable artifact:
+Base replication should produce the final editable and visual-check artifacts:
 
 - `.drawio`
+- `.svg`
 
 Work-dir sidecars:
 
 - `.spec.yaml`
 - `.arch.json`
-
-Academic overlay final delivery also defaults to:
-
-- standalone SVG
 
 Optional outputs:
 

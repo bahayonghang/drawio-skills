@@ -411,6 +411,35 @@ function isFiniteNumber(value) {
   return typeof value === 'number' && Number.isFinite(value)
 }
 
+function parseCanvasSize(canvas) {
+  if (canvas == null || canvas === 'auto') return null
+  if (typeof canvas !== 'string') {
+    throw new Error('Invalid meta.canvas: use "auto" or WIDTHxHEIGHT')
+  }
+
+  const match = /^(\d+)x(\d+)$/.exec(canvas)
+  if (!match) {
+    throw new Error(`Invalid meta.canvas "${canvas}": use "auto" or WIDTHxHEIGHT`)
+  }
+
+  const width = Number(match[1])
+  const height = Number(match[2])
+  if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width <= 0 || height <= 0) {
+    throw new Error(`Invalid meta.canvas "${canvas}": width and height must be positive integers`)
+  }
+
+  return { width, height }
+}
+
+function resolveCanvasSize(canvas, autoWidth, autoHeight) {
+  const explicit = parseCanvasSize(canvas)
+  if (!explicit) return { width: autoWidth, height: autoHeight }
+  return {
+    width: Math.max(autoWidth, explicit.width),
+    height: Math.max(autoHeight, explicit.height)
+  }
+}
+
 function normalizeNodeBounds(node) {
   const bounds = node?.bounds
   if (!bounds) return null
@@ -1029,8 +1058,9 @@ export function buildXml(spec, theme, layout) {
     maxY = Math.max(maxY, pos.y + pos.height)
   }
 
-  const canvasWidth = snapToGrid(maxX + 80, 8)
-  const canvasHeight = snapToGrid(maxY + 80, 8)
+  const autoCanvasWidth = snapToGrid(maxX + 80, 8)
+  const autoCanvasHeight = snapToGrid(maxY + 80, 8)
+  const canvas = resolveCanvasSize(spec.meta?.canvas, autoCanvasWidth, autoCanvasHeight)
 
   // Generate module containers
   const moduleIdMap = new Map()
@@ -1132,7 +1162,7 @@ export function buildXml(spec, theme, layout) {
     theme.canvas?.background || '#FFFFFF'
   )
   const xml =
-    `<mxGraphModel dx="1120" dy="720" grid="1" gridSize="8" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${canvasWidth}" pageHeight="${canvasHeight}" math="1" background="${canvasBackground}">` +
+    `<mxGraphModel dx="1120" dy="720" grid="1" gridSize="8" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${canvas.width}" pageHeight="${canvas.height}" math="1" background="${canvasBackground}">` +
     `<root>` +
     `<mxCell id="0"/>` +
     `<mxCell id="1" parent="0"/>` +
@@ -1900,6 +1930,9 @@ export function validateSpec(spec) {
   if (spec.meta?.source != null && !VALID_SOURCES.includes(spec.meta.source)) {
     throw new Error(`Invalid meta.source "${spec.meta.source}": must be one of ${VALID_SOURCES.join(', ')}`)
   }
+  if (spec.meta?.canvas != null) {
+    parseCanvasSize(spec.meta.canvas)
+  }
   if (spec.meta?.replication != null) {
     if (typeof spec.meta.replication !== 'object' || Array.isArray(spec.meta.replication)) {
       throw new Error('meta.replication must be an object when provided')
@@ -2075,6 +2108,64 @@ export function validateSpec(spec) {
   }
 }
 
+function getXmlAttribute(tagText, name) {
+  const match = new RegExp(`\\b${name}="([^"]*)"`).exec(tagText)
+  return match ? match[1] : null
+}
+
+function parseXmlNumber(value) {
+  if (value == null || value === '') return null
+  const number = Number(value)
+  return Number.isFinite(number) ? number : null
+}
+
+function isImageCell(cellAttrs) {
+  const style = getXmlAttribute(cellAttrs, 'style') || ''
+  return /\bshape=image\b/.test(style) || /\bimage=/.test(style) || style.includes('data:image')
+}
+
+function collectFullPageImageErrors(xml) {
+  const errors = []
+  const graphMatch = /<mxGraphModel\s([^>]*)>/.exec(xml)
+  if (!graphMatch) return errors
+
+  const pageWidth = parseXmlNumber(getXmlAttribute(graphMatch[1], 'pageWidth'))
+  const pageHeight = parseXmlNumber(getXmlAttribute(graphMatch[1], 'pageHeight'))
+  if (!pageWidth || !pageHeight || pageWidth <= 0 || pageHeight <= 0) return errors
+
+  const cellPattern = /<mxCell\s([^>]*?)(\/?)>/g
+  let match
+  while ((match = cellPattern.exec(xml)) !== null) {
+    const cellAttrs = match[1]
+    const isSelfClosing = match[2] === '/'
+    if (isSelfClosing) continue
+    if (!/\bvertex="1"/.test(cellAttrs) || !isImageCell(cellAttrs)) continue
+
+    const closeIndex = xml.indexOf('</mxCell>', cellPattern.lastIndex)
+    if (closeIndex === -1) continue
+    const cellBody = xml.slice(cellPattern.lastIndex, closeIndex)
+    const geometryMatch = /<mxGeometry\s([^>]*)\/?>/.exec(cellBody)
+    if (!geometryMatch) continue
+
+    const x = parseXmlNumber(getXmlAttribute(geometryMatch[1], 'x')) ?? 0
+    const y = parseXmlNumber(getXmlAttribute(geometryMatch[1], 'y')) ?? 0
+    const width = parseXmlNumber(getXmlAttribute(geometryMatch[1], 'width'))
+    const height = parseXmlNumber(getXmlAttribute(geometryMatch[1], 'height'))
+    if (!width || !height || width <= 0 || height <= 0) continue
+
+    const coversWidth = width >= pageWidth * 0.9
+    const coversHeight = height >= pageHeight * 0.9
+    const coversArea = width * height >= pageWidth * pageHeight * 0.8
+    const nearOrigin = Math.abs(x) <= pageWidth * 0.05 && Math.abs(y) <= pageHeight * 0.05
+    if (coversWidth && coversHeight && coversArea && nearOrigin) {
+      const id = getXmlAttribute(cellAttrs, 'id') || '(unknown)'
+      errors.push(`Cell "${id}" appears to be a full-page embedded image; rebuild the reference with native draw.io shapes instead.`)
+    }
+  }
+
+  return errors
+}
+
 /**
  * Validate draw.io XML structure
  * @param {string} xml - draw.io XML string
@@ -2158,6 +2249,8 @@ export function validateXml(xml) {
       errors.push(`Edge "${edgeId}" references nonexistent target ID: "${tgtMatch[1]}"`)
     }
   }
+
+  errors.push(...collectFullPageImageErrors(xml))
 
   return { valid: errors.length === 0, errors }
 }

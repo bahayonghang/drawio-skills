@@ -41,6 +41,7 @@ meta:
   figureType: architecture
   title: Example Diagram
   source: generated
+  canvas: auto
 ```
 
 Common fields:
@@ -51,6 +52,9 @@ Common fields:
 - `profile`: `default`, `academic-paper`, `engineering-review`
 - `figureType`: `architecture`, `roadmap`, `workflow` when `profile=academic-paper`
 - `source`: `generated`, `replicated`, or `edited`
+- `canvas`: `auto` or `WIDTHxHEIGHT`, such as `1200x800`
+
+`meta.canvas` sets the minimum draw.io page size. Omit it or use `auto` for content-derived sizing. Use `WIDTHxHEIGHT` for reference-image replication when you are mapping visible elements from source-image coordinates. The renderer expands beyond the explicit canvas if native content exceeds the page, so shapes are not clipped.
 
 ### `modules`
 
@@ -98,6 +102,7 @@ Replicated diagrams usually include:
 ```yaml
 meta:
   source: replicated
+  canvas: 1200x800
   replication:
     colorMode: preserve-original
     background: "#FFF7ED"
@@ -112,6 +117,8 @@ meta:
 
 - `preserve-original`
 - `theme-first`
+
+Do not replicate a reference by embedding the whole source image as the page. The final `.drawio` should be native editable content, and validation flags full-page embedded image cells.
 
 ## Text Fidelity Fields
 
@@ -155,6 +162,7 @@ The compiler validates:
 - edge quality
 - academic-paper requirements when enabled
 - text-position rules for replicated labels and formulas
+- full-page embedded image cells in validated draw.io XML
 
 Use strict mode when warnings should fail the build.
 

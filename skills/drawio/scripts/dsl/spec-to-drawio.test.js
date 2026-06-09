@@ -583,6 +583,30 @@ describe('specToDrawioXml', () => {
     assert.ok(xml.includes('Query'), 'should contain Query')
   })
 
+  it('should use explicit meta.canvas dimensions as minimum page size', () => {
+    const spec = {
+      meta: { theme: 'tech-blue', canvas: '1200x800' },
+      nodes: [{ id: 'n1', label: 'Reference Node', bounds: { x: 40, y: 40, width: 160, height: 80 } }]
+    }
+
+    const xml = specToDrawioXml(spec)
+
+    assert.ok(xml.includes('pageWidth="1200"'), 'should use explicit canvas width')
+    assert.ok(xml.includes('pageHeight="800"'), 'should use explicit canvas height')
+  })
+
+  it('should expand beyond explicit meta.canvas when content exceeds the page', () => {
+    const spec = {
+      meta: { theme: 'tech-blue', canvas: '400x300' },
+      nodes: [{ id: 'n1', label: 'Wide Reference Node', bounds: { x: 440, y: 360, width: 160, height: 80 } }]
+    }
+
+    const xml = specToDrawioXml(spec)
+
+    assert.ok(xml.includes('pageWidth="680"'), 'content width should expand beyond explicit canvas')
+    assert.ok(xml.includes('pageHeight="520"'), 'content height should expand beyond explicit canvas')
+  })
+
   it('should throw error for invalid spec', () => {
     assert.throws(() => specToDrawioXml(null), 'should throw for null')
     assert.throws(() => specToDrawioXml({}), 'should throw for empty object')
@@ -853,6 +877,18 @@ nodes:
     assert.strictEqual(spec.meta.replication.palette[0].hex, '#FDBA74')
   })
 
+  it('should parse explicit canvas metadata', () => {
+    const yamlText = `
+meta:
+  canvas: 1200x800
+nodes:
+  - id: n1
+    label: Box
+`
+    const spec = parseSpecYaml(yamlText)
+    assert.strictEqual(spec.meta.canvas, '1200x800')
+  })
+
   it('should return default empty spec for empty string', () => {
     const spec = parseSpecYaml('')
     assert.deepStrictEqual(spec.meta, {}, 'meta should be empty object')
@@ -883,6 +919,21 @@ nodes:
       () => parseSpecYaml(yamlText),
       /meta\.replication\.colorMode/,
       'invalid replication color modes should be rejected'
+    )
+  })
+
+  it('should reject invalid canvas metadata', () => {
+    const yamlText = `
+meta:
+  canvas: wide
+nodes:
+  - id: n1
+    label: Box
+`
+    assert.throws(
+      () => parseSpecYaml(yamlText),
+      /Invalid meta\.canvas "wide": use "auto" or WIDTHxHEIGHT/,
+      'invalid canvas metadata should be rejected'
     )
   })
 })
@@ -1199,6 +1250,17 @@ describe('Phase 2.3b: text fidelity', () => {
         }),
       /labelOffset must have numeric x and y/
     )
+
+    assert.throws(
+      () =>
+        validateSpec({
+          meta: { canvas: '0x600' },
+          nodes: [{ id: 'n1', label: 'Note' }],
+          edges: [],
+          modules: []
+        }),
+      /Invalid meta\.canvas "0x600": width and height must be positive integers/
+    )
   })
 })
 
@@ -1356,6 +1418,40 @@ describe('validateXml', () => {
       result.errors.some((e) => e.includes('source') && e.includes('"999"')),
       'should report nonexistent source ID'
     )
+  })
+
+  it('should reject a full-page embedded image cell', () => {
+    const xml =
+      '<mxGraphModel pageWidth="1200" pageHeight="800">' +
+      '<root>' +
+      '<mxCell id="0"/>' +
+      '<mxCell id="1" parent="0"/>' +
+      '<mxCell id="2" value="" style="shape=image;image=data:image/png;base64,abc;" vertex="1" parent="1">' +
+      '<mxGeometry x="0" y="0" width="1200" height="800" as="geometry"/>' +
+      '</mxCell>' +
+      '</root>' +
+      '</mxGraphModel>'
+    const result = validateXml(xml)
+    assert.strictEqual(result.valid, false, 'full-page image should be invalid')
+    assert.ok(
+      result.errors.some((e) => e.includes('full-page embedded image')),
+      'should report full-page embedded image'
+    )
+  })
+
+  it('should allow small embedded image icon cells', () => {
+    const xml =
+      '<mxGraphModel pageWidth="1200" pageHeight="800">' +
+      '<root>' +
+      '<mxCell id="0"/>' +
+      '<mxCell id="1" parent="0"/>' +
+      '<mxCell id="2" value="" style="shape=image;image=data:image/png;base64,abc;" vertex="1" parent="1">' +
+      '<mxGeometry x="40" y="40" width="80" height="80" as="geometry"/>' +
+      '</mxCell>' +
+      '</root>' +
+      '</mxGraphModel>'
+    const result = validateXml(xml)
+    assert.strictEqual(result.valid, true, 'small image icon should be valid')
   })
 })
 

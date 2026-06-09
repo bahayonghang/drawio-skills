@@ -111,11 +111,31 @@
       ],
       "assertions": [
         "Sets meta.source to replicated",
+        "Uses meta.canvas when source image dimensions or top-left coordinate fidelity matter",
         "Preserves source palette unless the user asks for theme-first",
         "Uses bounds for position-sensitive standalone text",
         "Uses labelOffset when edge labels must sit off connector lines",
+        "Does not embed the whole uploaded reference image as the final draw.io page",
         "Does not force academic-paper metadata",
         "Compares against exported SVG or Desktop-exported artifacts before any browser screenshot"
+      ]
+    },
+    {
+      "id": "base-native-reference-rebuild",
+      "prompt": "Rebuild the uploaded workflow screenshot as an editable native draw.io diagram. Match the 1200x800 source canvas, preserve panel bounds, labels, arrows, and a small legend thumbnail, but do not paste the screenshot as the page.",
+      "expected_output": "A native editable reference rebuild bundle with explicit canvas, inventory, validation, and exported-artifact verification.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-warm-approval.svg"
+      ],
+      "assertions": [
+        "Writes or presents a reference inventory covering source canvas, regions, native shapes, connectors, palette, and approximations",
+        "Sets meta.source to replicated",
+        "Sets meta.canvas to the source dimensions, such as 1200x800, when mapping top-left coordinates",
+        "Uses native draw.io shapes, text, connectors, modules or groups, waypoints, and styles for the main diagram",
+        "Allows only small icon or motif image cells when they are not the whole page",
+        "Runs --validate or validateXml so full-page embedded image cells are caught",
+        "Outputs final .drawio and .svg, with .spec.yaml, .arch.json, and inventory sidecars in a work directory",
+        "Uses exported SVG or Desktop-exported artifacts for visual verification before any browser screenshot"
       ]
     },
     {

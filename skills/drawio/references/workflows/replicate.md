@@ -1,6 +1,6 @@
 # Workflow: /drawio replicate
 
-Replicate existing images or diagrams using structured extraction with design-system styling and explicit live-backend boundaries.
+Replicate existing images or diagrams using structured extraction with design-system styling, native editable draw.io geometry, and explicit live-backend boundaries.
 
 ## Trigger
 
@@ -22,17 +22,29 @@ Step 2: Configuration
 
 Step 3: Structured Extraction
 ├── Analyze image structure
+├── Record source canvas:
+│   ├── source image width and height
+│   ├── background/canvas color
+│   └── intended `meta.canvas` value (`auto` or WIDTHxHEIGHT)
 ├── Extract source color summary:
 │   ├── background/canvas color
 │   ├── 3-6 dominant flat colors
 │   ├── node / edge / module color assignments
 │   └── confidence notes for uncertain regions
+├── Native Reference Inventory:
+│   ├── panel or region bounds in top-left coordinates
+│   ├── native shapes, labels, styles, and uncertainty notes
+│   ├── connector endpoints, waypoints, labels, and offsets
+│   ├── dense motifs that will be approximated with native simplified shapes
+│   └── any temporary tracing image that must not remain as final full-page content
 ├── Text Fidelity Pass:
 │   ├── extract every text-bearing element as shape label, edge label, standalone text, or formula annotation
 │   ├── record text bounds, baseline/anchor, alignment, font family, font size, italic/bold state, and spacing
 │   ├── record relative offset from the nearest arrow, connector, node, module, or canvas boundary
 │   └── preserve math delimiters for formulas (`$$...$$`, `\(...\)`, or AsciiMath backticks)
 ├── Extract to YAML specification format:
+│   ├── `meta.source: replicated`
+│   ├── `meta.canvas` from the source page size when coordinate fidelity matters
 │   ├── nodes with semantic types
 │   ├── edges with connector types
 │   ├── modules for grouping
@@ -58,6 +70,7 @@ Step 6: Convert to Diagram
 ├── Parse specification via scripts/dsl/spec-to-drawio.js
 ├── Apply selected theme
 ├── Keep `meta.replication.background` as canvas background when provided
+├── Use `meta.canvas: WIDTHxHEIGHT` as the minimum draw.io page size when mapping reference coordinates
 ├── Calculate 8px grid positions for structure
 ├── Preserve explicit top-left `bounds` for high-fidelity text boxes and formula annotations
 ├── Apply `labelOffset` so connector labels sit 12-20px off the line by default
@@ -77,6 +90,7 @@ Step 8: Validate
 ├── Check cell ID uniqueness
 ├── Check edge source/target reference validity
 ├── Check required root cells present
+├── Check `--validate` does not report a full-page embedded image cell
 ├── Check text-label clearance: no edge label overlaps its connector, no formula is clipped or pasted to a boundary
 ├── For screenshot/academic replication, record at least one original-vs-export visual comparison from exported SVG/PNG/PDF/JPG when vision or a viewer can inspect it
 ├── Use browser/live screenshots only as a last-resort review aid when the user explicitly requested live review and no exported artifact can be inspected
@@ -84,6 +98,57 @@ Step 8: Validate
 ```
 
 ## Design-System Integration
+
+### Native Reference Rebuild Contract
+
+Do not satisfy a reference rebuild by placing the uploaded image as the whole draw.io page. The final `.drawio` must be editable native content: shapes, text, connectors, modules/groups, waypoints, labels, styles, and simplified motifs.
+
+Temporary image use is allowed only for analysis or tracing. If an image layer is used while drafting, remove it before delivery or keep it clearly outside the final page. The final validation pass should reject a full-page image cell that covers the canvas.
+
+Use this inventory shape for complex rebuilds:
+
+```yaml
+source:
+  file: reference.png
+  canvas: 1200x800
+  background: "#FFFFFF"
+regions:
+  - id: left-panel
+    label: Data preparation
+    bounds: { x: 32, y: 72, width: 336, height: 560 }
+shapes:
+  - id: extract
+    label: Extract
+    type: service
+    bounds: { x: 80, y: 144, width: 168, height: 56 }
+connectors:
+  - from: extract
+    to: train
+    label: features
+    waypoints:
+      - { x: 320, y: 172 }
+    labelOffset: { x: 0, y: -16 }
+palette:
+  - hex: "#FDBA74"
+    role: warm process fill
+    appliesTo: nodes
+    confidence: high
+approximations:
+  - "Heatmap thumbnail becomes a 5x4 grid of small native rectangles."
+```
+
+Convert that inventory into the canonical YAML spec. Use `meta.canvas` to preserve the reference coordinate system:
+
+```yaml
+meta:
+  source: replicated
+  canvas: 1200x800
+  replication:
+    colorMode: preserve-original
+    background: "#FFFFFF"
+```
+
+`meta.canvas` is a minimum page size, not a crop. If native shapes extend beyond it, the renderer expands the page to keep content editable and visible.
 
 ### Theme Selection by Domain
 
@@ -128,11 +193,13 @@ During extraction, map visual elements to semantic types:
 2. Mark missing facts as `Not specified` / `未提及`.
 3. Keep YAML spec as the canonical result, even if a live preview is opened later.
 4. Preserve the source palette by default and store it in `meta.replication`.
-5. If a live provider is used, treat it as preview/refinement only unless it also satisfies the edit-session capability gate from `/drawio edit`.
-6. Treat standalone text, captions, callouts, legends, and formula annotations as first-class replicated elements; do not force them into nearby shapes when their separate position carries meaning.
-7. Use `bounds: {x, y, width, height}` for high-fidelity text boxes. `bounds` uses top-left coordinates; `position` remains a center-point convenience for ordinary nodes.
-8. For labeled connectors, prefer an off-line offset: horizontal connectors usually use `labelOffset: {x: 0, y: -12}` to `-20`, and vertical connectors usually use `{x: 12, y: 0}` to `{x: 20, y: 0}`. Adjust the sign to match the source side.
-9. Fix failures in this order: (a) wrong/missing text, (b) formula delimiters/font, (c) `bounds` and baselines, (d) `labelOffset`, (e) connector waypoints/routing, (f) color/style polish.
+5. Use `meta.canvas: WIDTHxHEIGHT` when the source coordinate system matters; keep `auto` for ordinary regenerated diagrams.
+6. Never deliver the final rebuild as a full-page embedded image.
+7. If a live provider is used, treat it as preview/refinement only unless it also satisfies the edit-session capability gate from `/drawio edit`.
+8. Treat standalone text, captions, callouts, legends, and formula annotations as first-class replicated elements; do not force them into nearby shapes when their separate position carries meaning.
+9. Use `bounds: {x, y, width, height}` for high-fidelity text boxes. `bounds` uses top-left coordinates; `position` remains a center-point convenience for ordinary nodes.
+10. For labeled connectors, prefer an off-line offset: horizontal connectors usually use `labelOffset: {x: 0, y: -12}` to `-20`, and vertical connectors usually use `{x: 12, y: 0}` to `{x: 20, y: 0}`. Adjust the sign to match the source side.
+11. Fix failures in this order: (a) wrong/missing text, (b) formula delimiters/font, (c) `bounds` and baselines, (d) `labelOffset`, (e) connector waypoints/routing, (f) color/style polish, (g) accidental full-page image cells.
 
 ## Related
 
