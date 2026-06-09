@@ -42,4 +42,7 @@ progress.md
 package/
 
 .agents/
+
 examples/
+!skills/drawio/references/examples/
+!skills/drawio/references/examples/**
