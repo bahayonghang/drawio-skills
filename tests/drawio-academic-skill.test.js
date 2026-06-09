@@ -195,10 +195,64 @@ test('drawio-academic-skills: sibling base CLI separates final artifacts from si
   logger.info('校验 sibling base CLI academic clean-final 导出完成')
 })
 
+test('drawio examples: scientific paper examples render through base CLI', () => {
+  /*
+   * ========================================================================
+   * 步骤4：校验 scientific academic 示例可渲染
+   * ========================================================================
+   * 数据源：base references/examples
+   * 操作要点：
+   * 1) 使用 sibling base CLI 渲染新增科学图示例
+   * 2) 开启 strict warnings，保证示例符合 academic profile 质量门槛
+   * 3) 校验最终目录与 sidecar 目录分离
+   */
+  logger.info('开始校验 scientific academic 示例渲染...')
+
+  const examples = [
+    ['yolo-model-architecture-paper.yaml', 'yolo'],
+    ['max-pooling-operation-paper.yaml', 'max-pooling']
+  ]
+
+  const tempDir = mkdtempSync(join(tmpdir(), 'drawio-scientific-examples-'))
+
+  try {
+    for (const [exampleName, outputName] of examples) {
+      const input = resolve(BASE_DIR, 'references/examples', exampleName)
+      const output = resolve(tempDir, `${outputName}.svg`)
+      const sidecarDir = resolve(tempDir, '.drawio-tmp', outputName)
+
+      execFileSync(
+        process.execPath,
+        [
+          resolve(BASE_DIR, 'scripts/cli.js'),
+          input,
+          output,
+          '--validate',
+          '--write-sidecars',
+          '--sidecar-dir',
+          sidecarDir,
+          '--strict-warnings'
+        ],
+        { cwd: PROJECT_ROOT, stdio: 'pipe' }
+      )
+
+      assert.equal(existsSync(output), true)
+      assert.equal(existsSync(resolve(tempDir, `${outputName}.drawio`)), true)
+      assert.equal(existsSync(resolve(tempDir, `${outputName}.spec.yaml`)), false)
+      assert.equal(existsSync(resolve(tempDir, `${outputName}.arch.json`)), false)
+      assert.equal(existsSync(resolve(sidecarDir, `${outputName}.spec.yaml`)), true)
+      assert.equal(existsSync(resolve(sidecarDir, `${outputName}.arch.json`)), true)
+    }
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+  logger.info('校验 scientific academic 示例渲染完成')
+})
+
 test('drawio evals: base and academic sets encode separate responsibilities', () => {
   /*
    * ========================================================================
-   * 步骤4：校验 evals 拆分结果
+   * 步骤5：校验 evals 拆分结果
    * ========================================================================
    * 数据源：base 与 academic eval JSON
    * 操作要点：
@@ -223,9 +277,12 @@ test('drawio evals: base and academic sets encode separate responsibilities', ()
   assert.ok(baseIds.includes('base-desktop-unavailable-fallback'))
 
   assert.ok(academicIds.includes('academic-ieee-campus-network'))
+  assert.ok(academicIds.includes('academic-yolo-model-architecture'))
+  assert.ok(academicIds.includes('academic-max-pooling-operation-figure'))
   assert.ok(academicIds.includes('academic-thesis-word-a4-bundle'))
   assert.ok(academicIds.includes('academic-formula-publication-figure'))
   assert.ok(academicIds.includes('academic-paper-evidence-chain-preview'))
+  assert.ok(academicIds.includes('academic-reference-redraw-native-scientific'))
   assert.ok(academicIds.includes('academic-image-improvement-preview-gate'))
   assert.ok(academicIds.includes('academic-desktop-png-pdf-unavailable-fallback'))
 

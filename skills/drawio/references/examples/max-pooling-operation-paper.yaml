@@ -1,0 +1,72 @@
+meta:
+  profile: academic-paper
+  figureType: workflow
+  theme: academic-color
+  layout: horizontal
+  title: "Max-Pooling Operation"
+  description: "Native-cell operation figure for a single pooling window."
+  legend: "Four input cells form one pooling window. The output cell stores the maximum value."
+
+nodes:
+  - id: in11
+    label: "1"
+    type: service
+    bounds: { x: 48, y: 96, width: 40, height: 40 }
+    style: { fillColor: "#EFF6FF", strokeColor: "#2563EB", fontSize: 10 }
+  - id: in12
+    label: "5"
+    type: service
+    bounds: { x: 88, y: 96, width: 40, height: 40 }
+    style: { fillColor: "#DBEAFE", strokeColor: "#2563EB", fontSize: 10 }
+  - id: in21
+    label: "2"
+    type: service
+    bounds: { x: 48, y: 136, width: 40, height: 40 }
+    style: { fillColor: "#EFF6FF", strokeColor: "#2563EB", fontSize: 10 }
+  - id: in22
+    label: "3"
+    type: service
+    bounds: { x: 88, y: 136, width: 40, height: 40 }
+    style: { fillColor: "#EFF6FF", strokeColor: "#2563EB", fontSize: 10 }
+  - id: inputLabel
+    label: "2 x 2 window"
+    type: text
+    bounds: { x: 44, y: 56, width: 112, height: 28 }
+    style: { fontSize: 10, align: center }
+  - id: operator
+    label: "max"
+    type: operator
+    bounds: { x: 208, y: 116, width: 48, height: 48 }
+    style: { fillColor: "#F8FAFC", strokeColor: "#475569", fontSize: 10 }
+  - id: outputCell
+    label: "5"
+    type: output
+    bounds: { x: 336, y: 116, width: 56, height: 56 }
+    style: { fillColor: "#DCFCE7", strokeColor: "#16A34A", fontSize: 10 }
+  - id: outputLabel
+    label: "pooled output"
+    type: text
+    bounds: { x: 320, y: 56, width: 104, height: 28 }
+    style: { fontSize: 10, align: center }
+  - id: formula
+    label: "$$y = max(x)$$"
+    type: formula
+    bounds: { x: 176, y: 200, width: 128, height: 48 }
+    style: { fontSize: 10, align: center }
+
+edges:
+  - from: in12
+    to: operator
+    type: primary
+    label: window
+    labelOffset: { x: 0, y: -16 }
+  - from: operator
+    to: outputCell
+    type: primary
+    label: max value
+    labelOffset: { x: 0, y: -16 }
+  - from: formula
+    to: operator
+    type: optional
+    label: rule
+    labelOffset: { x: 16, y: 0 }

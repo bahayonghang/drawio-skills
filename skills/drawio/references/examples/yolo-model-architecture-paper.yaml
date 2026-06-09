@@ -1,0 +1,116 @@
+meta:
+  profile: academic-paper
+  figureType: architecture
+  theme: academic-color
+  layout: horizontal
+  title: "YOLO-Style Detector"
+  description: "Compact paper figure for backbone, fusion neck, detection heads, and loss."
+  legend: "Cubes are feature maps. Rounded blocks are learned stages. Dashed links carry multi-scale features."
+
+modules:
+  - id: inputStage
+    label: Input
+  - id: backbone
+    label: Backbone
+  - id: neck
+    label: Neck / Fusion
+  - id: head
+    label: Head and Loss
+
+nodes:
+  - id: image
+    label: Image batch
+    type: input
+    module: inputStage
+    bounds: { x: 64, y: 96, width: 120, height: 48 }
+  - id: tensor0
+    label: H x W x 3
+    type: tensor3d
+    module: inputStage
+    bounds: { x: 96, y: 208, width: 72, height: 80 }
+  - id: stem
+    label: Stem Conv
+    type: conv
+    module: backbone
+    bounds: { x: 256, y: 80, width: 112, height: 48 }
+  - id: csp
+    label: CSP blocks
+    type: conv
+    module: backbone
+    bounds: { x: 256, y: 184, width: 112, height: 56 }
+  - id: spp
+    label: SPPF
+    type: pool
+    module: backbone
+    bounds: { x: 256, y: 304, width: 112, height: 48 }
+  - id: p3
+    label: P3 feature
+    type: tensor3d
+    module: neck
+    bounds: { x: 448, y: 72, width: 64, height: 72 }
+  - id: fuse
+    label: PAN fusion
+    type: attention
+    module: neck
+    bounds: { x: 424, y: 184, width: 120, height: 56 }
+  - id: p5
+    label: P5 feature
+    type: tensor3d
+    module: neck
+    bounds: { x: 448, y: 312, width: 64, height: 72 }
+  - id: detectSmall
+    label: Small head
+    type: output
+    module: head
+    bounds: { x: 624, y: 96, width: 112, height: 48 }
+  - id: detectLarge
+    label: Large head
+    type: output
+    module: head
+    bounds: { x: 624, y: 232, width: 112, height: 48 }
+  - id: loss
+    label: Box + cls loss
+    type: loss
+    module: head
+    bounds: { x: 624, y: 344, width: 112, height: 48 }
+
+edges:
+  - from: image
+    to: tensor0
+    type: primary
+  - from: tensor0
+    to: stem
+    type: primary
+  - from: stem
+    to: csp
+    type: primary
+  - from: csp
+    to: spp
+    type: primary
+  - from: spp
+    to: p3
+    type: data
+    label: multi-scale
+    labelOffset: { x: 0, y: -16 }
+  - from: p3
+    to: fuse
+    type: primary
+  - from: fuse
+    to: p5
+    type: primary
+  - from: fuse
+    to: detectSmall
+    type: data
+    label: P3/P4
+    labelOffset: { x: 0, y: -16 }
+  - from: p5
+    to: detectLarge
+    type: data
+    label: P5
+    labelOffset: { x: 0, y: -16 }
+  - from: detectSmall
+    to: loss
+    type: optional
+  - from: detectLarge
+    to: loss
+    type: optional

@@ -40,12 +40,27 @@ For paper-derived figures, classify the source first:
 | System architecture paper | data/sensing -> processing modules -> decision/control -> outputs -> evaluation |
 | Experimental study | problem -> setup -> treatment/control -> measurement -> analysis -> findings |
 | Review or policy paper | problem space -> classification -> evidence groups -> synthesis -> gaps/recommendations |
+| Deep-learning model paper | input -> backbone/encoder -> fusion/attention -> head/decoder -> loss/output -> metrics |
+| Algorithm mechanism figure | local inputs -> operation window -> formula/operator -> output -> interpretation |
 
 Map the result to the existing `meta.figureType` contract:
 
 - `architecture`: structure, layers, modules, systems, actors, or static relationships.
 - `roadmap`: study stages, milestones, phases, or progressive deliverables.
 - `workflow`: ordered execution, branching, iterative methods, experiments, or pipelines.
+
+## Scientific Figure Planning
+
+When the source is a research model, mechanism, or experiment, turn the evidence chain into one of these compact plans before drafting YAML:
+
+| Intent | Use | YAML emphasis |
+| --- | --- | --- |
+| Model architecture | CNN, YOLO, Transformer, encoder-decoder, feature fusion, multi-head prediction | `meta.figureType: architecture`, modules for stages, semantic layer types, concise tensor labels |
+| Operation/mechanism | max pooling, attention scoring, residual add, gating, normalization, algorithm block | explicit `bounds`, native grid/matrix cells, `formula` nodes, `operator` nodes, offset arrows |
+| Experiment pipeline | datasets, variants, simulations, ablations, validation, metrics | `meta.figureType: workflow`, parallel branches, shared evaluation, metrics/reporting block |
+| Scholarly framework redraw | uploaded research framework or paper figure screenshot | `meta.source: replicated`, `meta.canvas` when needed, source inventory, no full-page image embed |
+
+Prefer an architecture figure for static relationships and a workflow figure for ordered operations. Do not invent a new `meta.figureType` when the existing three values can express the paper role.
 
 ## Research Evidence Chain
 
@@ -74,6 +89,7 @@ Primary research chain:
 Major sections:
 Supporting nodes:
 Key arrows and feedback:
+Formula/callout placement:
 Validation and contribution:
 Preview path:
 Terms needing confirmation:
@@ -92,6 +108,8 @@ Academic figures should not copy paragraphs into boxes. Compress source text int
 - one-line notes for assumptions, constraints, or limitations.
 
 Prefer 4-8 major modules and 2-5 supporting nodes per major section. Use one dominant reading path and only 1-2 feedback loops unless the source genuinely requires more.
+
+For model-architecture and mechanism figures, compress repeated layers into stage labels such as `CSP block x3`, `Feature fusion`, or `Detect head` instead of drawing every internal layer. Use a legend or caption to explain notation that repeats across the figure.
 
 ## Optional Image Preview
 

@@ -82,6 +82,7 @@ Step 6: Convert to Diagram
 Step 7: Review and Refine
 ├── Compare the original image with the exported SVG or Desktop-exported image when a viewer or vision path can inspect it
 ├── Compare text placement: no labels on top of lines, no formulas touching borders, matching relative title/caption/callout positions
+├── For scientific figures, compare stage grouping, formula/callout placement, legend/caption fidelity, and whether model/operation elements are native editable cells
 ├── Default to /drawio edit in offline mode
 ├── Live providers with `render_inline_preview` may help review only after exported-artifact verification is unavailable or insufficient
 └── Providers without `read_diagram_xml + patch_diagram_cells` still do not replace the offline edit path
@@ -161,6 +162,18 @@ meta:
 | 项目管理 (Project Management) | tech-blue | Standard project visuals |
 | 教学设计 (Teaching Design) | nature | Friendly, accessible colors |
 
+### Scientific Redraw Priorities
+
+For research-framework screenshots, model architecture figures, operation diagrams, or algorithm illustrations, preserve meaning before decoration:
+
+1. Rebuild the figure as native editable cells, not a pasted page image.
+2. Preserve text-bearing regions: title, caption, legend, section headers, formula blocks, callouts, and edge labels.
+3. Use `bounds` for standalone labels, formulas, small grid cells, matrix cells, heatmap motifs, or annotations whose location carries meaning.
+4. Use semantic deep-learning types when they match the source: `input`, `tensor3d`, `conv`, `pool`, `attention`, `feature`, `operator`, `loss`, and `output`.
+5. Use modules for visual sections such as Backbone, Fusion, Head, Experiment Setup, Validation, or Metrics.
+6. Preserve or normalize the source palette intentionally. If exact colors are uncertain, record confidence in `meta.replication.palette` and keep the final figure grayscale-safe for academic use.
+7. Keep connector labels off the line with `labelOffset`; give formula and legend boxes breathing room before polishing colors.
+
 ### Semantic Shape Mapping
 
 During extraction, map visual elements to semantic types:
@@ -176,6 +189,9 @@ During extraction, map visual elements to semantic types:
 | Document shape | `document` | Wave rect |
 | Math formula | `formula` | White rect with border |
 | Caption, callout, legend note | `text` | Standalone text box |
+| CNN/Transformer layer | `conv`, `pool`, `attention`, `norm`, `matrix` | Deep-learning semantic block |
+| Feature map / tensor | `tensor3d` | Cube-like feature-map block |
+| Add/concat/gate operator | `operator` | Small circular operator |
 
 ### Connector Type Mapping
 
