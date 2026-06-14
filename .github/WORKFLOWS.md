@@ -4,11 +4,11 @@ This directory contains GitHub Actions workflows for the Draw.io Skills project.
 
 ## Workflows
 
-### 1. Deploy Documentation (Release)
+### 1. Deploy Documentation
 
 **File:** `deploy-docs.yml`
 
-**Trigger:** When a new release is published
+**Trigger:** When a GitHub Release is published
 
 **Purpose:** Automatically builds and deploys documentation to GitHub Pages when a new release is created.
 
@@ -17,21 +17,7 @@ This directory contains GitHub Actions workflows for the Draw.io Skills project.
 2. The workflow will automatically trigger
 3. Documentation will be built and deployed to GitHub Pages
 
-### 2. Deploy Documentation (Push to Main)
-
-**File:** `deploy-docs-push.yml`
-
-**Trigger:** When changes are pushed to the `main` branch that affect documentation
-
-**Purpose:** Automatically updates documentation on GitHub Pages when documentation files are modified.
-
-**Paths monitored:**
-- `docs/**`
-- `skills/drawio/**`
-- `package.json`
-- `package-lock.json`
-
-### 3. Build Documentation (PR Preview)
+### 2. Build Documentation (PR Preview)
 
 **File:** `build-docs-pr.yml`
 
@@ -73,14 +59,11 @@ Ensure the workflow has the necessary permissions:
 - Under **Workflow permissions**, select **Read and write permissions**
 - Check **Allow GitHub Actions to create and approve pull requests**
 
-## Manual Deployment
+## Deployment Trigger
 
-You can manually trigger documentation deployment:
+Documentation deployment is triggered by releases:
 
-1. Go to **Actions** tab in your repository
-2. Select **Deploy Documentation to GitHub Pages** workflow
-3. Click **Run workflow**
-4. Select the branch and click **Run workflow**
+Publish a GitHub Release to deploy documentation.
 
 ## Troubleshooting
 
@@ -166,6 +149,6 @@ Add these badges to your README to show workflow status:
 When modifying workflows:
 
 1. Test changes in a fork first
-2. Use `workflow_dispatch` for manual testing
+2. Publish a test release for deployment testing
 3. Document any new workflows in this README
 4. Follow GitHub Actions best practices

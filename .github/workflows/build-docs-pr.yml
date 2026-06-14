@@ -73,7 +73,7 @@ jobs:
             - 📦 Total size: ${size}
             - 📄 Files generated: ${fileCount}
 
-            **Note:** This is a preview build. The documentation will be deployed to GitHub Pages when this PR is merged to main or when a release is published.
+            **Note:** This is a preview build. The documentation will be deployed to GitHub Pages when a release is published.
             `;
 
             github.rest.issues.createComment({
