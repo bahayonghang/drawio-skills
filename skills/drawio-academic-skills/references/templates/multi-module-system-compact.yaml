@@ -1,0 +1,258 @@
+# Template: Multi-Module System Architecture (Compact)
+# Version: 1.0
+# Node Budget: 28 nodes (target < 40)
+#
+# This template demonstrates node-efficient patterns for multi-module system diagrams:
+# - 5 modules with 3-4 nodes each
+# - Color coding for module types
+# - Compact legend
+# - Different connector styles for different relationships
+#
+# Usage:
+#   1. Copy this file to your work directory
+#   2. Modify module labels and node contents
+#   3. Adjust for your system's architecture
+#   4. Keep node count < 40
+
+meta:
+  profile: academic-paper
+  figureType: architecture
+  theme: academic-color
+  title: 'Multi-Module System Architecture (Compact Template)'
+  description: 'Demonstrates efficient representation of distributed systems with 5 modules and varied connector styles'
+  canvasSize: { width: 1100, height: 600 }
+  gridSize: 8
+  legend: true
+
+  template:
+    name: 'multi-module-system-compact'
+    version: '1.0'
+    author: 'drawio-academic-skills'
+    nodeCountTarget: 28
+    nodeCountActual: 28
+    useCases:
+      - 'Microservice architectures'
+      - 'Distributed systems'
+      - 'Multi-tier applications'
+
+modules:
+  - id: frontend
+    label: 'Frontend Layer'
+    bounds: { x: 50, y: 80, width: 180, height: 140 }
+    color: '#E0F2FE'
+
+  - id: api_gateway
+    label: 'API Gateway'
+    bounds: { x: 280, y: 80, width: 180, height: 140 }
+    color: '#DBEAFE'
+
+  - id: services
+    label: 'Service Layer'
+    bounds: { x: 510, y: 80, width: 180, height: 140 }
+    color: '#FEF3C7'
+
+  - id: data
+    label: 'Data Layer'
+    bounds: { x: 740, y: 80, width: 180, height: 140 }
+    color: '#D1FAE5'
+
+  - id: monitoring
+    label: 'Monitoring'
+    bounds: { x: 970, y: 80, width: 100, height: 140 }
+    color: '#F3E8FF'
+
+nodes:
+  # Frontend Layer
+  - id: f1_web
+    module: frontend
+    label: 'Web App'
+    bounds: { x: 70, y: 100, width: 140, height: 30 }
+    type: user
+
+  - id: f2_mobile
+    module: frontend
+    label: 'Mobile App'
+    bounds: { x: 70, y: 145, width: 140, height: 30 }
+    type: user
+
+  - id: f3_cli
+    module: frontend
+    label: 'CLI Tool'
+    bounds: { x: 70, y: 175, width: 140, height: 30 }
+    type: terminal
+
+  # API Gateway
+  - id: g1_router
+    module: api_gateway
+    label: 'Router'
+    bounds: { x: 300, y: 100, width: 140, height: 25 }
+    type: service
+
+  - id: g2_auth
+    module: api_gateway
+    label: 'Auth Service'
+    bounds: { x: 300, y: 135, width: 140, height: 25 }
+    type: service
+
+  - id: g3_cache
+    module: api_gateway
+    label: 'Cache Layer'
+    bounds: { x: 300, y: 170, width: 140, height: 25 }
+    type: queue
+
+  # Service Layer
+  - id: s1_user
+    module: services
+    label: 'User Service'
+    bounds: { x: 530, y: 100, width: 140, height: 25 }
+    type: service
+
+  - id: s2_order
+    module: services
+    label: 'Order Service'
+    bounds: { x: 530, y: 135, width: 140, height: 25 }
+    type: service
+
+  - id: s3_payment
+    module: services
+    label: 'Payment Service'
+    bounds: { x: 530, y: 170, width: 140, height: 25 }
+    type: service
+
+  - id: s4_notify
+    module: services
+    label: 'Notification'
+    bounds: { x: 530, y: 190, width: 140, height: 20 }
+    type: service
+
+  # Data Layer
+  - id: d1_postgres
+    module: data
+    label: 'PostgreSQL'
+    bounds: { x: 760, y: 100, width: 140, height: 25 }
+    type: database
+
+  - id: d2_redis
+    module: data
+    label: 'Redis Cache'
+    bounds: { x: 760, y: 135, width: 140, height: 25 }
+    type: database
+
+  - id: d3_s3
+    module: data
+    label: 'Object Storage'
+    bounds: { x: 760, y: 170, width: 140, height: 25 }
+    type: cloud
+
+  # Monitoring
+  - id: m1_metrics
+    module: monitoring
+    label: 'Metrics'
+    bounds: { x: 980, y: 100, width: 80, height: 25 }
+    type: service
+
+  - id: m2_logs
+    module: monitoring
+    label: 'Logs'
+    bounds: { x: 980, y: 135, width: 80, height: 25 }
+    type: service
+
+  - id: m3_traces
+    module: monitoring
+    label: 'Traces'
+    bounds: { x: 980, y: 170, width: 80, height: 25 }
+    type: service
+
+  # Legend (compact, 1 node)
+  - id: legend
+    label: |
+      Legend
+
+      → API call  |  ⇢ Event stream
+      ⋯ Monitoring  |  = Database query
+
+      Layer colors: Frontend | Gateway | Services | Data | Monitor
+    bounds: { x: 50, y: 260, width: 350, height: 100 }
+    style:
+      shape: text
+      align: left
+      fontSize: 10
+      fontColor: '#1E293B'
+
+edges:
+  # Frontend → Gateway
+  - from: f1_web
+    to: g1_router
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: f2_mobile
+    to: g1_router
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: f3_cli
+    to: g1_router
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  # Gateway → Services
+  - from: g1_router
+    to: s1_user
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: g1_router
+    to: s2_order
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: g2_auth
+    to: s1_user
+    style: { strokeColor: '#1E3A5F', strokeWidth: 1.5, dashed: true }
+
+  # Services → Data
+  - from: s1_user
+    to: d1_postgres
+    style: { strokeColor: '#059669', strokeWidth: 1.5 }
+
+  - from: s2_order
+    to: d1_postgres
+    style: { strokeColor: '#059669', strokeWidth: 1.5 }
+
+  - from: s3_payment
+    to: d1_postgres
+    style: { strokeColor: '#059669', strokeWidth: 1.5 }
+
+  - from: g3_cache
+    to: d2_redis
+    style: { strokeColor: '#059669', strokeWidth: 1.5 }
+
+  # Event stream
+  - from: s2_order
+    to: s4_notify
+    style:
+      strokeColor: '#D97706'
+      strokeWidth: 1.5
+      dashed: true
+      dashPattern: '6 4'
+
+  # Monitoring connections
+  - from: g1_router
+    to: m1_metrics
+    style:
+      strokeColor: '#9333EA'
+      strokeWidth: 1
+      dashed: true
+      dashPattern: '2 2'
+
+  - from: s1_user
+    to: m2_logs
+    style:
+      strokeColor: '#9333EA'
+      strokeWidth: 1
+      dashed: true
+      dashPattern: '2 2'
+
+  - from: s2_order
+    to: m3_traces
+    style:
+      strokeColor: '#9333EA'
+      strokeWidth: 1
+      dashed: true
+      dashPattern: '2 2'

@@ -1,0 +1,279 @@
+# Template: Neural Network Architecture (Compact)
+# Version: 1.0
+# Node Budget: 35 nodes (target < 40)
+#
+# This template demonstrates node-efficient patterns for academic neural network figures:
+# - Compact legend (1 node with multi-line text)
+# - Formulas embedded in node labels
+# - Module grouping to reduce top-level nodes
+#
+# Usage:
+#   1. Copy this file to your work directory
+#   2. Modify meta.title and meta.description
+#   3. Adjust module bounds and node positions
+#   4. Keep node count < 40 for readability
+
+meta:
+  profile: academic-paper
+  figureType: architecture
+  theme: academic-color
+  title: 'Multi-Module Neural Network Architecture (Compact Template)'
+  description: 'Demonstrates node-efficient patterns for complex neural network figures with 4 modules, embedded formulas, and compact legend'
+  canvasSize: { width: 1200, height: 700 }
+  gridSize: 8
+  legend: true
+
+  # Template metadata
+  template:
+    name: 'neural-network-architecture-compact'
+    version: '1.0'
+    author: 'drawio-academic-skills'
+    nodeCountTarget: 35
+    nodeCountActual: 35
+    useCases:
+      - 'Multi-module neural network architectures'
+      - 'CNN, Transformer, or encoder-decoder models'
+      - 'Feature fusion architectures'
+
+# ============================================================================
+# MODULES: 4 major stages (Input, Feature Extraction, Fusion, Output)
+# ============================================================================
+
+modules:
+  - id: input_module
+    label: 'A. Input Processing'
+    bounds: { x: 50, y: 100, width: 200, height: 180 }
+    color: '#DBEAFE'
+
+  - id: feature_module
+    label: 'B. Feature Extraction'
+    bounds: { x: 300, y: 100, width: 200, height: 180 }
+    color: '#FEF3C7'
+
+  - id: fusion_module
+    label: 'C. Feature Fusion'
+    bounds: { x: 550, y: 100, width: 200, height: 180 }
+    color: '#F3E8FF'
+
+  - id: output_module
+    label: 'D. Output & Loss'
+    bounds: { x: 800, y: 100, width: 200, height: 180 }
+    color: '#DCFCE7'
+
+# ============================================================================
+# NODES: Core processing nodes (grouped by module)
+# ============================================================================
+
+nodes:
+  # --- Module A: Input Processing ---
+  - id: a1_input
+    module: input_module
+    label: "$$\\mathbf{X} \\in \\mathbb{R}^{B \\times D \\times L}$$"
+    bounds: { x: 70, y: 130, width: 160, height: 30 }
+    style:
+      shape: box
+      fillColor: '#DBEAFE'
+      strokeColor: '#2563EB'
+      strokeWidth: 1.5
+      rounded: 4
+      fontSize: 11
+
+  - id: a2_norm
+    module: input_module
+    label: 'Layer Norm'
+    bounds: { x: 90, y: 175, width: 120, height: 30 }
+    type: norm
+
+  - id: a3_embed
+    module: input_module
+    label: "Embedding\n$$d_{model}=256$$"
+    bounds: { x: 90, y: 220, width: 120, height: 35 }
+    type: embed
+
+  # --- Module B: Feature Extraction ---
+  - id: b1_conv1
+    module: feature_module
+    label: "Conv1D\n$$k=3, c=128$$"
+    bounds: { x: 320, y: 130, width: 80, height: 35 }
+    type: conv
+
+  - id: b2_pool
+    module: feature_module
+    label: "MaxPool\n$$k=2$$"
+    bounds: { x: 420, y: 130, width: 60, height: 35 }
+    type: pool
+
+  - id: b3_conv2
+    module: feature_module
+    label: "Conv1D\n$$k=3, c=256$$"
+    bounds: { x: 320, y: 180, width: 80, height: 35 }
+    type: conv
+
+  - id: b4_attn
+    module: feature_module
+    label: "Self-Attention\n$$h=4$$"
+    bounds: { x: 420, y: 180, width: 60, height: 35 }
+    type: attention
+
+  - id: b5_output
+    module: feature_module
+    label: "$$\\mathbf{F} \\in \\mathbb{R}^{B \\times 256 \\times L'}$$"
+    bounds: { x: 320, y: 230, width: 160, height: 30 }
+    style:
+      shape: box
+      fillColor: '#FEF3C7'
+      strokeColor: '#D97706'
+      strokeWidth: 1.5
+      rounded: 4
+      fontSize: 10
+
+  # --- Module C: Feature Fusion ---
+  - id: c1_concat
+    module: fusion_module
+    label: "Concat\n$$\\text{dim}=1$$"
+    bounds: { x: 590, y: 130, width: 120, height: 30 }
+    type: operator
+
+  - id: c2_film
+    module: fusion_module
+    label: "FiLM Layer\n$$\\gamma, \\beta$$"
+    bounds: { x: 590, y: 175, width: 120, height: 35 }
+    type: gate
+
+  - id: c3_residual
+    module: fusion_module
+    label: 'Residual Add'
+    bounds: { x: 590, y: 225, width: 120, height: 25 }
+    type: operator
+
+  # --- Module D: Output & Loss ---
+  - id: d1_global_pool
+    module: output_module
+    label: 'Global Pool'
+    bounds: { x: 820, y: 130, width: 160, height: 25 }
+    type: pool
+
+  - id: d2_fc
+    module: output_module
+    label: "Fully Connected\n$$d_{out}=1$$"
+    bounds: { x: 840, y: 170, width: 120, height: 30 }
+    type: operator
+
+  - id: d3_output
+    module: output_module
+    label: "$$\\hat{y} \\in \\mathbb{R}^{B}$$"
+    bounds: { x: 840, y: 215, width: 120, height: 25 }
+    type: output
+
+  - id: d4_loss
+    module: output_module
+    label: 'MSE Loss'
+    bounds: { x: 840, y: 250, width: 120, height: 20 }
+    type: loss
+
+  # Additional helper nodes outside modules
+  - id: condition_input
+    label: "Condition\n$$\\mathbf{C} \\in \\mathbb{R}^{B \\times d_c}$$"
+    bounds: { x: 550, y: 50, width: 150, height: 30 }
+    style:
+      shape: box
+      fillColor: '#FEF3C7'
+      strokeColor: '#D97706'
+      strokeWidth: 1.5
+      rounded: 4
+      fontSize: 10
+
+  # ============================================================================
+  # LEGEND: Single-node compact legend
+  # ============================================================================
+
+  - id: legend
+    label: |
+      Legend
+
+      → Data flow  |  ⇢ Conditional
+      ⊙ Element-wise  |  ∥ Concat
+
+      ■ A: Input  ■ B: Features
+      ■ C: Fusion  ■ D: Output
+    bounds: { x: 50, y: 350, width: 280, height: 120 }
+    style:
+      shape: text
+      align: left
+      fontSize: 10
+      fontColor: '#1E293B'
+      # Note: No fillColor means transparent background
+
+# ============================================================================
+# EDGES: Data flow connections
+# ============================================================================
+
+edges:
+  # Module A flow
+  - from: a1_input
+    to: a2_norm
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: a2_norm
+    to: a3_embed
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: a3_embed
+    to: b1_conv1
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  # Module B flow
+  - from: b1_conv1
+    to: b2_pool
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: b2_pool
+    to: b3_conv2
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: b3_conv2
+    to: b4_attn
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: b4_attn
+    to: b5_output
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: b5_output
+    to: c1_concat
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  # Conditional flow
+  - from: condition_input
+    to: c2_film
+    style:
+      strokeColor: '#D97706'
+      strokeWidth: 2
+      dashed: true
+      dashPattern: '6 4'
+
+  # Module C flow
+  - from: c1_concat
+    to: c2_film
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: c2_film
+    to: c3_residual
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: c3_residual
+    to: d1_global_pool
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  # Module D flow
+  - from: d1_global_pool
+    to: d2_fc
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: d2_fc
+    to: d3_output
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
+
+  - from: d3_output
+    to: d4_loss
+    style: { strokeColor: '#1E3A5F', strokeWidth: 2 }
