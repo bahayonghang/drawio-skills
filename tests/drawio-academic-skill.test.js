@@ -89,10 +89,14 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
   assert.equal(existsSync(resolve(SKILL_DIR, 'test-prompts.json')), false)
   assert.equal(existsSync(resolve(SKILL_DIR, 'evals/test-prompts.json')), true)
 
-  // 1.5 overlay references/ 是不变量白名单：修复后只应保留 publication 专属指南。
+  // 1.5 overlay references/ 是不变量白名单：只允许 publication 指南和 academic 专属模板。
   //     枚举式黑名单会漏掉新混入的副本，所以这里断言“恰好等于”白名单。
   const overlayRefs = listFilesRecursive(resolve(SKILL_DIR, 'references'))
-  assert.deepEqual(overlayRefs, ['docs/publication-overlay.md'])
+  assert.deepEqual(overlayRefs, [
+    'docs/publication-overlay.md',
+    'templates/multi-module-system-compact.yaml',
+    'templates/neural-network-architecture-compact.yaml'
+  ])
 
   // 1.6 overlay 的资源子树不得出现与 base 字节相同的文件，
   //     防止 themes/scripts/styles/references 等共享资源被复制进 overlay 而长期漂移。

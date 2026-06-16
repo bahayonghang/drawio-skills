@@ -2,13 +2,14 @@
 /**
  * Version sync utility for this repo.
  *
- * Default source of truth: skills/drawio/SKILL.md frontmatter version.
+ * Default source of truth: package.json version.
  * Can override with a positional version arg or --version.
  *
  * Sync targets:
  * - package.json (root)
  * - package-lock.json (root + packages[""].version)
  * - skills/drawio/SKILL.md frontmatter version
+ * - skills/drawio-academic-skills/SKILL.md frontmatter version
  * - skills/drawio/evals/evals.json version
  *
  * Usage:
@@ -29,7 +30,8 @@ const REPO_ROOT = resolve(__dirname, '..')
 const PATHS = {
   packageJson: resolve(REPO_ROOT, 'package.json'),
   packageLock: resolve(REPO_ROOT, 'package-lock.json'),
-  skillMd: resolve(REPO_ROOT, 'skills/drawio/SKILL.md'),
+  baseSkillMd: resolve(REPO_ROOT, 'skills/drawio/SKILL.md'),
+  academicSkillMd: resolve(REPO_ROOT, 'skills/drawio-academic-skills/SKILL.md'),
   evalsJson: resolve(REPO_ROOT, 'skills/drawio/evals/evals.json')
 }
 
@@ -163,8 +165,11 @@ function readAllVersions() {
       lockText
     )?.[1] || null
 
-  const skillText = readText(PATHS.skillMd)
-  const skillVersion = getSkillVersion(skillText)
+  const baseSkillText = readText(PATHS.baseSkillMd)
+  const baseSkillVersion = getSkillVersion(baseSkillText)
+
+  const academicSkillText = readText(PATHS.academicSkillMd)
+  const academicSkillVersion = getSkillVersion(academicSkillText)
 
   const evals = readJson(PATHS.evalsJson)
   const evalsVersion = typeof evals.version === 'string' ? evals.version : null
@@ -173,7 +178,8 @@ function readAllVersions() {
     packageVersion,
     lockTop,
     lockPackages,
-    skillVersion,
+    baseSkillVersion,
+    academicSkillVersion,
     evalsVersion
   }
 }
@@ -181,8 +187,8 @@ function readAllVersions() {
 function main() {
   const { check, version: requestedVersion } = parseArgs(process.argv.slice(2))
 
-  const skillText = readText(PATHS.skillMd)
-  const defaultVersion = getSkillVersion(skillText)
+  const pkg = readJson(PATHS.packageJson)
+  const defaultVersion = getPackageVersion(pkg)
   const targetVersion = requestedVersion ?? defaultVersion
   ensureSemver(targetVersion)
 
@@ -195,8 +201,10 @@ function main() {
     mismatches.push(`package-lock.json (root): ${versions.lockTop} != ${targetVersion}`)
   if (versions.lockPackages !== targetVersion)
     mismatches.push(`package-lock.json (packages[""]): ${versions.lockPackages} != ${targetVersion}`)
-  if (versions.skillVersion !== targetVersion)
-    mismatches.push(`skills/drawio/SKILL.md: ${versions.skillVersion} != ${targetVersion}`)
+  if (versions.baseSkillVersion !== targetVersion)
+    mismatches.push(`skills/drawio/SKILL.md: ${versions.baseSkillVersion} != ${targetVersion}`)
+  if (versions.academicSkillVersion !== targetVersion)
+    mismatches.push(`skills/drawio-academic-skills/SKILL.md: ${versions.academicSkillVersion} != ${targetVersion}`)
   if (versions.evalsVersion !== targetVersion)
     mismatches.push(`skills/drawio/evals/evals.json: ${versions.evalsVersion} != ${targetVersion}`)
 
@@ -211,7 +219,6 @@ function main() {
     return
   }
 
-  const pkg = readJson(PATHS.packageJson)
   if (pkg.version !== targetVersion) {
     pkg.version = targetVersion
     writeJson(PATHS.packageJson, pkg)
@@ -227,11 +234,20 @@ function main() {
     console.log(`Updated package-lock.json -> ${targetVersion}`)
   }
 
-  const updatedSkill = setSkillVersion(skillText, targetVersion)
-  if (updatedSkill !== skillText) {
-    writeText(PATHS.skillMd, updatedSkill)
+  const baseSkillText = readText(PATHS.baseSkillMd)
+  const updatedBaseSkill = setSkillVersion(baseSkillText, targetVersion)
+  if (updatedBaseSkill !== baseSkillText) {
+    writeText(PATHS.baseSkillMd, updatedBaseSkill)
     // eslint-disable-next-line no-console
     console.log(`Updated skills/drawio/SKILL.md -> ${targetVersion}`)
+  }
+
+  const academicSkillText = readText(PATHS.academicSkillMd)
+  const updatedAcademicSkill = setSkillVersion(academicSkillText, targetVersion)
+  if (updatedAcademicSkill !== academicSkillText) {
+    writeText(PATHS.academicSkillMd, updatedAcademicSkill)
+    // eslint-disable-next-line no-console
+    console.log(`Updated skills/drawio-academic-skills/SKILL.md -> ${targetVersion}`)
   }
 
   const evals = readJson(PATHS.evalsJson)
@@ -243,9 +259,14 @@ function main() {
   }
 
   const post = readAllVersions()
-  const stillBad = [post.packageVersion, post.lockTop, post.lockPackages, post.skillVersion, post.evalsVersion].some(
-    (v) => v !== targetVersion
-  )
+  const stillBad = [
+    post.packageVersion,
+    post.lockTop,
+    post.lockPackages,
+    post.baseSkillVersion,
+    post.academicSkillVersion,
+    post.evalsVersion
+  ].some((v) => v !== targetVersion)
 
   if (stillBad) {
     throw new Error('Version sync did not converge; please inspect files manually')

@@ -507,7 +507,7 @@ describe('calculateLayout', () => {
 describe('checkComplexity', () => {
   it('should warn when node count exceeds threshold', () => {
     const spec = {
-      nodes: Array(25)
+      nodes: Array(41)
         .fill(null)
         .map((_, i) => ({ id: `n${i}`, label: `Node ${i}` })),
       edges: []
@@ -521,7 +521,7 @@ describe('checkComplexity', () => {
 
   it('should error when node count is very high', () => {
     const spec = {
-      nodes: Array(35)
+      nodes: Array(61)
         .fill(null)
         .map((_, i) => ({ id: `n${i}`, label: `Node ${i}` })),
       edges: []
@@ -719,8 +719,8 @@ describe('specToDrawioXml', () => {
     assert.ok(result.includes('<mxGraphModel'), 'should contain mxGraphModel')
   })
 
-  it('strict mode with 35 nodes: should throw containing "Complexity check failed"', () => {
-    const nodes = Array.from({ length: 35 }, (_, i) => ({ id: `n${i}`, label: `Node ${i}` }))
+  it('strict mode with 61 nodes: should throw containing "Complexity check failed"', () => {
+    const nodes = Array.from({ length: 61 }, (_, i) => ({ id: `n${i}`, label: `Node ${i}` }))
     const spec = { meta: { theme: 'tech-blue' }, nodes, edges: [] }
     assert.throws(
       () => specToDrawioXml(spec, { strict: true }),
@@ -747,8 +747,8 @@ describe('specToDrawioXml', () => {
     assert.doesNotThrow(() => specToDrawioXml(spec, { strict: true }))
   })
 
-  it('returnWarnings with 25 nodes: returns { xml, warnings } with warning-level items', () => {
-    const nodes = Array.from({ length: 25 }, (_, i) => ({ id: `n${i}`, label: `Node ${i}` }))
+  it('returnWarnings with 41 nodes: returns { xml, warnings } with warning-level items', () => {
+    const nodes = Array.from({ length: 41 }, (_, i) => ({ id: `n${i}`, label: `Node ${i}` }))
     const spec = { meta: { theme: 'tech-blue' }, nodes, edges: [] }
     const result = specToDrawioXml(spec, { returnWarnings: true })
     assert.ok(result && typeof result === 'object', 'should return an object')

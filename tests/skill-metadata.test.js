@@ -8,16 +8,32 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const PROJECT_ROOT = resolve(__dirname, '..')
 
-function readDescription(skillPath) {
+function readFrontmatterField(skillPath, field) {
   const skillText = readFileSync(skillPath, 'utf8')
   const frontmatterMatch = skillText.match(/^---\r?\n([\s\S]*?)\r?\n---/)
   assert.ok(frontmatterMatch, `missing frontmatter in ${skillPath}`)
 
-  const descriptionMatch = frontmatterMatch[1].match(/^description:\s*"([\s\S]*?)"$/m)
-  assert.ok(descriptionMatch, `missing description in ${skillPath}`)
+  const fieldMatch = frontmatterMatch[1].match(new RegExp(`^${field}:\\s*["']?([^"'\\r\\n]+)["']?\\s*$`, 'm'))
+  assert.ok(fieldMatch, `missing ${field} in ${skillPath}`)
 
-  return descriptionMatch[1]
+  return fieldMatch[1]
 }
+
+function readDescription(skillPath) {
+  return readFrontmatterField(skillPath, 'description')
+}
+
+test('skill metadata versions match package.json', () => {
+  const packageJson = JSON.parse(readFileSync(resolve(PROJECT_ROOT, 'package.json'), 'utf8'))
+  const skillPaths = [
+    resolve(PROJECT_ROOT, 'skills/drawio/SKILL.md'),
+    resolve(PROJECT_ROOT, 'skills/drawio-academic-skills/SKILL.md')
+  ]
+
+  for (const skillPath of skillPaths) {
+    assert.equal(readFrontmatterField(skillPath, 'version'), packageJson.version, `${skillPath} version is out of sync`)
+  }
+})
 
 test('skill metadata descriptions stay within installer limits', () => {
   const skillPaths = [
@@ -28,10 +44,7 @@ test('skill metadata descriptions stay within installer limits', () => {
   for (const skillPath of skillPaths) {
     const description = readDescription(skillPath)
 
-    assert.ok(
-      description.length <= 1024,
-      `${skillPath} description exceeds 1024 characters: ${description.length}`
-    )
+    assert.ok(description.length <= 1024, `${skillPath} description exceeds 1024 characters: ${description.length}`)
     assert.ok(
       Buffer.byteLength(description, 'utf8') <= 1024,
       `${skillPath} description exceeds 1024 UTF-8 bytes: ${Buffer.byteLength(description, 'utf8')}`
