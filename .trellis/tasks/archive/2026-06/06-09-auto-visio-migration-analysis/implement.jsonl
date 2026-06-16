@@ -1,0 +1,14 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Composition and overlay-boundary rules before editing drawio skill documents or examples."}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Artifact, sidecar, canonical YAML, and derived-output contracts."}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "Validation expectations for YAML, XML, style, icon, and filesystem inputs."}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Required tests, exported-artifact policy, and forbidden patterns for this repo."}
+{"file": "ref/Auto-Visio-Helper/SKILL.md", "reason": "Reference-only scientific diagram workflow patterns, not conversion requirements."}
+{"file": "ref/Auto-Visio-Helper/references/diagram_types.md", "reason": "Reference-only scientific diagram taxonomy and layout patterns."}
+{"file": "ref/Auto-Visio-Helper/references/style_guide.md", "reason": "Reference-only publication style rules to compare against drawio academic guidance."}
+{"file": "skills/drawio/SKILL.md", "reason": "Base drawio skill routing and runtime contract."}
+{"file": "skills/drawio-academic-skills/SKILL.md", "reason": "Academic overlay route and sibling-base boundary."}
+{"file": "skills/drawio/references/workflows/create.md", "reason": "Create workflow route to improve for scientific drawio diagrams."}
+{"file": "skills/drawio/references/workflows/replicate.md", "reason": "Reference-image native rebuild workflow to improve for scientific redraws."}
+{"file": "skills/drawio/references/docs/design-system/specification.md", "reason": "Canonical YAML schema documentation and drawing contract."}
+{"file": "skills/drawio/references/docs/academic-figure-playbook.md", "reason": "Academic figure guidance to sharpen for scientific drawio figures."}
+{"file": "skills/drawio-academic-skills/references/docs/publication-overlay.md", "reason": "Overlay-only place for publication-facing scientific figure policy."}

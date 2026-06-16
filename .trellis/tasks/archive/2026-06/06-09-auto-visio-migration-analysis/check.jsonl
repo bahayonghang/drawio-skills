@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Quality gate, forbidden patterns, and required tests for drawio skill changes."}
+{"file": "tests/skill-metadata.test.js", "reason": "Frontmatter description length guard that must remain passing."}
+{"file": "tests/visual-verification-policy.test.js", "reason": "Exported-artifact-first verification policy guard."}
+{"file": "tests/drawio-academic-skill.test.js", "reason": "Academic overlay boundary, eval split, and sidecar contract guard."}
+{"file": "skills/drawio/evals/evals.json", "reason": "Base eval split and non-academic coverage to preserve."}
+{"file": "skills/drawio-academic-skills/evals/evals.json", "reason": "Academic eval set to extend and validate."}
