@@ -68,6 +68,7 @@ Before generating or editing, determine and state:
 4. Caption, legend, and title needs.
 5. Formula and text-fidelity needs: delimiters, font family, standalone text boxes, edge labels, and callouts.
 6. Export expectations: default final `.drawio` and `.svg`, the intermediate work directory, plus any requested PNG/PDF/JPG; whether Desktop is required.
+7. **Node budget estimate**: Count major modules (4-6), nodes per module (5-8), formulas, and legend. If estimate > 40, confirm split/simplify strategy with user before generating. Use compact patterns from `references/templates/` or `../drawio/references/docs/academic-figure-playbook.md § Node Budget Management`.
 
 ## Source Understanding
 
@@ -218,9 +219,11 @@ Do not claim completion until:
 - final `.drawio` and `.svg` are aligned with work-dir `.spec.yaml` and `.arch.json`
 - `meta.profile` is `academic-paper`
 - `meta.figureType` is one of `architecture`, `roadmap`, or `workflow`
+- **node count is reasonable**: < 40 nodes ideal, < 60 nodes acceptable with justification, > 60 nodes must split or simplify
 - labels are readable at paper/A4 scale
 - formulas use official delimiters: `$$...$$`, `\(...\)`, or AsciiMath backticks
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
+- **legends use compact form**: single text node with multi-line content, not 10+ separate nodes
 - colors are not the only carrier of meaning
 - any visual self-check used the exported SVG or Desktop-exported final artifact before any live/browser preview
 - the first exported artifact was inspected for overlap, clipped text, connector-label clearance, arrows crossing text or nodes, missing modules, and mismatch from the confirmed plan or source
