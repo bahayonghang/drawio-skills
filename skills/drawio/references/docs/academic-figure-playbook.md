@@ -135,6 +135,141 @@ Add `.png` only when one of these is true:
 
 If draw.io Desktop export is unavailable, keep the offline bundle plus SVG as the completed baseline and note that PNG is optional follow-up.
 
+## Node Budget Management
+
+Academic figures should be clear and focused. Keep node count under 40 for optimal readability.
+
+### Budget Guidelines
+
+**Recommended targets by figure type**:
+
+| Figure Type  | Target Nodes | Maximum Nodes | Typical Distribution                     |
+| ------------ | ------------ | ------------- | ---------------------------------------- |
+| Architecture | 30-35        | 60            | 4-6 modules × 5-7 nodes + legend (1-2)   |
+| Workflow     | 25-30        | 50            | 15-20 steps + 5-8 decisions + legend (1) |
+| Roadmap      | 15-20        | 40            | 10-15 stages + 3-5 outputs + legend (1)  |
+
+**System warnings**:
+
+- 0-40 nodes: no warning (ideal range)
+- 41-60 nodes: warning (conversion succeeds, but consider simplification)
+- 61-100 nodes: error (blocked in strict mode, split strongly recommended)
+- > 100 nodes: fatal (always blocked, hard limit)
+
+### Node-Efficient Patterns
+
+#### Example 1: Legend
+
+**❌ Expanded Legend (wastes 12 nodes)**:
+
+```yaml
+- id: legend_container
+  label: "Legend"
+  bounds: { x: 1000, y: 400, width: 200, height: 160 }
+  style: { shape: box, fillColor: "#FAFAFA" }
+
+- id: legend_arrow_solid
+  label: ""
+  bounds: { x: 1010, y: 430, width: 40, height: 2 }
+  style: { strokeColor: "#1E3A5F", strokeWidth: 2 }
+
+- id: legend_arrow_label
+  label: "Data flow"
+  bounds: { x: 1060, y: 426, width: 120, height: 16 }
+  style: { shape: text, fontSize: 11 }
+# ... 10 more nodes for each legend item
+```
+
+**✅ Compact Legend (1 node)**:
+
+```yaml
+- id: legend
+  label: |
+    Legend
+
+    → Data flow
+    ⇢ Conditional flow
+    ⊙ Hadamard product
+    ∥ Concatenation
+
+    ■ Zone A: Feature extraction
+    ■ Zone B: Conditional embedding
+  bounds: { x: 1000, y: 400, width: 280, height: 140 }
+  style:
+    shape: text
+    align: left
+    fontSize: 11
+```
+
+**Savings**: 12 nodes → 1 node (11 nodes saved)
+
+#### Example 2: Decorative Elements
+
+**❌ Detailed Bar Chart (wastes 8 nodes)**:
+
+```yaml
+- id: bar_1
+  label: ""
+  bounds: { x: 100, y: 512, width: 18, height: 36 }
+  style: { shape: box, fillColor: "#22C55E" }
+
+- id: bar_2
+  label: ""
+  bounds: { x: 122, y: 524, width: 18, height: 24 }
+  style: { shape: box, fillColor: "#4ADE80" }
+# ... 6 more bars
+```
+
+**✅ Simplified Representation (1 node)**:
+
+```yaml
+- id: attention_weights
+  label: "ωₜ weight visualization (bar chart, t=1..L)"
+  bounds: { x: 100, y: 512, width: 180, height: 40 }
+  style:
+    shape: box
+    fillColor: "#E8F5E9"
+    strokeColor: "#16A34A"
+    fontSize: 9
+```
+
+**Savings**: 8 nodes → 1 node (7 nodes saved)
+
+### When to Split
+
+Split into multiple figures when:
+
+- Node count approaches 50 and simplification is not practical
+- The diagram explains 3+ distinct mechanisms or stages
+- Readers would need to zoom in to read labels at normal page size
+- The figure serves multiple purposes (e.g., architecture + training procedure)
+
+### Split Strategies
+
+**By data path** (for multi-input or multi-branch systems):
+
+- Figure 3a: High-frequency processing path
+- Figure 3b: Low-frequency conditioning path
+- Both figures share the same fusion/output stage context in captions
+
+**By hierarchy level** (for deep architectures):
+
+- Figure 3a: System overview (4-6 major modules)
+- Figure 3b: Detailed view of the fusion module
+- Figure 3c: Attention mechanism internals
+
+**By mechanism** (for multi-stage methods):
+
+- Figure 3a: Feature extraction stage
+- Figure 3b: Conditional fusion mechanism
+- Figure 3c: Temporal attention and regression
+
+**Real-world example from IEEE papers**:
+
+- Typical neural network figures: 25-35 nodes
+- Complex architectures often split into 2-3 sub-figures
+- Main figure shows 4-6 modules; detail figures zoom into 1-2 modules
+
 ## Final Quality Gate
 
 Do not consider the figure complete until all of these are true:
