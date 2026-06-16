@@ -2159,7 +2159,9 @@ function collectFullPageImageErrors(xml) {
     const nearOrigin = Math.abs(x) <= pageWidth * 0.05 && Math.abs(y) <= pageHeight * 0.05
     if (coversWidth && coversHeight && coversArea && nearOrigin) {
       const id = getXmlAttribute(cellAttrs, 'id') || '(unknown)'
-      errors.push(`Cell "${id}" appears to be a full-page embedded image; rebuild the reference with native draw.io shapes instead.`)
+      errors.push(
+        `Cell "${id}" appears to be a full-page embedded image; rebuild the reference with native draw.io shapes instead.`
+      )
     }
   }
 
@@ -2268,10 +2270,16 @@ export function checkComplexity(spec) {
   // Fatal hard caps (security limits — always enforced)
   if (nodeCount > 100) {
     warnings.push({ level: 'fatal', message: `Node count (${nodeCount}) exceeds safety limit of 100` })
-  } else if (nodeCount > 30) {
-    warnings.push({ level: 'error', message: `Too many nodes (${nodeCount}). Consider splitting into sub-diagrams.` })
-  } else if (nodeCount > 20) {
-    warnings.push({ level: 'warning', message: `Many nodes (${nodeCount}). Consider splitting for clarity.` })
+  } else if (nodeCount > 60) {
+    warnings.push({
+      level: 'error',
+      message: `Too many nodes (${nodeCount}). Consider splitting into sub-diagrams. For academic figures, aim for 40 nodes or fewer.`
+    })
+  } else if (nodeCount > 40) {
+    warnings.push({
+      level: 'warning',
+      message: `Many nodes (${nodeCount}). Consider splitting for clarity or using compact patterns (e.g., single-node legends).`
+    })
   }
 
   if (edgeCount > 200) {
