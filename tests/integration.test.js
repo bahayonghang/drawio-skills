@@ -285,7 +285,8 @@ test('CLI: --sidecar-dir keeps drawio output directory free of sidecars', () => 
 test('CLI: --write-sidecars with svg output writes drawio companion and sidecars', () => {
   const tempDir = createTempDir()
   const outputFile = resolve(tempDir, 'paper-figure.svg')
-  const yamlInput = 'meta:\n  profile: academic-paper\nnodes:\n  - id: A\n    label: Figure Node\n'
+  const yamlInput =
+    'meta:\n  profile: academic-paper\n  figureType: architecture\n  title: Fig. 1\n  description: Test figure\nnodes:\n  - id: A\n    label: Figure Node\n'
 
   runCli(['-', outputFile, '--write-sidecars'], { input: yamlInput })
 
@@ -300,7 +301,8 @@ test('CLI: --sidecar-dir keeps svg output directory to svg and drawio companion'
   const finalDir = resolve(tempDir, 'final')
   const sidecarDir = resolve(tempDir, '.drawio-tmp', 'paper-figure')
   const outputFile = resolve(finalDir, 'paper-figure.svg')
-  const yamlInput = 'meta:\n  profile: academic-paper\nnodes:\n  - id: A\n    label: Clean Figure Node\n'
+  const yamlInput =
+    'meta:\n  profile: academic-paper\n  figureType: architecture\n  title: Fig. 2\n  description: Test figure\nnodes:\n  - id: A\n    label: Clean Figure Node\n'
   mkdirSync(finalDir)
 
   runCli(['-', outputFile, '--write-sidecars', '--sidecar-dir', sidecarDir], { input: yamlInput })
@@ -319,7 +321,16 @@ test('CLI: --export-spec writes spec and arch to sidecar dir when requested', ()
   const inputFile = resolve(PROJECT_ROOT, 'skills/drawio/evals/fixtures/import-simple.drawio')
   const specFile = resolve(finalDir, 'imported.spec.yaml')
 
-  runCli([inputFile, specFile, '--input-format', 'drawio', '--export-spec', '--write-sidecars', '--sidecar-dir', sidecarDir])
+  runCli([
+    inputFile,
+    specFile,
+    '--input-format',
+    'drawio',
+    '--export-spec',
+    '--write-sidecars',
+    '--sidecar-dir',
+    sidecarDir
+  ])
 
   assert.equal(existsSync(specFile), false, 'exported spec should not be written to final dir')
   assert.ok(existsSync(resolve(sidecarDir, 'imported.spec.yaml')), 'spec should be written to sidecar dir')
