@@ -18,19 +18,19 @@ nodes:
   - id: mfa
     label: MFA Required?
     type: decision
-    position: { x: 80, y: 400 }
+    position: { x: 80, y: 440 }
   - id: verify
     label: Verify MFA
     type: service
-    position: { x: 200, y: 520 }
+    position: { x: 200, y: 600 }
   - id: success
     label: Login Success
     type: terminal
-    position: { x: 200, y: 640 }
+    position: { x: 200, y: 720 }
   - id: fail
     label: Login Failed
     type: terminal
-    position: { x: 360, y: 400 }
+    position: { x: 360, y: 440 }
 
 edges:
   - from: start
@@ -42,19 +42,19 @@ edges:
   - from: check
     to: mfa
     type: primary
-    label: "Yes"
+    label: 'Yes'
   - from: check
     to: fail
     type: optional
-    label: "No"
+    label: 'No'
   - from: mfa
     to: verify
     type: primary
-    label: "Yes"
+    label: 'Yes'
   - from: mfa
     to: success
     type: primary
-    label: "No"
+    label: 'No'
   - from: verify
     to: success
     type: primary
