@@ -54,6 +54,21 @@ Common fields:
 - `source`: `generated`, `replicated`, or `edited`
 - `canvas`: `auto` or `WIDTHxHEIGHT`, such as `1200x800`
 
+Font policy:
+
+```yaml
+meta:
+  font:
+    primary: Times New Roman
+    cjk: Simsun
+    formula: Times New Roman
+```
+
+- `meta.font` activates force mode automatically.
+- `primary` is for Latin text, `cjk` is for Chinese/Japanese/Korean text, and `formula` is for formula surfaces.
+- When `meta.font` is present, it overrides lower-priority font-family settings on the covered text surfaces.
+- When `meta.font` is absent, generic diagrams use `Times New Roman`; academic-paper diagrams use `Times New Roman` for Latin/formula text and `Simsun` for CJK text.
+
 `meta.canvas` sets the minimum draw.io page size. Omit it or use `auto` for content-derived sizing. Use `WIDTHxHEIGHT` for reference-image replication when you are mapping visible elements from source-image coordinates. The renderer expands beyond the explicit canvas if native content exceeds the page, so shapes are not clipped.
 
 ### `modules`

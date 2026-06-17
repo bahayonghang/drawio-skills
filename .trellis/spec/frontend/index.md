@@ -31,6 +31,7 @@ surfaces and ESM JavaScript tooling.
 | [State Management](./state-management.md) | Canonical YAML state, derived artifacts, sidecars, and caches | Filled |
 | [Type Safety](./type-safety.md) | Runtime validation patterns for ESM JavaScript and VitePress config | Filled |
 | [Quality Guidelines](./quality-guidelines.md) | Required tests, artifact policy, forbidden patterns, review checks | Filled |
+| [Font Policy](./font-policy.md) | Diagram-level `meta.font` contract, force mode, and script-aware font resolution | Filled |
 
 ## Quality Check
 

@@ -110,6 +110,23 @@ meta:
 | `dark` | Dark mode presentations |
 | `high-contrast` | Maximum contrast for accessibility and print |
 
+### Font Policy
+
+Use `meta.font` when you need deterministic diagram typography.
+
+```yaml
+meta:
+  font:
+    primary: Times New Roman
+    cjk: Simsun
+    formula: Times New Roman
+```
+
+- Presence of `meta.font` enables force mode automatically.
+- `primary` applies to Latin text, `cjk` applies to CJK text, and `formula` applies to formula surfaces.
+- When present, `meta.font` overrides lower-priority font-family settings on covered text surfaces.
+- When absent, generic diagrams default to `Times New Roman`; academic-paper diagrams keep `Times New Roman` for Latin/formula text and use `Simsun` for CJK text.
+
 ### Profile Options
 
 | Profile | Description |

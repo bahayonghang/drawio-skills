@@ -251,6 +251,11 @@ describe('generateNodeStyle', () => {
     )
     assert.ok(style.includes('fillColor=#FF0000'), 'should contain custom fillColor')
   })
+
+  it('defaults generic diagrams to Times New Roman when no explicit font is provided', () => {
+    const style = generateNodeStyle({ id: 'n4', label: 'API Gateway', type: 'service' }, theme)
+    assert.ok(style.includes('fontFamily=Times New Roman'), 'generic diagrams should default to Times New Roman')
+  })
 })
 
 describe('generateConnectorStyle', () => {
@@ -382,6 +387,17 @@ describe('generateModuleStyle', () => {
     assert.ok(style.includes('fillColor=#EDE9FE'), 'module fill should resolve token values')
     assert.ok(style.includes('strokeColor=#7C3AED'), 'module stroke should resolve token values')
     assert.ok(style.includes('fontColor=#1E293B'), 'module font color should resolve token values')
+  })
+
+  it('defaults module titles to Times New Roman when no explicit font is provided', () => {
+    const theme = {
+      module: {
+        fillColor: '#FAFAFA',
+        strokeColor: '#BDBDBD'
+      }
+    }
+    const style = generateModuleStyle({ id: 'm1', label: 'Backend Layer' }, theme)
+    assert.ok(style.includes('fontFamily=Times New Roman'), 'module titles should default to Times New Roman')
   })
 })
 
@@ -1226,6 +1242,85 @@ describe('Phase 2.3b: text fidelity', () => {
     assert.ok(xml.includes('<mxPoint x="0" y="-18" as="offset"/>'), 'edge labels should preserve the explicit offset')
     assert.match(xml, /<mxCell id="\d+" value="" style="[^"]*" edge="1"/, 'parent edge cell should not store duplicate label text')
     assert.equal((xml.match(/value="s\(t\)"/g) || []).length, 1, 'edge label text should be stored once')
+    assert.ok(xml.includes('fontFamily=Times New Roman'), 'edge labels should emit a default font family')
+  })
+
+  it('should force all covered text surfaces from meta.font and override node-level fontFamily', () => {
+    const spec = {
+      meta: {
+        theme: 'tech-blue',
+        font: {
+          primary: 'Times New Roman',
+          cjk: 'Simsun',
+          formula: 'Cambria Math'
+        }
+      },
+      modules: [{ id: 'm1', label: 'Module Title' }],
+      nodes: [
+        {
+          id: 'n1',
+          label: 'English Label',
+          module: 'm1',
+          style: { fontFamily: 'Arial' }
+        },
+        {
+          id: 'n2',
+          label: '$$h(t)=f(z(t))$$',
+          type: 'formula'
+        }
+      ],
+      edges: [{ from: 'n1', to: 'n2', label: 'flow' }]
+    }
+
+    const xml = specToDrawioXml(spec)
+    assert.ok(xml.includes('fontFamily=Times New Roman'), 'primary text surfaces should use meta.font.primary')
+    assert.ok(!xml.includes('fontFamily=Arial'), 'node-level fontFamily should be overridden by meta.font')
+    assert.ok(xml.includes('fontFamily=Cambria Math'), 'formula surfaces should use meta.font.formula')
+  })
+
+  it('should use Simsun fallback only for academic-paper Chinese text when meta.font is absent', () => {
+    const spec = {
+      meta: {
+        theme: 'academic',
+        title: 'Test Figure',
+        description: 'Test description',
+        figureType: 'architecture'
+      },
+      modules: [{ id: 'm1', label: '中文模块' }],
+      nodes: [
+        { id: 'n1', label: '中文标签', module: 'm1' },
+        { id: 'n2', label: 'English Label' }
+      ],
+      edges: [{ from: 'n1', to: 'n2', label: '中文连线' }]
+    }
+
+    const xml = specToDrawioXml(spec)
+    assert.ok(xml.includes('fontFamily=Simsun'), 'academic Chinese surfaces should fall back to Simsun')
+    assert.ok(xml.includes('fontFamily=Times New Roman'), 'non-CJK academic surfaces should still use Times New Roman')
+  })
+
+  it('should validate meta.font as a complete safe object', () => {
+    assert.throws(
+      () =>
+        validateSpec({
+          meta: { font: { primary: 'Times New Roman', cjk: 'Simsun' } },
+          nodes: [{ id: 'n1', label: 'Note' }],
+          edges: [],
+          modules: []
+        }),
+      /meta\.font\.formula must be a safe font-family string/
+    )
+
+    assert.throws(
+      () =>
+        validateSpec({
+          meta: { font: { primary: 'Times;Roman', cjk: 'Simsun', formula: 'Cambria Math' } },
+          nodes: [{ id: 'n1', label: 'Note' }],
+          edges: [],
+          modules: []
+        }),
+      /meta\.font\.primary must be a safe font-family string/
+    )
   })
 
   it('should validate explicit text bounds and label offsets', () => {
