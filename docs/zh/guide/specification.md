@@ -52,6 +52,21 @@ meta:
 - `figureType`：当 `profile=academic-paper` 时使用 `architecture`、`roadmap`、`workflow`
 - `source`：`generated`、`replicated` 或 `edited`
 
+字体策略：
+
+```yaml
+meta:
+  font:
+    primary: Times New Roman
+    cjk: Simsun
+    formula: Times New Roman
+```
+
+- `meta.font` 会自动启用强制字体模式。
+- `primary` 用于拉丁文本，`cjk` 用于中文/日文/韩文文本，`formula` 用于公式面。
+- 当 `meta.font` 存在时，它会覆盖受支持文本面的下层 `fontFamily` 设置。
+- 当 `meta.font` 缺失时，普通图表默认使用 `Times New Roman`；学术论文图表对拉丁/公式文本使用 `Times New Roman`，对 CJK 文本使用 `Simsun`。
+
 ### `modules`
 
 相关节点的逻辑容器。

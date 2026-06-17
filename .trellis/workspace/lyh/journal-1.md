@@ -169,3 +169,36 @@ Filled .trellis/spec/frontend guidelines from AGENTS.md, skill docs, CLI/runtime
 ### Next Steps
 
 - None - task complete
+
+
+## Session 6: Drawio font policy
+
+**Date**: 2026-06-17
+**Task**: Drawio font policy
+**Branch**: `dev`
+
+### Summary
+
+Implemented diagram-level meta.font policy for drawio, documented the contract, added tests, and verified with just ci.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c097a6d` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

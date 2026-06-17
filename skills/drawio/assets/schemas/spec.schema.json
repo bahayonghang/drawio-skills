@@ -87,6 +87,30 @@
             }
           }
         },
+        "font": {
+          "type": "object",
+          "description": "Optional diagram-level forced font-family policy",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "description": "Primary font family for non-formula, non-CJK text"
+            },
+            "cjk": {
+              "type": "string",
+              "description": "Font family for CJK-bearing text"
+            },
+            "formula": {
+              "type": "string",
+              "description": "Font family for formula-bearing text"
+            }
+          },
+          "required": [
+            "primary",
+            "cjk",
+            "formula"
+          ],
+          "additionalProperties": false
+        },
         "replication": {
           "type": "object",
           "description": "Optional metadata for image-driven redraws and source-palette preservation",

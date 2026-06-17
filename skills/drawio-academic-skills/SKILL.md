@@ -131,6 +131,8 @@ meta:
   legend: Required when symbols, colors, line styles, or icons need explanation
 ```
 
+This section defines the default academic final deliverables.
+
 Default deliverables:
 
 - `<name>.drawio`

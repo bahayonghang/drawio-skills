@@ -745,14 +745,39 @@ function safeStyleText(value, fallback) {
   return trimmed
 }
 
-function resolveFontFamily(node, semanticType, theme) {
-  return safeStyleText(
-    node.style?.fontFamily,
-    theme.typography?.fontFamily?.[semanticType] ||
-      (semanticType === 'formula' ? theme.typography?.fontFamily?.formula : null) ||
-      theme.typography?.fontFamily?.primary ||
-      'Inter, sans-serif'
-  )
+function containsCjk(text) {
+  return typeof text === 'string' && /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/.test(text)
+}
+
+function getDefaultFontPolicy(spec) {
+  if (resolveProfile(spec) === 'academic-paper') {
+    return {
+      primary: 'Times New Roman',
+      cjk: 'Simsun',
+      formula: 'Times New Roman'
+    }
+  }
+
+  return {
+    primary: 'Times New Roman',
+    cjk: 'Times New Roman',
+    formula: 'Times New Roman'
+  }
+}
+
+function resolveFontBucket({ text, semanticType, treatAsFormula = false }) {
+  if (semanticType === 'formula' || treatAsFormula) return 'formula'
+  if (containsCjk(text)) return 'cjk'
+  return 'primary'
+}
+
+function resolveFontFamily(spec, theme, { text, semanticType, styleFontFamily = null, treatAsFormula = false }) {
+  const bucket = resolveFontBucket({ text, semanticType, treatAsFormula })
+  const forcedFontFamily = safeStyleText(spec.meta?.font?.[bucket], null)
+  if (forcedFontFamily) return forcedFontFamily
+
+  const fallbackFontFamily = safeStyleText(getDefaultFontPolicy(spec)[bucket], 'Times New Roman')
+  return safeStyleText(styleFontFamily, fallbackFontFamily)
 }
 
 function resolveFontStyle(style = {}) {
@@ -810,6 +835,10 @@ export function deriveNodeIcon(node) {
  * Generate mxCell style string for a node
  */
 export function generateNodeStyle(node, theme) {
+  return generateNodeStyleWithSpec(node, theme, { meta: {} })
+}
+
+function generateNodeStyleWithSpec(node, theme, spec) {
   const semanticType = detectSemanticType(node.label, node.type, node.network)
   const shapeStyle = SHAPE_STYLES[semanticType] || SHAPE_STYLES.service
 
@@ -836,7 +865,11 @@ export function generateNodeStyle(node, theme) {
     nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
   )
   const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
-  const fontFamily = resolveFontFamily(node, semanticType, theme)
+  const fontFamily = resolveFontFamily(spec, theme, {
+    text: node.label,
+    semanticType,
+    styleFontFamily: node.style?.fontFamily
+  })
   const align = safeStyleText(node.style?.align, isTextNode ? 'left' : 'center')
   const verticalAlign = safeStyleText(node.style?.verticalAlign, isTextNode ? 'top' : 'middle')
   const fontStyle = resolveFontStyle(node.style)
@@ -960,6 +993,10 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
  * Generate mxCell style string for a module container
  */
 export function generateModuleStyle(module, theme) {
+  return generateModuleStyleWithSpec(module, theme, { meta: {} })
+}
+
+function generateModuleStyleWithSpec(module, theme, spec) {
   const moduleTheme = theme.module || {}
 
   const fillColor = resolveThemeColor(
@@ -973,6 +1010,11 @@ export function generateModuleStyle(module, theme) {
   const fontColor = resolveThemeColor(module.style?.fontColor, theme, moduleTheme.labelFontColor || '#1E293B')
   const fontSize = moduleTheme.labelFontSize || 14
   const fontWeight = moduleTheme.labelFontWeight || 600
+  const fontFamily = resolveFontFamily(spec, theme, {
+    text: module.label,
+    semanticType: 'text',
+    styleFontFamily: module.style?.fontFamily
+  })
 
   // IEEE style dashed border support
   const dashed = module.style?.dashed ?? moduleTheme.dashed ?? false
@@ -988,6 +1030,7 @@ export function generateModuleStyle(module, theme) {
     `strokeWidth=${strokeWidth}`,
     `fontColor=${fontColor}`,
     `fontSize=${fontSize}`,
+    `fontFamily=${fontFamily}`,
     fontWeight >= 600 ? 'fontStyle=1' : '',
     'verticalAlign=top',
     'align=left',
@@ -1073,7 +1116,7 @@ export function buildXml(spec, theme, layout) {
     const cellId = allocId()
     moduleIdMap.set(moduleId, cellId)
 
-    const style = generateModuleStyle(module, theme)
+    const style = generateModuleStyleWithSpec(module, theme, spec)
     const label = prepareMathLabel(module.label || moduleId)
 
     cells.push(
@@ -1091,7 +1134,7 @@ export function buildXml(spec, theme, layout) {
     const cellId = allocId()
     nodeIdMap.set(node.id, cellId)
 
-    const style = generateNodeStyle(node, theme)
+    const style = generateNodeStyleWithSpec(node, theme, spec)
     const label = prepareMathLabel(node.label)
     const parentId = node.module && moduleIdMap.has(node.module) ? moduleIdMap.get(node.module) : '1'
 
@@ -1144,8 +1187,13 @@ export function buildXml(spec, theme, layout) {
       const labelOffset = `<mxPoint x="${offset.x}" y="${offset.y}" as="offset"/>`
       const labelFontSize = edge.style?.fontSize || 11
       const labelFontColor = resolveThemeColor(edge.style?.fontColor, theme, theme.colors?.textMuted || '#64748B')
+      const labelFontFamily = resolveFontFamily(spec, theme, {
+        text: rawEdgeLabel,
+        semanticType: 'text',
+        treatAsFormula: isLikelyStandaloneMathLabel(rawEdgeLabel)
+      })
       edgeXml += `</mxCell>`
-      edgeXml += `<mxCell id="${labelId}" value="${edgeLabel}" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=${labelFontSize};fontColor=${labelFontColor};" vertex="1" connectable="0" parent="${cellId}">`
+      edgeXml += `<mxCell id="${labelId}" value="${edgeLabel}" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=${labelFontSize};fontColor=${labelFontColor};fontFamily=${labelFontFamily};" vertex="1" connectable="0" parent="${cellId}">`
       edgeXml += `<mxGeometry x="${labelX}" relative="1" as="geometry">${labelOffset}</mxGeometry>`
       edgeXml += `</mxCell>`
     } else {
@@ -1932,6 +1980,16 @@ export function validateSpec(spec) {
   }
   if (spec.meta?.canvas != null) {
     parseCanvasSize(spec.meta.canvas)
+  }
+  if (spec.meta?.font != null) {
+    if (typeof spec.meta.font !== 'object' || spec.meta.font == null || Array.isArray(spec.meta.font)) {
+      throw new Error('meta.font must be an object when provided')
+    }
+    for (const field of ['primary', 'cjk', 'formula']) {
+      if (typeof spec.meta.font[field] !== 'string' || !SAFE_STYLE_TEXT.test(spec.meta.font[field])) {
+        throw new Error(`meta.font.${field} must be a safe font-family string`)
+      }
+    }
   }
   if (spec.meta?.replication != null) {
     if (typeof spec.meta.replication !== 'object' || Array.isArray(spec.meta.replication)) {

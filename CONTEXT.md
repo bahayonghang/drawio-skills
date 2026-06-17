@@ -63,3 +63,19 @@ _Avoid_: XML-first authoring, manual XML as default
 **Direct XML Exception**:
 A narrow route for tiny one-off diagrams, CLI-unavailable handoff, or raw mxGraph control where writing XML directly is more appropriate than normal YAML-First Authoring.
 _Avoid_: XML workflow, upstream default path
+
+**Forced Font Setting**:
+A diagram-level typography instruction that takes precedence over local text-family choices elsewhere in the specification when present.
+_Avoid_: soft font hint, preferred font
+
+**Script-Aware Font Resolution**:
+The rule that visible text is assigned to a font family by its content category, such as formula text, CJK-bearing text, or other text, rather than by a single whole-diagram family alone.
+_Avoid_: manual per-label font routing, whole-diagram hard font lock
+
+**Text Surface**:
+A distinct user-visible label-bearing area in a rendered diagram, such as node text, formula nodes, module titles, or edge labels.
+_Avoid_: random text, implementation slot
+
+**Font Policy**:
+The complete diagram-level contract for how font families are chosen across Text Surfaces, including forced settings and fallback behavior.
+_Avoid_: theme-only font, preset-only font

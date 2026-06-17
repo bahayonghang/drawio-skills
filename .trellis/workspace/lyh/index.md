@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 5
-- **Last Active**: 2026-06-09
+- **Total Sessions**: 6
+- **Last Active**: 2026-06-17
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~171 | Active |
+| `journal-1.md` | ~204 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 6 | 2026-06-17 | Drawio font policy | `c097a6d` | `dev` |
 | 5 | 2026-06-09 | Improve draw.io scientific diagram drawing workflow | `0a07f764c68acfe4a7244536f18f9883e07b61de`, `3aff2ecca72396746b3fef61f82a4a3804488eb8` | `main` |
 | 4 | 2026-06-09 | Bootstrap Trellis frontend guidelines | - | `main` |
 | 3 | 2026-06-09 | Draw.io native reference rebuild | `13c2e01` | `main` |
