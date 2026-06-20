@@ -32,16 +32,16 @@ Use the source mode before drafting YAML:
 
 For paper-derived figures, classify the source first:
 
-| Source type | Figure pattern |
-| --- | --- |
-| Algorithm or optimization paper | inputs -> assumptions -> model stages -> execution -> feedback -> scenarios -> metrics |
-| Empirical study | question -> hypotheses/constructs -> data/sample -> variables -> method -> checks -> findings |
-| Mechanism study | antecedents -> mediators -> moderators/boundaries -> outcomes -> evidence |
-| System architecture paper | data/sensing -> processing modules -> decision/control -> outputs -> evaluation |
-| Experimental study | problem -> setup -> treatment/control -> measurement -> analysis -> findings |
-| Review or policy paper | problem space -> classification -> evidence groups -> synthesis -> gaps/recommendations |
-| Deep-learning model paper | input -> backbone/encoder -> fusion/attention -> head/decoder -> loss/output -> metrics |
-| Algorithm mechanism figure | local inputs -> operation window -> formula/operator -> output -> interpretation |
+| Source type                     | Figure pattern                                                                                |
+| ------------------------------- | --------------------------------------------------------------------------------------------- |
+| Algorithm or optimization paper | inputs -> assumptions -> model stages -> execution -> feedback -> scenarios -> metrics        |
+| Empirical study                 | question -> hypotheses/constructs -> data/sample -> variables -> method -> checks -> findings |
+| Mechanism study                 | antecedents -> mediators -> moderators/boundaries -> outcomes -> evidence                     |
+| System architecture paper       | data/sensing -> processing modules -> decision/control -> outputs -> evaluation               |
+| Experimental study              | problem -> setup -> treatment/control -> measurement -> analysis -> findings                  |
+| Review or policy paper          | problem space -> classification -> evidence groups -> synthesis -> gaps/recommendations       |
+| Deep-learning model paper       | input -> backbone/encoder -> fusion/attention -> head/decoder -> loss/output -> metrics       |
+| Algorithm mechanism figure      | local inputs -> operation window -> formula/operator -> output -> interpretation              |
 
 Map the result to the existing `meta.figureType` contract:
 
@@ -51,14 +51,7 @@ Map the result to the existing `meta.figureType` contract:
 
 ## Scientific Figure Planning
 
-When the source is a research model, mechanism, or experiment, turn the evidence chain into one of these compact plans before drafting YAML:
-
-| Intent | Use | YAML emphasis |
-| --- | --- | --- |
-| Model architecture | CNN, YOLO, Transformer, encoder-decoder, feature fusion, multi-head prediction | `meta.figureType: architecture`, modules for stages, semantic layer types, concise tensor labels |
-| Operation/mechanism | max pooling, attention scoring, residual add, gating, normalization, algorithm block | explicit `bounds`, native grid/matrix cells, `formula` nodes, `operator` nodes, offset arrows |
-| Experiment pipeline | datasets, variants, simulations, ablations, validation, metrics | `meta.figureType: workflow`, parallel branches, shared evaluation, metrics/reporting block |
-| Scholarly framework redraw | uploaded research framework or paper figure screenshot | `meta.source: replicated`, `meta.canvas` when needed, source inventory, no full-page image embed |
+When the source is a research model, mechanism, or experiment, turn the evidence chain into a compact figure plan before drafting YAML. The figure-type pattern library (model architecture, operation/mechanism, experiment pipeline, scholarly framework redraw — each with its YAML emphasis) lives in `academic-figure-playbook.md § Scientific Figure Patterns`; use it rather than re-deriving patterns here.
 
 Prefer an architecture figure for static relationships and a workflow figure for ordered operations. Do not invent a new `meta.figureType` when the existing three values can express the paper role.
 
@@ -169,12 +162,15 @@ For the first exported artifact, check:
 
 If a visible defect is found, adjust the YAML spec and rerender once. After that correction pass, report the result instead of starting an open-ended polish loop.
 
-## Base References
+## References
 
-Load the sibling base references for detailed rules:
+Load these overlay-local academic references for detailed rules:
 
-- `../drawio/references/docs/academic-figure-playbook.md`
-- `../drawio/references/docs/academic-export-checklist.md`
+- `academic-figure-playbook.md` (figure-type pattern library and node budget)
+- `academic-export-checklist.md`
+
+Load the sibling base references for shared execution detail:
+
 - `../drawio/references/docs/math-typesetting.md`
 - `../drawio/references/docs/design-system/specification.md`
 - `../drawio/references/workflows/create.md`

@@ -22,9 +22,15 @@ The overlay uses these base paths:
 - `../drawio/scripts/runtime/diagrams-net-url.js`
 - `../drawio/references/docs/`
 - `../drawio/references/workflows/`
-- `../drawio/references/examples/`
+- `../drawio/references/examples/` (shared general examples)
 - `../drawio/assets/themes/`
 - `../drawio/styles/built-in/`
+
+Academic policy docs and paper examples are overlay-local:
+
+- `references/docs/academic-figure-playbook.md`
+- `references/docs/academic-export-checklist.md`
+- `references/examples/` (paper/pipeline examples)
 
 If `../drawio` is missing, install the base skill next to this overlay. Do not vendor-copy base files into the overlay.
 
@@ -52,14 +58,14 @@ Before rendering, decide:
 From inside this overlay directory:
 
 ```bash
-node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
-node ../drawio/scripts/cli.js ../drawio/references/examples/system-architecture-paper.yaml figure.png --validate --use-desktop
+node ../drawio/scripts/cli.js references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
+node ../drawio/scripts/cli.js references/examples/system-architecture-paper.yaml figure.png --validate --use-desktop
 ```
 
 From the repository root:
 
 ```bash
-node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
+node skills/drawio/scripts/cli.js skills/drawio-academic-skills/references/examples/system-architecture-paper.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
 ```
 
 If draw.io Desktop is unavailable, generate a diagrams.net browser URL from the `.drawio` artifact:

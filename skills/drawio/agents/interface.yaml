@@ -1,0 +1,21 @@
+interface:
+  display_name: 'Draw.io Base'
+  short_description: 'Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow, themes, schemas, style presets, and optional Desktop export'
+  brand_color: '#2563EB'
+
+policy:
+  allow_implicit_invocation: true
+
+capabilities:
+  - Create engineering and product diagrams from natural language, YAML, Mermaid, or CSV
+  - Edit and import existing .drawio bundles through a YAML-first spec
+  - Replicate uploaded images, screenshots, or SVGs as structured redraws
+  - Generate .drawio, .spec.yaml, .arch.json, and standalone SVG as the offline bundle
+  - Export PNG, SVG, PDF, and JPG through draw.io Desktop when available
+  - Generate diagrams.net browser URLs when Desktop export is unavailable
+  - Apply built-in and user style presets and themes
+  - Work without MCP through the local CLI; optional live refinement is a refinement provider only
+
+prerequisites:
+  - Node 20+
+  - draw.io Desktop app for PNG/PDF/JPG and embedded SVG exports

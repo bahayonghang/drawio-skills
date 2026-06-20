@@ -12,10 +12,10 @@ Draw.io Skill is a YAML-first draw.io authoring system for engineering diagrams,
 
 ## Skill Variants
 
-- `skills/drawio`: **Draw.io Base Skill**. Owns the shared CLI, schemas, references, themes, examples, style presets, Desktop export helpers, diagrams.net URL fallback, and optional live refinement backend.
-- `skills/drawio-academic-skills`: **Academic Overlay**. Keeps academic policy, README, evals, and publication-specific references. It requires sibling `../drawio` for execution and never requires MCP/live backend.
+- `skills/drawio`: **Draw.io Base Skill**. Owns shared execution primitives: the CLI, schemas, general references, themes (including `academic`/`academic-color`), general examples, style presets, Desktop export helpers, diagrams.net URL fallback, and optional live refinement backend.
+- `skills/drawio-academic-skills`: **Academic Overlay**. Owns academic policy and academic-specific assets: publication overlay docs (`academic-figure-playbook.md`, `academic-export-checklist.md`), paper/pipeline examples, README, and evals. It requires sibling `../drawio` for execution and never requires MCP/live backend.
 
-The source tree intentionally keeps shared capability in one place. A standalone academic package can be generated later by a packaging workflow, but the repository model is base plus overlay.
+Boundary rule: themes and shared execution primitives live in the base; academic policy, academic docs, and paper examples live in the overlay. A standalone academic package can be generated later by a packaging workflow, but the repository model is base plus overlay.
 
 ## Features
 
@@ -162,7 +162,7 @@ node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidec
 Academic overlay still uses the sibling base CLI:
 
 ```bash
-node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
+node skills/drawio/scripts/cli.js skills/drawio-academic-skills/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
 ```
 
 Use draw.io Desktop when you need raster or PDF export:
