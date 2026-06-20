@@ -31,9 +31,7 @@
       "id": "academic-system-architecture-paper",
       "prompt": "Create a system architecture paper figure with client, API, worker, and storage layers. Make it readable in a two-column paper.",
       "expected_output": "A paper-facing architecture diagram with compact labels and publication checks.",
-      "files": [
-        "skills/drawio/references/examples/system-architecture-paper.yaml"
-      ],
+      "files": ["skills/drawio-academic-skills/references/examples/system-architecture-paper.yaml"],
       "assertions": [
         "Sets meta.figureType to architecture",
         "Uses concise labels before shrinking fonts",
@@ -45,9 +43,7 @@
       "id": "academic-yolo-model-architecture",
       "prompt": "Create a paper-ready YOLO-style object detection architecture figure. Show input image, backbone, neck/fusion, detection heads, and loss/output. Use editable draw.io primitives, compact labels, and deliver .drawio plus .svg with sidecars in a work directory.",
       "expected_output": "An academic model-architecture figure using modules and deep-learning semantic types rather than generic boxes.",
-      "files": [
-        "skills/drawio/references/examples/yolo-model-architecture-paper.yaml"
-      ],
+      "files": ["skills/drawio-academic-skills/references/examples/yolo-model-architecture-paper.yaml"],
       "assertions": [
         "Uses drawio-academic-skills overlay policy for the publication-facing request",
         "Sets meta.profile to academic-paper and meta.figureType to architecture",
@@ -61,9 +57,7 @@
       "id": "academic-max-pooling-operation-figure",
       "prompt": "Create a publication-ready max-pooling operation figure using native draw.io cells. Show a 2 x 2 input window, the max operation, the output value, a short formula, and arrow labels that do not overlap connector lines.",
       "expected_output": "A compact academic operation figure built from native grid cells, formula/text nodes, and offset connector labels.",
-      "files": [
-        "skills/drawio/references/examples/max-pooling-operation-paper.yaml"
-      ],
+      "files": ["skills/drawio-academic-skills/references/examples/max-pooling-operation-paper.yaml"],
       "assertions": [
         "Sets meta.profile to academic-paper and maps the operation to an existing meta.figureType value",
         "Builds the grid from native editable draw.io cells instead of embedding a raster image",
@@ -126,9 +120,7 @@
       "id": "academic-replication-text-formula-edge-labels",
       "prompt": "Replicate the uploaded academic figure into an editable bundle. Preserve caption, legend, formula block, standalone text boxes, and edge labels with their relative positions.",
       "expected_output": "An academic replication bundle with explicit text placement and label offsets.",
-      "files": [
-        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
-      ],
+      "files": ["skills/drawio/evals/fixtures/replicate-academic-highlight.svg"],
       "assertions": [
         "Sets meta.source to replicated",
         "Sets meta.profile to academic-paper",
@@ -142,9 +134,7 @@
       "id": "academic-reference-redraw-native-scientific",
       "prompt": "Redraw the uploaded research framework screenshot as an editable scientific draw.io figure. Preserve section labels, caption, legend, formulas, callouts, and connector labels, but rebuild the main diagram as native cells rather than pasting the screenshot as the page.",
       "expected_output": "A scientific reference redraw workflow with source inventory, native editable cells, explicit text placement, and exported-artifact verification.",
-      "files": [
-        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
-      ],
+      "files": ["skills/drawio/evals/fixtures/replicate-academic-highlight.svg"],
       "assertions": [
         "Sets meta.source to replicated and meta.profile to academic-paper",
         "Creates or presents a source inventory for canvas, regions, shapes, text, formulas, connectors, palette, and uncertainties",
@@ -158,9 +148,7 @@
       "id": "academic-image-improvement-preview-gate",
       "prompt": "Redraw the uploaded framework screenshot as a cleaner journal figure. Improve the hierarchy and academic tone, but preserve the visible caption, legend, callouts, and edge labels. Use a visual concept preview before final draw.io if that helps, then deliver editable .drawio and .svg with sidecars in a work directory.",
       "expected_output": "An academic image-improvement workflow that confirms extracted structure, uses optional image preview for layout approval, then verifies exported draw.io artifacts.",
-      "files": [
-        "skills/drawio/evals/fixtures/replicate-academic-highlight.svg"
-      ],
+      "files": ["skills/drawio/evals/fixtures/replicate-academic-highlight.svg"],
       "assertions": [
         "Confirms ambiguous source text or extracted structure before final rendering",
         "Uses optional image-generation preview for academic improvement or layout exploration when available",

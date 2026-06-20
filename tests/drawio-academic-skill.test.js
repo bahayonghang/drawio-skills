@@ -66,10 +66,7 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
 
   // 1.3 overlay SKILL 明确 sibling base 边界且不引用 live/MCP 文档
   const skillText = readFileSync(resolve(SKILL_DIR, 'SKILL.md'), 'utf8')
-  const publicationOverlayText = readFileSync(
-    resolve(SKILL_DIR, 'references/docs/publication-overlay.md'),
-    'utf8'
-  )
+  const publicationOverlayText = readFileSync(resolve(SKILL_DIR, 'references/docs/publication-overlay.md'), 'utf8')
   assert.match(skillText, /^name: drawio-academic-skills$/m)
   assert.match(skillText, /\.\.\/drawio\/scripts\/cli\.js/)
   assert.match(skillText, /\.\.\/drawio\/assets\/themes\//)
@@ -89,11 +86,21 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
   assert.equal(existsSync(resolve(SKILL_DIR, 'test-prompts.json')), false)
   assert.equal(existsSync(resolve(SKILL_DIR, 'evals/test-prompts.json')), true)
 
-  // 1.5 overlay references/ 是不变量白名单：只允许 publication 指南和 academic 专属模板。
-  //     枚举式黑名单会漏掉新混入的副本，所以这里断言“恰好等于”白名单。
+  // 1.5 overlay references/ 是不变量白名单：publication 指南、搬迁后的 academic 策略文档、
+  //     paper/pipeline examples 与 academic 专属模板。枚举式白名单会漏掉新混入的副本，
+  //     所以这里断言“恰好等于”白名单。
   const overlayRefs = listFilesRecursive(resolve(SKILL_DIR, 'references'))
   assert.deepEqual(overlayRefs, [
+    'docs/academic-export-checklist.md',
+    'docs/academic-figure-playbook.md',
     'docs/publication-overlay.md',
+    'examples/ablation-study-pipeline.yaml',
+    'examples/ieee-network-paper.yaml',
+    'examples/max-pooling-operation-paper.yaml',
+    'examples/research-pipeline.yaml',
+    'examples/system-architecture-paper.yaml',
+    'examples/technical-roadmap-paper.yaml',
+    'examples/yolo-model-architecture-paper.yaml',
     'templates/multi-module-system-compact.yaml',
     'templates/neural-network-architecture-compact.yaml'
   ])
@@ -155,7 +162,7 @@ test('drawio-academic-skills: sibling base CLI separates final artifacts from si
    * ========================================================================
    * 步骤3：校验 academic overlay 通过 base CLI 导出
    * ========================================================================
-   * 数据源：base publication 示例
+   * 数据源：overlay publication 示例
    * 操作要点：
    * 1) 使用 sibling base CLI 生成 SVG
    * 2) 校验最终目录只包含 .svg 和 .drawio
@@ -166,7 +173,7 @@ test('drawio-academic-skills: sibling base CLI separates final artifacts from si
   // 3.1 准备输入和临时输出路径
   const tempDir = mkdtempSync(join(tmpdir(), 'drawio-academic-overlay-'))
   const sidecarDir = resolve(tempDir, '.drawio-tmp', 'academic-system')
-  const input = resolve(BASE_DIR, 'references/examples/system-architecture-paper.yaml')
+  const input = resolve(SKILL_DIR, 'references/examples/system-architecture-paper.yaml')
   const output = resolve(tempDir, 'academic-system.svg')
 
   try {
@@ -204,7 +211,7 @@ test('drawio examples: scientific paper examples render through base CLI', () =>
    * ========================================================================
    * 步骤4：校验 scientific academic 示例可渲染
    * ========================================================================
-   * 数据源：base references/examples
+   * 数据源：overlay references/examples
    * 操作要点：
    * 1) 使用 sibling base CLI 渲染新增科学图示例
    * 2) 开启 strict warnings，保证示例符合 academic profile 质量门槛
@@ -221,7 +228,7 @@ test('drawio examples: scientific paper examples render through base CLI', () =>
 
   try {
     for (const [exampleName, outputName] of examples) {
-      const input = resolve(BASE_DIR, 'references/examples', exampleName)
+      const input = resolve(SKILL_DIR, 'references/examples', exampleName)
       const output = resolve(tempDir, `${outputName}.svg`)
       const sidecarDir = resolve(tempDir, '.drawio-tmp', outputName)
 

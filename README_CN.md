@@ -162,7 +162,7 @@ node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidec
 Academic Overlay 仍然调用 sibling Base CLI：
 
 ```bash
-node skills/drawio/scripts/cli.js skills/drawio/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
+node skills/drawio/scripts/cli.js skills/drawio-academic-skills/references/examples/system-architecture-paper.yaml academic-system.svg --validate --write-sidecars --strict-warnings
 ```
 
 当你需要位图或 PDF 时，改走 Desktop 路径：
