@@ -9,7 +9,7 @@ const __dirname = dirname(__filename)
 const PROJECT_ROOT = resolve(__dirname, '..')
 
 function readProjectFile(path) {
-  return readFileSync(resolve(PROJECT_ROOT, path), 'utf8')
+  return readFileSync(resolve(PROJECT_ROOT, path), 'utf8').replace(/\r\n/g, '\n')
 }
 
 test('drawio visual verification policy prefers exported artifacts over screenshots', () => {
