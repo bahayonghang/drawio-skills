@@ -200,6 +200,20 @@ describe('getNodeSize', () => {
     assert.deepStrictEqual(getNodeSize('large', 'operator'), { width: 160, height: 80 })
     assert.deepStrictEqual(getNodeSize('small', 'operator'), { width: 80, height: 40 })
   })
+
+  it('fits text node width to content when no explicit size is given', () => {
+    // Short CJK label should be far narrower than the old fixed medium width (120)
+    const shortText = getNodeSize(null, 'text', '有效频带')
+    assert.ok(shortText.width < 120, 'short CJK text should be narrower than the medium default')
+    assert.ok(shortText.width >= 48, 'width should respect the minimum')
+    // Longer labels widen, but width is capped so the box wraps instead of overflowing
+    const longText = getNodeSize(null, 'text', 'Conv1D-ResNet + FiLM + Cross-Attention')
+    assert.ok(longText.width > shortText.width, 'longer label should produce a wider box')
+    assert.ok(getNodeSize(null, 'text', 'x'.repeat(200)).width <= 320, 'width is clamped at 320')
+    // Explicit size and the no-label fallback keep their existing behavior
+    assert.deepStrictEqual(getNodeSize('large', 'text', '短'), { width: 160, height: 80 })
+    assert.deepStrictEqual(getNodeSize(null, 'text'), { width: 120, height: 60 })
+  })
 })
 
 // ============================================================================
@@ -255,6 +269,13 @@ describe('generateNodeStyle', () => {
   it('defaults generic diagrams to Times New Roman when no explicit font is provided', () => {
     const style = generateNodeStyle({ id: 'n4', label: 'API Gateway', type: 'service' }, theme)
     assert.ok(style.includes('fontFamily=Times New Roman'), 'generic diagrams should default to Times New Roman')
+  })
+
+  it('keeps text nodes transparent with no label background', () => {
+    const style = generateNodeStyle({ id: 'n5', label: '有效频带', type: 'text' }, theme)
+    assert.ok(style.includes('fillColor=none'), 'text fill should be transparent')
+    assert.ok(style.includes('labelBackgroundColor=none'), 'text should have no white label halo')
+    assert.ok(!style.includes('fillColor=#FFFFFF'), 'text should not use a white fill')
   })
 })
 

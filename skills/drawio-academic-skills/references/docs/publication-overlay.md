@@ -104,6 +104,13 @@ Prefer 4-8 major modules and 2-5 supporting nodes per major section. Use one dom
 
 For model-architecture and mechanism figures, compress repeated layers into stage labels such as `CSP block x3`, `Feature fusion`, or `Detect head` instead of drawing every internal layer. Use a legend or caption to explain notation that repeats across the figure.
 
+## Text and Callout Styling
+
+Captions, callouts, legends, and annotation labels follow the base rule in `../drawio/references/docs/design-system/tokens.md` § Text & Label Styling. Two points matter most for publication figures:
+
+- **Transparent, no white box.** Use `fillColor=none` and `labelBackgroundColor=none`. A white rectangle behind text occludes the figure and reads as unfinished in a paper; if a label sits on a busy region, prefer a darker font or relocation, and use only a restrained tint as a deliberate exception — never a hard `#FFFFFF` block.
+- **Content-sized boxes.** Size a text/callout box just wider than its longest line, not to a container or source-image region, so captions and callouts stay independently placeable and do not overlap modules or connectors.
+
 ## Optional Image Preview
 
 Use external image-generation preview by default for:
@@ -173,6 +180,7 @@ Load the sibling base references for shared execution detail:
 
 - `../drawio/references/docs/math-typesetting.md`
 - `../drawio/references/docs/design-system/specification.md`
+- `../drawio/references/docs/design-system/tokens.md`
 - `../drawio/references/workflows/create.md`
 - `../drawio/references/workflows/edit.md`
 - `../drawio/references/workflows/replicate.md`

@@ -113,6 +113,7 @@ Use this pattern when a paper screenshot or existing figure must become editable
 - align nodes to the grid instead of hand-placing them loosely
 - shorten labels before shrinking fonts
 - use consistent line weights, arrowheads, and corner radii
+- keep text, callouts, captions, and legends transparent (`fillColor=none`, `labelBackgroundColor=none`) and sized just wider than their content, not stretched to a container — see `../drawio/references/docs/design-system/tokens.md` § Text & Label Styling
 
 ## Academic Delivery Matrix
 

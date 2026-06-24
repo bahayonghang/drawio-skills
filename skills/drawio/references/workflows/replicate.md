@@ -40,6 +40,7 @@ Step 3: Structured Extraction
 ├── Text Fidelity Pass:
 │   ├── extract every text-bearing element as shape label, edge label, standalone text, or formula annotation
 │   ├── record text bounds, baseline/anchor, alignment, font family, font size, italic/bold state, and spacing
+│   ├── default text fill to `none` with `labelBackgroundColor=none`; add a restrained tint only when a busy background truly needs separation
 │   ├── record relative offset from the nearest arrow, connector, node, module, or canvas boundary
 │   └── preserve math delimiters for formulas (`$$...$$`, `\(...\)`, or AsciiMath backticks)
 ├── Extract to YAML specification format:
@@ -73,6 +74,7 @@ Step 6: Convert to Diagram
 ├── Use `meta.canvas: WIDTHxHEIGHT` as the minimum draw.io page size when mapping reference coordinates
 ├── Calculate 8px grid positions for structure
 ├── Preserve explicit top-left `bounds` for high-fidelity text boxes and formula annotations
+├── Size each text box just wider than its content, not the full source region, so it stays an independent movable element (see ../docs/design-system/tokens.md § Text & Label Styling)
 ├── Apply `labelOffset` so connector labels sit 12-20px off the line by default
 ├── Generate .drawio + .spec.yaml + .arch.json offline first
 ├── Export standalone SVG first; if a raster/final-fidelity check is needed and draw.io Desktop is available, export PNG/PDF/JPG or embedded SVG through the CLI
@@ -153,14 +155,14 @@ meta:
 
 ### Theme Selection by Domain
 
-| Domain | Recommended Theme | Reason |
-|--------|-------------------|--------|
-| 软件架构 (Software Architecture) | tech-blue | Professional technical style |
-| 商业流程 (Business Process) | tech-blue | Clean corporate look |
-| 科研流程 (Research Workflow) | academic | IEEE-compatible, grayscale-safe |
-| 工业流程 (Industrial Process) | tech-blue | Clear technical diagrams |
-| 项目管理 (Project Management) | tech-blue | Standard project visuals |
-| 教学设计 (Teaching Design) | nature | Friendly, accessible colors |
+| Domain                           | Recommended Theme | Reason                          |
+| -------------------------------- | ----------------- | ------------------------------- |
+| 软件架构 (Software Architecture) | tech-blue         | Professional technical style    |
+| 商业流程 (Business Process)      | tech-blue         | Clean corporate look            |
+| 科研流程 (Research Workflow)     | academic          | IEEE-compatible, grayscale-safe |
+| 工业流程 (Industrial Process)    | tech-blue         | Clear technical diagrams        |
+| 项目管理 (Project Management)    | tech-blue         | Standard project visuals        |
+| 教学设计 (Teaching Design)       | nature            | Friendly, accessible colors     |
 
 ### Scientific Redraw Priorities
 
@@ -178,30 +180,30 @@ For research-framework screenshots, model architecture figures, operation diagra
 
 During extraction, map visual elements to semantic types:
 
-| Visual Element | Semantic Type | Draw.io Shape |
-|----------------|---------------|---------------|
-| Rectangle/Box | `service` | Rounded rectangle |
-| Cylinder/Drum | `database` | Cylinder |
-| Diamond | `decision` | Rhombus |
-| Oval/Rounded rect | `terminal` | Stadium |
-| Parallelogram | `queue` | Parallelogram |
-| Person/Stick figure | `user` | Circle |
-| Document shape | `document` | Wave rect |
-| Math formula | `formula` | White rect with border |
-| Caption, callout, legend note | `text` | Standalone text box |
-| CNN/Transformer layer | `conv`, `pool`, `attention`, `norm`, `matrix` | Deep-learning semantic block |
-| Feature map / tensor | `tensor3d` | Cube-like feature-map block |
-| Add/concat/gate operator | `operator` | Small circular operator |
+| Visual Element                | Semantic Type                                 | Draw.io Shape                |
+| ----------------------------- | --------------------------------------------- | ---------------------------- |
+| Rectangle/Box                 | `service`                                     | Rounded rectangle            |
+| Cylinder/Drum                 | `database`                                    | Cylinder                     |
+| Diamond                       | `decision`                                    | Rhombus                      |
+| Oval/Rounded rect             | `terminal`                                    | Stadium                      |
+| Parallelogram                 | `queue`                                       | Parallelogram                |
+| Person/Stick figure           | `user`                                        | Circle                       |
+| Document shape                | `document`                                    | Wave rect                    |
+| Math formula                  | `formula`                                     | White rect with border       |
+| Caption, callout, legend note | `text`                                        | Standalone text box          |
+| CNN/Transformer layer         | `conv`, `pool`, `attention`, `norm`, `matrix` | Deep-learning semantic block |
+| Feature map / tensor          | `tensor3d`                                    | Cube-like feature-map block  |
+| Add/concat/gate operator      | `operator`                                    | Small circular operator      |
 
 ### Connector Type Mapping
 
-| Visual Style | Connector Type | Output Style |
-|--------------|----------------|--------------|
-| Solid arrow | `primary` | Solid 2px, filled arrow |
-| Dashed arrow | `data` | Dashed 2px, filled arrow |
-| Dotted line | `optional` | Dotted 1px, open arrow |
-| Diamond end | `dependency` | Solid 1px, diamond |
-| Double-headed | `bidirectional` | Solid 1.5px, no arrow |
+| Visual Style  | Connector Type  | Output Style             |
+| ------------- | --------------- | ------------------------ |
+| Solid arrow   | `primary`       | Solid 2px, filled arrow  |
+| Dashed arrow  | `data`          | Dashed 2px, filled arrow |
+| Dotted line   | `optional`      | Dotted 1px, open arrow   |
+| Diamond end   | `dependency`    | Solid 1px, diamond       |
+| Double-headed | `bidirectional` | Solid 1.5px, no arrow    |
 
 ## Extraction Rules
 

@@ -381,12 +381,40 @@ const TYPE_DEFAULT_SIZES = {
 }
 
 /**
+ * Estimate a content-fitted size for a standalone text node so the box hugs the
+ * text instead of stretching to a container width. Oversized text boxes overlap
+ * neighbors and are hard to select and move, so we keep the box just wider than
+ * the longest line. Latin glyphs are roughly 0.6em wide and CJK glyphs roughly
+ * 1.05em; width adds horizontal padding and is clamped so an unusually long
+ * label wraps via whiteSpace=wrap instead of overflowing the canvas.
+ */
+function estimateTextSize(label, fontSize = 13) {
+  const lines = String(label).split(/\n|<br\s*\/?>/i)
+  let maxLineWidth = 0
+  for (const line of lines) {
+    let lineWidth = 0
+    for (const ch of line) {
+      lineWidth += /[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? fontSize * 1.05 : fontSize * 0.6
+    }
+    maxLineWidth = Math.max(maxLineWidth, lineWidth)
+  }
+  const width = Math.min(Math.max(Math.ceil(maxLineWidth) + 20, 48), 320)
+  const height = Math.max(Math.ceil(lines.length * fontSize * 1.4) + 12, 24)
+  return { width, height }
+}
+
+/**
  * Get node dimensions based on size preset or node type
  */
-export function getNodeSize(size, nodeType = null) {
+export function getNodeSize(size, nodeType = null, label = null) {
   // If explicit size is provided and valid, use it
   if (size && SIZE_PRESETS[size]) {
     return SIZE_PRESETS[size]
+  }
+  // Text nodes without an explicit size fit their content so the box stays just
+  // wider than the text and remains easy to select, move, and transform.
+  if (nodeType === 'text' && label) {
+    return estimateTextSize(label)
   }
   // If node type has a default size, use it
   if (nodeType && TYPE_DEFAULT_SIZES[nodeType]) {
@@ -480,7 +508,7 @@ export function calculateLayout(spec, theme) {
 
   const placeNode = (node, x, y) => {
     const semanticType = detectSemanticType(node.label, node.type, node.network)
-    const size = getNodeSize(node.size, semanticType)
+    const size = getNodeSize(node.size, semanticType, node.label)
     positions.set(node.id, {
       x: snapToGrid(x, gridSize),
       y: snapToGrid(y, gridSize),
@@ -492,7 +520,7 @@ export function calculateLayout(spec, theme) {
 
   const getNodeMetrics = (node) => {
     const semanticType = detectSemanticType(node.label, node.type, node.network)
-    const size = getNodeSize(node.size, semanticType)
+    const size = getNodeSize(node.size, semanticType, node.label)
     return { semanticType, size }
   }
 
@@ -505,7 +533,7 @@ export function calculateLayout(spec, theme) {
       manuallyPositioned.add(node.id)
     } else if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
       const semanticType = detectSemanticType(node.label, node.type, node.network)
-      const size = getNodeSize(node.size, semanticType)
+      const size = getNodeSize(node.size, semanticType, node.label)
       positions.set(node.id, {
         x: snapToGrid(node.position.x - size.width / 2, gridSize),
         y: snapToGrid(node.position.y - size.height / 2, gridSize),
@@ -548,7 +576,7 @@ export function calculateLayout(spec, theme) {
       for (const node of moduleNodes) {
         if (manuallyPositioned.has(node.id)) continue
         const semanticType = detectSemanticType(node.label, node.type, node.network)
-        const size = getNodeSize(node.size, semanticType)
+        const size = getNodeSize(node.size, semanticType, node.label)
         const nodeX = snapToGrid(moduleX + containerPadding, gridSize)
         positions.set(node.id, {
           x: nodeX,
@@ -575,7 +603,7 @@ export function calculateLayout(spec, theme) {
       for (const node of moduleNodes) {
         if (manuallyPositioned.has(node.id)) continue
         const semanticType = detectSemanticType(node.label, node.type, node.network)
-        const size = getNodeSize(node.size, semanticType)
+        const size = getNodeSize(node.size, semanticType, node.label)
         positions.set(node.id, {
           x: snapToGrid(nodeX, gridSize),
           y: snapToGrid(moduleY + containerPadding + moduleHeaderHeight, gridSize),
@@ -638,7 +666,7 @@ export function calculateLayout(spec, theme) {
     for (const node of nodes) {
       if (manuallyPositioned.has(node.id)) continue
       const semanticType = detectSemanticType(node.label, node.type, node.network)
-      const size = getNodeSize(node.size, semanticType)
+      const size = getNodeSize(node.size, semanticType, node.label)
       positions.set(node.id, {
         x: snapToGrid(40 + col * (size.width + nodeMargin), gridSize),
         y: snapToGrid(40 + row * (size.height + nodeMargin), gridSize),
@@ -880,6 +908,7 @@ function generateNodeStyleWithSpec(node, theme, spec) {
       'html=1',
       'whiteSpace=wrap',
       'overflow=hidden',
+      'labelBackgroundColor=none',
       `fillColor=${fillColor}`,
       `strokeColor=${strokeColor}`,
       `strokeWidth=${strokeWidth}`,
