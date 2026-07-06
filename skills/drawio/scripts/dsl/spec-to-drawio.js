@@ -4,6 +4,7 @@
  */
 
 import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
+import { resolveShapeNameKind } from './shape-catalog.js'
 import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -266,7 +267,7 @@ const SHAPE_KEYWORDS = {
   ]
 }
 
-const SHAPE_STYLES = {
+export const SHAPE_STYLES = {
   // Traditional shapes
   service: 'rounded=1;arcSize=20',
   database: 'shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15',
@@ -281,12 +282,12 @@ const SHAPE_STYLES = {
   process: 'rounded=1;arcSize=20',
   router: 'ellipse',
   switch: 'shape=switch',
-  firewall: 'shape=mxgraph.cisco.firewalls.firewall;sketch=0',
+  firewall: 'shape=mxgraph.cisco.security.firewall;sketch=0',
   server: 'rounded=1;arcSize=12',
   load_balancer: 'shape=hexagon;perimeter=hexagonPerimeter2',
   subnet: 'swimlane;startSize=24',
   internet: 'ellipse;shape=cloud',
-  ap: 'shape=mxgraph.cisco.wireless.access_point;sketch=0',
+  ap: 'shape=mxgraph.cisco.misc.access_point;sketch=0',
 
   // Deep learning shapes
   input: 'rounded=1;arcSize=15',
@@ -727,11 +728,12 @@ const ICON_ALIASES = {
   'aws.app_lb': 'aws.application_load_balancer',
   'aws.internet-gateway': 'aws.internet_gateway',
   'aws.igw': 'aws.internet_gateway',
-  'aws.ec2': 'aws.ec2_instance',
+  // aws4 has no plain ec2_instance stencil; mxgraph.aws4.ec2 is a resource icon
+  'aws.ec2_instance': 'aws.ec2',
   'aws.rds': 'aws.rds_instance',
-  'cisco.firewall': 'mxgraph.cisco.firewalls.firewall',
-  'cisco.ap': 'mxgraph.cisco.wireless.access_point',
-  'cisco.access-point': 'mxgraph.cisco.wireless.access_point'
+  'cisco.firewall': 'mxgraph.cisco.security.firewall',
+  'cisco.ap': 'mxgraph.cisco.misc.access_point',
+  'cisco.access-point': 'mxgraph.cisco.misc.access_point'
 }
 
 const NETWORK_VENDOR_DEVICE_ICONS = {
@@ -740,17 +742,18 @@ const NETWORK_VENDOR_DEVICE_ICONS = {
     internet_gateway: 'aws.internet_gateway',
     load_balancer: 'aws.application_load_balancer',
     application_load_balancer: 'aws.application_load_balancer',
-    server: 'aws.ec2_instance',
-    ec2: 'aws.ec2_instance',
-    ec2_instance: 'aws.ec2_instance',
-    subnet: 'aws.rds_instance',
+    // aws4 has no plain ec2_instance stencil; aws.ec2 resolves via the aws4 resourceIcon style
+    server: 'aws.ec2',
+    ec2: 'aws.ec2',
+    ec2_instance: 'aws.ec2',
+    // subnet intentionally unmapped: the subnet semantic type renders as a swimlane group box
     rds: 'aws.rds_instance',
     rds_instance: 'aws.rds_instance'
   },
   cisco: {
-    firewall: 'mxgraph.cisco.firewalls.firewall',
-    ap: 'mxgraph.cisco.wireless.access_point',
-    access_point: 'mxgraph.cisco.wireless.access_point'
+    firewall: 'mxgraph.cisco.security.firewall',
+    ap: 'mxgraph.cisco.misc.access_point',
+    access_point: 'mxgraph.cisco.misc.access_point'
   }
 }
 
@@ -804,7 +807,8 @@ function resolveFontFamily(spec, theme, { text, semanticType, styleFontFamily = 
   const forcedFontFamily = safeStyleText(spec.meta?.font?.[bucket], null)
   if (forcedFontFamily) return forcedFontFamily
 
-  const fallbackFontFamily = safeStyleText(getDefaultFontPolicy(spec)[bucket], 'Times New Roman')
+  const themeFontFamily = safeStyleText(theme?.typography?.fontFamily?.[bucket], null)
+  const fallbackFontFamily = themeFontFamily || safeStyleText(getDefaultFontPolicy(spec)[bucket], 'Times New Roman')
   return safeStyleText(styleFontFamily, fallbackFontFamily)
 }
 
@@ -824,6 +828,22 @@ function pushTextSpacing(parts, style = {}) {
   pushNumberStyle(parts, 'spacingRight', style.spacingRight)
   pushNumberStyle(parts, 'spacingTop', style.spacingTop)
   pushNumberStyle(parts, 'spacingBottom', style.spacingBottom)
+}
+
+/**
+ * Apply a theme-declared corner radius to a SHAPE_STYLES base style.
+ * Only rectangle-family styles (carrying a rounded= token) are affected, and
+ * stadium shapes (arcSize>=50, e.g. terminal) keep their semantic rounding.
+ * themeRounded=0 emits square corners (rounded=0, no arcSize).
+ */
+function applyThemeRounding(shapeStyle, themeRounded) {
+  if (!isFiniteNumber(themeRounded)) return shapeStyle
+  if (!/(^|;)rounded=/.test(shapeStyle)) return shapeStyle
+  const arcMatch = /(?:^|;)arcSize=(\d+)/.exec(shapeStyle)
+  if (arcMatch && Number(arcMatch[1]) >= 50) return shapeStyle
+  const tokens = shapeStyle.split(';').filter((t) => t && !t.startsWith('rounded=') && !t.startsWith('arcSize='))
+  const rounding = themeRounded > 0 ? ['rounded=1', `arcSize=${Math.min(themeRounded, 50)}`] : ['rounded=0']
+  return [...rounding, ...tokens].join(';')
 }
 
 /**
@@ -886,13 +906,13 @@ function generateNodeStyleWithSpec(node, theme, spec) {
     isTextNode ? 'none' : nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB'
   )
   const strokeWidth =
-    node.style?.strokeWidth ?? (isTextNode ? 0 : nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5)
+    node.style?.strokeWidth ?? (isTextNode ? 0 : (nodeTheme.strokeWidth ?? defaultTheme.strokeWidth ?? 1.5))
   const fontColor = resolveThemeColor(
     node.style?.fontColor,
     theme,
     nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
   )
-  const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
+  const fontSize = node.style?.fontSize ?? nodeTheme.fontSize ?? defaultTheme.fontSize ?? 13
   const fontFamily = resolveFontFamily(spec, theme, {
     text: node.label,
     semanticType,
@@ -925,10 +945,14 @@ function generateNodeStyleWithSpec(node, theme, spec) {
 
   // If node has an icon, override shape to use the icon
   const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
-  let effectiveShapeStyle = shapeStyle
+  let effectiveShapeStyle = applyThemeRounding(shapeStyle, nodeTheme.rounded ?? defaultTheme.rounded)
   const parts = []
   if (iconShape) {
-    effectiveShapeStyle = `shape=${iconShape}`
+    // aws4 service icons that only exist as resource icons need the compound style
+    effectiveShapeStyle =
+      resolveShapeNameKind(iconShape) === 'aws4ResourceIcon'
+        ? `shape=mxgraph.aws4.resourceIcon;resIcon=${iconShape}`
+        : `shape=${iconShape}`
     parts.push(effectiveShapeStyle)
     parts.push('html=1')
     parts.push('whiteSpace=wrap')
@@ -971,7 +995,7 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
   const connectorTheme = theme.connector?.[connectorType] || theme.connector?.primary || {}
 
   const strokeColor = resolveThemeColor(edge.style?.strokeColor, theme, connectorTheme.strokeColor || '#1E293B')
-  const strokeWidth = edge.style?.strokeWidth || connectorTheme.strokeWidth || 2
+  const strokeWidth = edge.style?.strokeWidth ?? connectorTheme.strokeWidth ?? 2
   const dashed = edge.style?.dashed ?? connectorTheme.dashed ?? false
   const dashPattern = edge.style?.dashPattern || connectorTheme.dashPattern || '6 4'
   const endArrow = edge.style?.endArrow || connectorTheme.endArrow || 'block'
@@ -1034,11 +1058,11 @@ function generateModuleStyleWithSpec(module, theme, spec) {
     moduleTheme.fillColor || '#F8FAFC'
   )
   const strokeColor = resolveThemeColor(module.style?.strokeColor, theme, moduleTheme.strokeColor || '#E2E8F0')
-  const strokeWidth = moduleTheme.strokeWidth || 1
-  const rounded = moduleTheme.rounded || 12
+  const strokeWidth = moduleTheme.strokeWidth ?? 1
+  const rounded = moduleTheme.rounded ?? 12
   const fontColor = resolveThemeColor(module.style?.fontColor, theme, moduleTheme.labelFontColor || '#1E293B')
-  const fontSize = moduleTheme.labelFontSize || 14
-  const fontWeight = moduleTheme.labelFontWeight || 600
+  const fontSize = moduleTheme.labelFontSize ?? 14
+  const fontWeight = moduleTheme.labelFontWeight ?? 600
   const fontFamily = resolveFontFamily(spec, theme, {
     text: module.label,
     semanticType: 'text',
@@ -1050,8 +1074,8 @@ function generateModuleStyleWithSpec(module, theme, spec) {
   const dashPattern = module.style?.dashPattern || moduleTheme.dashPattern || '8 4'
 
   const parts = [
-    `rounded=1`,
-    `arcSize=${Math.min(rounded, 20)}`,
+    rounded > 0 ? `rounded=1` : `rounded=0`,
+    rounded > 0 ? `arcSize=${Math.min(rounded, 20)}` : '',
     'html=1',
     'whiteSpace=wrap',
     `fillColor=${fillColor}`,
@@ -1635,6 +1659,27 @@ export function validateConnectionPointPolicy(spec) {
   return warnings
 }
 
+/**
+ * Warn when a node resolves to a shape name absent from the draw.io shape
+ * catalog: such names render as empty boxes in draw.io Desktop.
+ * @param {Object} spec
+ * @returns {string[]} warnings
+ */
+export function validateShapeReferences(spec) {
+  const warnings = []
+  for (const node of spec.nodes || []) {
+    const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
+    if (!iconShape) continue
+    if (resolveShapeNameKind(iconShape) === 'unknown') {
+      warnings.push(
+        `Node "${node.id}" resolves to unknown shape "${iconShape}" (not in the draw.io shape catalog); ` +
+          'it would render as an empty box in draw.io Desktop.'
+      )
+    }
+  }
+  return warnings
+}
+
 export function validateAcademicProfile(spec) {
   const warnings = []
   const profile = resolveProfile(spec)
@@ -1853,12 +1898,14 @@ export function specToDrawioXml(spec, options = {}) {
   const connectionPointWarnings = validateConnectionPointPolicy(spec)
   const edgeWarnings = validateEdgeQuality(spec, layout)
   const academicWarnings = validateAcademicProfile(spec)
+  const shapeWarnings = validateShapeReferences(spec)
   const allValidationWarnings = [
     ...colorWarnings,
     ...layoutWarnings,
     ...connectionPointWarnings,
     ...edgeWarnings,
-    ...academicWarnings
+    ...academicWarnings,
+    ...shapeWarnings
   ]
 
   if (allValidationWarnings.length > 0) {

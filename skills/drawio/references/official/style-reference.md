@@ -835,7 +835,7 @@ Edge labels are usually encoded in the edge cell's `value`. The label position i
         </mxCell>
 
         <!-- Firewall inside DMZ -->
-        <mxCell id="fw" value="Firewall" style="shape=mxgraph.cisco.firewalls.firewall;sketch=0;html=1;whiteSpace=wrap;" vertex="1" parent="dmz">
+        <mxCell id="fw" value="Firewall" style="shape=mxgraph.cisco.security.firewall;sketch=0;html=1;whiteSpace=wrap;" vertex="1" parent="dmz">
           <mxGeometry x="100" y="60" width="80" height="60" as="geometry" />
         </mxCell>
 

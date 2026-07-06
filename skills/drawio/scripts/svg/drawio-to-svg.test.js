@@ -117,7 +117,7 @@ const FIREWALL_NODE = `
   <root>
     <mxCell id="0"/>
     <mxCell id="1" parent="0"/>
-    <mxCell id="2" value="Firewall" style="shape=mxgraph.cisco.firewalls.firewall;fillColor=#FDE68A;strokeColor=#B45309;" vertex="1" parent="1">
+    <mxCell id="2" value="Firewall" style="shape=mxgraph.cisco.security.firewall;fillColor=#FDE68A;strokeColor=#B45309;" vertex="1" parent="1">
       <mxGeometry x="100" y="100" width="120" height="80" as="geometry"/>
     </mxCell>
   </root>
@@ -128,7 +128,7 @@ const AP_NODE = `
   <root>
     <mxCell id="0"/>
     <mxCell id="1" parent="0"/>
-    <mxCell id="2" value="Wireless AP" style="shape=mxgraph.cisco.wireless.access_point;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
+    <mxCell id="2" value="Wireless AP" style="shape=mxgraph.cisco.misc.access_point;fillColor=#DBEAFE;strokeColor=#2563EB;" vertex="1" parent="1">
       <mxGeometry x="100" y="100" width="100" height="100" as="geometry"/>
     </mxCell>
   </root>
@@ -668,10 +668,7 @@ describe('drawioToSvg fidelity', () => {
 
   it('should clip floating straight edges to node boundaries instead of centers', () => {
     const svg = drawioToSvg(EDGE_WITH_BLOCK_ARROW)
-    assert.ok(
-      svg.includes('x1="130" y1="70" x2="250" y2="70"'),
-      'Edge endpoints should sit on the facing node borders'
-    )
+    assert.ok(svg.includes('x1="130" y1="70" x2="250" y2="70"'), 'Edge endpoints should sit on the facing node borders')
   })
 
   it('should approximate orthogonal edges with Z-shaped bends', () => {

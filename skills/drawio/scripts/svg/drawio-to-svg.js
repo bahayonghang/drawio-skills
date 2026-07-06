@@ -36,8 +36,9 @@ function classifyShape(style) {
   if (shape === 'switch') return 'switch'
   if (shape === 'hexagon') return 'hexagon'
   if (shape === 'cube') return 'cube'
-  if (shape === 'mxgraph.cisco.firewalls.firewall') return 'firewall'
-  if (shape === 'mxgraph.cisco.wireless.access_point') return 'wirelessAp'
+  if (shape === 'mxgraph.cisco.security.firewall' || shape === 'mxgraph.cisco.firewalls.firewall') return 'firewall'
+  if (shape === 'mxgraph.cisco.misc.access_point' || shape === 'mxgraph.cisco.wireless.access_point')
+    return 'wirelessAp'
   if (style.has('rhombus')) return 'rhombus'
   if (style.has('ellipse')) return 'ellipse'
   const rounded = style.get('rounded')
@@ -384,8 +385,7 @@ function resolveEdgePoints(cell, style, absGeo) {
     } else {
       const toward = waypoints[waypoints.length - 1] || start
       endFace = dominantFace(targetRect, toward)
-      end =
-        orthogonal && !waypoints.length ? faceMidpoint(targetRect, endFace) : clipToRectBoundary(targetRect, toward)
+      end = orthogonal && !waypoints.length ? faceMidpoint(targetRect, endFace) : clipToRectBoundary(targetRect, toward)
     }
   }
 

@@ -23,8 +23,11 @@ import {
   validateXml,
   validateSpec,
   validateColorScheme,
-  validateLayoutConsistency
+  validateLayoutConsistency,
+  validateShapeReferences,
+  SHAPE_STYLES
 } from './spec-to-drawio.js'
+import { resolveShapeNameKind } from './shape-catalog.js'
 
 // ============================================================================
 // Semantic Type Detection Tests
@@ -266,9 +269,11 @@ describe('generateNodeStyle', () => {
     assert.ok(style.includes('fillColor=#FF0000'), 'should contain custom fillColor')
   })
 
-  it('defaults generic diagrams to Times New Roman when no explicit font is provided', () => {
+  it('uses theme typography for generic diagrams and Times New Roman when the theme has none', () => {
     const style = generateNodeStyle({ id: 'n4', label: 'API Gateway', type: 'service' }, theme)
-    assert.ok(style.includes('fontFamily=Times New Roman'), 'generic diagrams should default to Times New Roman')
+    assert.ok(style.includes('fontFamily=Inter, sans-serif'), 'themed diagrams should use theme typography')
+    const bare = generateNodeStyle({ id: 'n4b', label: 'API Gateway', type: 'service' }, { node: {} })
+    assert.ok(bare.includes('fontFamily=Times New Roman'), 'themes without typography fall back to Times New Roman')
   })
 
   it('keeps text nodes transparent with no label background', () => {
@@ -714,8 +719,9 @@ describe('specToDrawioXml', () => {
 
   it('should resolve documented icon aliases', () => {
     assert.strictEqual(resolveIconShape('aws.alb'), 'mxgraph.aws4.application_load_balancer')
-    assert.strictEqual(resolveIconShape('aws.ec2'), 'mxgraph.aws4.ec2_instance')
-    assert.strictEqual(resolveIconShape('cisco.ap'), 'mxgraph.cisco.wireless.access_point')
+    assert.strictEqual(resolveIconShape('aws.ec2'), 'mxgraph.aws4.ec2')
+    assert.strictEqual(resolveIconShape('aws.ec2_instance'), 'mxgraph.aws4.ec2')
+    assert.strictEqual(resolveIconShape('cisco.ap'), 'mxgraph.cisco.misc.access_point')
   })
 
   it('should derive node icons from network vendor/device metadata', () => {
@@ -725,7 +731,7 @@ describe('specToDrawioXml', () => {
     )
     assert.strictEqual(
       deriveNodeIcon({ network: { vendor: 'cisco', device: 'firewall' } }),
-      'mxgraph.cisco.firewalls.firewall'
+      'mxgraph.cisco.security.firewall'
     )
   })
 
@@ -745,7 +751,7 @@ describe('specToDrawioXml', () => {
       },
       theme
     )
-    assert.ok(style.includes('shape=mxgraph.cisco.firewalls.firewall'), 'should use vendor-derived stencil shape')
+    assert.ok(style.includes('shape=mxgraph.cisco.security.firewall'), 'should use vendor-derived stencil shape')
   })
 
   it('default behavior: 25 nodes returns a string (no error)', () => {
@@ -1234,7 +1240,7 @@ describe('Phase 2.3b: text fidelity', () => {
 
     const xml = specToDrawioXml(spec)
     assert.ok(
-      xml.includes('shape=text') || xml.includes('rounded=1'),
+      xml.includes('shape=text') || /rounded=[01]/.test(xml),
       'formula nodes should remain dedicated annotation nodes'
     )
     assert.ok(xml.includes('fontFamily=Times New Roman, serif'), 'formula nodes should preserve serif typography')
@@ -1261,9 +1267,16 @@ describe('Phase 2.3b: text fidelity', () => {
 
     const xml = specToDrawioXml(spec)
     assert.ok(xml.includes('<mxPoint x="0" y="-18" as="offset"/>'), 'edge labels should preserve the explicit offset')
-    assert.match(xml, /<mxCell id="\d+" value="" style="[^"]*" edge="1"/, 'parent edge cell should not store duplicate label text')
+    assert.match(
+      xml,
+      /<mxCell id="\d+" value="" style="[^"]*" edge="1"/,
+      'parent edge cell should not store duplicate label text'
+    )
     assert.equal((xml.match(/value="s\(t\)"/g) || []).length, 1, 'edge label text should be stored once')
-    assert.ok(xml.includes('fontFamily=Times New Roman'), 'edge labels should emit a default font family')
+    assert.ok(
+      xml.includes('fontFamily=Inter, Roboto, system-ui, -apple-system, sans-serif'),
+      'edge labels should emit the theme typography font family'
+    )
   })
 
   it('should force all covered text surfaces from meta.font and override node-level fontFamily', () => {
@@ -1431,9 +1444,12 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
     }
   }
 
-  it('node with icon aws.lambda should have shape=mxgraph.aws4.lambda in style', () => {
+  it('node with icon aws.lambda should emit the aws4 resourceIcon compound style', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Lambda', icon: 'aws.lambda' }, theme)
-    assert.ok(style.includes('shape=mxgraph.aws4.lambda'), 'should contain shape=mxgraph.aws4.lambda')
+    assert.ok(
+      style.includes('shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda'),
+      'resource-only aws4 icons must use shape=resourceIcon;resIcon=<name>'
+    )
     assert.ok(style.includes('verticalLabelPosition=bottom'), 'should contain verticalLabelPosition=bottom')
     assert.ok(style.includes('labelBackgroundColor=none'), 'should contain labelBackgroundColor=none')
   })
@@ -2053,5 +2069,104 @@ describe('specToDrawioXml validation integration', () => {
       () => specToDrawioXml(spec, { silent: true }),
       'non-strict mode should not throw on invalid color'
     )
+  })
+})
+
+// ============================================================================
+// Theme Style Fidelity Tests (rounded corners, typography, shape catalog)
+// ============================================================================
+
+describe('theme style fidelity', () => {
+  const academic = loadTheme('academic')
+  const techBlue = loadTheme('tech-blue')
+
+  it('academic theme renders service nodes with square corners', () => {
+    const style = generateNodeStyle({ id: 's1', label: 'Encoder', type: 'service' }, academic)
+    assert.ok(style.includes('rounded=0'), 'academic service nodes should be square')
+    assert.ok(!style.includes('arcSize='), 'square corners should not carry an arcSize')
+  })
+
+  it('academic theme renders modules with square corners', () => {
+    const style = generateModuleStyle({ id: 'm1', label: 'Encoder Stack' }, academic)
+    assert.ok(style.includes('rounded=0'), 'academic modules should be square (module.rounded: 0)')
+    assert.ok(!style.includes('arcSize='), 'square modules should not carry an arcSize')
+  })
+
+  it('terminal stadium shapes keep their semantic rounding under square themes', () => {
+    const style = generateNodeStyle({ id: 't1', label: 'Start', type: 'terminal' }, academic)
+    assert.ok(style.includes('arcSize=50'), 'stadium rounding is shape semantics, not decoration')
+  })
+
+  it('tech-blue theme rounded token overrides SHAPE_STYLES arcSize', () => {
+    const style = generateNodeStyle({ id: 's2', label: 'API Gateway', type: 'service' }, techBlue)
+    assert.ok(style.includes('rounded=1'), 'tech-blue keeps rounded corners')
+    assert.ok(style.includes('arcSize=8'), 'tech-blue node.default.rounded=8 should win over the hardcoded 20')
+  })
+
+  it('theme typography supplies node fonts with meta.font staying strongest', () => {
+    const themed = generateNodeStyle({ id: 'f1', label: 'API Gateway', type: 'service' }, techBlue)
+    assert.ok(themed.includes('fontFamily=Inter, Roboto, system-ui, -apple-system, sans-serif'))
+
+    const formula = generateNodeStyle({ id: 'f2', label: '$$y=mx+b$$', type: 'formula' }, academic)
+    assert.ok(
+      formula.includes('fontFamily=Latin Modern, STIX Two Math, Times New Roman, serif'),
+      'academic formula nodes should use the theme formula stack'
+    )
+
+    const xml = specToDrawioXml(
+      {
+        meta: { theme: 'tech-blue', font: { primary: 'Georgia', cjk: 'SimHei', formula: 'STIX Two Math' } },
+        nodes: [{ id: 'n1', label: 'Gateway' }],
+        edges: [],
+        modules: []
+      },
+      { silent: true }
+    )
+    assert.ok(xml.includes('fontFamily=Georgia'), 'meta.font must override theme typography')
+    assert.ok(!xml.includes('fontFamily=Inter'), 'meta.font leaves no theme font on covered surfaces')
+  })
+
+  it('maps aws subnet devices to the swimlane group instead of an RDS icon', () => {
+    assert.strictEqual(deriveNodeIcon({ network: { vendor: 'aws', device: 'subnet' } }), null)
+    const style = generateNodeStyle(
+      { id: 'sn1', label: 'Public Subnet', network: { vendor: 'aws', device: 'subnet' } },
+      techBlue
+    )
+    assert.ok(style.includes('swimlane'), 'subnet nodes should render as swimlane group boxes')
+    assert.ok(!style.includes('rds_instance'), 'subnet must not map to the RDS icon')
+  })
+
+  it('emits aws4 resource icons through the compound resourceIcon style', () => {
+    const style = generateNodeStyle(
+      { id: 'ec1', label: 'App Server', network: { vendor: 'aws', device: 'ec2' } },
+      techBlue
+    )
+    assert.ok(
+      style.includes('shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2'),
+      'aws4 resource-only icons need shape=resourceIcon;resIcon=<name>'
+    )
+  })
+
+  it('keeps every SHAPE_STYLES stencil reference inside the shape catalog', () => {
+    for (const [type, style] of Object.entries(SHAPE_STYLES)) {
+      const match = /(?:^|;)shape=([^;]+)/.exec(style)
+      if (!match) continue
+      const kind = resolveShapeNameKind(match[1])
+      assert.ok(
+        kind === 'stencil' || kind === 'builtin' || kind === 'unchecked',
+        `SHAPE_STYLES.${type} emits unknown shape "${match[1]}" (${kind})`
+      )
+    }
+  })
+
+  it('warns on icons that resolve to unknown shape names', () => {
+    const warnings = validateShapeReferences({
+      nodes: [
+        { id: 'bad', label: 'Broken', icon: 'cisco.wireless.access_point' },
+        { id: 'good', label: 'DB', icon: 'aws.rds' }
+      ]
+    })
+    assert.equal(warnings.length, 1, 'only the unknown shape should warn')
+    assert.match(warnings[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
   })
 })
