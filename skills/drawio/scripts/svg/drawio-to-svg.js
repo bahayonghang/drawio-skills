@@ -35,6 +35,7 @@ function classifyShape(style) {
   if (shape === 'cloud') return 'cloud'
   if (shape === 'switch') return 'switch'
   if (shape === 'hexagon') return 'hexagon'
+  if (shape === 'cube') return 'cube'
   if (shape === 'mxgraph.cisco.firewalls.firewall') return 'firewall'
   if (shape === 'mxgraph.cisco.wireless.access_point') return 'wirelessAp'
   if (style.has('rhombus')) return 'rhombus'
@@ -104,6 +105,359 @@ function markerRef(arrowType, position) {
 }
 
 // ============================================================================
+// Geometry Resolution
+// ============================================================================
+
+const ROOT_PARENT_IDS = new Set(['0', '1'])
+const MAX_PARENT_DEPTH = 32
+
+/**
+ * Round a coordinate to 2 decimals for stable SVG output
+ * @param {number} n
+ * @returns {number}
+ */
+function fmt(n) {
+  return Math.round(n * 100) / 100
+}
+
+/**
+ * Compute absolute geometries for vertex cells.
+ * draw.io stores child vertex coordinates relative to their parent container;
+ * SVG needs absolute canvas coordinates, so parent offsets are accumulated
+ * along the parent chain (memoized, depth-capped against cycles).
+ * @param {object[]} cells
+ * @param {Map<string, object>} cellMap
+ * @returns {Map<string, {x: number, y: number, width: number, height: number}>}
+ */
+function computeAbsoluteGeometries(cells, cellMap) {
+  const originMemo = new Map()
+
+  function absoluteOrigin(cell, depth) {
+    if (!cell || !cell.geometry) return { x: 0, y: 0 }
+    if (cell.id && originMemo.has(cell.id)) return originMemo.get(cell.id)
+    let x = cell.geometry.x
+    let y = cell.geometry.y
+    const parent = cell.parent && !ROOT_PARENT_IDS.has(cell.parent) ? cellMap.get(cell.parent) : null
+    if (parent && parent !== cell && parent.vertex && parent.geometry && depth < MAX_PARENT_DEPTH) {
+      const parentOrigin = absoluteOrigin(parent, depth + 1)
+      x += parentOrigin.x
+      y += parentOrigin.y
+    }
+    const origin = { x, y }
+    if (cell.id) originMemo.set(cell.id, origin)
+    return origin
+  }
+
+  const absGeo = new Map()
+  for (const cell of cells) {
+    if (!cell.id || !cell.vertex || !cell.geometry || cell.geometry.relative) continue
+    const origin = absoluteOrigin(cell, 0)
+    absGeo.set(cell.id, { x: origin.x, y: origin.y, width: cell.geometry.width, height: cell.geometry.height })
+  }
+  return absGeo
+}
+
+/**
+ * Compute center point of an absolute rect
+ * @param {{x: number, y: number, width: number, height: number}} rect
+ * @returns {{ x: number, y: number }}
+ */
+function rectCenter(rect) {
+  return {
+    x: rect.x + rect.width / 2,
+    y: rect.y + rect.height / 2
+  }
+}
+
+/**
+ * Read a fixed connection point (exitX/exitY or entryX/entryY) from an edge style
+ * @param {Map<string, string>} style
+ * @param {'exit'|'entry'} prefix
+ * @returns {{ xFrac: number, yFrac: number, dx: number, dy: number }|null}
+ */
+function readAnchor(style, prefix) {
+  const xFrac = Number(style.get(`${prefix}X`))
+  const yFrac = Number(style.get(`${prefix}Y`))
+  if (!Number.isFinite(xFrac) || !Number.isFinite(yFrac)) return null
+  return {
+    xFrac,
+    yFrac,
+    dx: Number(style.get(`${prefix}Dx`)) || 0,
+    dy: Number(style.get(`${prefix}Dy`)) || 0
+  }
+}
+
+/**
+ * Resolve an anchor to an absolute point on a node rect
+ */
+function anchorPoint(rect, anchor) {
+  return {
+    x: rect.x + rect.width * anchor.xFrac + anchor.dx,
+    y: rect.y + rect.height * anchor.yFrac + anchor.dy
+  }
+}
+
+/**
+ * Clip the segment from a rect's center toward a reference point to the rect
+ * boundary, so floating edges start/end on the node border instead of its center
+ */
+function clipToRectBoundary(rect, toward) {
+  const center = rectCenter(rect)
+  const dx = toward.x - center.x
+  const dy = toward.y - center.y
+  if (dx === 0 && dy === 0) return center
+  const tx = dx !== 0 ? rect.width / 2 / Math.abs(dx) : Infinity
+  const ty = dy !== 0 ? rect.height / 2 / Math.abs(dy) : Infinity
+  const t = Math.min(tx, ty, 1)
+  return { x: center.x + dx * t, y: center.y + dy * t }
+}
+
+/**
+ * Map a fixed anchor to the node face it sits on
+ * @returns {'west'|'east'|'north'|'south'|null}
+ */
+function faceFromAnchor(anchor) {
+  if (anchor.xFrac === 0) return 'west'
+  if (anchor.xFrac === 1) return 'east'
+  if (anchor.yFrac === 0) return 'north'
+  if (anchor.yFrac === 1) return 'south'
+  return null
+}
+
+/**
+ * Infer the node face pointing toward a reference point (dominant axis wins)
+ */
+function dominantFace(rect, toward) {
+  const center = rectCenter(rect)
+  const dx = toward.x - center.x
+  const dy = toward.y - center.y
+  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? 'east' : 'west'
+  return dy >= 0 ? 'south' : 'north'
+}
+
+/**
+ * Midpoint of a node face, used as the connection point for floating orthogonal edges
+ */
+function faceMidpoint(rect, face) {
+  switch (face) {
+    case 'west':
+      return { x: rect.x, y: rect.y + rect.height / 2 }
+    case 'east':
+      return { x: rect.x + rect.width, y: rect.y + rect.height / 2 }
+    case 'north':
+      return { x: rect.x + rect.width / 2, y: rect.y }
+    default:
+      return { x: rect.x + rect.width / 2, y: rect.y + rect.height }
+  }
+}
+
+const ORTHO_STUB = 20
+
+function isHorizontalFace(face) {
+  return face === 'east' || face === 'west'
+}
+
+function rectBottom(rect, fallback) {
+  return rect ? rect.y + rect.height : fallback
+}
+
+function rectRight(rect, fallback) {
+  return rect ? rect.x + rect.width : fallback
+}
+
+/**
+ * Synthesize L/Z-shaped bend points for an orthogonal edge without waypoints.
+ * Segments leave/enter perpendicular to their faces; when the direct mid-line
+ * would cut back through a node body, the route detours around both rects.
+ * This is an approximation, not a replica of draw.io jetty routing.
+ * @returns {Array<{x: number, y: number}>}
+ */
+function synthesizeOrthogonalBends(start, startFace, end, endFace, sourceRect, targetRect) {
+  const horizontalStart = isHorizontalFace(startFace)
+  const horizontalEnd = isHorizontalFace(endFace)
+
+  if (horizontalStart && horizontalEnd) {
+    const midX = (start.x + end.x) / 2
+    const clearStart = startFace === 'east' ? midX >= start.x : midX <= start.x
+    const clearEnd = endFace === 'east' ? midX >= end.x : midX <= end.x
+    if (clearStart && clearEnd) {
+      if (start.y === end.y) return []
+      return [
+        { x: midX, y: start.y },
+        { x: midX, y: end.y }
+      ]
+    }
+    const stubX1 = startFace === 'east' ? start.x + ORTHO_STUB : start.x - ORTHO_STUB
+    const stubX2 = endFace === 'east' ? end.x + ORTHO_STUB : end.x - ORTHO_STUB
+    const detourY = Math.max(rectBottom(sourceRect, start.y), rectBottom(targetRect, end.y)) + ORTHO_STUB
+    return [
+      { x: stubX1, y: start.y },
+      { x: stubX1, y: detourY },
+      { x: stubX2, y: detourY },
+      { x: stubX2, y: end.y }
+    ]
+  }
+
+  if (!horizontalStart && !horizontalEnd) {
+    const midY = (start.y + end.y) / 2
+    const clearStart = startFace === 'south' ? midY >= start.y : midY <= start.y
+    const clearEnd = endFace === 'south' ? midY >= end.y : midY <= end.y
+    if (clearStart && clearEnd) {
+      if (start.x === end.x) return []
+      return [
+        { x: start.x, y: midY },
+        { x: end.x, y: midY }
+      ]
+    }
+    const stubY1 = startFace === 'south' ? start.y + ORTHO_STUB : start.y - ORTHO_STUB
+    const stubY2 = endFace === 'south' ? end.y + ORTHO_STUB : end.y - ORTHO_STUB
+    const detourX = Math.max(rectRight(sourceRect, start.x), rectRight(targetRect, end.x)) + ORTHO_STUB
+    return [
+      { x: start.x, y: stubY1 },
+      { x: detourX, y: stubY1 },
+      { x: detourX, y: stubY2 },
+      { x: end.x, y: stubY2 }
+    ]
+  }
+
+  // Mixed orientation: single L-shaped corner aligned with the start face
+  if (horizontalStart) return [{ x: end.x, y: start.y }]
+  return [{ x: start.x, y: end.y }]
+}
+
+/**
+ * Drop consecutive duplicate points from a polyline
+ */
+function dedupePoints(points) {
+  const result = []
+  for (const point of points) {
+    const prev = result[result.length - 1]
+    if (prev && prev.x === point.x && prev.y === point.y) continue
+    result.push(point)
+  }
+  return result
+}
+
+/**
+ * Resolve the full point sequence of an edge in absolute coordinates:
+ * fixed connection points, boundary clipping, waypoint playback and
+ * orthogonal L/Z approximation.
+ * @param {object} cell - parsed edge cell
+ * @param {Map<string, string>} style
+ * @param {Map<string, object>} absGeo - id -> absolute rect
+ * @returns {Array<{x: number, y: number}>} at least two points
+ */
+function resolveEdgePoints(cell, style, absGeo) {
+  const sourceRect = cell.source ? absGeo.get(cell.source) : null
+  const targetRect = cell.target ? absGeo.get(cell.target) : null
+
+  // Edge waypoints are stored relative to the edge's parent coordinate system
+  const parentRect = cell.parent ? absGeo.get(cell.parent) : null
+  const offsetX = parentRect ? parentRect.x : 0
+  const offsetY = parentRect ? parentRect.y : 0
+  const waypoints = (cell.geometry?.points || []).map((p) => ({ x: p.x + offsetX, y: p.y + offsetY }))
+
+  const exit = readAnchor(style, 'exit')
+  const entry = readAnchor(style, 'entry')
+  const orthogonal = style.get('edgeStyle') === 'orthogonalEdgeStyle'
+
+  let start = sourceRect ? rectCenter(sourceRect) : { x: 0, y: 0 }
+  let end = targetRect ? rectCenter(targetRect) : { x: 100, y: 100 }
+  let startFace = null
+  let endFace = null
+
+  if (sourceRect) {
+    if (exit) {
+      start = anchorPoint(sourceRect, exit)
+      startFace = faceFromAnchor(exit)
+    } else {
+      const toward = waypoints[0] || end
+      startFace = dominantFace(sourceRect, toward)
+      start =
+        orthogonal && !waypoints.length ? faceMidpoint(sourceRect, startFace) : clipToRectBoundary(sourceRect, toward)
+    }
+  }
+  if (targetRect) {
+    if (entry) {
+      end = anchorPoint(targetRect, entry)
+      endFace = faceFromAnchor(entry)
+    } else {
+      const toward = waypoints[waypoints.length - 1] || start
+      endFace = dominantFace(targetRect, toward)
+      end =
+        orthogonal && !waypoints.length ? faceMidpoint(targetRect, endFace) : clipToRectBoundary(targetRect, toward)
+    }
+  }
+
+  let bends = waypoints
+  if (!bends.length && orthogonal && sourceRect && targetRect) {
+    bends = synthesizeOrthogonalBends(
+      start,
+      startFace || dominantFace(sourceRect, end),
+      end,
+      endFace || dominantFace(targetRect, start),
+      sourceRect,
+      targetRect
+    )
+  }
+
+  return dedupePoints([start, ...bends, end])
+}
+
+/**
+ * Midpoint of the middle segment of a polyline, used for inline edge labels
+ */
+function polylineMidpoint(points) {
+  const segIndex = Math.floor((points.length - 1) / 2)
+  const a = points[segIndex]
+  const b = points[segIndex + 1] || a
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+}
+
+// ============================================================================
+// Text Rendering
+// ============================================================================
+
+const LINE_HEIGHT_FACTOR = 1.4
+
+/**
+ * Split a decoded label into logical lines. Literal newlines, <br> variants
+ * and residual &#10;/&#xA; entities all count as line breaks.
+ * @param {string} label
+ * @returns {string[]}
+ */
+function splitLabelLines(label) {
+  return String(label)
+    .replace(/&#(?:10|x0*a);/gi, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/\r/g, '')
+    .split('\n')
+}
+
+/**
+ * Render label lines as escaped <text> content. Multi-line labels become
+ * per-line <tspan> rows (SVG collapses raw newlines into spaces otherwise).
+ * @param {string[]} lines
+ * @param {number} x - text anchor x, repeated on each tspan
+ * @param {'top'|'middle'|'bottom'} verticalAlign - how lines stack around the text y
+ * @param {number} fontSize
+ * @returns {string}
+ */
+function renderTextLines(lines, x, verticalAlign, fontSize) {
+  if (lines.length <= 1) return escapeXml(lines[0] || '')
+  const lineHeight = Math.round(fontSize * LINE_HEIGHT_FACTOR * 10) / 10
+  const firstDy =
+    verticalAlign === 'top'
+      ? 0
+      : verticalAlign === 'bottom'
+        ? -(lines.length - 1) * lineHeight
+        : (-(lines.length - 1) / 2) * lineHeight
+  return lines
+    .map((line, i) => `<tspan x="${fmt(x)}" dy="${fmt(i === 0 ? firstDy : lineHeight)}">${escapeXml(line)}</tspan>`)
+    .join('')
+}
+
+// ============================================================================
 // Shape SVG Renderers
 // ============================================================================
 
@@ -111,10 +465,11 @@ function markerRef(arrowType, position) {
  * Render a vertex cell to SVG elements
  * @param {object} cell - parsed cell
  * @param {Map<string, string>} style - parsed style
+ * @param {{x: number, y: number, width: number, height: number}} [absRect] - absolute geometry (falls back to raw cell geometry)
  * @returns {string} SVG markup
  */
-function renderVertex(cell, style) {
-  const geo = cell.geometry || { x: 0, y: 0, width: 120, height: 60 }
+function renderVertex(cell, style, absRect) {
+  const geo = absRect || cell.geometry || { x: 0, y: 0, width: 120, height: 60 }
   const { x, y, width, height } = geo
 
   const fillColor = style.get('fillColor') || '#FFFFFF'
@@ -209,6 +564,28 @@ function renderVertex(cell, style) {
         `${x},${y + height / 2}`
       ].join(' ')
       parts.push(`<polygon points="${points}" ${baseAttrs}/>`)
+      break
+    }
+
+    case 'cube': {
+      // Approximation of the mxgraph cube stencil: front face plus top/right extrusion
+      const depth = Math.max(4, Math.min(Number(style.get('size')) || 20, Math.min(width, height) / 2))
+      const outer = [
+        `M ${x} ${y + depth}`,
+        `L ${x + depth} ${y}`,
+        `L ${x + width} ${y}`,
+        `L ${x + width} ${y + height - depth}`,
+        `L ${x + width - depth} ${y + height}`,
+        `L ${x} ${y + height}`,
+        'Z'
+      ].join(' ')
+      const innerEdges = [
+        `M ${x} ${y + depth} L ${x + width - depth} ${y + depth}`,
+        `M ${x + width - depth} ${y + depth} L ${x + width - depth} ${y + height}`,
+        `M ${x + width - depth} ${y + depth} L ${x + width} ${y}`
+      ].join(' ')
+      parts.push(`<path d="${outer}" ${baseAttrs}/>`)
+      parts.push(`<path d="${innerEdges}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>`)
       break
     }
 
@@ -346,10 +723,11 @@ function renderVertex(cell, style) {
     const dominantBaseline = verticalAlign === 'top' ? 'hanging' : verticalAlign === 'bottom' ? 'auto' : 'central'
     const fontWeightAttr = fontStyleBits & 1 ? ' font-weight="700"' : ''
     const fontStyleAttr = fontStyleBits & 2 ? ' font-style="italic"' : ''
+    const lines = splitLabelLines(label)
     parts.push(
       `<text x="${textX}" y="${textY}" text-anchor="${textAnchor}" dominant-baseline="${dominantBaseline}" ` +
         `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}"${fontWeightAttr}${fontStyleAttr}>` +
-        `${escapeXml(label)}</text>`
+        `${renderTextLines(lines, textX, verticalAlign, fontSize)}</text>`
     )
   }
 
@@ -361,26 +739,14 @@ function renderVertex(cell, style) {
 // ============================================================================
 
 /**
- * Compute center point of a cell's geometry
- * @param {object} cell
- * @returns {{ x: number, y: number }}
- */
-function cellCenter(cell) {
-  const geo = cell.geometry || { x: 0, y: 0, width: 120, height: 60 }
-  return {
-    x: geo.x + geo.width / 2,
-    y: geo.y + geo.height / 2
-  }
-}
-
-/**
  * Render an edge cell to SVG elements
  * @param {object} cell - parsed edge cell
  * @param {Map<string, string>} style - parsed style
- * @param {Map<string, object>} cellMap - id → cell lookup
+ * @param {Map<string, object>} absGeo - id -> absolute rect lookup
+ * @param {boolean} suppressLabel
  * @returns {string} SVG markup
  */
-function renderEdge(cell, style, cellMap, suppressLabel = false) {
+function renderEdge(cell, style, absGeo, suppressLabel = false) {
   const strokeColor = style.get('strokeColor') || '#000000'
   const strokeWidth = Number(style.get('strokeWidth')) || 1
   const fontColor = style.get('fontColor') || '#000000'
@@ -392,23 +758,7 @@ function renderEdge(cell, style, cellMap, suppressLabel = false) {
     dashAttr = ` stroke-dasharray="${pattern}"`
   }
 
-  const sourceCell = cell.source ? cellMap.get(cell.source) : null
-  const targetCell = cell.target ? cellMap.get(cell.target) : null
-
-  let x1 = 0,
-    y1 = 0,
-    x2 = 100,
-    y2 = 100
-  if (sourceCell) {
-    const c = cellCenter(sourceCell)
-    x1 = c.x
-    y1 = c.y
-  }
-  if (targetCell) {
-    const c = cellCenter(targetCell)
-    x2 = c.x
-    y2 = c.y
-  }
+  const points = resolveEdgePoints(cell, style, absGeo)
 
   const parts = []
 
@@ -418,36 +768,41 @@ function renderEdge(cell, style, cellMap, suppressLabel = false) {
   const endRef = markerRef(endArrow, 'end')
   const startRef = markerRef(startArrow, 'start')
   const colorStyle = ` style="color: ${strokeColor}"`
+  const strokeAttrs =
+    `stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}` + `${endRef}${startRef}${colorStyle} fill="none"`
 
-  parts.push(
-    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ` +
-      `stroke="${strokeColor}" stroke-width="${strokeWidth}"${dashAttr}` +
-      `${endRef}${startRef}${colorStyle} fill="none"/>`
-  )
+  if (points.length === 2) {
+    parts.push(
+      `<line x1="${fmt(points[0].x)}" y1="${fmt(points[0].y)}" x2="${fmt(points[1].x)}" y2="${fmt(points[1].y)}" ${strokeAttrs}/>`
+    )
+  } else {
+    const d = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${fmt(p.x)} ${fmt(p.y)}`).join(' ')
+    parts.push(`<path d="${d}" ${strokeAttrs}/>`)
+  }
 
   // Edge label
   const label = decodeEntities(cell.value)
   if (label && !suppressLabel) {
-    const midX = (x1 + x2) / 2
-    const midY = (y1 + y2) / 2
+    const mid = polylineMidpoint(points)
+    const lines = splitLabelLines(label)
     parts.push(
-      `<text x="${midX}" y="${midY - 6}" text-anchor="middle" dominant-baseline="auto" ` +
-        `font-size="${fontSize}" fill="${fontColor}">${escapeXml(label)}</text>`
+      `<text x="${fmt(mid.x)}" y="${fmt(mid.y - 6)}" text-anchor="middle" dominant-baseline="auto" ` +
+        `font-size="${fontSize}" fill="${fontColor}">${renderTextLines(lines, mid.x, 'bottom', fontSize)}</text>`
     )
   }
 
   return parts.join('\n')
 }
 
-function renderEdgeLabel(cell, style, cellMap) {
+function renderEdgeLabel(cell, style, cellMap, absGeo) {
   const parentEdge = cell.parent ? cellMap.get(cell.parent) : null
   if (!parentEdge) return ''
-  const sourceCell = parentEdge.source ? cellMap.get(parentEdge.source) : null
-  const targetCell = parentEdge.target ? cellMap.get(parentEdge.target) : null
-  if (!sourceCell || !targetCell) return ''
+  const sourceRect = parentEdge.source ? absGeo.get(parentEdge.source) : null
+  const targetRect = parentEdge.target ? absGeo.get(parentEdge.target) : null
+  if (!sourceRect || !targetRect) return ''
 
-  const source = cellCenter(sourceCell)
-  const target = cellCenter(targetCell)
+  const source = rectCenter(sourceRect)
+  const target = rectCenter(targetRect)
   const rawLabelX = Number(cell.geometry?.labelX)
   const labelX = Number.isFinite(rawLabelX) ? rawLabelX : 0.5
   const offset = cell.geometry?.offset || { x: 0, y: -6 }
@@ -459,11 +814,12 @@ function renderEdgeLabel(cell, style, cellMap) {
   const fontColor = style.get('fontColor') || '#000000'
   const fontSize = Number(style.get('fontSize')) || 11
   const fontFamily = style.get('fontFamily') || 'sans-serif'
+  const lines = splitLabelLines(label)
 
   return (
-    `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" ` +
+    `<text x="${fmt(x)}" y="${fmt(y)}" text-anchor="middle" dominant-baseline="central" ` +
     `font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" fill="${fontColor}">` +
-    `${escapeXml(label)}</text>`
+    `${renderTextLines(lines, x, 'middle', fontSize)}</text>`
   )
 }
 
@@ -497,15 +853,28 @@ export function drawioToSvg(xmlString) {
   const edgeLabelParents = new Set(edgeLabels.map((v) => v.parent).filter(Boolean))
   const shapeVertices = vertices.filter((v) => !edgeLabelParents.has(v.id) && !parseStyle(v.style).has('edgeLabel'))
 
+  // Resolve container-relative coordinates to absolute canvas coordinates
+  const absGeo = computeAbsoluteGeometries(cells, cellMap)
+
   // Calculate viewBox dimensions from content if default
   let svgWidth = graph.pageWidth
   let svgHeight = graph.pageHeight
 
-  // Expand viewBox if any shape extends beyond page bounds
+  // Expand viewBox if any shape or waypoint extends beyond page bounds
   for (const v of shapeVertices) {
-    if (v.geometry) {
-      svgWidth = Math.max(svgWidth, v.geometry.x + v.geometry.width + 20)
-      svgHeight = Math.max(svgHeight, v.geometry.y + v.geometry.height + 20)
+    const geo = absGeo.get(v.id) || v.geometry
+    if (geo) {
+      svgWidth = Math.max(svgWidth, geo.x + geo.width + 20)
+      svgHeight = Math.max(svgHeight, geo.y + geo.height + 20)
+    }
+  }
+  for (const e of edges) {
+    const parentRect = e.parent ? absGeo.get(e.parent) : null
+    const offsetX = parentRect ? parentRect.x : 0
+    const offsetY = parentRect ? parentRect.y : 0
+    for (const p of e.geometry?.points || []) {
+      svgWidth = Math.max(svgWidth, p.x + offsetX + 20)
+      svgHeight = Math.max(svgHeight, p.y + offsetY + 20)
     }
   }
 
@@ -530,17 +899,17 @@ export function drawioToSvg(xmlString) {
   // Render vertices first, then edges on top
   for (const v of shapeVertices) {
     const style = parseStyle(v.style)
-    svgParts.push(renderVertex(v, style))
+    svgParts.push(renderVertex(v, style, absGeo.get(v.id)))
   }
 
   for (const e of edges) {
     const style = parseStyle(e.style)
-    svgParts.push(renderEdge(e, style, cellMap, edgeLabelParents.has(e.id)))
+    svgParts.push(renderEdge(e, style, absGeo, edgeLabelParents.has(e.id)))
   }
 
   for (const labelCell of edgeLabels) {
     const style = parseStyle(labelCell.style)
-    const rendered = renderEdgeLabel(labelCell, style, cellMap)
+    const rendered = renderEdgeLabel(labelCell, style, cellMap, absGeo)
     if (rendered) svgParts.push(rendered)
   }
 

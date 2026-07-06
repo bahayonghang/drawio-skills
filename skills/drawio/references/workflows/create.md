@@ -127,8 +127,8 @@ Step 12: Render
 ├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ├── For paper-quality diagrams prefer output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
 ├── For thesis / A4 / Word / PNG requests, add a matching PNG only when draw.io Desktop export is available
-├── Note: standalone SVG (without --use-desktop) is preview-quality (straight-line edges).
-│   For publication-grade vector output, add --use-desktop or export to .drawio and refine in draw.io.
+├── Note: standalone SVG (without --use-desktop) replays anchors/waypoints and approximates orthogonal routes (L/Z bends).
+│   For exact Desktop routing (jetty spacing, obstacle avoidance), add --use-desktop or refine in draw.io.
 └── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
 
 Step 13: Exported-Artifact Verification / Optional Live Handoff
