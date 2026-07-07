@@ -727,6 +727,7 @@ const ICON_ALIASES = {
   'aws.alb': 'aws.application_load_balancer',
   'aws.app_lb': 'aws.application_load_balancer',
   'aws.internet-gateway': 'aws.internet_gateway',
+  'aws.api-gateway': 'aws.api_gateway',
   'aws.igw': 'aws.internet_gateway',
   // aws4 has no plain ec2_instance stencil; mxgraph.aws4.ec2 is a resource icon
   'aws.ec2_instance': 'aws.ec2',
@@ -1287,6 +1288,20 @@ function normalizeLabelText(label) {
     .trim()
 }
 
+/**
+ * Estimate the rendered length of a label: math delimiters vanish and each
+ * TeX command renders as roughly one glyph, so counting raw source length
+ * would flag legitimate tensor formulas as verbose.
+ */
+function estimateVisibleLabelLength(label) {
+  return String(label || '')
+    .replace(/\$\$|\\\(|\\\)/g, '')
+    .replace(/\\[a-zA-Z]+/g, 'x')
+    .replace(/[{}^_]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim().length
+}
+
 function countManualLabelLines(label) {
   return String(label || '').split(/\r?\n/).length
 }
@@ -1680,6 +1695,123 @@ export function validateShapeReferences(spec) {
   return warnings
 }
 
+const IEEE_SINGLE_COLUMN_PT = 252
+const ACADEMIC_CANVAS_REVIEW_WIDTH = 1500
+
+/**
+ * Warn when an academic canvas is so wide that labels drop below 8pt after
+ * the figure is scaled to IEEE single-column width (3.5in = 252pt).
+ * @param {Object} spec
+ * @returns {string[]} warnings
+ */
+function collectAcademicLayoutSizeWarning(spec) {
+  let canvasWidth = null
+  try {
+    const explicit = parseCanvasSize(spec.meta?.canvas)
+    if (explicit) canvasWidth = explicit.width
+  } catch {
+    return []
+  }
+  if (canvasWidth == null) {
+    let maxX = 0
+    for (const node of spec.nodes || []) {
+      const bounds = normalizeNodeBounds(node)
+      if (bounds) maxX = Math.max(maxX, bounds.x + bounds.width)
+    }
+    if (maxX > 0) canvasWidth = maxX + 80
+  }
+  if (canvasWidth == null || canvasWidth <= ACADEMIC_CANVAS_REVIEW_WIDTH) return []
+
+  let minFontSize = Infinity
+  for (const node of spec.nodes || []) {
+    const fontSize = node.style?.fontSize
+    if (typeof fontSize === 'number') minFontSize = Math.min(minFontSize, fontSize)
+  }
+  if (!Number.isFinite(minFontSize)) minFontSize = 11
+
+  const effectivePt = (minFontSize * IEEE_SINGLE_COLUMN_PT) / canvasWidth
+  if (effectivePt >= 8) return []
+
+  const requiredFontSize = Math.ceil(canvasWidth / (IEEE_SINGLE_COLUMN_PT / 8))
+  return [
+    `Academic figure canvas is ${canvasWidth}px wide. Scaled to IEEE single-column width (3.5in = 252pt), the smallest label font (${minFontSize}px) prints at ~${effectivePt.toFixed(1)}pt (fontSize x 252 / canvas width), below the 8pt floor. Raise label fontSize to >= ${requiredFontSize}, narrow the canvas, target a double-column figure (7.16in = 516pt), or split the figure.`
+  ]
+}
+
+const KNOWN_META_KEYS = new Set([
+  'title',
+  'description',
+  'theme',
+  'layout',
+  'routing',
+  'profile',
+  'figureType',
+  'source',
+  'canvas',
+  'font',
+  'legend',
+  'replication',
+  'template'
+])
+
+const KNOWN_NODE_STYLE_KEYS = new Set([
+  'fillColor',
+  'strokeColor',
+  'strokeWidth',
+  'fontColor',
+  'fontSize',
+  'fontFamily',
+  'fontStyle',
+  'fontWeight',
+  'bold',
+  'italic',
+  'align',
+  'verticalAlign',
+  'spacingLeft',
+  'spacingRight',
+  'spacingTop',
+  'spacingBottom'
+])
+
+const KNOWN_MODULE_KEYS = new Set(['id', 'label', 'color', 'style'])
+
+/**
+ * Warn about spec keys the renderer silently ignores (schema drift):
+ * unknown meta keys, unknown node.style keys, unknown module keys.
+ * @param {Object} spec
+ * @returns {string[]} warnings
+ */
+export function validateSchemaDrift(spec) {
+  const warnings = []
+
+  const metaUnknown = Object.keys(spec.meta || {}).filter((key) => !KNOWN_META_KEYS.has(key))
+  if (metaUnknown.length > 0) {
+    warnings.push(
+      `Unknown meta key(s) ${metaUnknown.map((key) => `"${key}"`).join(', ')} are ignored by the renderer. Supported keys: ${[...KNOWN_META_KEYS].join(', ')}.`
+    )
+  }
+
+  for (const node of spec.nodes || []) {
+    const unknown = Object.keys(node.style || {}).filter((key) => !KNOWN_NODE_STYLE_KEYS.has(key))
+    if (unknown.length > 0) {
+      warnings.push(
+        `Node "${node.id}" style has unknown key(s) ${unknown.map((key) => `"${key}"`).join(', ')}; they are ignored. Use top-level node fields (e.g. type, icon) for shape selection.`
+      )
+    }
+  }
+
+  for (const module of spec.modules || []) {
+    const unknown = Object.keys(module || {}).filter((key) => !KNOWN_MODULE_KEYS.has(key))
+    if (unknown.length > 0) {
+      warnings.push(
+        `Module "${module.id}" has unknown key(s) ${unknown.map((key) => `"${key}"`).join(', ')}; they are ignored (module bounds are computed from member nodes).`
+      )
+    }
+  }
+
+  return warnings
+}
+
 export function validateAcademicProfile(spec) {
   const warnings = []
   const profile = resolveProfile(spec)
@@ -1726,9 +1858,12 @@ export function validateAcademicProfile(spec) {
 
   const verboseLabels = []
   for (const node of spec.nodes || []) {
-    const label = normalizeLabelText(node.label)
+    // Compact legends/callouts are single text nodes by design (see the
+    // playbook's node-efficient patterns); they are exempt from this rule.
+    if (node.type === 'text') continue
+    const visibleLength = estimateVisibleLabelLength(node.label)
     const lineCount = countManualLabelLines(node.label)
-    if (label.length > 40 || lineCount > 3) {
+    if (visibleLength > 40 || lineCount > 3) {
       verboseLabels.push(`node "${node.id}"`)
     }
   }
@@ -1747,13 +1882,7 @@ export function validateAcademicProfile(spec) {
     }
   }
 
-  const nodeCount = spec.nodes?.length || 0
-  const moduleCount = spec.modules?.length || 0
-  if (nodeCount > 18 || (moduleCount === 0 && nodeCount > 12)) {
-    warnings.push(
-      `Academic-paper profile is dense for a single-page figure (${nodeCount} nodes, ${moduleCount} modules). Split the figure or add modules before export.`
-    )
-  }
+  warnings.push(...collectAcademicLayoutSizeWarning(spec))
 
   return warnings
 }
@@ -1899,13 +2028,15 @@ export function specToDrawioXml(spec, options = {}) {
   const edgeWarnings = validateEdgeQuality(spec, layout)
   const academicWarnings = validateAcademicProfile(spec)
   const shapeWarnings = validateShapeReferences(spec)
+  const schemaDriftWarnings = validateSchemaDrift(spec)
   const allValidationWarnings = [
     ...colorWarnings,
     ...layoutWarnings,
     ...connectionPointWarnings,
     ...edgeWarnings,
     ...academicWarnings,
-    ...shapeWarnings
+    ...shapeWarnings,
+    ...schemaDriftWarnings
   ]
 
   if (allValidationWarnings.length > 0) {
@@ -2431,6 +2562,7 @@ export function checkComplexity(spec) {
   }
 
   // Check label lengths
+  const longLabelIds = []
   for (const node of spec.nodes || []) {
     if (node.label && node.label.length > 200) {
       warnings.push({
@@ -2438,11 +2570,19 @@ export function checkComplexity(spec) {
         message: `Node "${node.id}" label exceeds 200 characters (${node.label.length} chars)`
       })
     } else if (node.label && node.label.length > 14) {
-      warnings.push({
-        level: 'info',
-        message: `Node "${node.id}" label is long (${node.label.length} chars). Consider abbreviation.`
-      })
+      longLabelIds.push(node.id)
     }
+  }
+  if (longLabelIds.length > 0) {
+    const sample = longLabelIds
+      .slice(0, 3)
+      .map((id) => `"${id}"`)
+      .join(', ')
+    const suffix = longLabelIds.length > 3 ? ` +${longLabelIds.length - 3} more` : ''
+    warnings.push({
+      level: 'info',
+      message: `${longLabelIds.length} node label(s) exceed 14 characters (${sample}${suffix}). Consider abbreviation.`
+    })
   }
 
   return warnings

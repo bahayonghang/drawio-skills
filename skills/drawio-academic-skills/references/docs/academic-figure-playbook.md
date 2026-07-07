@@ -167,7 +167,7 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
 - id: legend_container
   label: "Legend"
   bounds: { x: 1000, y: 400, width: 200, height: 160 }
-  style: { shape: box, fillColor: "#FAFAFA" }
+  style: { fillColor: "#FAFAFA" }
 
 - id: legend_arrow_solid
   label: ""
@@ -175,9 +175,10 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
   style: { strokeColor: "#1E3A5F", strokeWidth: 2 }
 
 - id: legend_arrow_label
+  type: text
   label: "Data flow"
   bounds: { x: 1060, y: 426, width: 120, height: 16 }
-  style: { shape: text, fontSize: 11 }
+  style: { fontSize: 11 }
 # ... 10 more nodes for each legend item
 ```
 
@@ -185,6 +186,7 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
 
 ```yaml
 - id: legend
+  type: text
   label: |
     Legend
 
@@ -197,7 +199,6 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
     ■ Zone B: Conditional embedding
   bounds: { x: 1000, y: 400, width: 280, height: 140 }
   style:
-    shape: text
     align: left
     fontSize: 11
 ```
@@ -212,12 +213,12 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
 - id: bar_1
   label: ""
   bounds: { x: 100, y: 512, width: 18, height: 36 }
-  style: { shape: box, fillColor: "#22C55E" }
+  style: { fillColor: "#22C55E" }
 
 - id: bar_2
   label: ""
   bounds: { x: 122, y: 524, width: 18, height: 24 }
-  style: { shape: box, fillColor: "#4ADE80" }
+  style: { fillColor: "#4ADE80" }
 # ... 6 more bars
 ```
 
@@ -228,7 +229,6 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
   label: "ωₜ weight visualization (bar chart, t=1..L)"
   bounds: { x: 100, y: 512, width: 180, height: 40 }
   style:
-    shape: box
     fillColor: "#E8F5E9"
     strokeColor: "#16A34A"
     fontSize: 9
@@ -270,6 +270,34 @@ Split into multiple figures when:
 - Typical neural network figures: 25-35 nodes
 - Complex architectures often split into 2-3 sub-figures
 - Main figure shows 4-6 modules; detail figures zoom into 1-2 modules
+
+## Canvas and Print Sizing
+
+A figure is scaled to the column width of the paper, so canvas pixels have no fixed print size. When a figure is placed at full column width:
+
+```
+effective pt = fontSize x column-width-pt / canvas-width-px
+```
+
+IEEE column widths: single column 3.5in = 252pt, double column 7.16in = 516pt. Keep every label at 8pt or larger after scaling.
+
+**Minimum label fontSize for an 8pt print result**:
+
+| Canvas width | Single column (252pt) | Double column (516pt) |
+| ------------ | --------------------- | --------------------- |
+| 315px        | 10                    | 5                     |
+| 630px        | 20                    | 10                    |
+| 800px        | 26                    | 13                    |
+| 1000px       | 32                    | 16                    |
+| 1200px       | 39                    | 19                    |
+| 1600px       | 51                    | 25                    |
+
+Practical prescriptions:
+
+- Design the canvas for the target column from the start: about 315px for a single-column figure with 10px labels, about 630px for a double-column figure with 10px labels.
+- Wide architecture figures are double-column material; do not squeeze them into a single column.
+- Past 1500px canvas width, the validator warns when the smallest label falls below the single-column 8pt floor; raise font sizes, narrow the canvas, or split the figure (see When to Split).
+- IEEE vector submissions accept PS/EPS/PDF only (SVG is not on the list). Export a PDF via draw.io Desktop for IEEE targets.
 
 ## Final Quality Gate
 

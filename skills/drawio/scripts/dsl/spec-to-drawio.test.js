@@ -25,6 +25,8 @@ import {
   validateColorScheme,
   validateLayoutConsistency,
   validateShapeReferences,
+  validateAcademicProfile,
+  validateSchemaDrift,
   SHAPE_STYLES
 } from './spec-to-drawio.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
@@ -582,7 +584,7 @@ describe('checkComplexity', () => {
     }
     const warnings = checkComplexity(spec)
     assert.ok(
-      warnings.some((w) => w.level === 'info' && w.message.includes('long')),
+      warnings.some((w) => w.level === 'info' && w.message.includes('abbreviation') && w.message.includes('"n1"')),
       'should have info about long labels'
     )
   })
@@ -2168,5 +2170,145 @@ describe('theme style fidelity', () => {
     })
     assert.equal(warnings.length, 1, 'only the unknown shape should warn')
     assert.match(warnings[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
+  })
+})
+
+describe('academic consistency', () => {
+  const academicMeta = {
+    profile: 'academic-paper',
+    theme: 'academic',
+    figureType: 'architecture',
+    title: 'Figure',
+    description: 'Test figure'
+  }
+
+  it('exempts explicit text nodes from the verbose-label warning', () => {
+    const spec = {
+      meta: { ...academicMeta },
+      nodes: [
+        {
+          id: 'legend',
+          type: 'text',
+          label: 'Solid: data flow / Dashed: gradients / Dotted: control / Bold: main path / Thin: aux path'
+        }
+      ],
+      edges: []
+    }
+    const warnings = validateAcademicProfile(spec)
+    assert.ok(
+      !warnings.some((w) => w.includes('concise')),
+      'text nodes must be exempt from the verbose-label rule'
+    )
+  })
+
+  it('measures label verbosity by visible length, not raw TeX source length', () => {
+    const spec = {
+      meta: { ...academicMeta },
+      nodes: [
+        { id: 'math', label: String.raw`$$\mathbf{X} \in \mathbb{R}^{B \times D \times L}$$` },
+        { id: 'plain', label: 'A genuinely verbose plain-text label that keeps going well past forty characters' }
+      ],
+      edges: []
+    }
+    const verbose = validateAcademicProfile(spec).find((w) => w.includes('concise'))
+    assert.ok(verbose, 'plain long label still warns')
+    assert.ok(verbose.includes('"plain"'), 'plain node is named')
+    assert.ok(!verbose.includes('"math"'), 'TeX label with short visible text is not flagged')
+  })
+
+  it('no longer emits the academic density warning (checkComplexity owns density)', () => {
+    const spec = {
+      meta: { ...academicMeta },
+      nodes: Array.from({ length: 30 }, (_, i) => ({ id: `n${i}`, label: `N${i}` })),
+      edges: []
+    }
+    assert.ok(!validateAcademicProfile(spec).some((w) => w.includes('dense')))
+  })
+
+  it('warns when a wide canvas drops labels below 8pt at single-column width', () => {
+    const spec = {
+      meta: { ...academicMeta, canvas: '1600x900' },
+      nodes: [{ id: 'a', label: 'A', style: { fontSize: 10 } }],
+      edges: []
+    }
+    const sizeWarning = validateAcademicProfile(spec).find((w) => w.includes('252pt'))
+    assert.ok(sizeWarning, 'expected layout-size warning for 1600px canvas')
+    assert.ok(sizeWarning.includes('1600px'), 'mentions canvas width')
+    assert.ok(sizeWarning.includes('>= 51'), 'prescribes ceil(1600 / 31.5) = 51')
+  })
+
+  it('keeps existing-scale canvases (<= 1500px) silent', () => {
+    const spec = {
+      meta: { ...academicMeta, canvas: '1200x800' },
+      nodes: [{ id: 'a', label: 'A', style: { fontSize: 10 } }],
+      edges: []
+    }
+    assert.ok(!validateAcademicProfile(spec).some((w) => w.includes('252pt')))
+  })
+
+  it('flags unknown meta keys but accepts template metadata', () => {
+    const warnings = validateSchemaDrift({
+      meta: { title: 't', template: 'compact', canvasSize: '1200x800', gridSize: 8 },
+      nodes: [{ id: 'n1', label: 'L' }]
+    })
+    assert.equal(warnings.length, 1)
+    assert.ok(warnings[0].includes('"canvasSize"'))
+    assert.ok(warnings[0].includes('"gridSize"'))
+    assert.ok(!warnings[0].includes('"template"'))
+  })
+
+  it('flags unknown node.style keys such as shape and rounded', () => {
+    const warnings = validateSchemaDrift({
+      meta: { title: 't' },
+      nodes: [{ id: 'n1', label: 'L', style: { shape: 'box', rounded: false, fillColor: '#FFFFFF' } }]
+    })
+    assert.equal(warnings.length, 1)
+    assert.ok(warnings[0].includes('"n1"'))
+    assert.ok(warnings[0].includes('"shape"'))
+    assert.ok(warnings[0].includes('"rounded"'))
+    assert.ok(!warnings[0].includes('"fillColor"'))
+  })
+
+  it('flags unknown module keys such as bounds', () => {
+    const warnings = validateSchemaDrift({
+      meta: { title: 't' },
+      nodes: [{ id: 'n1', label: 'L' }],
+      modules: [{ id: 'm1', label: 'M', bounds: { x: 0, y: 0, width: 100, height: 100 } }]
+    })
+    assert.equal(warnings.length, 1)
+    assert.ok(warnings[0].includes('"m1"'))
+    assert.ok(warnings[0].includes('"bounds"'))
+  })
+
+  it('fails strict conversion when schema drift is present', () => {
+    const spec = {
+      meta: { title: 't', canvasSize: '1200x800' },
+      nodes: [{ id: 'n1', label: 'L' }],
+      edges: []
+    }
+    assert.throws(() => specToDrawioXml(spec, { strict: true, silent: true }), /canvasSize/)
+    assert.doesNotThrow(() => specToDrawioXml(spec, { silent: true }))
+  })
+
+  it('aggregates long-label infos and keeps the 200-char fatal per node', () => {
+    const longLabel = 'This label is definitely longer than fourteen characters'
+    const spec = {
+      nodes: [
+        { id: 'a', label: longLabel },
+        { id: 'b', label: longLabel },
+        { id: 'c', label: longLabel },
+        { id: 'd', label: longLabel },
+        { id: 'e', label: 'x'.repeat(201) }
+      ],
+      edges: []
+    }
+    const warnings = checkComplexity(spec)
+    const infos = warnings.filter((w) => w.level === 'info')
+    assert.equal(infos.length, 1)
+    assert.ok(infos[0].message.includes('4 node label(s)'))
+    assert.ok(infos[0].message.includes('"a", "b", "c" +1 more'))
+    const fatals = warnings.filter((w) => w.level === 'fatal')
+    assert.equal(fatals.length, 1)
+    assert.ok(fatals[0].message.includes('"e"'))
   })
 })

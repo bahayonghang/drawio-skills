@@ -9,7 +9,7 @@ nodes:
   - id: gateway
     label: API Gateway
     type: service
-    icon: aws.api-gateway
+    icon: aws.api_gateway
   - id: lambda
     label: Lambda
     type: service

@@ -149,6 +149,8 @@ Work-dir sidecars are still part of the reproducible bundle, but should live in 
 
 PNG/PDF/JPG are optional Desktop-enhanced exports. If Desktop is unavailable, report the missing export and provide the editable `.drawio`, SVG, work-dir sidecars, and fallback command or URL.
 
+IEEE vector submissions accept PS/EPS/PDF only (SVG is not on the accepted list). When the target venue is IEEE or applies similar rules, recommend a Desktop-exported PDF alongside the standard bundle; the default `.drawio` + `.svg` contract stays unchanged.
+
 ## Visual Verification
 
 Use exported artifacts for paper-readability checks before any browser path:
