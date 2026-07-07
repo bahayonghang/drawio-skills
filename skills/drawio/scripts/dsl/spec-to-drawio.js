@@ -405,6 +405,26 @@ function estimateTextSize(label, fontSize = 13) {
 }
 
 /**
+ * Raw text extent without the usability floors of estimateTextSize. Used by
+ * lint passes that compare declared bounds or label boxes against content.
+ */
+function measureLabelExtent(label, fontSize = 13, padding = 8) {
+  const lines = String(label).split(/\n|<br\s*\/?>/i)
+  let maxLineWidth = 0
+  for (const line of lines) {
+    let lineWidth = 0
+    for (const ch of line) {
+      lineWidth += /[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? fontSize * 1.05 : fontSize * 0.6
+    }
+    maxLineWidth = Math.max(maxLineWidth, lineWidth)
+  }
+  return {
+    width: Math.ceil(maxLineWidth) + padding,
+    height: Math.ceil(lines.length * fontSize * 1.4) + padding
+  }
+}
+
+/**
  * Get node dimensions based on size preset or node type
  */
 export function getNodeSize(size, nodeType = null, label = null) {
@@ -979,16 +999,16 @@ function generateNodeStyleWithSpec(node, theme, spec) {
   const defaultTheme = theme.node?.default || {}
   const isTextNode = semanticType === 'text'
 
-  const fillColor = resolveThemeColor(
-    node.style?.fillColor,
-    theme,
-    isTextNode ? 'none' : nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE'
-  )
-  const strokeColor = resolveThemeColor(
-    node.style?.strokeColor,
-    theme,
-    isTextNode ? 'none' : nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB'
-  )
+  // Plain text boxes always render transparent: captions, callouts, and
+  // vertical labels must never mask the grid or connectors behind them.
+  // Explicit fills on type "text" are ignored (use a shape node or formula
+  // type for a filled label); validateTextNodeStyles reports the override.
+  const fillColor = isTextNode
+    ? 'none'
+    : resolveThemeColor(node.style?.fillColor, theme, nodeTheme.fillColor || defaultTheme.fillColor || '#DBEAFE')
+  const strokeColor = isTextNode
+    ? 'none'
+    : resolveThemeColor(node.style?.strokeColor, theme, nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB')
   const strokeWidth =
     node.style?.strokeWidth ?? (isTextNode ? 0 : (nodeTheme.strokeWidth ?? defaultTheme.strokeWidth ?? 1.5))
   const fontColor = resolveThemeColor(
@@ -1011,7 +1031,6 @@ function generateNodeStyleWithSpec(node, theme, spec) {
       shapeStyle,
       'html=1',
       'whiteSpace=wrap',
-      'overflow=hidden',
       'labelBackgroundColor=none',
       `fillColor=${fillColor}`,
       `strokeColor=${strokeColor}`,
@@ -1071,6 +1090,8 @@ function generateNodeStyleWithSpec(node, theme, spec) {
   return parts.join(';')
 }
 
+const DEFAULT_ARROW_HEAD_SIZE = 12
+
 /**
  * Generate mxCell style string for a connector
  */
@@ -1099,9 +1120,22 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
     `endFill=${endFill ? 1 : 0}`
   ]
 
+  // Bold solid triangular heads by default: small stock arrowheads read as
+  // afterthoughts on 2px architecture connectors.
+  const endSize =
+    edge.style?.endSize ??
+    connectorTheme.endSize ??
+    (endArrow === 'block' || endArrow === 'classic' ? DEFAULT_ARROW_HEAD_SIZE : undefined)
+  if (endSize !== undefined) parts.push(`endSize=${endSize}`)
+
   if (startArrow) {
     parts.push(`startArrow=${startArrow}`)
     parts.push(`startFill=${startFill ? 1 : 0}`)
+    const startSize =
+      edge.style?.startSize ??
+      connectorTheme.startSize ??
+      (startArrow === 'block' || startArrow === 'classic' ? DEFAULT_ARROW_HEAD_SIZE : undefined)
+    if (startSize !== undefined) parts.push(`startSize=${startSize}`)
   }
 
   // Edge entry/exit routing
@@ -1198,7 +1232,19 @@ function formatNetworkEdgeLabel(edge) {
 }
 
 function defaultEdgeLabelOffset(edge) {
-  return edge.__routing?.orientation === 'vertical' ? { x: 12, y: 0 } : { x: 0, y: -12 }
+  // draw.io centers an edge label on the offset point, so the offset must
+  // cover half the label extent plus clearance, or wide CJK labels will sit
+  // right on top of the connector they annotate. A bent fallback edge anchors
+  // its label on the middle segment, which runs perpendicular to the overall
+  // orientation, so the clearing axis flips.
+  const label = formatNetworkEdgeLabel(edge)
+  const extent = label ? measureLabelExtent(label, edge.style?.fontSize ?? 11, 2) : { width: 0, height: 0 }
+  const vertical = edge.__routing?.orientation === 'vertical'
+  const clearHorizontally = edge.__bent ? !vertical : vertical
+  if (clearHorizontally) {
+    return { x: 8 + Math.ceil(extent.width / 2), y: 0 }
+  }
+  return { x: 0, y: -(8 + Math.ceil(extent.height / 2)) }
 }
 
 function resolveEdgeLabelOffset(edge) {
@@ -1212,6 +1258,19 @@ function resolveEdgeLabelOffset(edge) {
 // ============================================================================
 // XML Generation
 // ============================================================================
+
+const MATH_DELIMITER_PATTERN = /\$\$|\\\(|\\\[|`/
+
+/**
+ * XML attribute-value normalization folds literal newlines into spaces, so
+ * multi-line labels (including one-character-per-line vertical CJK labels)
+ * must travel as <br> tags, which html=1 labels render as real line breaks.
+ * Math labels keep their newlines: <br> inside $$...$$ breaks MathJax.
+ */
+function toHtmlLineBreaks(escapedLabel, rawLabel) {
+  if (MATH_DELIMITER_PATTERN.test(String(rawLabel))) return escapedLabel
+  return escapedLabel.replace(/\n/g, '&lt;br&gt;')
+}
 
 /**
  * Build draw.io XML from specification
@@ -1254,7 +1313,7 @@ export function buildXml(spec, theme, layout) {
     moduleIdMap.set(moduleId, cellId)
 
     const style = generateModuleStyleWithSpec(module, theme, spec)
-    const label = prepareMathLabel(module.label || moduleId)
+    const label = toHtmlLineBreaks(prepareMathLabel(module.label || moduleId), module.label || moduleId)
 
     cells.push(
       `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="1">` +
@@ -1272,7 +1331,7 @@ export function buildXml(spec, theme, layout) {
     nodeIdMap.set(node.id, cellId)
 
     const style = generateNodeStyleWithSpec(node, theme, spec)
-    const label = prepareMathLabel(node.label)
+    const label = toHtmlLineBreaks(prepareMathLabel(node.label), node.label)
     const parentId = node.module && moduleIdMap.has(node.module) ? moduleIdMap.get(node.module) : '1'
 
     // Adjust position relative to parent if in module
@@ -1302,7 +1361,7 @@ export function buildXml(spec, theme, layout) {
     const cellId = allocId()
     const style = generateConnectorStyle(edge, theme, routing)
     const rawEdgeLabel = formatNetworkEdgeLabel(edge)
-    const edgeLabel = rawEdgeLabel ? prepareMathLabel(rawEdgeLabel) : ''
+    const edgeLabel = rawEdgeLabel ? toHtmlLineBreaks(prepareMathLabel(rawEdgeLabel), rawEdgeLabel) : ''
 
     const edgeCellValue = rawEdgeLabel ? '' : edgeLabel
     let edgeXml = `<mxCell id="${cellId}" value="${edgeCellValue}" style="${style}" edge="1" parent="1" source="${sourceId}" target="${targetId}">`
@@ -1456,6 +1515,7 @@ export function validateColorScheme(spec, theme) {
 
   const checkColor = (value, context) => {
     if (!value) return
+    if (value === 'none' || value === 'transparent') return // explicit transparency
     if (validTokens.has(value)) return // valid theme token
     if (HEX_COLOR_REGEX.test(value)) return // valid hex color
     const tokenSamples = [...validTokens].slice(0, 3).join(', ')
@@ -1557,6 +1617,45 @@ export function validateLayoutConsistency(spec) {
   return warnings
 }
 
+const TRANSPARENT_STYLE_VALUES = new Set(['none', 'transparent'])
+
+/**
+ * Plain text nodes must stay transparent, and their declared bounds must be
+ * large enough for the content. The style generator already forces
+ * fillColor=none/strokeColor=none for type "text"; this pass surfaces ignored
+ * overrides and likely clipping so specs stay honest.
+ */
+export function validateTextNodeStyles(spec) {
+  const warnings = []
+  for (const node of spec.nodes || []) {
+    const semanticType = detectSemanticType(node.label, node.type, node.network)
+    if (semanticType !== 'text') continue
+
+    for (const field of ['fillColor', 'strokeColor']) {
+      const value = node.style?.[field]
+      if (value !== undefined && !TRANSPARENT_STYLE_VALUES.has(String(value).toLowerCase())) {
+        warnings.push(
+          `Text node "${node.id}" declares style.${field}="${value}", but plain text boxes always render transparent ` +
+            '(fillColor=none;strokeColor=none;labelBackgroundColor=none). Use a shape node or formula type for a filled label.'
+        )
+      }
+    }
+
+    const bounds = node.bounds
+    if (bounds && isFiniteNumber(bounds.width) && isFiniteNumber(bounds.height) && node.label) {
+      const fontSize = node.style?.fontSize ?? 13
+      const extent = measureLabelExtent(node.label, fontSize, 8)
+      if (bounds.width + 2 < extent.width || bounds.height + 2 < extent.height) {
+        warnings.push(
+          `Text node "${node.id}" bounds ${bounds.width}x${bounds.height} are smaller than the estimated content size ` +
+            `${extent.width}x${extent.height}; the label may clip or wrap badly. Enlarge bounds or shorten the text.`
+        )
+      }
+    }
+  }
+  return warnings
+}
+
 const FACE_SLOTS = [0.25, 0.5, 0.75, 0.33, 0.66, 0.2, 0.8]
 
 function resolveProfile(spec) {
@@ -1573,7 +1672,19 @@ function detectEdgeFaces(sourcePos, targetPos) {
   const targetCenterY = targetPos.y + targetPos.height / 2
   const dx = targetCenterX - sourceCenterX
   const dy = targetCenterY - sourceCenterY
-  const horizontal = Math.abs(dx) >= Math.abs(dy)
+  // Prefer the axis whose face-to-face gap is positive: a negative gap means
+  // the shapes overlap on that axis, so routing along it would immediately
+  // clash with the shapes themselves (wide bars above narrow boxes, etc.).
+  const horizontalGap = Math.abs(dx) - (sourcePos.width + targetPos.width) / 2
+  const verticalGap = Math.abs(dy) - (sourcePos.height + targetPos.height) / 2
+  let horizontal
+  if (verticalGap >= 0 && horizontalGap < 0) {
+    horizontal = false
+  } else if (horizontalGap >= 0 && verticalGap < 0) {
+    horizontal = true
+  } else {
+    horizontal = Math.abs(dx) >= Math.abs(dy)
+  }
 
   if (horizontal) {
     return {
@@ -1632,6 +1743,89 @@ function getSlot(index) {
   return FACE_SLOTS[index % FACE_SLOTS.length]
 }
 
+const CONNECTION_CORNER_MARGIN = 8
+const CONNECTION_MIN_SEPARATION = 30
+
+/**
+ * Interval of absolute coordinates (X for vertical edges, Y for horizontal
+ * edges) where both faces can host the same connection coordinate, keeping the
+ * orthogonal edge a single straight segment. Null when the faces do not
+ * overlap on the shared axis and a bend is genuinely required.
+ */
+function sharedAxisInterval(sourcePos, targetPos, orientation) {
+  const vertical = orientation === 'vertical'
+  const lo = vertical ? Math.max(sourcePos.x, targetPos.x) : Math.max(sourcePos.y, targetPos.y)
+  const hi = vertical
+    ? Math.min(sourcePos.x + sourcePos.width, targetPos.x + targetPos.width)
+    : Math.min(sourcePos.y + sourcePos.height, targetPos.y + targetPos.height)
+  const min = lo + CONNECTION_CORNER_MARGIN
+  const max = hi - CONNECTION_CORNER_MARGIN
+  return min <= max ? { lo: min, hi: max } : null
+}
+
+/**
+ * Straight edges anchor on the center of the narrower face: a small box
+ * connects from its own center straight into the larger box, which is how
+ * hand-drawn architecture diagrams keep their vertical arrows straight.
+ */
+function preferredSharedCoordinate(sourcePos, targetPos, orientation, interval) {
+  const vertical = orientation === 'vertical'
+  const sourceSpan = vertical ? sourcePos.width : sourcePos.height
+  const targetSpan = vertical ? targetPos.width : targetPos.height
+  const sourceCenter = vertical ? sourcePos.x + sourcePos.width / 2 : sourcePos.y + sourcePos.height / 2
+  const targetCenter = vertical ? targetPos.x + targetPos.width / 2 : targetPos.y + targetPos.height / 2
+  const preferred = sourceSpan <= targetSpan ? sourceCenter : targetCenter
+  return Math.min(interval.hi, Math.max(interval.lo, preferred))
+}
+
+function roundFraction(value) {
+  return Math.round(value * 10000) / 10000
+}
+
+/**
+ * Spread straight edges that landed within CONNECTION_MIN_SEPARATION of each
+ * other on the same physical face. Moving an edge moves both endpoints
+ * together, so collinearity is preserved; clamping keeps every edge inside its
+ * own shared interval.
+ */
+function spreadSharedCoordinates(edges) {
+  const faceGroups = new Map()
+  for (const edge of edges) {
+    if (!edge.__shared) continue
+    const keys = [`${edge.from}:${edge.__routing.sourceFace}`, `${edge.to}:${edge.__routing.targetFace}`]
+    for (const key of keys) {
+      if (!faceGroups.has(key)) faceGroups.set(key, [])
+      faceGroups.get(key).push(edge)
+    }
+  }
+  const sortedKeys = [...faceGroups.keys()].sort()
+  for (const key of sortedKeys) {
+    const group = faceGroups
+      .get(key)
+      .slice()
+      .sort((a, b) => a.__shared.coord - b.__shared.coord)
+    let start = 0
+    while (start < group.length) {
+      let end = start
+      while (
+        end + 1 < group.length &&
+        group[end + 1].__shared.coord - group[end].__shared.coord < CONNECTION_MIN_SEPARATION
+      ) {
+        end++
+      }
+      if (end > start) {
+        const cluster = group.slice(start, end + 1)
+        const mean = cluster.reduce((sum, item) => sum + item.__shared.coord, 0) / cluster.length
+        cluster.forEach((item, index) => {
+          const desired = mean + (index - (cluster.length - 1) / 2) * CONNECTION_MIN_SEPARATION
+          item.__shared.coord = Math.min(item.__shared.interval.hi, Math.max(item.__shared.interval.lo, desired))
+        })
+      }
+      start = end + 1
+    }
+  }
+}
+
 function buildRoutedEdges(spec, layout) {
   const { positions } = layout
   const declaredLayout = spec.meta?.layout || 'horizontal'
@@ -1671,6 +1865,7 @@ function buildRoutedEdges(spec, layout) {
       }
       edge.waypoints = dedupedWaypoints
       if (edge.waypoints.length > 0) {
+        edge.__bent = true
         continue
       }
     }
@@ -1697,10 +1892,26 @@ function buildRoutedEdges(spec, layout) {
         }
         edge.waypoints = dedupedWaypoints
         if (edge.waypoints.length > 0) {
+          edge.__bent = true
           continue
         }
       }
     }
+
+    const hasManualPoints =
+      edge.style.exitX !== undefined ||
+      edge.style.exitY !== undefined ||
+      edge.style.entryX !== undefined ||
+      edge.style.entryY !== undefined
+    const interval = hasManualPoints ? null : sharedAxisInterval(sourcePos, targetPos, faces.orientation)
+    if (interval) {
+      edge.__shared = {
+        interval,
+        coord: preferredSharedCoordinate(sourcePos, targetPos, faces.orientation, interval)
+      }
+      continue
+    }
+    edge.__bent = !hasManualPoints
 
     const sourceKey = `${edge.from}:${faces.sourceFace}`
     const targetKey = `${edge.to}:${faces.targetFace}`
@@ -1711,21 +1922,119 @@ function buildRoutedEdges(spec, layout) {
     targetGroups.get(targetKey).push(edge)
   }
 
-  for (const group of sourceGroups.values()) {
-    group.forEach((edge, index) => {
-      const slot = group.length === 1 ? 0.5 : getSlot(index)
-      applyFaceSlot(edge.style, edge.__routing.sourceFace, slot)
-    })
+  spreadSharedCoordinates(edges)
+
+  const usedFaceCoords = new Map()
+  const faceCoordsFor = (nodeId, face) => {
+    const key = `${nodeId}:${face}`
+    if (!usedFaceCoords.has(key)) usedFaceCoords.set(key, [])
+    return usedFaceCoords.get(key)
   }
 
-  for (const group of targetGroups.values()) {
-    group.forEach((edge, index) => {
-      const slot = group.length === 1 ? 0.5 : getSlot(index)
-      applyTargetFaceSlot(edge.style, edge.__routing.targetFace, slot)
-    })
+  for (const edge of edges) {
+    if (!edge.__shared) continue
+    const sourcePos = positions.get(edge.from)
+    const targetPos = positions.get(edge.to)
+    const { coord } = edge.__shared
+    const style = edge.style
+    if (edge.__routing.orientation === 'vertical') {
+      style.exitX = roundFraction((coord - sourcePos.x) / sourcePos.width)
+      style.exitY = edge.__routing.sourceFace === 'bottom' ? 1 : 0
+      style.entryX = roundFraction((coord - targetPos.x) / targetPos.width)
+      style.entryY = edge.__routing.targetFace === 'top' ? 0 : 1
+    } else {
+      style.exitX = edge.__routing.sourceFace === 'right' ? 1 : 0
+      style.exitY = roundFraction((coord - sourcePos.y) / sourcePos.height)
+      style.entryX = edge.__routing.targetFace === 'left' ? 0 : 1
+      style.entryY = roundFraction((coord - targetPos.y) / targetPos.height)
+    }
+    style.exitDx = 0
+    style.exitDy = 0
+    style.entryDx = 0
+    style.entryDy = 0
+    faceCoordsFor(edge.from, edge.__routing.sourceFace).push(coord)
+    faceCoordsFor(edge.to, edge.__routing.targetFace).push(coord)
+    delete edge.__shared
   }
+
+  assignFallbackFaceSlots(sourceGroups, positions, faceCoordsFor, true)
+  assignFallbackFaceSlots(targetGroups, positions, faceCoordsFor, false)
 
   return edges
+}
+
+function faceGeometry(pos, face) {
+  const vertical = face === 'top' || face === 'bottom'
+  return { vertical, base: vertical ? pos.x : pos.y, span: vertical ? pos.width : pos.height }
+}
+
+/**
+ * Legacy slot distribution for edges without a collinear interval. Slots now
+ * dodge coordinates already taken on the same physical face by straight edges
+ * or manual connection points, so mixed faces stay CONNECTION_MIN_SEPARATION
+ * apart instead of stacking at 0.5.
+ */
+function assignFallbackFaceSlots(groups, positions, faceCoordsFor, isSource) {
+  for (const group of groups.values()) {
+    const manualEdges = new Set()
+
+    for (const edge of group) {
+      const face = isSource ? edge.__routing.sourceFace : edge.__routing.targetFace
+      const nodeId = isSource ? edge.from : edge.to
+      const pos = positions.get(nodeId)
+      if (!pos) continue
+      const { vertical, base, span } = faceGeometry(pos, face)
+      const style = edge.style
+      const manual = isSource ? (vertical ? style.exitX : style.exitY) : (vertical ? style.entryX : style.entryY)
+      if (manual !== undefined) {
+        faceCoordsFor(nodeId, face).push(base + manual * span)
+        manualEdges.add(edge)
+      }
+    }
+
+    group.forEach((edge, index) => {
+      const face = isSource ? edge.__routing.sourceFace : edge.__routing.targetFace
+      const nodeId = isSource ? edge.from : edge.to
+      const pos = positions.get(nodeId)
+      const fallbackSlot = group.length === 1 ? 0.5 : getSlot(index)
+      if (!pos || manualEdges.has(edge)) {
+        if (isSource) applyFaceSlot(edge.style, face, fallbackSlot)
+        else applyTargetFaceSlot(edge.style, face, fallbackSlot)
+        return
+      }
+      const { base, span } = faceGeometry(pos, face)
+      const used = faceCoordsFor(nodeId, face)
+      // Prefer the legacy slot for this position in the group; only dodge to
+      // another slot when a straight edge or manual point already occupies the
+      // coordinate. Small faces cannot honor the separation at all, so the
+      // exhausted case falls back to the legacy slot unchanged.
+      let chosen
+      for (const slot of [fallbackSlot, 0.5, ...FACE_SLOTS]) {
+        const coord = base + slot * span
+        if (used.every((taken) => Math.abs(taken - coord) >= CONNECTION_MIN_SEPARATION)) {
+          chosen = slot
+          break
+        }
+      }
+      if (chosen === undefined) {
+        // The face is too small to honor the separation; take the slot that
+        // keeps the largest distance to everything already connected instead
+        // of stacking exactly onto an occupied coordinate.
+        let bestDistance = -1
+        for (const slot of [fallbackSlot, 0.5, ...FACE_SLOTS]) {
+          const coord = base + slot * span
+          const minDistance = used.length ? Math.min(...used.map((taken) => Math.abs(taken - coord))) : Infinity
+          if (minDistance > bestDistance) {
+            bestDistance = minDistance
+            chosen = slot
+          }
+        }
+      }
+      used.push(base + chosen * span)
+      if (isSource) applyFaceSlot(edge.style, face, chosen)
+      else applyTargetFaceSlot(edge.style, face, chosen)
+    })
+  }
 }
 
 export function validateConnectionPointPolicy(spec) {
@@ -1998,6 +2307,28 @@ export function validateEdgeQuality(spec, layout) {
       }
     }
 
+    if (!hasWaypoints && edge.__routing) {
+      const orientation = edge.__routing.orientation
+      const vertical = orientation === 'vertical'
+      const exitFrac = vertical ? style.exitX : style.exitY
+      const entryFrac = vertical ? style.entryX : style.entryY
+      if (exitFrac !== undefined && entryFrac !== undefined) {
+        const absExit = vertical
+          ? sourcePos.x + exitFrac * sourcePos.width
+          : sourcePos.y + exitFrac * sourcePos.height
+        const absEntry = vertical
+          ? targetPos.x + entryFrac * targetPos.width
+          : targetPos.y + entryFrac * targetPos.height
+        const delta = Math.abs(absExit - absEntry)
+        if (delta > 0.5 && sharedAxisInterval(sourcePos, targetPos, orientation)) {
+          warnings.push(
+            `Edge "${edge.from}->${edge.to}" bends ${Math.round(delta)}px off a straight ${orientation} line. ` +
+              'A collinear connection exists on this axis; use the same absolute exit/entry coordinate.'
+          )
+        }
+      }
+    }
+
     if (!hasWaypoints) {
       const sourceCenterX = sourcePos.x + sourcePos.width / 2
       const sourceCenterY = sourcePos.y + sourcePos.height / 2
@@ -2060,6 +2391,149 @@ export function validateEdgeQuality(spec, layout) {
     }
   }
 
+  return warnings
+}
+
+const LABEL_COLLISION_WARNING_CAP = 12
+
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+}
+
+function polylineIntersectsRect(points, rect) {
+  for (let i = 1; i < points.length; i++) {
+    if (segmentIntersectsRect(points[i - 1], points[i], rect)) return true
+  }
+  return false
+}
+
+/**
+ * Approximate the rendered polyline of a routed edge: waypoints when present,
+ * otherwise the exit/entry points with the standard orthogonal mid-bend.
+ */
+function edgePolyline(edge, sourcePos, targetPos) {
+  const style = edge.style || {}
+  if (edge.waypoints?.length) {
+    const first = edge.waypoints[0]
+    const last = edge.waypoints[edge.waypoints.length - 1]
+    return [
+      clipPointToRect(sourcePos, first),
+      ...edge.waypoints.map((point) => ({ x: point.x, y: point.y })),
+      clipPointToRect(targetPos, last)
+    ]
+  }
+  if (style.exitX === undefined || style.entryX === undefined) return null
+  const start = { x: sourcePos.x + style.exitX * sourcePos.width, y: sourcePos.y + style.exitY * sourcePos.height }
+  const end = { x: targetPos.x + style.entryX * targetPos.width, y: targetPos.y + style.entryY * targetPos.height }
+  const vertical = edge.__routing?.orientation === 'vertical'
+  const straight = vertical ? Math.abs(start.x - end.x) < 0.5 : Math.abs(start.y - end.y) < 0.5
+  if (straight) return [start, end]
+  if (vertical) {
+    const midY = (start.y + end.y) / 2
+    return [start, { x: start.x, y: midY }, { x: end.x, y: midY }, end]
+  }
+  const midX = (start.x + end.x) / 2
+  return [start, { x: midX, y: start.y }, { x: midX, y: end.y }, end]
+}
+
+function pointAlongPolyline(points, fraction) {
+  let total = 0
+  for (let i = 1; i < points.length; i++) {
+    total += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y)
+  }
+  let remaining = total * fraction
+  for (let i = 1; i < points.length; i++) {
+    const segment = Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y)
+    if (remaining <= segment) {
+      const t = segment === 0 ? 0 : remaining / segment
+      return {
+        x: points[i - 1].x + (points[i].x - points[i - 1].x) * t,
+        y: points[i - 1].y + (points[i].y - points[i - 1].y) * t
+      }
+    }
+    remaining -= segment
+  }
+  return points[points.length - 1]
+}
+
+/**
+ * Heuristic lint for label clashes: edge labels on their own line, labels
+ * crossing other connectors, standalone text boxes crossed by connectors, and
+ * label/label overlap. Extents are estimated, so treat results as warnings.
+ */
+export function validateLabelCollisions(spec, layout) {
+  const warnings = []
+  const routedEdges = buildRoutedEdges(spec, layout)
+  const lines = []
+  const labelRects = []
+
+  for (const edge of routedEdges) {
+    const sourcePos = layout.positions.get(edge.from)
+    const targetPos = layout.positions.get(edge.to)
+    if (!sourcePos || !targetPos) continue
+    const points = edgePolyline(edge, sourcePos, targetPos)
+    if (!points) continue
+    const key = `${edge.from}->${edge.to}`
+    lines.push({ key, points })
+
+    const label = formatNetworkEdgeLabel(edge)
+    if (!label) continue
+    const fraction = edge.labelPosition === 'start' ? 0.2 : edge.labelPosition === 'end' ? 0.8 : 0.5
+    const anchor = pointAlongPolyline(points, fraction)
+    const offset = resolveEdgeLabelOffset(edge)
+    const extent = measureLabelExtent(label, edge.style?.fontSize ?? 11, 2)
+    labelRects.push({
+      key,
+      isTextNode: false,
+      rect: {
+        x: anchor.x + offset.x - extent.width / 2,
+        y: anchor.y + offset.y - extent.height / 2,
+        width: extent.width,
+        height: extent.height
+      }
+    })
+  }
+
+  for (const node of spec.nodes || []) {
+    if (detectSemanticType(node.label, node.type, node.network) !== 'text') continue
+    const pos = layout.positions.get(node.id)
+    if (!pos) continue
+    labelRects.push({ key: `text "${node.id}"`, isTextNode: true, rect: pos })
+  }
+
+  for (const label of labelRects) {
+    for (const line of lines) {
+      if (!label.isTextNode && label.key === line.key) {
+        if (polylineIntersectsRect(line.points, label.rect)) {
+          warnings.push(
+            `Label of edge "${label.key}" sits on its own connector; offset it 12-20px away from the line via labelOffset.`
+          )
+        }
+        continue
+      }
+      if (polylineIntersectsRect(line.points, label.rect)) {
+        const subject = label.isTextNode ? `Text node ${label.key}` : `Label of edge "${label.key}"`
+        warnings.push(`${subject} overlaps connector "${line.key}"; move the label or reroute the edge.`)
+      }
+    }
+  }
+
+  for (let i = 0; i < labelRects.length; i++) {
+    for (let j = i + 1; j < labelRects.length; j++) {
+      if (rectsOverlap(labelRects[i].rect, labelRects[j].rect)) {
+        warnings.push(
+          `Labels ${labelRects[i].key} and ${labelRects[j].key} overlap; separate them or shorten the text.`
+        )
+      }
+    }
+  }
+
+  if (warnings.length > LABEL_COLLISION_WARNING_CAP) {
+    const extra = warnings.length - LABEL_COLLISION_WARNING_CAP
+    return warnings
+      .slice(0, LABEL_COLLISION_WARNING_CAP)
+      .concat([`(+${extra} more label-collision warnings truncated)`])
+  }
   return warnings
 }
 
@@ -2235,6 +2709,8 @@ export function specToDrawioXml(spec, options = {}) {
   const layoutWarnings = validateLayoutConsistency(spec)
   const connectionPointWarnings = validateConnectionPointPolicy(spec)
   const edgeWarnings = validateEdgeQuality(spec, layout)
+  const textNodeWarnings = validateTextNodeStyles(spec)
+  const labelCollisionWarnings = validateLabelCollisions(spec, layout)
   const academicWarnings = validateAcademicProfile(spec)
   const shapeWarnings = validateShapeReferences(spec)
   const schemaDriftWarnings = validateSchemaDrift(spec)
@@ -2243,6 +2719,8 @@ export function specToDrawioXml(spec, options = {}) {
     ...layoutWarnings,
     ...connectionPointWarnings,
     ...edgeWarnings,
+    ...textNodeWarnings,
+    ...labelCollisionWarnings,
     ...academicWarnings,
     ...shapeWarnings,
     ...schemaDriftWarnings
@@ -2649,9 +3127,10 @@ function collectFullPageImageErrors(xml) {
  */
 export function validateXml(xml) {
   const errors = []
+  const warnings = []
 
   if (typeof xml !== 'string' || xml.trim() === '') {
-    return { valid: false, errors: ['XML must be a non-empty string'] }
+    return { valid: false, errors: ['XML must be a non-empty string'], warnings: [] }
   }
 
   // Check root structure
@@ -2718,6 +3197,13 @@ export function validateXml(xml) {
     const idMatch = /\bid="([^"]+)"/.exec(edgeAttr)
     const edgeId = idMatch ? idMatch[1] : '(unknown)'
 
+    if (!srcMatch || !tgtMatch) {
+      const missing = !srcMatch && !tgtMatch ? 'source and target' : !srcMatch ? 'source' : 'target'
+      warnings.push(
+        `Edge "${edgeId}" is not bound to nodes (missing ${missing}). ` +
+          'Connect modules with native bound edges (source/target node ids) instead of floating connectors.'
+      )
+    }
     if (srcMatch && !vertexIds.has(srcMatch[1])) {
       errors.push(`Edge "${edgeId}" references nonexistent source ID: "${srcMatch[1]}"`)
     }
@@ -2726,9 +3212,36 @@ export function validateXml(xml) {
     }
   }
 
+  // Arrow-look-alike vertices and opaque plain text boxes
+  const cellTagPattern = /<mxCell\s[^>]*>/g
+  while ((match = cellTagPattern.exec(xml)) !== null) {
+    const tag = match[0]
+    if (!/\bvertex="1"/.test(tag)) continue
+    const styleMatch = /\bstyle="([^"]*)"/.exec(tag)
+    if (!styleMatch) continue
+    const style = styleMatch[1]
+    const idMatch = /\bid="([^"]+)"/.exec(tag)
+    const cellId = idMatch ? idMatch[1] : '(unknown)'
+
+    const arrowShape = /(?:^|;)shape=(singleArrow|doubleArrow|triangle|mxgraph\.arrows2\.[^;"]*)/.exec(style)
+    if (arrowShape) {
+      warnings.push(
+        `Cell "${cellId}" uses arrow shape "${arrowShape[1]}" as a connector look-alike. ` +
+          'Connect modules with a native bound edge (endArrow=block;endFill=1) instead of standalone arrow shapes.'
+      )
+    }
+
+    if (/^text;/.test(style) && /fillColor=(#fff(fff)?|white)\b/i.test(style)) {
+      warnings.push(
+        `Cell "${cellId}" is a plain text box with a white background. ` +
+          'Plain text boxes must stay transparent: fillColor=none;strokeColor=none;labelBackgroundColor=none.'
+      )
+    }
+  }
+
   errors.push(...collectFullPageImageErrors(xml))
 
-  return { valid: errors.length === 0, errors }
+  return { valid: errors.length === 0, errors, warnings }
 }
 
 /**

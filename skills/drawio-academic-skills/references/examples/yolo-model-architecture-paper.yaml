@@ -102,12 +102,10 @@ edges:
     to: detectSmall
     type: data
     label: P3/P4
-    labelOffset: { x: 0, y: -16 }
   - from: p5
     to: detectLarge
     type: data
     label: P5
-    labelOffset: { x: 0, y: -16 }
   - from: detectSmall
     to: loss
     type: optional

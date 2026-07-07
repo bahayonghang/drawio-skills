@@ -113,5 +113,10 @@
     "id": "academic-replicate-text-comparison",
     "profile": "academic-paper",
     "prompt": "Replicate the uploaded academic figure into final .drawio and .svg, keep .spec.yaml and .arch.json in a work directory, and pay special attention to caption, callout, formula, and legend text positions. Record the visual comparison used for text-position self-checking."
+  },
+  {
+    "id": "replicate-straight-architecture",
+    "profile": "default",
+    "prompt": "复刻一张工业系统架构图：宽的 Web 浏览器条在顶部，下方算法服务器与 Web 服务器双向连接，所有垂直/水平箭头必须是共线直线（不允许 Z 形折弯），连接必须是绑定 source/target 的原生边并用加大的实心三角箭头（endSize=12），竖排中文标签一字一行且纯文本框透明背景。"
   }
 ]
