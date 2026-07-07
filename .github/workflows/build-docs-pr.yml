@@ -3,10 +3,16 @@ name: Build Documentation (PR Preview)
 on:
   pull_request:
     paths:
+      - '.github/workflows/build-docs-pr.yml'
       - 'docs/**'
       - 'skills/drawio/**'
       - 'package.json'
       - 'package-lock.json'
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
 
 jobs:
   build:
@@ -76,7 +82,7 @@ jobs:
             **Note:** This is a preview build. The documentation will be deployed to GitHub Pages when a release is published.
             `;
 
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
