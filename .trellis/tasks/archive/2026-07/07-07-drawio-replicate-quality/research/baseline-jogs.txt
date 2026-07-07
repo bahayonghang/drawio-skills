@@ -1,0 +1,35 @@
+算法服务器
+（基于P->Web浏览器
+（可视 V delta=228px exit(292,280) entry(520,104)
+Web浏览器
+（可视->Web服务器
+（基于 H delta=240px exit(960,72) entry(600,312)
+Web服务器
+（基于->Web浏览器
+（可视 H delta=224px exit(600,296) entry(960,72)
+Web服务器
+（基于->算法服务器
+（基于P H delta=16px exit(600,312) entry(464,296)
+Web服务器
+（基于->样本库 V delta=20px exit(780,344) entry(800,424)
+样本库->算法服务器
+（基于P H delta=136px exit(640,448) entry(464,312)
+算法服务器
+（基于P->数据中转数据库 V delta=0px exit(292,344) entry(292,528)
+样本库->工业大数据
+（基于S V delta=8px exit(800,472) entry(792,528)
+工业大数据
+（基于S->样本库 V delta=8px exit(792,528) entry(800,472)
+数据中转数据库->专家系统 H delta=158px exit(440,584) entry(104,742)
+专家系统->工业大数据
+（基于S H delta=172px exit(960,756) entry(624,584)
+DSC数采软件->专家系统 H delta=140px exit(360,896) entry(104,756)
+能耗数采软件->专家系统 V delta=16px exit(548,872) entry(532,784)
+Json数采软件->专家系统 H delta=140px exit(744,896) entry(960,756)
+DCS系统OPC服务->DSC数采软件 V delta=0px exit(252,992) entry(252,920)
+能耗系统OPC服务器->能耗数采软件 V delta=0px exit(548,992) entry(548,920)
+质量系统Json服务->Json数采软件 V delta=0px exit(852,992) entry(852,920)
+专家系统->算法服务器
+（基于P: waypoints/no explicit cp
+---
+edges with jog (delta>0.5px): 13
