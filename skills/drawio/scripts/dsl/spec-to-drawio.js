@@ -4,6 +4,7 @@
  */
 
 import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
+import { resolveShapeNameKind } from './shape-catalog.js'
 import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -266,7 +267,7 @@ const SHAPE_KEYWORDS = {
   ]
 }
 
-const SHAPE_STYLES = {
+export const SHAPE_STYLES = {
   // Traditional shapes
   service: 'rounded=1;arcSize=20',
   database: 'shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15',
@@ -281,12 +282,12 @@ const SHAPE_STYLES = {
   process: 'rounded=1;arcSize=20',
   router: 'ellipse',
   switch: 'shape=switch',
-  firewall: 'shape=mxgraph.cisco.firewalls.firewall;sketch=0',
+  firewall: 'shape=mxgraph.cisco.security.firewall;sketch=0',
   server: 'rounded=1;arcSize=12',
   load_balancer: 'shape=hexagon;perimeter=hexagonPerimeter2',
   subnet: 'swimlane;startSize=24',
   internet: 'ellipse;shape=cloud',
-  ap: 'shape=mxgraph.cisco.wireless.access_point;sketch=0',
+  ap: 'shape=mxgraph.cisco.misc.access_point;sketch=0',
 
   // Deep learning shapes
   input: 'rounded=1;arcSize=15',
@@ -491,6 +492,53 @@ function normalizeNodeBounds(node) {
 // Layout Engine
 // ============================================================================
 
+// North-South tiers for layout: tiered — external systems on top, endpoints at
+// the bottom. Explicit node.network.tier wins, then role, then semantic type.
+const NETWORK_ROLE_TIERS = {
+  internet: 0,
+  wan: 0,
+  isp: 0,
+  external: 0,
+  firewall: 1,
+  dmz: 1,
+  router: 1,
+  core: 2,
+  distribution: 3,
+  aggregation: 3,
+  access: 4,
+  switch: 4,
+  wireless: 4,
+  server: 5,
+  endpoint: 5,
+  host: 5,
+  storage: 5,
+  database: 5
+}
+
+const NETWORK_TYPE_TIERS = {
+  cloud: 0,
+  internet: 0,
+  firewall: 1,
+  router: 1,
+  load_balancer: 2,
+  switch: 4,
+  server: 5,
+  database: 5,
+  storage: 5,
+  user: 5,
+  terminal: 5
+}
+
+function resolveNetworkTier(node) {
+  const explicit = node.network?.tier
+  if (typeof explicit === 'number' && Number.isFinite(explicit)) return explicit
+  const role = typeof node.network?.role === 'string' ? node.network.role.toLowerCase() : null
+  if (role && NETWORK_ROLE_TIERS[role] !== undefined) return NETWORK_ROLE_TIERS[role]
+  const semanticType = detectSemanticType(node.label, node.type, node.network)
+  if (NETWORK_TYPE_TIERS[semanticType] !== undefined) return NETWORK_TYPE_TIERS[semanticType]
+  return 2.5
+}
+
 /**
  * Calculate positions for nodes based on layout type
  */
@@ -657,6 +705,42 @@ export function calculateLayout(spec, theme) {
         centerY + Math.sin(angle) * radius - size.height / 2
       )
     })
+  } else if (layout === 'tiered') {
+    // North-South rows: sort tiers ascending, center each row horizontally.
+    const autoNodes = nodes.filter((node) => !manuallyPositioned.has(node.id))
+    const tierBuckets = new Map()
+    for (const node of autoNodes) {
+      const tier = resolveNetworkTier(node)
+      if (!tierBuckets.has(tier)) tierBuckets.set(tier, [])
+      tierBuckets.get(tier).push(node)
+    }
+    const rowGap = 96
+    const nodeGap = 48
+    const rowMetrics = [...tierBuckets.keys()]
+      .sort((a, b) => a - b)
+      .map((tier) => {
+        const rowNodes = tierBuckets.get(tier)
+        const moduleOrder = new Map()
+        for (const node of rowNodes) {
+          const key = node.module || ''
+          if (!moduleOrder.has(key)) moduleOrder.set(key, moduleOrder.size)
+        }
+        rowNodes.sort((a, b) => moduleOrder.get(a.module || '') - moduleOrder.get(b.module || ''))
+        const sizes = rowNodes.map((node) => getNodeMetrics(node).size)
+        const width = sizes.reduce((sum, size) => sum + size.width, 0) + nodeGap * Math.max(rowNodes.length - 1, 0)
+        const height = Math.max(...sizes.map((size) => size.height))
+        return { rowNodes, sizes, width, height }
+      })
+    const maxRowWidth = rowMetrics.reduce((max, row) => Math.max(max, row.width), 0)
+    let rowY = 40
+    for (const row of rowMetrics) {
+      let nodeX = 40 + (maxRowWidth - row.width) / 2
+      row.rowNodes.forEach((node, index) => {
+        placeNode(node, nodeX, rowY)
+        nodeX += row.sizes[index].width + nodeGap
+      })
+      rowY += row.height + rowGap
+    }
   } else {
     // Hierarchical or other: simple grid layout
     let row = 0
@@ -726,12 +810,14 @@ const ICON_ALIASES = {
   'aws.alb': 'aws.application_load_balancer',
   'aws.app_lb': 'aws.application_load_balancer',
   'aws.internet-gateway': 'aws.internet_gateway',
+  'aws.api-gateway': 'aws.api_gateway',
   'aws.igw': 'aws.internet_gateway',
-  'aws.ec2': 'aws.ec2_instance',
+  // aws4 has no plain ec2_instance stencil; mxgraph.aws4.ec2 is a resource icon
+  'aws.ec2_instance': 'aws.ec2',
   'aws.rds': 'aws.rds_instance',
-  'cisco.firewall': 'mxgraph.cisco.firewalls.firewall',
-  'cisco.ap': 'mxgraph.cisco.wireless.access_point',
-  'cisco.access-point': 'mxgraph.cisco.wireless.access_point'
+  'cisco.firewall': 'mxgraph.cisco.security.firewall',
+  'cisco.ap': 'mxgraph.cisco.misc.access_point',
+  'cisco.access-point': 'mxgraph.cisco.misc.access_point'
 }
 
 const NETWORK_VENDOR_DEVICE_ICONS = {
@@ -740,17 +826,18 @@ const NETWORK_VENDOR_DEVICE_ICONS = {
     internet_gateway: 'aws.internet_gateway',
     load_balancer: 'aws.application_load_balancer',
     application_load_balancer: 'aws.application_load_balancer',
-    server: 'aws.ec2_instance',
-    ec2: 'aws.ec2_instance',
-    ec2_instance: 'aws.ec2_instance',
-    subnet: 'aws.rds_instance',
+    // aws4 has no plain ec2_instance stencil; aws.ec2 resolves via the aws4 resourceIcon style
+    server: 'aws.ec2',
+    ec2: 'aws.ec2',
+    ec2_instance: 'aws.ec2',
+    // subnet intentionally unmapped: the subnet semantic type renders as a swimlane group box
     rds: 'aws.rds_instance',
     rds_instance: 'aws.rds_instance'
   },
   cisco: {
-    firewall: 'mxgraph.cisco.firewalls.firewall',
-    ap: 'mxgraph.cisco.wireless.access_point',
-    access_point: 'mxgraph.cisco.wireless.access_point'
+    firewall: 'mxgraph.cisco.security.firewall',
+    ap: 'mxgraph.cisco.misc.access_point',
+    access_point: 'mxgraph.cisco.misc.access_point'
   }
 }
 
@@ -804,7 +891,8 @@ function resolveFontFamily(spec, theme, { text, semanticType, styleFontFamily = 
   const forcedFontFamily = safeStyleText(spec.meta?.font?.[bucket], null)
   if (forcedFontFamily) return forcedFontFamily
 
-  const fallbackFontFamily = safeStyleText(getDefaultFontPolicy(spec)[bucket], 'Times New Roman')
+  const themeFontFamily = safeStyleText(theme?.typography?.fontFamily?.[bucket], null)
+  const fallbackFontFamily = themeFontFamily || safeStyleText(getDefaultFontPolicy(spec)[bucket], 'Times New Roman')
   return safeStyleText(styleFontFamily, fallbackFontFamily)
 }
 
@@ -824,6 +912,22 @@ function pushTextSpacing(parts, style = {}) {
   pushNumberStyle(parts, 'spacingRight', style.spacingRight)
   pushNumberStyle(parts, 'spacingTop', style.spacingTop)
   pushNumberStyle(parts, 'spacingBottom', style.spacingBottom)
+}
+
+/**
+ * Apply a theme-declared corner radius to a SHAPE_STYLES base style.
+ * Only rectangle-family styles (carrying a rounded= token) are affected, and
+ * stadium shapes (arcSize>=50, e.g. terminal) keep their semantic rounding.
+ * themeRounded=0 emits square corners (rounded=0, no arcSize).
+ */
+function applyThemeRounding(shapeStyle, themeRounded) {
+  if (!isFiniteNumber(themeRounded)) return shapeStyle
+  if (!/(^|;)rounded=/.test(shapeStyle)) return shapeStyle
+  const arcMatch = /(?:^|;)arcSize=(\d+)/.exec(shapeStyle)
+  if (arcMatch && Number(arcMatch[1]) >= 50) return shapeStyle
+  const tokens = shapeStyle.split(';').filter((t) => t && !t.startsWith('rounded=') && !t.startsWith('arcSize='))
+  const rounding = themeRounded > 0 ? ['rounded=1', `arcSize=${Math.min(themeRounded, 50)}`] : ['rounded=0']
+  return [...rounding, ...tokens].join(';')
 }
 
 /**
@@ -886,13 +990,13 @@ function generateNodeStyleWithSpec(node, theme, spec) {
     isTextNode ? 'none' : nodeTheme.strokeColor || defaultTheme.strokeColor || '#2563EB'
   )
   const strokeWidth =
-    node.style?.strokeWidth ?? (isTextNode ? 0 : nodeTheme.strokeWidth || defaultTheme.strokeWidth || 1.5)
+    node.style?.strokeWidth ?? (isTextNode ? 0 : (nodeTheme.strokeWidth ?? defaultTheme.strokeWidth ?? 1.5))
   const fontColor = resolveThemeColor(
     node.style?.fontColor,
     theme,
     nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
   )
-  const fontSize = node.style?.fontSize || nodeTheme.fontSize || defaultTheme.fontSize || 13
+  const fontSize = node.style?.fontSize ?? nodeTheme.fontSize ?? defaultTheme.fontSize ?? 13
   const fontFamily = resolveFontFamily(spec, theme, {
     text: node.label,
     semanticType,
@@ -925,10 +1029,14 @@ function generateNodeStyleWithSpec(node, theme, spec) {
 
   // If node has an icon, override shape to use the icon
   const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
-  let effectiveShapeStyle = shapeStyle
+  let effectiveShapeStyle = applyThemeRounding(shapeStyle, nodeTheme.rounded ?? defaultTheme.rounded)
   const parts = []
   if (iconShape) {
-    effectiveShapeStyle = `shape=${iconShape}`
+    // aws4 service icons that only exist as resource icons need the compound style
+    effectiveShapeStyle =
+      resolveShapeNameKind(iconShape) === 'aws4ResourceIcon'
+        ? `shape=mxgraph.aws4.resourceIcon;resIcon=${iconShape}`
+        : `shape=${iconShape}`
     parts.push(effectiveShapeStyle)
     parts.push('html=1')
     parts.push('whiteSpace=wrap')
@@ -971,7 +1079,7 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
   const connectorTheme = theme.connector?.[connectorType] || theme.connector?.primary || {}
 
   const strokeColor = resolveThemeColor(edge.style?.strokeColor, theme, connectorTheme.strokeColor || '#1E293B')
-  const strokeWidth = edge.style?.strokeWidth || connectorTheme.strokeWidth || 2
+  const strokeWidth = edge.style?.strokeWidth ?? connectorTheme.strokeWidth ?? 2
   const dashed = edge.style?.dashed ?? connectorTheme.dashed ?? false
   const dashPattern = edge.style?.dashPattern || connectorTheme.dashPattern || '6 4'
   const endArrow = edge.style?.endArrow || connectorTheme.endArrow || 'block'
@@ -1034,11 +1142,11 @@ function generateModuleStyleWithSpec(module, theme, spec) {
     moduleTheme.fillColor || '#F8FAFC'
   )
   const strokeColor = resolveThemeColor(module.style?.strokeColor, theme, moduleTheme.strokeColor || '#E2E8F0')
-  const strokeWidth = moduleTheme.strokeWidth || 1
-  const rounded = moduleTheme.rounded || 12
+  const strokeWidth = moduleTheme.strokeWidth ?? 1
+  const rounded = moduleTheme.rounded ?? 12
   const fontColor = resolveThemeColor(module.style?.fontColor, theme, moduleTheme.labelFontColor || '#1E293B')
-  const fontSize = moduleTheme.labelFontSize || 14
-  const fontWeight = moduleTheme.labelFontWeight || 600
+  const fontSize = moduleTheme.labelFontSize ?? 14
+  const fontWeight = moduleTheme.labelFontWeight ?? 600
   const fontFamily = resolveFontFamily(spec, theme, {
     text: module.label,
     semanticType: 'text',
@@ -1050,8 +1158,8 @@ function generateModuleStyleWithSpec(module, theme, spec) {
   const dashPattern = module.style?.dashPattern || moduleTheme.dashPattern || '8 4'
 
   const parts = [
-    `rounded=1`,
-    `arcSize=${Math.min(rounded, 20)}`,
+    rounded > 0 ? `rounded=1` : `rounded=0`,
+    rounded > 0 ? `arcSize=${Math.min(rounded, 20)}` : '',
     'html=1',
     'whiteSpace=wrap',
     `fillColor=${fillColor}`,
@@ -1261,6 +1369,20 @@ function normalizeLabelText(label) {
   return String(label || '')
     .replace(/\s+/g, ' ')
     .trim()
+}
+
+/**
+ * Estimate the rendered length of a label: math delimiters vanish and each
+ * TeX command renders as roughly one glyph, so counting raw source length
+ * would flag legitimate tensor formulas as verbose.
+ */
+function estimateVisibleLabelLength(label) {
+  return String(label || '')
+    .replace(/\$\$|\\\(|\\\)/g, '')
+    .replace(/\\[a-zA-Z]+/g, 'x')
+    .replace(/[{}^_]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim().length
 }
 
 function countManualLabelLines(label) {
@@ -1591,14 +1713,14 @@ function buildRoutedEdges(spec, layout) {
 
   for (const group of sourceGroups.values()) {
     group.forEach((edge, index) => {
-      const slot = getSlot(index)
+      const slot = group.length === 1 ? 0.5 : getSlot(index)
       applyFaceSlot(edge.style, edge.__routing.sourceFace, slot)
     })
   }
 
   for (const group of targetGroups.values()) {
     group.forEach((edge, index) => {
-      const slot = getSlot(index)
+      const slot = group.length === 1 ? 0.5 : getSlot(index)
       applyTargetFaceSlot(edge.style, edge.__routing.targetFace, slot)
     })
   }
@@ -1632,6 +1754,144 @@ export function validateConnectionPointPolicy(spec) {
       )
     }
   }
+  return warnings
+}
+
+/**
+ * Warn when a node resolves to a shape name absent from the draw.io shape
+ * catalog: such names render as empty boxes in draw.io Desktop.
+ * @param {Object} spec
+ * @returns {string[]} warnings
+ */
+export function validateShapeReferences(spec) {
+  const warnings = []
+  for (const node of spec.nodes || []) {
+    const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
+    if (!iconShape) continue
+    if (resolveShapeNameKind(iconShape) === 'unknown') {
+      warnings.push(
+        `Node "${node.id}" resolves to unknown shape "${iconShape}" (not in the draw.io shape catalog); ` +
+          'it would render as an empty box in draw.io Desktop.'
+      )
+    }
+  }
+  return warnings
+}
+
+const IEEE_SINGLE_COLUMN_PT = 252
+const ACADEMIC_CANVAS_REVIEW_WIDTH = 1500
+
+/**
+ * Warn when an academic canvas is so wide that labels drop below 8pt after
+ * the figure is scaled to IEEE single-column width (3.5in = 252pt).
+ * @param {Object} spec
+ * @returns {string[]} warnings
+ */
+function collectAcademicLayoutSizeWarning(spec) {
+  let canvasWidth = null
+  try {
+    const explicit = parseCanvasSize(spec.meta?.canvas)
+    if (explicit) canvasWidth = explicit.width
+  } catch {
+    return []
+  }
+  if (canvasWidth == null) {
+    let maxX = 0
+    for (const node of spec.nodes || []) {
+      const bounds = normalizeNodeBounds(node)
+      if (bounds) maxX = Math.max(maxX, bounds.x + bounds.width)
+    }
+    if (maxX > 0) canvasWidth = maxX + 80
+  }
+  if (canvasWidth == null || canvasWidth <= ACADEMIC_CANVAS_REVIEW_WIDTH) return []
+
+  let minFontSize = Infinity
+  for (const node of spec.nodes || []) {
+    const fontSize = node.style?.fontSize
+    if (typeof fontSize === 'number') minFontSize = Math.min(minFontSize, fontSize)
+  }
+  if (!Number.isFinite(minFontSize)) minFontSize = 11
+
+  const effectivePt = (minFontSize * IEEE_SINGLE_COLUMN_PT) / canvasWidth
+  if (effectivePt >= 8) return []
+
+  const requiredFontSize = Math.ceil(canvasWidth / (IEEE_SINGLE_COLUMN_PT / 8))
+  return [
+    `Academic figure canvas is ${canvasWidth}px wide. Scaled to IEEE single-column width (3.5in = 252pt), the smallest label font (${minFontSize}px) prints at ~${effectivePt.toFixed(1)}pt (fontSize x 252 / canvas width), below the 8pt floor. Raise label fontSize to >= ${requiredFontSize}, narrow the canvas, target a double-column figure (7.16in = 516pt), or split the figure.`
+  ]
+}
+
+const KNOWN_META_KEYS = new Set([
+  'title',
+  'description',
+  'theme',
+  'layout',
+  'routing',
+  'profile',
+  'figureType',
+  'source',
+  'canvas',
+  'font',
+  'legend',
+  'replication',
+  'template'
+])
+
+const KNOWN_NODE_STYLE_KEYS = new Set([
+  'fillColor',
+  'strokeColor',
+  'strokeWidth',
+  'fontColor',
+  'fontSize',
+  'fontFamily',
+  'fontStyle',
+  'fontWeight',
+  'bold',
+  'italic',
+  'align',
+  'verticalAlign',
+  'spacingLeft',
+  'spacingRight',
+  'spacingTop',
+  'spacingBottom'
+])
+
+const KNOWN_MODULE_KEYS = new Set(['id', 'label', 'color', 'style'])
+
+/**
+ * Warn about spec keys the renderer silently ignores (schema drift):
+ * unknown meta keys, unknown node.style keys, unknown module keys.
+ * @param {Object} spec
+ * @returns {string[]} warnings
+ */
+export function validateSchemaDrift(spec) {
+  const warnings = []
+
+  const metaUnknown = Object.keys(spec.meta || {}).filter((key) => !KNOWN_META_KEYS.has(key))
+  if (metaUnknown.length > 0) {
+    warnings.push(
+      `Unknown meta key(s) ${metaUnknown.map((key) => `"${key}"`).join(', ')} are ignored by the renderer. Supported keys: ${[...KNOWN_META_KEYS].join(', ')}.`
+    )
+  }
+
+  for (const node of spec.nodes || []) {
+    const unknown = Object.keys(node.style || {}).filter((key) => !KNOWN_NODE_STYLE_KEYS.has(key))
+    if (unknown.length > 0) {
+      warnings.push(
+        `Node "${node.id}" style has unknown key(s) ${unknown.map((key) => `"${key}"`).join(', ')}; they are ignored. Use top-level node fields (e.g. type, icon) for shape selection.`
+      )
+    }
+  }
+
+  for (const module of spec.modules || []) {
+    const unknown = Object.keys(module || {}).filter((key) => !KNOWN_MODULE_KEYS.has(key))
+    if (unknown.length > 0) {
+      warnings.push(
+        `Module "${module.id}" has unknown key(s) ${unknown.map((key) => `"${key}"`).join(', ')}; they are ignored (module bounds are computed from member nodes).`
+      )
+    }
+  }
+
   return warnings
 }
 
@@ -1681,9 +1941,12 @@ export function validateAcademicProfile(spec) {
 
   const verboseLabels = []
   for (const node of spec.nodes || []) {
-    const label = normalizeLabelText(node.label)
+    // Compact legends/callouts are single text nodes by design (see the
+    // playbook's node-efficient patterns); they are exempt from this rule.
+    if (node.type === 'text') continue
+    const visibleLength = estimateVisibleLabelLength(node.label)
     const lineCount = countManualLabelLines(node.label)
-    if (label.length > 40 || lineCount > 3) {
+    if (visibleLength > 40 || lineCount > 3) {
       verboseLabels.push(`node "${node.id}"`)
     }
   }
@@ -1702,13 +1965,7 @@ export function validateAcademicProfile(spec) {
     }
   }
 
-  const nodeCount = spec.nodes?.length || 0
-  const moduleCount = spec.modules?.length || 0
-  if (nodeCount > 18 || (moduleCount === 0 && nodeCount > 12)) {
-    warnings.push(
-      `Academic-paper profile is dense for a single-page figure (${nodeCount} nodes, ${moduleCount} modules). Split the figure or add modules before export.`
-    )
-  }
+  warnings.push(...collectAcademicLayoutSizeWarning(spec))
 
   return warnings
 }
@@ -1807,6 +2064,120 @@ export function validateEdgeQuality(spec, layout) {
 }
 
 // ============================================================================
+// Layout Quality Metrics
+// ============================================================================
+
+function rectCenter(rect) {
+  return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }
+}
+
+function clipPointToRect(rect, toward) {
+  const center = rectCenter(rect)
+  const dx = toward.x - center.x
+  const dy = toward.y - center.y
+  if (dx === 0 && dy === 0) return center
+  const halfW = rect.width / 2
+  const halfH = rect.height / 2
+  const scaleX = dx !== 0 ? halfW / Math.abs(dx) : Infinity
+  const scaleY = dy !== 0 ? halfH / Math.abs(dy) : Infinity
+  const t = Math.min(scaleX, scaleY, 1)
+  return { x: center.x + dx * t, y: center.y + dy * t }
+}
+
+function orientationOf(a, b, c) {
+  const value = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+  if (Math.abs(value) < 1e-9) return 0
+  return value > 0 ? 1 : -1
+}
+
+function segmentsProperlyIntersect(p1, p2, p3, p4) {
+  const o1 = orientationOf(p1, p2, p3)
+  const o2 = orientationOf(p1, p2, p4)
+  const o3 = orientationOf(p3, p4, p1)
+  const o4 = orientationOf(p3, p4, p2)
+  return o1 !== o2 && o3 !== o4 && o1 !== 0 && o2 !== 0 && o3 !== 0 && o4 !== 0
+}
+
+function segmentIntersectsRect(p1, p2, rect) {
+  const inside = (p) => p.x > rect.x && p.x < rect.x + rect.width && p.y > rect.y && p.y < rect.y + rect.height
+  if (inside(p1) || inside(p2)) return true
+  const corners = [
+    { x: rect.x, y: rect.y },
+    { x: rect.x + rect.width, y: rect.y },
+    { x: rect.x + rect.width, y: rect.y + rect.height },
+    { x: rect.x, y: rect.y + rect.height }
+  ]
+  for (let i = 0; i < 4; i++) {
+    if (segmentsProperlyIntersect(p1, p2, corners[i], corners[(i + 1) % 4])) return true
+  }
+  return false
+}
+
+/**
+ * Readability metrics over the routed layout: how many edges cut through
+ * unrelated nodes, how many edge pairs cross, and the total polyline length.
+ * Edge endpoints are approximated by center-to-boundary clipping; waypoints
+ * are honored, so orthogonal (elk) routes are measured on their real path.
+ */
+export function computeLayoutQualityMetrics(spec, options = {}) {
+  const theme = options.theme || loadTheme(spec.meta?.theme || 'tech-blue')
+  const layout = options.layout || calculateLayout(spec, theme)
+  const routedEdges = buildRoutedEdges(spec, layout)
+  const { positions } = layout
+
+  let edgeNodeCrossings = 0
+  let edgeEdgeCrossings = 0
+  let totalEdgeLength = 0
+
+  const polylines = []
+  for (const edge of routedEdges) {
+    const sourceRect = positions.get(edge.from)
+    const targetRect = positions.get(edge.to)
+    if (!sourceRect || !targetRect) continue
+    const waypoints = edge.waypoints || []
+    const firstToward = waypoints[0] || rectCenter(targetRect)
+    const lastToward = waypoints[waypoints.length - 1] || rectCenter(sourceRect)
+    const points = [clipPointToRect(sourceRect, firstToward), ...waypoints, clipPointToRect(targetRect, lastToward)]
+    polylines.push({ edge, points })
+    for (let i = 1; i < points.length; i++) {
+      totalEdgeLength += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y)
+    }
+  }
+
+  for (const { edge, points } of polylines) {
+    for (const node of spec.nodes || []) {
+      if (node.id === edge.from || node.id === edge.to) continue
+      const rect = positions.get(node.id)
+      if (!rect) continue
+      let crosses = false
+      for (let i = 1; i < points.length && !crosses; i++) {
+        crosses = segmentIntersectsRect(points[i - 1], points[i], rect)
+      }
+      if (crosses) edgeNodeCrossings++
+    }
+  }
+
+  for (let i = 0; i < polylines.length; i++) {
+    for (let j = i + 1; j < polylines.length; j++) {
+      const a = polylines[i]
+      const b = polylines[j]
+      const shared =
+        a.edge.from === b.edge.from || a.edge.from === b.edge.to || a.edge.to === b.edge.from || a.edge.to === b.edge.to
+      if (shared) continue
+      let crosses = false
+      for (let si = 1; si < a.points.length && !crosses; si++) {
+        for (let sj = 1; sj < b.points.length && !crosses; sj++) {
+          crosses = segmentsProperlyIntersect(a.points[si - 1], a.points[si], b.points[sj - 1], b.points[sj])
+        }
+      }
+      if (crosses) edgeEdgeCrossings++
+    }
+  }
+
+  return { edgeNodeCrossings, edgeEdgeCrossings, totalEdgeLength: Math.round(totalEdgeLength) }
+}
+
+// ============================================================================
 // Main Export Functions
 // ============================================================================
 
@@ -1827,6 +2198,18 @@ export function specToDrawioXml(spec, options = {}) {
 
   // Check complexity
   const warnings = checkComplexity(spec)
+
+  // Direct sync conversion cannot run the async elk pre-pass; surface it.
+  if (
+    spec.meta?.layout === 'hierarchical' &&
+    (spec.nodes || []).some((node) => node.bounds == null && node.position == null)
+  ) {
+    warnings.push({
+      level: 'info',
+      message:
+        'Layout "hierarchical" placed auto nodes with the legacy grid. Convert via the CLI (or run applyAutoLayout first) for edge-aware layered layout.'
+    })
+  }
 
   // Security: always throw on fatal-level warnings regardless of strict mode
   const fatals = warnings.filter((w) => w.level === 'fatal')
@@ -1853,12 +2236,16 @@ export function specToDrawioXml(spec, options = {}) {
   const connectionPointWarnings = validateConnectionPointPolicy(spec)
   const edgeWarnings = validateEdgeQuality(spec, layout)
   const academicWarnings = validateAcademicProfile(spec)
+  const shapeWarnings = validateShapeReferences(spec)
+  const schemaDriftWarnings = validateSchemaDrift(spec)
   const allValidationWarnings = [
     ...colorWarnings,
     ...layoutWarnings,
     ...connectionPointWarnings,
     ...edgeWarnings,
-    ...academicWarnings
+    ...academicWarnings,
+    ...shapeWarnings,
+    ...schemaDriftWarnings
   ]
 
   if (allValidationWarnings.length > 0) {
@@ -1924,7 +2311,7 @@ export function validateSpec(spec) {
   const VALID_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
   const VALID_THEME = /^[a-z][a-z0-9-]*$/
   const VALID_ICON = /^[a-zA-Z][a-zA-Z0-9._-]*$/
-  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical', 'star', 'mesh']
+  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical', 'star', 'mesh', 'tiered']
   const VALID_ROUTINGS = ['orthogonal', 'rounded']
   const VALID_PROFILES = ['default', 'academic-paper', 'engineering-review']
   const VALID_FIGURE_TYPES = ['architecture', 'roadmap', 'workflow']
@@ -2384,6 +2771,7 @@ export function checkComplexity(spec) {
   }
 
   // Check label lengths
+  const longLabelIds = []
   for (const node of spec.nodes || []) {
     if (node.label && node.label.length > 200) {
       warnings.push({
@@ -2391,11 +2779,19 @@ export function checkComplexity(spec) {
         message: `Node "${node.id}" label exceeds 200 characters (${node.label.length} chars)`
       })
     } else if (node.label && node.label.length > 14) {
-      warnings.push({
-        level: 'info',
-        message: `Node "${node.id}" label is long (${node.label.length} chars). Consider abbreviation.`
-      })
+      longLabelIds.push(node.id)
     }
+  }
+  if (longLabelIds.length > 0) {
+    const sample = longLabelIds
+      .slice(0, 3)
+      .map((id) => `"${id}"`)
+      .join(', ')
+    const suffix = longLabelIds.length > 3 ? ` +${longLabelIds.length - 3} more` : ''
+    warnings.push({
+      level: 'info',
+      message: `${longLabelIds.length} node label(s) exceed 14 characters (${sample}${suffix}). Consider abbreviation.`
+    })
   }
 
   return warnings

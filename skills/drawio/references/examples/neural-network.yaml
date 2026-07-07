@@ -4,6 +4,10 @@
 meta:
   theme: academic
   layout: horizontal
+  figureType: architecture
+  title: 'Neural Network Architecture'
+  description: 'Encoder-decoder CNN with self-attention, standard node types only.'
+  legend: true
 
 modules:
   - id: encoder

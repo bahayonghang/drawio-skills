@@ -1,0 +1,2 @@
+{"file": ".trellis/tasks/07-06-auto-layout-engine/prd.md", "reason": "AC 清单：12节点 workflow 无告警、mod-test 0.5 挂点、tiered strict 通过、既有示例坐标不变、离线降级"}
+{"file": ".trellis/tasks/07-06-auto-layout-engine/implement.md", "reason": "步骤级验证命令与回滚点"}

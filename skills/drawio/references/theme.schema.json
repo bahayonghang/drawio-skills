@@ -90,6 +90,10 @@
           "type": "object",
           "properties": {
             "primary": { "type": "string" },
+            "cjk": {
+              "type": "string",
+              "description": "Optional CJK font stack; falls back to the built-in profile policy (e.g. SimSun for academic-paper) when absent"
+            },
             "monospace": { "type": "string" },
             "formula": { "type": "string" }
           }

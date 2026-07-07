@@ -1,6 +1,6 @@
 # Template: Multi-Module System Architecture (Compact)
-# Version: 1.0
-# Node Budget: 28 nodes (target < 40)
+# Version: 1.1
+# Node Budget: 17 nodes (target < 40)
 #
 # This template demonstrates node-efficient patterns for multi-module system diagrams:
 # - 5 modules with 3-4 nodes each
@@ -20,16 +20,14 @@ meta:
   theme: academic-color
   title: 'Multi-Module System Architecture (Compact Template)'
   description: 'Demonstrates efficient representation of distributed systems with 5 modules and varied connector styles'
-  canvasSize: { width: 1100, height: 600 }
-  gridSize: 8
   legend: true
 
   template:
     name: 'multi-module-system-compact'
-    version: '1.0'
+    version: '1.1'
     author: 'drawio-academic-skills'
     nodeCountTarget: 28
-    nodeCountActual: 28
+    nodeCountActual: 17
     useCases:
       - 'Microservice architectures'
       - 'Distributed systems'
@@ -38,27 +36,22 @@ meta:
 modules:
   - id: frontend
     label: 'Frontend Layer'
-    bounds: { x: 50, y: 80, width: 180, height: 140 }
     color: '#E0F2FE'
 
   - id: api_gateway
     label: 'API Gateway'
-    bounds: { x: 280, y: 80, width: 180, height: 140 }
     color: '#DBEAFE'
 
   - id: services
     label: 'Service Layer'
-    bounds: { x: 510, y: 80, width: 180, height: 140 }
     color: '#FEF3C7'
 
   - id: data
     label: 'Data Layer'
-    bounds: { x: 740, y: 80, width: 180, height: 140 }
     color: '#D1FAE5'
 
   - id: monitoring
     label: 'Monitoring'
-    bounds: { x: 970, y: 80, width: 100, height: 140 }
     color: '#F3E8FF'
 
 nodes:
@@ -165,6 +158,7 @@ nodes:
 
   # Legend (compact, 1 node)
   - id: legend
+    type: text
     label: |
       Legend
 
@@ -174,7 +168,6 @@ nodes:
       Layer colors: Frontend | Gateway | Services | Data | Monitor
     bounds: { x: 50, y: 260, width: 350, height: 100 }
     style:
-      shape: text
       align: left
       fontSize: 10
       fontColor: '#1E293B'

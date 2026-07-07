@@ -82,7 +82,7 @@ test('CLI: aws-vpc-topology.yaml produces provider icon XML', () => {
 
 test('CLI: onprem-dmz-topology.yaml produces DMZ topology XML', () => {
   const output = runCli([resolve(EXAMPLES_DIR, 'onprem-dmz-topology.yaml'), '--validate'])
-  assert.ok(output.includes('mxgraph.cisco.firewalls.firewall'), 'Output should contain firewall stencil')
+  assert.ok(output.includes('mxgraph.cisco.security.firewall'), 'Output should contain firewall stencil')
   assert.ok(output.includes('DMZ'), 'Output should include the DMZ module container label')
   assert.ok(output.includes('Internal Network'), 'Output should include the Internal Network module label')
   assert.ok(output.includes('east-west'), 'Output should derive linkType label from edge metadata')
@@ -92,8 +92,8 @@ test('CLI: vendor-device-mapping.yaml derives icons from network metadata', () =
   const output = runCli([resolve(EXAMPLES_DIR, 'vendor-device-mapping.yaml'), '--validate'])
   assert.ok(output.includes('mxgraph.aws4.internet_gateway'), 'Output should derive AWS internet gateway icon')
   assert.ok(output.includes('mxgraph.aws4.application_load_balancer'), 'Output should derive AWS load balancer icon')
-  assert.ok(output.includes('mxgraph.cisco.firewalls.firewall'), 'Output should derive Cisco firewall stencil')
-  assert.ok(output.includes('mxgraph.cisco.wireless.access_point'), 'Output should derive Cisco AP stencil')
+  assert.ok(output.includes('mxgraph.cisco.security.firewall'), 'Output should derive Cisco firewall stencil')
+  assert.ok(output.includes('mxgraph.cisco.misc.access_point'), 'Output should derive Cisco AP stencil')
 })
 
 // ============================================================================

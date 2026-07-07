@@ -11,6 +11,7 @@ Use these rules for professional draw.io routing. They apply to architecture dia
 3. **Corners are forbidden**
    - Do not use `0/0`, `0/1`, `1/0`, `1/1` corner pairs. Use face centers or distributed slots.
 4. **Distribute edges on shared faces**
+   - A face with a single edge connects at its `0.5` center.
    - When multiple edges leave or enter the same face, use `0.25`, `0.5`, `0.75` slots.
 5. **Preserve corridor spacing**
    - Parallel corridors should be at least `30px` apart.

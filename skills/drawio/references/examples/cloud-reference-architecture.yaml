@@ -1,7 +1,7 @@
 meta:
   profile: engineering-review
   theme: tech-blue
-  layout: horizontal
+  layout: hierarchical
   title: "Cloud Reference Architecture"
   description: "Gateway, compute, async processing, and storage."
 
@@ -9,7 +9,7 @@ nodes:
   - id: gateway
     label: API Gateway
     type: service
-    icon: aws.api-gateway
+    icon: aws.api_gateway
   - id: lambda
     label: Lambda
     type: service

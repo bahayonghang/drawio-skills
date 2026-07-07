@@ -24,12 +24,12 @@ nodes:
   - id: web1
     label: App Server A
     type: server
-    icon: aws.ec2_instance
+    icon: aws.ec2
     module: vpc
   - id: web2
     label: App Server B
     type: server
-    icon: aws.ec2_instance
+    icon: aws.ec2
     module: vpc
   - id: db
     label: RDS Subnet

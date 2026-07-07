@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/07-06-drawio-figure-quality/research/audit-findings.md", "reason": "审计发现 #2 #3 #4 证据（网格布局无拓扑、0.25 偏心槽位、无避障航点）与 elkjs/dagre 选型调研结论"}
+{"file": ".trellis/tasks/07-06-auto-layout-engine/design.md", "reason": "选型定稿、异步边界、复合图映射、坐标换算、tiered 层级表、R3/R7 方案"}
+{"file": "skills/drawio/scripts/dsl/spec-to-drawio.js", "reason": "calculateLayout(498)/buildRoutedEdges(1552)/FACE_SLOTS(1477)/waypoint 发射(1228) 改造落点"}
+{"file": "skills/drawio/scripts/cli.js", "reason": "顶层 await ESM，接线 applyAutoLayout 前置 pass"}

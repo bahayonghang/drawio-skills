@@ -23,8 +23,14 @@ import {
   validateXml,
   validateSpec,
   validateColorScheme,
-  validateLayoutConsistency
+  validateLayoutConsistency,
+  validateShapeReferences,
+  validateAcademicProfile,
+  validateSchemaDrift,
+  computeLayoutQualityMetrics,
+  SHAPE_STYLES
 } from './spec-to-drawio.js'
+import { resolveShapeNameKind } from './shape-catalog.js'
 
 // ============================================================================
 // Semantic Type Detection Tests
@@ -266,9 +272,11 @@ describe('generateNodeStyle', () => {
     assert.ok(style.includes('fillColor=#FF0000'), 'should contain custom fillColor')
   })
 
-  it('defaults generic diagrams to Times New Roman when no explicit font is provided', () => {
+  it('uses theme typography for generic diagrams and Times New Roman when the theme has none', () => {
     const style = generateNodeStyle({ id: 'n4', label: 'API Gateway', type: 'service' }, theme)
-    assert.ok(style.includes('fontFamily=Times New Roman'), 'generic diagrams should default to Times New Roman')
+    assert.ok(style.includes('fontFamily=Inter, sans-serif'), 'themed diagrams should use theme typography')
+    const bare = generateNodeStyle({ id: 'n4b', label: 'API Gateway', type: 'service' }, { node: {} })
+    assert.ok(bare.includes('fontFamily=Times New Roman'), 'themes without typography fall back to Times New Roman')
   })
 
   it('keeps text nodes transparent with no label background', () => {
@@ -577,7 +585,7 @@ describe('checkComplexity', () => {
     }
     const warnings = checkComplexity(spec)
     assert.ok(
-      warnings.some((w) => w.level === 'info' && w.message.includes('long')),
+      warnings.some((w) => w.level === 'info' && w.message.includes('abbreviation') && w.message.includes('"n1"')),
       'should have info about long labels'
     )
   })
@@ -714,8 +722,9 @@ describe('specToDrawioXml', () => {
 
   it('should resolve documented icon aliases', () => {
     assert.strictEqual(resolveIconShape('aws.alb'), 'mxgraph.aws4.application_load_balancer')
-    assert.strictEqual(resolveIconShape('aws.ec2'), 'mxgraph.aws4.ec2_instance')
-    assert.strictEqual(resolveIconShape('cisco.ap'), 'mxgraph.cisco.wireless.access_point')
+    assert.strictEqual(resolveIconShape('aws.ec2'), 'mxgraph.aws4.ec2')
+    assert.strictEqual(resolveIconShape('aws.ec2_instance'), 'mxgraph.aws4.ec2')
+    assert.strictEqual(resolveIconShape('cisco.ap'), 'mxgraph.cisco.misc.access_point')
   })
 
   it('should derive node icons from network vendor/device metadata', () => {
@@ -725,7 +734,7 @@ describe('specToDrawioXml', () => {
     )
     assert.strictEqual(
       deriveNodeIcon({ network: { vendor: 'cisco', device: 'firewall' } }),
-      'mxgraph.cisco.firewalls.firewall'
+      'mxgraph.cisco.security.firewall'
     )
   })
 
@@ -745,7 +754,7 @@ describe('specToDrawioXml', () => {
       },
       theme
     )
-    assert.ok(style.includes('shape=mxgraph.cisco.firewalls.firewall'), 'should use vendor-derived stencil shape')
+    assert.ok(style.includes('shape=mxgraph.cisco.security.firewall'), 'should use vendor-derived stencil shape')
   })
 
   it('default behavior: 25 nodes returns a string (no error)', () => {
@@ -1234,7 +1243,7 @@ describe('Phase 2.3b: text fidelity', () => {
 
     const xml = specToDrawioXml(spec)
     assert.ok(
-      xml.includes('shape=text') || xml.includes('rounded=1'),
+      xml.includes('shape=text') || /rounded=[01]/.test(xml),
       'formula nodes should remain dedicated annotation nodes'
     )
     assert.ok(xml.includes('fontFamily=Times New Roman, serif'), 'formula nodes should preserve serif typography')
@@ -1261,9 +1270,16 @@ describe('Phase 2.3b: text fidelity', () => {
 
     const xml = specToDrawioXml(spec)
     assert.ok(xml.includes('<mxPoint x="0" y="-18" as="offset"/>'), 'edge labels should preserve the explicit offset')
-    assert.match(xml, /<mxCell id="\d+" value="" style="[^"]*" edge="1"/, 'parent edge cell should not store duplicate label text')
+    assert.match(
+      xml,
+      /<mxCell id="\d+" value="" style="[^"]*" edge="1"/,
+      'parent edge cell should not store duplicate label text'
+    )
     assert.equal((xml.match(/value="s\(t\)"/g) || []).length, 1, 'edge label text should be stored once')
-    assert.ok(xml.includes('fontFamily=Times New Roman'), 'edge labels should emit a default font family')
+    assert.ok(
+      xml.includes('fontFamily=Inter, Roboto, system-ui, -apple-system, sans-serif'),
+      'edge labels should emit the theme typography font family'
+    )
   })
 
   it('should force all covered text surfaces from meta.font and override node-level fontFamily', () => {
@@ -1431,9 +1447,12 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
     }
   }
 
-  it('node with icon aws.lambda should have shape=mxgraph.aws4.lambda in style', () => {
+  it('node with icon aws.lambda should emit the aws4 resourceIcon compound style', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Lambda', icon: 'aws.lambda' }, theme)
-    assert.ok(style.includes('shape=mxgraph.aws4.lambda'), 'should contain shape=mxgraph.aws4.lambda')
+    assert.ok(
+      style.includes('shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda'),
+      'resource-only aws4 icons must use shape=resourceIcon;resIcon=<name>'
+    )
     assert.ok(style.includes('verticalLabelPosition=bottom'), 'should contain verticalLabelPosition=bottom')
     assert.ok(style.includes('labelBackgroundColor=none'), 'should contain labelBackgroundColor=none')
   })
@@ -2053,5 +2072,376 @@ describe('specToDrawioXml validation integration', () => {
       () => specToDrawioXml(spec, { silent: true }),
       'non-strict mode should not throw on invalid color'
     )
+  })
+})
+
+// ============================================================================
+// Theme Style Fidelity Tests (rounded corners, typography, shape catalog)
+// ============================================================================
+
+describe('theme style fidelity', () => {
+  const academic = loadTheme('academic')
+  const techBlue = loadTheme('tech-blue')
+
+  it('academic theme renders service nodes with square corners', () => {
+    const style = generateNodeStyle({ id: 's1', label: 'Encoder', type: 'service' }, academic)
+    assert.ok(style.includes('rounded=0'), 'academic service nodes should be square')
+    assert.ok(!style.includes('arcSize='), 'square corners should not carry an arcSize')
+  })
+
+  it('academic theme renders modules with square corners', () => {
+    const style = generateModuleStyle({ id: 'm1', label: 'Encoder Stack' }, academic)
+    assert.ok(style.includes('rounded=0'), 'academic modules should be square (module.rounded: 0)')
+    assert.ok(!style.includes('arcSize='), 'square modules should not carry an arcSize')
+  })
+
+  it('terminal stadium shapes keep their semantic rounding under square themes', () => {
+    const style = generateNodeStyle({ id: 't1', label: 'Start', type: 'terminal' }, academic)
+    assert.ok(style.includes('arcSize=50'), 'stadium rounding is shape semantics, not decoration')
+  })
+
+  it('tech-blue theme rounded token overrides SHAPE_STYLES arcSize', () => {
+    const style = generateNodeStyle({ id: 's2', label: 'API Gateway', type: 'service' }, techBlue)
+    assert.ok(style.includes('rounded=1'), 'tech-blue keeps rounded corners')
+    assert.ok(style.includes('arcSize=8'), 'tech-blue node.default.rounded=8 should win over the hardcoded 20')
+  })
+
+  it('theme typography supplies node fonts with meta.font staying strongest', () => {
+    const themed = generateNodeStyle({ id: 'f1', label: 'API Gateway', type: 'service' }, techBlue)
+    assert.ok(themed.includes('fontFamily=Inter, Roboto, system-ui, -apple-system, sans-serif'))
+
+    const formula = generateNodeStyle({ id: 'f2', label: '$$y=mx+b$$', type: 'formula' }, academic)
+    assert.ok(
+      formula.includes('fontFamily=Latin Modern, STIX Two Math, Times New Roman, serif'),
+      'academic formula nodes should use the theme formula stack'
+    )
+
+    const xml = specToDrawioXml(
+      {
+        meta: { theme: 'tech-blue', font: { primary: 'Georgia', cjk: 'SimHei', formula: 'STIX Two Math' } },
+        nodes: [{ id: 'n1', label: 'Gateway' }],
+        edges: [],
+        modules: []
+      },
+      { silent: true }
+    )
+    assert.ok(xml.includes('fontFamily=Georgia'), 'meta.font must override theme typography')
+    assert.ok(!xml.includes('fontFamily=Inter'), 'meta.font leaves no theme font on covered surfaces')
+  })
+
+  it('maps aws subnet devices to the swimlane group instead of an RDS icon', () => {
+    assert.strictEqual(deriveNodeIcon({ network: { vendor: 'aws', device: 'subnet' } }), null)
+    const style = generateNodeStyle(
+      { id: 'sn1', label: 'Public Subnet', network: { vendor: 'aws', device: 'subnet' } },
+      techBlue
+    )
+    assert.ok(style.includes('swimlane'), 'subnet nodes should render as swimlane group boxes')
+    assert.ok(!style.includes('rds_instance'), 'subnet must not map to the RDS icon')
+  })
+
+  it('emits aws4 resource icons through the compound resourceIcon style', () => {
+    const style = generateNodeStyle(
+      { id: 'ec1', label: 'App Server', network: { vendor: 'aws', device: 'ec2' } },
+      techBlue
+    )
+    assert.ok(
+      style.includes('shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2'),
+      'aws4 resource-only icons need shape=resourceIcon;resIcon=<name>'
+    )
+  })
+
+  it('keeps every SHAPE_STYLES stencil reference inside the shape catalog', () => {
+    for (const [type, style] of Object.entries(SHAPE_STYLES)) {
+      const match = /(?:^|;)shape=([^;]+)/.exec(style)
+      if (!match) continue
+      const kind = resolveShapeNameKind(match[1])
+      assert.ok(
+        kind === 'stencil' || kind === 'builtin' || kind === 'unchecked',
+        `SHAPE_STYLES.${type} emits unknown shape "${match[1]}" (${kind})`
+      )
+    }
+  })
+
+  it('warns on icons that resolve to unknown shape names', () => {
+    const warnings = validateShapeReferences({
+      nodes: [
+        { id: 'bad', label: 'Broken', icon: 'cisco.wireless.access_point' },
+        { id: 'good', label: 'DB', icon: 'aws.rds' }
+      ]
+    })
+    assert.equal(warnings.length, 1, 'only the unknown shape should warn')
+    assert.match(warnings[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
+  })
+})
+
+describe('academic consistency', () => {
+  const academicMeta = {
+    profile: 'academic-paper',
+    theme: 'academic',
+    figureType: 'architecture',
+    title: 'Figure',
+    description: 'Test figure'
+  }
+
+  it('exempts explicit text nodes from the verbose-label warning', () => {
+    const spec = {
+      meta: { ...academicMeta },
+      nodes: [
+        {
+          id: 'legend',
+          type: 'text',
+          label: 'Solid: data flow / Dashed: gradients / Dotted: control / Bold: main path / Thin: aux path'
+        }
+      ],
+      edges: []
+    }
+    const warnings = validateAcademicProfile(spec)
+    assert.ok(!warnings.some((w) => w.includes('concise')), 'text nodes must be exempt from the verbose-label rule')
+  })
+
+  it('measures label verbosity by visible length, not raw TeX source length', () => {
+    const spec = {
+      meta: { ...academicMeta },
+      nodes: [
+        { id: 'math', label: String.raw`$$\mathbf{X} \in \mathbb{R}^{B \times D \times L}$$` },
+        { id: 'plain', label: 'A genuinely verbose plain-text label that keeps going well past forty characters' }
+      ],
+      edges: []
+    }
+    const verbose = validateAcademicProfile(spec).find((w) => w.includes('concise'))
+    assert.ok(verbose, 'plain long label still warns')
+    assert.ok(verbose.includes('"plain"'), 'plain node is named')
+    assert.ok(!verbose.includes('"math"'), 'TeX label with short visible text is not flagged')
+  })
+
+  it('no longer emits the academic density warning (checkComplexity owns density)', () => {
+    const spec = {
+      meta: { ...academicMeta },
+      nodes: Array.from({ length: 30 }, (_, i) => ({ id: `n${i}`, label: `N${i}` })),
+      edges: []
+    }
+    assert.ok(!validateAcademicProfile(spec).some((w) => w.includes('dense')))
+  })
+
+  it('warns when a wide canvas drops labels below 8pt at single-column width', () => {
+    const spec = {
+      meta: { ...academicMeta, canvas: '1600x900' },
+      nodes: [{ id: 'a', label: 'A', style: { fontSize: 10 } }],
+      edges: []
+    }
+    const sizeWarning = validateAcademicProfile(spec).find((w) => w.includes('252pt'))
+    assert.ok(sizeWarning, 'expected layout-size warning for 1600px canvas')
+    assert.ok(sizeWarning.includes('1600px'), 'mentions canvas width')
+    assert.ok(sizeWarning.includes('>= 51'), 'prescribes ceil(1600 / 31.5) = 51')
+  })
+
+  it('keeps existing-scale canvases (<= 1500px) silent', () => {
+    const spec = {
+      meta: { ...academicMeta, canvas: '1200x800' },
+      nodes: [{ id: 'a', label: 'A', style: { fontSize: 10 } }],
+      edges: []
+    }
+    assert.ok(!validateAcademicProfile(spec).some((w) => w.includes('252pt')))
+  })
+
+  it('flags unknown meta keys but accepts template metadata', () => {
+    const warnings = validateSchemaDrift({
+      meta: { title: 't', template: 'compact', canvasSize: '1200x800', gridSize: 8 },
+      nodes: [{ id: 'n1', label: 'L' }]
+    })
+    assert.equal(warnings.length, 1)
+    assert.ok(warnings[0].includes('"canvasSize"'))
+    assert.ok(warnings[0].includes('"gridSize"'))
+    assert.ok(!warnings[0].includes('"template"'))
+  })
+
+  it('flags unknown node.style keys such as shape and rounded', () => {
+    const warnings = validateSchemaDrift({
+      meta: { title: 't' },
+      nodes: [{ id: 'n1', label: 'L', style: { shape: 'box', rounded: false, fillColor: '#FFFFFF' } }]
+    })
+    assert.equal(warnings.length, 1)
+    assert.ok(warnings[0].includes('"n1"'))
+    assert.ok(warnings[0].includes('"shape"'))
+    assert.ok(warnings[0].includes('"rounded"'))
+    assert.ok(!warnings[0].includes('"fillColor"'))
+  })
+
+  it('flags unknown module keys such as bounds', () => {
+    const warnings = validateSchemaDrift({
+      meta: { title: 't' },
+      nodes: [{ id: 'n1', label: 'L' }],
+      modules: [{ id: 'm1', label: 'M', bounds: { x: 0, y: 0, width: 100, height: 100 } }]
+    })
+    assert.equal(warnings.length, 1)
+    assert.ok(warnings[0].includes('"m1"'))
+    assert.ok(warnings[0].includes('"bounds"'))
+  })
+
+  it('fails strict conversion when schema drift is present', () => {
+    const spec = {
+      meta: { title: 't', canvasSize: '1200x800' },
+      nodes: [{ id: 'n1', label: 'L' }],
+      edges: []
+    }
+    assert.throws(() => specToDrawioXml(spec, { strict: true, silent: true }), /canvasSize/)
+    assert.doesNotThrow(() => specToDrawioXml(spec, { silent: true }))
+  })
+
+  it('aggregates long-label infos and keeps the 200-char fatal per node', () => {
+    const longLabel = 'This label is definitely longer than fourteen characters'
+    const spec = {
+      nodes: [
+        { id: 'a', label: longLabel },
+        { id: 'b', label: longLabel },
+        { id: 'c', label: longLabel },
+        { id: 'd', label: longLabel },
+        { id: 'e', label: 'x'.repeat(201) }
+      ],
+      edges: []
+    }
+    const warnings = checkComplexity(spec)
+    const infos = warnings.filter((w) => w.level === 'info')
+    assert.equal(infos.length, 1)
+    assert.ok(infos[0].message.includes('4 node label(s)'))
+    assert.ok(infos[0].message.includes('"a", "b", "c" +1 more'))
+    const fatals = warnings.filter((w) => w.level === 'fatal')
+    assert.equal(fatals.length, 1)
+    assert.ok(fatals[0].message.includes('"e"'))
+  })
+})
+
+describe('tiered layout and centered slots', () => {
+  it('places network tiers in North-South rows', () => {
+    const spec = {
+      meta: { layout: 'tiered' },
+      nodes: [
+        { id: 'net', label: 'Internet', network: { role: 'internet' } },
+        { id: 'fw', label: 'Edge FW', network: { role: 'firewall' } },
+        { id: 'core', label: 'Core SW', network: { role: 'core' } },
+        { id: 'dist', label: 'Dist SW', network: { role: 'distribution' } },
+        { id: 'acc1', label: 'Access 1', network: { role: 'access' } },
+        { id: 'acc2', label: 'Access 2', network: { role: 'access' } },
+        { id: 'srv', label: 'App Server', network: { role: 'server' } }
+      ],
+      edges: []
+    }
+    const layout = calculateLayout(spec, loadTheme('tech-blue'))
+    const y = (id) => layout.positions.get(id).y
+    assert.ok(y('net') < y('fw'))
+    assert.ok(y('fw') < y('core'))
+    assert.ok(y('core') < y('dist'))
+    assert.ok(y('dist') < y('acc1'))
+    assert.equal(y('acc1'), y('acc2'))
+    assert.ok(y('acc1') < y('srv'))
+  })
+
+  it('keeps explicitly positioned nodes untouched in tiered layout', () => {
+    const spec = {
+      meta: { layout: 'tiered' },
+      nodes: [
+        {
+          id: 'pinned',
+          label: 'Pinned',
+          bounds: { x: 500, y: 500, width: 100, height: 40 },
+          network: { role: 'core' }
+        },
+        { id: 'auto', label: 'Auto', network: { role: 'access' } }
+      ],
+      edges: []
+    }
+    const layout = calculateLayout(spec, loadTheme('tech-blue'))
+    assert.deepEqual(layout.positions.get('pinned'), { x: 500, y: 500, width: 100, height: 40 })
+  })
+
+  it('validateSpec accepts tiered and still rejects unknown layouts', () => {
+    assert.doesNotThrow(() =>
+      validateSpec({ meta: { layout: 'tiered' }, nodes: [{ id: 'a', label: 'A' }], edges: [], modules: [] })
+    )
+    assert.throws(() =>
+      validateSpec({ meta: { layout: 'diagonal' }, nodes: [{ id: 'a', label: 'A' }], edges: [], modules: [] })
+    )
+  })
+
+  it('centers the connection point when a face has a single edge', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      modules: [{ id: 'm1', label: 'M1' }],
+      nodes: [
+        { id: 'a', label: 'A', module: 'm1' },
+        { id: 'b', label: 'B' }
+      ],
+      edges: [{ from: 'a', to: 'b' }]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.ok(xml.includes('exitY=0.5'), 'single-edge source face centers at 0.5')
+    assert.ok(xml.includes('entryY=0.5'), 'single-edge target face centers at 0.5')
+    assert.ok(!xml.includes('exitY=0.25'))
+  })
+
+  it('distributes multiple edges on a shared face across slots', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', position: { x: 100, y: 200 } },
+        { id: 'b', label: 'B', position: { x: 400, y: 100 } },
+        { id: 'c', label: 'C', position: { x: 400, y: 300 } }
+      ],
+      edges: [
+        { from: 'a', to: 'b' },
+        { from: 'a', to: 'c' }
+      ]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.ok(xml.includes('exitY=0.25'))
+    assert.ok(xml.includes('exitY=0.5'))
+  })
+})
+
+describe('layout quality metrics', () => {
+  it('counts an edge cutting through an unrelated node', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 40, y: 100, width: 80, height: 40 } },
+        { id: 'mid', label: 'Mid', bounds: { x: 240, y: 100, width: 80, height: 40 } },
+        { id: 'c', label: 'C', bounds: { x: 440, y: 100, width: 80, height: 40 } }
+      ],
+      edges: [{ from: 'a', to: 'c' }]
+    }
+    const metrics = computeLayoutQualityMetrics(spec)
+    assert.equal(metrics.edgeNodeCrossings, 1)
+    assert.equal(metrics.edgeEdgeCrossings, 0)
+    assert.equal(metrics.totalEdgeLength, 320)
+  })
+
+  it('counts crossing edge pairs and stays silent for clean layouts', () => {
+    const crossing = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 40, y: 40, width: 80, height: 40 } },
+        { id: 'b', label: 'B', bounds: { x: 40, y: 240, width: 80, height: 40 } },
+        { id: 'c', label: 'C', bounds: { x: 440, y: 40, width: 80, height: 40 } },
+        { id: 'd', label: 'D', bounds: { x: 440, y: 240, width: 80, height: 40 } }
+      ],
+      edges: [
+        { from: 'a', to: 'd' },
+        { from: 'b', to: 'c' }
+      ]
+    }
+    assert.equal(computeLayoutQualityMetrics(crossing).edgeEdgeCrossings, 1)
+
+    const clean = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 40, y: 40, width: 80, height: 40 } },
+        { id: 'b', label: 'B', bounds: { x: 240, y: 40, width: 80, height: 40 } }
+      ],
+      edges: [{ from: 'a', to: 'b' }]
+    }
+    const metrics = computeLayoutQualityMetrics(clean)
+    assert.equal(metrics.edgeNodeCrossings, 0)
+    assert.equal(metrics.edgeEdgeCrossings, 0)
+    assert.equal(metrics.totalEdgeLength, 120)
   })
 })

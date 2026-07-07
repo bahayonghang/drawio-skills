@@ -1,0 +1,1 @@
+{"file": ".trellis/tasks/07-06-drawio-figure-quality/research/audit-findings.md", "reason": "对照审计发现 #1 #2 #3 #9 的复现命令逐条验证修复效果；检查父任务 Cross-child AC 中与 SVG 相关项"}

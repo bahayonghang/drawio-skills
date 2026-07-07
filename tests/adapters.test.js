@@ -137,7 +137,7 @@ test('validateAcademicProfile warns on missing figureType and dense academic lab
   assert.ok(warnings.some((w) => /grayscale-safe explicit overrides/.test(w)))
 })
 
-test('validateAcademicProfile warns on dense single-page academic figures', () => {
+test('validateAcademicProfile leaves figure density to checkComplexity', () => {
   const warnings = validateAcademicProfile({
     meta: {
       profile: 'academic-paper',
@@ -146,14 +146,14 @@ test('validateAcademicProfile warns on dense single-page academic figures', () =
       title: 'Fig. 3',
       description: 'Dense workflow'
     },
-    nodes: Array.from({ length: 13 }, (_, index) => ({
+    nodes: Array.from({ length: 45 }, (_, index) => ({
       id: `N${index}`,
       label: `Node ${index}`
     })),
     edges: [],
     modules: []
   })
-  assert.ok(warnings.some((w) => /dense for a single-page figure/.test(w)))
+  assert.ok(!warnings.some((w) => /dense for a single-page figure/.test(w)))
 })
 
 test('validateSpec accepts academic figureType and rejects invalid values', () => {

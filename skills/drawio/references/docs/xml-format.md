@@ -25,11 +25,11 @@ When work is expected to continue later, keep the canonical trio together:
 
 ### Standalone SVG limitation
 
-Standalone SVG export without draw.io Desktop is preview-quality only:
+Standalone SVG export without draw.io Desktop renders faithfully for most diagrams:
 
-- node geometry is preserved
-- edges are rendered as straight lines between node centers
-- publication-grade orthogonal routing still requires draw.io Desktop export or manual refinement in draw.io
+- node geometry is preserved, including container-relative child coordinates resolved to absolute positions
+- edges honor fixed exit/entry connection points and replay `<Array as="points">` waypoints; floating endpoints are clipped to node boundaries
+- orthogonal edges without explicit waypoints are approximated with L/Z-shaped bends; exact jetty spacing and obstacle-avoiding routing still require draw.io Desktop export or manual refinement in draw.io
 
 ### Formula rules
 

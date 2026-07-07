@@ -343,6 +343,25 @@ Themes are validated against `theme.schema.json`. Required fields:
 
 ---
 
+## Consumed Tokens
+
+The renderer consumes these theme tokens directly; others are advisory for now:
+
+| Token | Effect |
+|-------|--------|
+| `colors.*` | `$token` references in specs and default fallbacks |
+| `node.<type>.fillColor/strokeColor/strokeWidth/fontColor/fontSize` | Node styles (`<type>` falls back to `node.default`) |
+| `node.<type>.rounded` (incl. `default`) | Corner radius: `0` emits square `rounded=0`, `>0` overrides the built-in arcSize. Stadium shapes (`terminal`, arcSize>=50) keep their semantic rounding |
+| `typography.fontFamily.primary/cjk/formula` | Font fallback layer: `meta.font.<bucket>` > `node.style.fontFamily` > theme bucket > built-in policy (academic-paper CJK falls back to SimSun) |
+| `connector.<type>.*` | Edge stroke, arrows, dash patterns |
+| `module.fillColor/strokeColor/strokeWidth/rounded/labelFontSize/labelFontWeight/labelFontColor/dashed/dashPattern` | Module containers; `rounded: 0` emits square corners |
+| `module.padding` | Layout padding inside module containers |
+| `canvas.background`, `canvas.gridSize` | Page background and layout snapping grid |
+
+Not yet consumed: `spacing.*`, `borderRadius.*`, `shadows.*`, `typography.fontSize/fontWeight`, `node.*.fontFamily` (use `typography.fontFamily` instead), `canvas.gridColor`.
+
+---
+
 ## Theme Switching
 
 To switch themes on an existing diagram:

@@ -64,7 +64,7 @@ meta:
   theme: tech-blue # tech-blue | academic | academic-color | nature | dark | high-contrast | custom-name
 
   # Layout direction
-  layout: horizontal # horizontal | vertical | hierarchical
+  layout: horizontal # horizontal | vertical | hierarchical | star | mesh | tiered
 
   # Canvas sizing
   canvas: auto # auto | WIDTHxHEIGHT, e.g. 800x600 or 1200x800
@@ -166,11 +166,16 @@ Use `meta.figureType` whenever `meta.profile = academic-paper`.
 
 ### Layout Options
 
-| Layout         | Description           | Best For             |
-| -------------- | --------------------- | -------------------- |
-| `horizontal`   | Left-to-right flow    | Process flows        |
-| `vertical`     | Top-to-bottom flow    | Hierarchy            |
-| `hierarchical` | Auto-grid (4 columns) | Complex dependencies |
+| Layout         | Description                                                                                                       | Best For                |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `horizontal`   | Left-to-right flow                                                                                                  | Process flows           |
+| `vertical`     | Top-to-bottom flow                                                                                                  | Hierarchy               |
+| `hierarchical` | Edge-aware layered auto-layout (vendored elkjs) via the CLI when no node has explicit geometry; legacy grid otherwise | Workflows, dependencies |
+| `star`         | Hub-and-spoke ring around a central device                                                                          | Small hub topologies    |
+| `mesh`         | Ring placement with mid waypoints                                                                                   | Full-mesh links         |
+| `tiered`       | North-South network rows from `network.tier`, `network.role`, or node type (external on top, endpoints at the bottom) | Network topologies      |
+
+`hierarchical` auto-layout fills node bounds and orthogonal edge waypoints; it degrades to the legacy grid with a warning if the vendored engine is unavailable. Any explicit `bounds`/`position` in the spec disables the auto pass (the author owns the geometry).
 
 ---
 

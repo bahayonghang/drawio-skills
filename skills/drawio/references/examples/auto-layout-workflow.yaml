@@ -1,0 +1,81 @@
+# Auto-Layout Workflow Example
+# No node carries bounds/position: with layout: hierarchical the CLI runs the
+# edge-aware layered auto-layout (vendored elkjs), which fills node bounds and
+# orthogonal edge waypoints automatically. Direct sync conversion falls back to
+# the legacy grid and reports an info notice instead.
+meta:
+  title: Content Publishing Workflow
+  description: Branching and merging review pipeline, laid out automatically.
+  theme: tech-blue
+  layout: hierarchical
+
+modules:
+  - id: prep
+    label: Preparation
+  - id: delivery
+    label: Delivery
+
+nodes:
+  - id: start
+    label: Start
+    type: terminal
+  - id: validate
+    label: Validate
+    module: prep
+  - id: enrich_a
+    label: Enrich A
+    module: prep
+  - id: enrich_b
+    label: Enrich B
+    module: prep
+  - id: merge
+    label: Merge
+    module: prep
+  - id: transform
+    label: Transform
+  - id: review
+    label: Review
+  - id: approve
+    label: Auto Approve
+  - id: publish
+    label: Publish
+    module: delivery
+  - id: notify
+    label: Notify
+    module: delivery
+  - id: archive
+    label: Archive
+    module: delivery
+  - id: end
+    label: End
+    type: terminal
+
+edges:
+  - from: start
+    to: validate
+  - from: validate
+    to: enrich_a
+  - from: validate
+    to: enrich_b
+  - from: enrich_a
+    to: merge
+  - from: enrich_b
+    to: merge
+  - from: merge
+    to: transform
+  - from: transform
+    to: review
+  - from: transform
+    to: approve
+  - from: review
+    to: publish
+  - from: approve
+    to: publish
+  - from: publish
+    to: notify
+  - from: publish
+    to: archive
+  - from: notify
+    to: end
+  - from: archive
+    to: end
