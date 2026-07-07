@@ -2393,8 +2393,10 @@ describe('tiered layout and centered slots', () => {
       ]
     }
     const xml = specToDrawioXml(spec, { silent: true })
+    // Slots keep the legacy 0.25-first order but dodge to the next slot that
+    // honors the 30px corridor rule (0.5 on a 60px face is only 15px away).
     assert.ok(xml.includes('exitY=0.25'))
-    assert.ok(xml.includes('exitY=0.5'))
+    assert.ok(xml.includes('exitY=0.75'))
   })
 })
 
@@ -2443,5 +2445,301 @@ describe('layout quality metrics', () => {
     assert.equal(metrics.edgeNodeCrossings, 0)
     assert.equal(metrics.edgeEdgeCrossings, 0)
     assert.equal(metrics.totalEdgeLength, 120)
+  })
+})
+
+describe('straight orthogonal routing', () => {
+  function extractEdges(xml) {
+    const edges = []
+    const re = /<mxCell [^>]*style="([^"]*)"[^>]*edge="1"[^>]*>/g
+    let match
+    while ((match = re.exec(xml)) !== null) {
+      const style = match[1]
+      const get = (key) => {
+        const found = new RegExp(`${key}=(-?[0-9.]+)`).exec(style)
+        return found ? Number(found[1]) : undefined
+      }
+      edges.push({
+        style,
+        exitX: get('exitX'),
+        exitY: get('exitY'),
+        entryX: get('entryX'),
+        entryY: get('entryY')
+      })
+    }
+    return edges
+  }
+
+  it('aligns a vertical edge between different-width boxes into one straight line', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'wide', label: 'Wide', bounds: { x: 80, y: 40, width: 880, height: 64 } },
+        { id: 'narrow', label: 'Narrow', bounds: { x: 120, y: 280, width: 344, height: 64 } }
+      ],
+      edges: [{ from: 'narrow', to: 'wide' }]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    const [edge] = extractEdges(xml)
+    const absExit = 120 + edge.exitX * 344
+    const absEntry = 80 + edge.entryX * 880
+    assert.ok(Math.abs(absExit - absEntry) < 0.1, `expected collinear, delta=${Math.abs(absExit - absEntry)}`)
+    assert.equal(absExit, 120 + 344 / 2)
+    assert.equal(edge.exitY, 0)
+    assert.equal(edge.entryY, 1)
+  })
+
+  it('keeps multiple edges into a wide bar aligned with each counterpart center', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'bar', label: 'Bar', bounds: { x: 80, y: 400, width: 880, height: 56 } },
+        { id: 'a', label: 'A', bounds: { x: 120, y: 560, width: 160, height: 48 } },
+        { id: 'b', label: 'B', bounds: { x: 600, y: 560, width: 160, height: 48 } }
+      ],
+      edges: [
+        { from: 'a', to: 'bar' },
+        { from: 'b', to: 'bar' }
+      ]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    const edges = extractEdges(xml)
+    const coords = []
+    for (const [index, source] of [
+      [0, { x: 120, width: 160 }],
+      [1, { x: 600, width: 160 }]
+    ]) {
+      const edge = edges[index]
+      const absExit = source.x + edge.exitX * source.width
+      const absEntry = 80 + edge.entryX * 880
+      assert.ok(Math.abs(absExit - absEntry) < 0.1, `edge ${index} not collinear`)
+      assert.equal(absExit, source.x + source.width / 2)
+      coords.push(absExit)
+    }
+    assert.ok(Math.abs(coords[0] - coords[1]) >= 30)
+  })
+
+  it('separates a bidirectional pair into two parallel straight lines', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'top', label: 'Top', bounds: { x: 100, y: 0, width: 300, height: 60 } },
+        { id: 'bottom', label: 'Bottom', bounds: { x: 100, y: 240, width: 300, height: 60 } }
+      ],
+      edges: [
+        { from: 'top', to: 'bottom' },
+        { from: 'bottom', to: 'top' }
+      ]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    const edges = extractEdges(xml)
+    const downCoord = 100 + edges[0].exitX * 300
+    const downEntry = 100 + edges[0].entryX * 300
+    const upCoord = 100 + edges[1].exitX * 300
+    const upEntry = 100 + edges[1].entryX * 300
+    assert.ok(Math.abs(downCoord - downEntry) < 0.1, 'downward edge must stay straight')
+    assert.ok(Math.abs(upCoord - upEntry) < 0.1, 'upward edge must stay straight')
+    assert.ok(Math.abs(downCoord - upCoord) >= 29.9, `parallel pair too close: ${Math.abs(downCoord - upCoord)}`)
+  })
+
+  it('falls back to face slots when no collinear interval exists', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 0, y: 0, width: 100, height: 60 } },
+        { id: 'b', label: 'B', bounds: { x: 300, y: 200, width: 100, height: 60 } }
+      ],
+      edges: [{ from: 'a', to: 'b' }]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    const [edge] = extractEdges(xml)
+    assert.equal(edge.exitX, 1)
+    assert.equal(edge.exitY, 0.5)
+    assert.equal(edge.entryX, 0)
+    assert.equal(edge.entryY, 0.5)
+  })
+
+  it('keeps explicit user connection points untouched', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'wide', label: 'Wide', bounds: { x: 80, y: 40, width: 880, height: 64 } },
+        { id: 'narrow', label: 'Narrow', bounds: { x: 120, y: 280, width: 344, height: 64 } }
+      ],
+      edges: [
+        {
+          from: 'narrow',
+          to: 'wide',
+          style: { exitX: 0.25, exitY: 0, entryX: 0.75, entryY: 1, exitDx: 0, exitDy: 0, entryDx: 0, entryDy: 0 }
+        }
+      ]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    const [edge] = extractEdges(xml)
+    assert.equal(edge.exitX, 0.25)
+    assert.equal(edge.entryX, 0.75)
+  })
+
+  it('routes overlapping wide/narrow boxes vertically instead of through their bodies', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'browser', label: 'Browser', bounds: { x: 80, y: 40, width: 880, height: 64 } },
+        { id: 'web', label: 'Web', bounds: { x: 600, y: 280, width: 360, height: 64 } }
+      ],
+      edges: [{ from: 'browser', to: 'web' }]
+    }
+    const { warnings } = specToDrawioXml(spec, { silent: true, returnWarnings: true })
+    const xml = specToDrawioXml(spec, { silent: true })
+    const [edge] = extractEdges(xml)
+    assert.equal(edge.exitY, 1, 'edge should leave the bottom face')
+    assert.equal(edge.entryY, 0, 'edge should enter the top face')
+    const segmentWarnings = warnings.filter((w) => String(w.message || w).includes('short final segment'))
+    assert.equal(segmentWarnings.length, 0)
+  })
+
+  it('warns when explicit points bend an edge that could be straight', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'top', label: 'Top', bounds: { x: 100, y: 0, width: 300, height: 60 } },
+        { id: 'bottom', label: 'Bottom', bounds: { x: 100, y: 240, width: 300, height: 60 } }
+      ],
+      edges: [
+        {
+          from: 'top',
+          to: 'bottom',
+          style: { exitX: 0.2, exitY: 1, entryX: 0.8, entryY: 0, exitDx: 0, exitDy: 0, entryDx: 0, entryDy: 0 }
+        }
+      ]
+    }
+    const { warnings } = specToDrawioXml(spec, { silent: true, returnWarnings: true })
+    const bendWarnings = warnings.filter((w) => String(w.message || w).includes('off a straight vertical line'))
+    assert.equal(bendWarnings.length, 1)
+  })
+})
+
+describe('replicate quality gates', () => {
+  it('forces plain text nodes transparent even when the spec asks for white', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        {
+          id: 'note',
+          label: 'note',
+          type: 'text',
+          bounds: { x: 0, y: 0, width: 120, height: 40 },
+          style: { fillColor: '#FFFFFF', strokeColor: '#FF0000' }
+        }
+      ],
+      edges: []
+    }
+    const { xml, warnings } = specToDrawioXml(spec, { silent: true, returnWarnings: true })
+    const styleMatch = /<mxCell[^>]*value="note"[^>]*style="([^"]*)"/.exec(xml)
+    assert.ok(styleMatch, 'text cell should exist')
+    assert.match(styleMatch[1], /fillColor=none/)
+    assert.match(styleMatch[1], /strokeColor=none/)
+    assert.match(styleMatch[1], /labelBackgroundColor=none/)
+    assert.ok(!styleMatch[1].includes('overflow=hidden'), 'text nodes must not clip their content')
+    const overrideWarnings = warnings.filter((w) => String(w.message || w).includes('always render transparent'))
+    assert.equal(overrideWarnings.length, 2)
+  })
+
+  it('warns when text bounds are smaller than the content estimate', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        {
+          id: 'clipped',
+          label: '过程数据报表汇总说明',
+          type: 'text',
+          bounds: { x: 0, y: 0, width: 40, height: 16 }
+        }
+      ],
+      edges: []
+    }
+    const { warnings } = specToDrawioXml(spec, { silent: true, returnWarnings: true })
+    const clipWarnings = warnings.filter((w) => String(w.message || w).includes('smaller than the estimated content size'))
+    assert.equal(clipWarnings.length, 1)
+  })
+
+  it('adds a bold default endSize to block arrows and honors overrides', () => {
+    const theme = loadTheme('tech-blue')
+    const defaultStyle = generateConnectorStyle({ from: 'a', to: 'b' }, theme)
+    assert.match(defaultStyle, /endArrow=block/)
+    assert.match(defaultStyle, /endSize=12/)
+    const overridden = generateConnectorStyle({ from: 'a', to: 'b', style: { endSize: 6 } }, theme)
+    assert.match(overridden, /endSize=6/)
+  })
+
+  it('converts label newlines to <br> so vertical CJK labels survive XML attributes', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'v', label: '可\n视\n化', type: 'text', bounds: { x: 0, y: 0, width: 32, height: 80 } },
+        { id: 'a', label: 'A', bounds: { x: 100, y: 200, width: 80, height: 40 } },
+        { id: 'b', label: 'B', bounds: { x: 100, y: 400, width: 80, height: 40 } }
+      ],
+      edges: [{ from: 'a', to: 'b', label: '上\n位' }]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.ok(xml.includes('可&lt;br&gt;视&lt;br&gt;化'), 'node label newlines become <br>')
+    assert.ok(xml.includes('上&lt;br&gt;位'), 'edge label newlines become <br>')
+  })
+
+  it('keeps math labels free of injected <br> tags', () => {
+    const spec = {
+      meta: {},
+      nodes: [{ id: 'f', label: '$$a=b\nc=d$$', type: 'formula', bounds: { x: 0, y: 0, width: 120, height: 60 } }],
+      edges: []
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.ok(!xml.includes('&lt;br&gt;'), 'math labels keep raw newlines')
+  })
+
+  it('reports floating edges and arrow-shape connectors as validateXml warnings', () => {
+    const xml =
+      '<mxGraphModel><root>' +
+      '<mxCell id="0"/>' +
+      '<mxCell id="1" parent="0"/>' +
+      '<mxCell id="2" value="A" style="rounded=1" vertex="1" parent="1"><mxGeometry x="0" y="0" width="80" height="40" as="geometry"/></mxCell>' +
+      '<mxCell id="3" value="" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>' +
+      '<mxCell id="4" value="" style="shape=singleArrow;fillColor=#000000" vertex="1" parent="1"><mxGeometry x="100" y="0" width="60" height="20" as="geometry"/></mxCell>' +
+      '<mxCell id="5" value="t" style="text;html=1;fillColor=#FFFFFF" vertex="1" parent="1"><mxGeometry x="0" y="100" width="60" height="20" as="geometry"/></mxCell>' +
+      '</root></mxGraphModel>'
+    const result = validateXml(xml)
+    assert.equal(result.valid, true)
+    const floating = result.warnings.filter((w) => w.includes('not bound to nodes'))
+    const arrowShapes = result.warnings.filter((w) => w.includes('arrow shape'))
+    const whiteText = result.warnings.filter((w) => w.includes('white background'))
+    assert.equal(floating.length, 1)
+    assert.equal(arrowShapes.length, 1)
+    assert.equal(whiteText.length, 1)
+  })
+
+  it('flags edge labels that sit on their own connector', () => {
+    const spec = {
+      meta: {},
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 100, y: 0, width: 120, height: 40 } },
+        { id: 'b', label: 'B', bounds: { x: 100, y: 300, width: 120, height: 40 } }
+      ],
+      edges: [{ from: 'a', to: 'b', label: '很长的水平标签文字', labelOffset: { x: 0, y: 0 } }]
+    }
+    const { warnings } = specToDrawioXml(spec, { silent: true, returnWarnings: true })
+    const onLine = warnings.filter((w) => String(w.message || w).includes('sits on its own connector'))
+    assert.equal(onLine.length, 1)
+  })
+
+  it('accepts none as an explicit transparent module fill', () => {
+    const spec = {
+      meta: {},
+      modules: [{ id: 'm', label: 'M', style: { fillColor: 'none', strokeColor: '#000000' } }],
+      nodes: [{ id: 'a', label: 'A', module: 'm', bounds: { x: 0, y: 0, width: 80, height: 40 } }],
+      edges: []
+    }
+    const { warnings } = specToDrawioXml(spec, { silent: true, returnWarnings: true })
+    const colorWarnings = warnings.filter((w) => String(w.message || w).includes('Invalid color "none"'))
+    assert.equal(colorWarnings.length, 0)
   })
 })

@@ -143,10 +143,21 @@ Text and labels use `fillColor=none` and `labelBackgroundColor=none`.
 
 A white fill or white label background paints an opaque rectangle around the text. On a colored or busy figure that box occludes connectors and neighbors, fights the palette, and makes the diagram look pasted together — readers want the text, not its container. draw.io's default `labelBackgroundColor` is already `none`; the failure mode is _adding_ a white one for perceived legibility.
 
-If text genuinely needs separation from a noisy background, treat it as a deliberate exception and note why:
+For plain `type: text` nodes this is enforced, not advisory: the converter always emits `fillColor=none;strokeColor=none;labelBackgroundColor=none`, ignores explicit fills on text nodes, and `validateTextNodeStyles` warns about the override. Replication color extraction must never assign the canvas/background color to a text box fill.
+
+If text genuinely needs separation from a noisy background, use a node type that owns a surface:
 
 - First try cheaper fixes: a darker/bolder `fontColor`, a thin text stroke, or moving the label into whitespace.
-- Only if those are insufficient, use a restrained tint or a semi-transparent backing (for example `fillColor=#F8FAFC;opacity=70` or a themed light surface) — never a hard `#FFFFFF` block.
+- Then use a `formula` node (white surface with border, by design) or an ordinary shape node with a restrained tint or semi-transparent backing (for example `fillColor=#F8FAFC;opacity=70`) — never a hard `#FFFFFF` block behind plain text.
+
+### Vertical CJK labels (one character per line)
+
+Vertical Chinese/Japanese/Korean labels beside vertical arrows are written one character per line with explicit newlines, e.g. `label: "可\n视\n化\n数\n据"`.
+
+- The converter turns label newlines into `<br>` so they survive XML attribute-value normalization (a literal `\n` in an attribute is folded into a space when the file is reopened, which is where random re-wrapping like `能耗指 标计算` comes from).
+- Do **not** use `horizontal=0` for CJK vertical text — it rotates the glyphs 90° instead of stacking them.
+- Size the box to one glyph column: `width ≈ fontSize + 12–16`, `height ≈ chars × fontSize × 1.4 + padding`; the 48px minimum-width floor does not apply to these narrow columns.
+- Never rely on a narrow box plus `whiteSpace=wrap` to fake vertical text — wrap points drift and clip.
 
 ### Size to content, not to the container
 

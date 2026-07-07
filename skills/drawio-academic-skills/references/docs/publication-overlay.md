@@ -108,8 +108,9 @@ For model-architecture and mechanism figures, compress repeated layers into stag
 
 Captions, callouts, legends, and annotation labels follow the base rule in `../drawio/references/docs/design-system/tokens.md` § Text & Label Styling. Two points matter most for publication figures:
 
-- **Transparent, no white box.** Use `fillColor=none` and `labelBackgroundColor=none`. A white rectangle behind text occludes the figure and reads as unfinished in a paper; if a label sits on a busy region, prefer a darker font or relocation, and use only a restrained tint as a deliberate exception — never a hard `#FFFFFF` block.
-- **Content-sized boxes.** Size a text/callout box just wider than its longest line, not to a container or source-image region, so captions and callouts stay independently placeable and do not overlap modules or connectors.
+- **Transparent, no white box.** Plain text boxes always render `fillColor=none;strokeColor=none;labelBackgroundColor=none` — the base converter enforces this and warns on white fills. A white rectangle behind text occludes the figure and reads as unfinished in a paper; if a label sits on a busy region, prefer a darker font or relocation, and use a `formula` node or shape node with a restrained tint as the deliberate exception — never a hard `#FFFFFF` block.
+- **Content-sized boxes.** Size a text/callout box just wider than its longest line, not to a container or source-image region, so captions and callouts stay independently placeable and do not overlap modules or connectors. Vertical CJK labels are one character per line with explicit newlines.
+- **Native straight connectors.** Publication figures follow the base edge rules: bound edges only (no arrow-shape stand-ins), collinear no-waypoint orthogonal edges, and bold `endSize=12` block heads; run `--validate --strict` before export.
 
 ## Optional Image Preview
 

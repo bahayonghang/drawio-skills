@@ -220,6 +220,16 @@ try {
 
 if (doValidate && !exportSpec) {
   const result = validateXml(xml)
+  if (result.warnings?.length) {
+    console.error(`XML validation warnings (${result.warnings.length}):`)
+    for (const w of result.warnings) {
+      console.error(`  - ${w}`)
+    }
+    if (strict) {
+      console.error('XML validation: FAILED (--strict treats warnings as errors)')
+      process.exit(1)
+    }
+  }
   if (result.valid) {
     console.error('XML validation: PASSED (no errors)')
   } else {

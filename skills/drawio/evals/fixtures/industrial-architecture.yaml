@@ -1,0 +1,239 @@
+# 回归 fixture：工业系统架构原图（research/original.png）关键几何建模。
+# 覆盖场景：宽/窄盒垂直直线边、双向平行边对、水平直线边、无公共区间回退边、
+# 显式 waypoints 边、竖排一字一行标签（节点与边标签）、内容感知默认标签偏移、
+# 虚线模块、圆柱数据库、透明纯文本框。
+meta:
+  title: "工业大数据专家系统架构（复刻回归样例）"
+  theme: tech-blue
+  layout: vertical
+  canvas: 1088x1160
+  source: replicated
+  replication:
+    colorMode: preserve-original
+    background: "#FFFFFF"
+    palette:
+      - hex: "#F8CECC"
+        role: 服务器/浏览器节点填充
+        appliesTo: nodes
+        confidence: high
+      - hex: "#FFF2CC"
+        role: 数据库/样本库填充
+        appliesTo: nodes
+        confidence: high
+      - hex: "#D5E8D4"
+        role: 数采软件填充
+        appliesTo: nodes
+        confidence: high
+      - hex: "#E1D5E7"
+        role: 专家系统填充
+        appliesTo: nodes
+        confidence: high
+
+modules:
+  - id: field-layer
+    label: "现场采集层"
+    style:
+      fillColor: "none"
+      strokeColor: "#000000"
+      dashed: true
+
+nodes:
+  - id: browser
+    label: "Web浏览器\n（可视化显示、工程师站、运维、组态）"
+    type: service
+    bounds: { x: 80, y: 40, width: 880, height: 64 }
+    style: { fillColor: "#F8CECC", strokeColor: "#B85450" }
+
+  - id: alg-server
+    label: "算法服务器\n（基于Python深度学习技术）"
+    type: service
+    bounds: { x: 120, y: 280, width: 344, height: 64 }
+    style: { fillColor: "#F8CECC", strokeColor: "#B85450" }
+
+  - id: web-server
+    label: "Web服务器\n（基于JAVA的Spring Boot框架）"
+    type: service
+    bounds: { x: 600, y: 280, width: 360, height: 64 }
+    style: { fillColor: "#F8CECC", strokeColor: "#B85450" }
+
+  - id: sample-lib
+    label: "样本库"
+    type: service
+    bounds: { x: 640, y: 424, width: 320, height: 48 }
+    style: { fillColor: "#FFF2CC", strokeColor: "#D6B656" }
+
+  - id: transfer-db
+    label: "数据中转数据库"
+    type: database
+    bounds: { x: 144, y: 528, width: 296, height: 112 }
+    style: { fillColor: "#FFF2CC", strokeColor: "#D6B656" }
+
+  - id: big-data
+    label: "工业大数据\n（基于SQL Server的数据服务器）"
+    type: database
+    bounds: { x: 624, y: 528, width: 336, height: 112 }
+    style: { fillColor: "#FFF2CC", strokeColor: "#D6B656" }
+
+  - id: expert
+    label: "专家系统"
+    type: service
+    module: field-layer
+    bounds: { x: 104, y: 728, width: 856, height: 56 }
+    style: { fillColor: "#E1D5E7", strokeColor: "#9673A6" }
+
+  - id: dsc
+    label: "DSC数采软件"
+    type: service
+    module: field-layer
+    bounds: { x: 144, y: 872, width: 216, height: 48 }
+    style: { fillColor: "#D5E8D4", strokeColor: "#82B366" }
+
+  - id: energy
+    label: "能耗数采软件"
+    type: service
+    module: field-layer
+    bounds: { x: 440, y: 872, width: 216, height: 48 }
+    style: { fillColor: "#D5E8D4", strokeColor: "#82B366" }
+
+  - id: json-soft
+    label: "Json数采软件"
+    type: service
+    module: field-layer
+    bounds: { x: 744, y: 872, width: 216, height: 48 }
+    style: { fillColor: "#D5E8D4", strokeColor: "#82B366" }
+
+  - id: dcs-opc
+    label: "DCS系统OPC服务器"
+    type: service
+    module: field-layer
+    bounds: { x: 144, y: 992, width: 216, height: 48 }
+    style: { fillColor: "#F8CECC", strokeColor: "#B85450" }
+
+  - id: energy-opc
+    label: "能耗系统OPC服务器"
+    type: service
+    module: field-layer
+    bounds: { x: 440, y: 992, width: 216, height: 48 }
+    style: { fillColor: "#F8CECC", strokeColor: "#B85450" }
+
+  - id: json-srv
+    label: "质量系统Json服务器"
+    type: service
+    module: field-layer
+    bounds: { x: 744, y: 992, width: 216, height: 48 }
+    style: { fillColor: "#F8CECC", strokeColor: "#B85450" }
+
+  # 竖排一字一行标签（AC5）：透明纯文本框
+  - id: label-vis-data
+    label: "可\n视\n化\n数\n据"
+    type: text
+    bounds: { x: 248, y: 120, width: 32, height: 120 }
+
+  - id: label-realtime
+    label: "实\n时\n样\n本"
+    type: text
+    bounds: { x: 40, y: 440, width: 32, height: 96 }
+
+edges:
+  # 垂直直线：窄盒(alg)中心 292 在宽盒(browser)底面区间内 → 应共线
+  - from: alg-server
+    to: browser
+    type: primary
+
+  # 双向平行对：browser ⇄ web-server（两条平行直线，间距 ≥30；竖排边标签）
+  - from: browser
+    to: web-server
+    type: primary
+    label: "上\n位\n操\n作\n指\n令"
+  - from: web-server
+    to: browser
+    type: primary
+    label: "可\n视\n化\n数\n据"
+
+  # 水平直线：两盒中心 y 相同 → 共线（横排标签走内容感知默认偏移）
+  - from: web-server
+    to: alg-server
+    type: primary
+    label: "上位操作指令"
+
+  # 垂直直线：web-server 中心 780 落在 sample-lib 顶面区间 [648,952]
+  - from: web-server
+    to: sample-lib
+    type: primary
+    label: "上位操作指令"
+
+  # 无公共区间边：sample-lib 左面 → alg-server。按 Blocking Rule 8，
+  # 面无公共区间时优先显式 waypoints 控制绕行；标签垂直于中段偏移。
+  - from: sample-lib
+    to: alg-server
+    type: data
+    label: "算法样本"
+    labelOffset: { x: -36, y: 0 }
+    waypoints:
+      - { x: 552, y: 448 }
+      - { x: 552, y: 328 }
+
+  # 垂直直线：alg 中心 292 → transfer-db 顶面 [152,432]（竖排边标签）
+  - from: alg-server
+    to: transfer-db
+    type: primary
+    label: "计\n算\n返\n回\n值"
+
+  # 双向平行对：sample-lib ⇄ big-data（请求数据显式外侧偏移，返回数据走默认）
+  - from: sample-lib
+    to: big-data
+    type: primary
+    label: "请求数据"
+    labelOffset: { x: -32, y: 0 }
+  - from: big-data
+    to: sample-lib
+    type: primary
+    label: "返回数据"
+
+  # 垂直直线：transfer-db 中心 292 → expert 顶面 [112,952]
+  - from: transfer-db
+    to: expert
+    type: primary
+    label: "被控变量决策值"
+
+  # 垂直直线：big-data 中心 792 ← expert 顶面
+  - from: expert
+    to: big-data
+    type: primary
+    label: "工业大数据"
+
+  # 三条并行垂直直线：采集软件 → expert 底面（各自与源盒中心对齐）
+  - from: dsc
+    to: expert
+    type: primary
+    label: "过程数据采样"
+  - from: energy
+    to: expert
+    type: primary
+    label: "能耗指标计算"
+  - from: json-soft
+    to: expert
+    type: primary
+    label: "质量数据采样"
+
+  # 底层三条垂直直线
+  - from: dcs-opc
+    to: dsc
+    type: primary
+    label: "过程数据"
+  - from: energy-opc
+    to: energy
+    type: primary
+    label: "能耗数据"
+  - from: json-srv
+    to: json-soft
+    type: primary
+    label: "质量数据"
+
+  # 显式 waypoints 回环（实时样本）：expert 左侧绕行到 alg-server 左面
+  - from: expert
+    to: alg-server
+    type: primary
+    waypoints:
+      - { x: 80, y: 756 }
+      - { x: 80, y: 312 }

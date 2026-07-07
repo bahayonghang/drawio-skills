@@ -1,0 +1,2 @@
+{"file": ".trellis/tasks/07-07-drawio-replicate-quality/research/comparison-notes.md", "reason": "原图 vs 复刻样张缺陷清单，实施对照基准（research/original.png、codex-replica.png 为对应图片）"}
+{"file": ".trellis/spec/guides/quality-guidelines.md", "reason": "仓库通用质量门槛（测试、lint、提交前检查）"}

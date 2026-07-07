@@ -166,7 +166,7 @@ nodes:
       ⋯ Monitoring  |  = Database query
 
       Layer colors: Frontend | Gateway | Services | Data | Monitor
-    bounds: { x: 50, y: 260, width: 350, height: 100 }
+    bounds: { x: 50, y: 260, width: 376, height: 112 }
     style:
       align: left
       fontSize: 10

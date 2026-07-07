@@ -1,6 +1,6 @@
 ---
 name: drawio-academic-skills
-version: "2.4.0"
+version: "2.5.0"
 description: "Publication-figure overlay for draw.io. Use instead of the general drawio skill whenever a diagram is for a paper, thesis, dissertation, journal, conference, IEEE/ACM submission, manuscript, camera-ready, Word/LaTeX figure, or other publication. Applies venue, figure-type, color, caption/legend, formula, and paper-readability gates for architecture, workflow, roadmap, network-topology, and replicated paper figures. Runs offline and YAML-first through the sibling ../drawio base for CLI, references, themes, schemas, styles, and Desktop export; never requires MCP or a live backend."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
