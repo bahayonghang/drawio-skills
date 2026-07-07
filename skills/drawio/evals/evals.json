@@ -1,6 +1,6 @@
 {
   "skill_name": "drawio",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "evals": [
     {
       "id": "base-general-architecture",

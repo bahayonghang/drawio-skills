@@ -1,5 +1,61 @@
 # Changelog — drawio base skill
 
+## 2.5.0 (2026-07-07)
+
+Replication-quality round driven by an original-vs-replica comparison (industrial
+architecture figure): straight native connectors, transparent text, faithful
+vertical CJK labels.
+
+### Straight orthogonal routing
+
+- `buildRoutedEdges` resolves a shared absolute coordinate per edge (narrower-face
+  center clamped into the faces' overlap interval) and derives exit/entry fractions
+  from it, so no-waypoint orthogonal edges render as single straight segments by
+  construction; same-face edges spread ≥30px with both endpoints moving together,
+  and bidirectional pairs become two parallel straight lines.
+- Face detection prefers the axis with a positive face-to-face gap, fixing wide-bar
+  vs narrow-box pairs that previously routed through shape bodies.
+- Legacy `0.25/0.5/0.75` slots remain only as the no-overlap fallback and now dodge
+  coordinates already occupied on the same face (best-effort max-distance when the
+  face is too small).
+- New straightness audit in `validateEdgeQuality`: warns when an avoidable bend
+  exists (collinear solution available but unused); `--strict` fails.
+
+### Transparent text and label fidelity
+
+- Plain `type: text` nodes always emit `fillColor=none;strokeColor=none;labelBackgroundColor=none`;
+  explicit fills are ignored and reported by the new `validateTextNodeStyles`
+  (which also warns when declared bounds are smaller than the content estimate).
+  `overflow=hidden` removed from text nodes (no more clipped labels).
+- Label newlines become `<br>` in emitted XML (XML attribute normalization used to
+  fold them into spaces — the root cause of scrambled vertical CJK labels); math
+  labels keep raw newlines. Vertical CJK label pattern (one char per line) documented.
+- Content-aware default `labelOffset` (8px clearance + half label extent, axis
+  flipped on bent/star/mesh edges) and a new `validateLabelCollisions` lint for
+  labels on their own connector, across other connectors, and label/label overlap.
+- `validateColorScheme` accepts `none`/`transparent` as explicit transparency.
+
+### Native connectors and arrowheads
+
+- Block/classic arrows default to a bold solid head (`endSize=12`, `startSize=12`
+  with a start arrow), overridable per edge or theme.
+- `validateXml` now returns `warnings` (additive) and reports floating edges
+  (missing `source`/`target`), arrow shapes posing as connectors
+  (`singleArrow`/`doubleArrow`/`triangle`/`mxgraph.arrows2.*`), and white-filled
+  plain text cells; the CLI prints them and `--strict` fails on them.
+
+### Assets and docs
+
+- New regression fixture `evals/fixtures/industrial-architecture.yaml` (18-edge
+  replica of the audited figure; baseline had 13 bent edges, now 0).
+- `edge-quality-rules.md` (collinear-first, native-bound-edges, transparent-text
+  blocking rules; counterpart-projection face policy), `tokens.md` (enforced
+  transparency, vertical CJK pattern), `replicate.md` (mandatory transparency,
+  content-aware offsets, new validate checklist), `SKILL.md` rules 13-14.
+- Known follow-up: `aws-vpc-topology`, `campus-lan-topology`, `e-commerce`, and
+  `vendor-device-mapping` examples still carry advisory label-collision warnings
+  from dense layouts; they need layout spacing, not just offsets.
+
 ## 2.4.0 (2026-07-07)
 
 Quality round driven by the 2026-07-06 audit (19 findings): academic figures and

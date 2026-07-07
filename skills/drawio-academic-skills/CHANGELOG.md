@@ -1,5 +1,19 @@
 # Changelog — drawio academic skills overlay
 
+## 2.5.0 (2026-07-07)
+
+Sync with base 2.5.0 (straight routing / transparent text / native connectors):
+
+- `publication-overlay.md` § Text and Callout Styling now states the enforced
+  transparency contract (converter forces `fillColor=none` on plain text and
+  warns), the one-char-per-line vertical CJK label pattern, and a new
+  "Native straight connectors" point (bound edges only, collinear orthogonal
+  edges, `endSize=12` block heads, `--validate --strict` before export).
+- `yolo-model-architecture-paper.yaml`: stale fixed label offsets removed in
+  favor of the base content-aware defaults (previous `y: -16` sat on the line).
+- `multi-module-system-compact.yaml`: legend bounds enlarged to fit content
+  (350x100 → 376x112) per the new text-bounds lint.
+
 ## 2.4.0 (2026-07-07)
 
 Consistency round driven by the 2026-07-06 audit: the playbook, templates, and
