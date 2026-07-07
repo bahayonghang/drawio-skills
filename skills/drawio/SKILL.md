@@ -98,8 +98,8 @@ Academic triggers such as `paper`, `thesis`, `IEEE`, `journal`, `manuscript`, or
 1. Identify the diagram type and input format.
 2. Load the route references from the task-routing table.
 3. Normalize the request into YAML spec.
-4. Apply theme, semantic node types, typed connectors, and layout intent.
-5. Run validation before rendering.
+4. Apply theme, semantic node types, typed connectors, and layout intent. Layout values: `horizontal`, `vertical`, `hierarchical` (edge-aware layered auto-layout via the CLI when no node has explicit bounds/position; legacy grid fallback with a warning when the vendored engine is unavailable), `star`, `mesh`, `tiered` (North-South network rows from `network.tier`/`network.role` or node type).
+5. Run validation before rendering. `--validate` also reports layout quality metrics (node crossings, edge crossings, total edge length).
 6. Render final `.drawio` and `.svg` in the requested output directory, and write sidecars to a project-local work directory unless the user explicitly asks for a persistent sidecar bundle beside the output.
 
 Typical commands:

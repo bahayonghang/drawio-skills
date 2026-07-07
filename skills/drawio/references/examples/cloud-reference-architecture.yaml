@@ -1,7 +1,7 @@
 meta:
   profile: engineering-review
   theme: tech-blue
-  layout: horizontal
+  layout: hierarchical
   title: "Cloud Reference Architecture"
   description: "Gateway, compute, async processing, and storage."
 

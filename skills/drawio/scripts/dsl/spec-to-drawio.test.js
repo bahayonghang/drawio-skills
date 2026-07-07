@@ -27,6 +27,7 @@ import {
   validateShapeReferences,
   validateAcademicProfile,
   validateSchemaDrift,
+  computeLayoutQualityMetrics,
   SHAPE_STYLES
 } from './spec-to-drawio.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
@@ -2195,10 +2196,7 @@ describe('academic consistency', () => {
       edges: []
     }
     const warnings = validateAcademicProfile(spec)
-    assert.ok(
-      !warnings.some((w) => w.includes('concise')),
-      'text nodes must be exempt from the verbose-label rule'
-    )
+    assert.ok(!warnings.some((w) => w.includes('concise')), 'text nodes must be exempt from the verbose-label rule')
   })
 
   it('measures label verbosity by visible length, not raw TeX source length', () => {
@@ -2310,5 +2308,140 @@ describe('academic consistency', () => {
     const fatals = warnings.filter((w) => w.level === 'fatal')
     assert.equal(fatals.length, 1)
     assert.ok(fatals[0].message.includes('"e"'))
+  })
+})
+
+describe('tiered layout and centered slots', () => {
+  it('places network tiers in North-South rows', () => {
+    const spec = {
+      meta: { layout: 'tiered' },
+      nodes: [
+        { id: 'net', label: 'Internet', network: { role: 'internet' } },
+        { id: 'fw', label: 'Edge FW', network: { role: 'firewall' } },
+        { id: 'core', label: 'Core SW', network: { role: 'core' } },
+        { id: 'dist', label: 'Dist SW', network: { role: 'distribution' } },
+        { id: 'acc1', label: 'Access 1', network: { role: 'access' } },
+        { id: 'acc2', label: 'Access 2', network: { role: 'access' } },
+        { id: 'srv', label: 'App Server', network: { role: 'server' } }
+      ],
+      edges: []
+    }
+    const layout = calculateLayout(spec, loadTheme('tech-blue'))
+    const y = (id) => layout.positions.get(id).y
+    assert.ok(y('net') < y('fw'))
+    assert.ok(y('fw') < y('core'))
+    assert.ok(y('core') < y('dist'))
+    assert.ok(y('dist') < y('acc1'))
+    assert.equal(y('acc1'), y('acc2'))
+    assert.ok(y('acc1') < y('srv'))
+  })
+
+  it('keeps explicitly positioned nodes untouched in tiered layout', () => {
+    const spec = {
+      meta: { layout: 'tiered' },
+      nodes: [
+        {
+          id: 'pinned',
+          label: 'Pinned',
+          bounds: { x: 500, y: 500, width: 100, height: 40 },
+          network: { role: 'core' }
+        },
+        { id: 'auto', label: 'Auto', network: { role: 'access' } }
+      ],
+      edges: []
+    }
+    const layout = calculateLayout(spec, loadTheme('tech-blue'))
+    assert.deepEqual(layout.positions.get('pinned'), { x: 500, y: 500, width: 100, height: 40 })
+  })
+
+  it('validateSpec accepts tiered and still rejects unknown layouts', () => {
+    assert.doesNotThrow(() =>
+      validateSpec({ meta: { layout: 'tiered' }, nodes: [{ id: 'a', label: 'A' }], edges: [], modules: [] })
+    )
+    assert.throws(() =>
+      validateSpec({ meta: { layout: 'diagonal' }, nodes: [{ id: 'a', label: 'A' }], edges: [], modules: [] })
+    )
+  })
+
+  it('centers the connection point when a face has a single edge', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      modules: [{ id: 'm1', label: 'M1' }],
+      nodes: [
+        { id: 'a', label: 'A', module: 'm1' },
+        { id: 'b', label: 'B' }
+      ],
+      edges: [{ from: 'a', to: 'b' }]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.ok(xml.includes('exitY=0.5'), 'single-edge source face centers at 0.5')
+    assert.ok(xml.includes('entryY=0.5'), 'single-edge target face centers at 0.5')
+    assert.ok(!xml.includes('exitY=0.25'))
+  })
+
+  it('distributes multiple edges on a shared face across slots', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', position: { x: 100, y: 200 } },
+        { id: 'b', label: 'B', position: { x: 400, y: 100 } },
+        { id: 'c', label: 'C', position: { x: 400, y: 300 } }
+      ],
+      edges: [
+        { from: 'a', to: 'b' },
+        { from: 'a', to: 'c' }
+      ]
+    }
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.ok(xml.includes('exitY=0.25'))
+    assert.ok(xml.includes('exitY=0.5'))
+  })
+})
+
+describe('layout quality metrics', () => {
+  it('counts an edge cutting through an unrelated node', () => {
+    const spec = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 40, y: 100, width: 80, height: 40 } },
+        { id: 'mid', label: 'Mid', bounds: { x: 240, y: 100, width: 80, height: 40 } },
+        { id: 'c', label: 'C', bounds: { x: 440, y: 100, width: 80, height: 40 } }
+      ],
+      edges: [{ from: 'a', to: 'c' }]
+    }
+    const metrics = computeLayoutQualityMetrics(spec)
+    assert.equal(metrics.edgeNodeCrossings, 1)
+    assert.equal(metrics.edgeEdgeCrossings, 0)
+    assert.equal(metrics.totalEdgeLength, 320)
+  })
+
+  it('counts crossing edge pairs and stays silent for clean layouts', () => {
+    const crossing = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 40, y: 40, width: 80, height: 40 } },
+        { id: 'b', label: 'B', bounds: { x: 40, y: 240, width: 80, height: 40 } },
+        { id: 'c', label: 'C', bounds: { x: 440, y: 40, width: 80, height: 40 } },
+        { id: 'd', label: 'D', bounds: { x: 440, y: 240, width: 80, height: 40 } }
+      ],
+      edges: [
+        { from: 'a', to: 'd' },
+        { from: 'b', to: 'c' }
+      ]
+    }
+    assert.equal(computeLayoutQualityMetrics(crossing).edgeEdgeCrossings, 1)
+
+    const clean = {
+      meta: { layout: 'horizontal' },
+      nodes: [
+        { id: 'a', label: 'A', bounds: { x: 40, y: 40, width: 80, height: 40 } },
+        { id: 'b', label: 'B', bounds: { x: 240, y: 40, width: 80, height: 40 } }
+      ],
+      edges: [{ from: 'a', to: 'b' }]
+    }
+    const metrics = computeLayoutQualityMetrics(clean)
+    assert.equal(metrics.edgeNodeCrossings, 0)
+    assert.equal(metrics.edgeEdgeCrossings, 0)
+    assert.equal(metrics.totalEdgeLength, 120)
   })
 })

@@ -7,7 +7,14 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, extname, join, resolve } from 'node:path'
-import { parseSpecYaml, specToDrawioXml, validateSpec, validateXml } from './dsl/spec-to-drawio.js'
+import {
+  computeLayoutQualityMetrics,
+  parseSpecYaml,
+  specToDrawioXml,
+  validateSpec,
+  validateXml
+} from './dsl/spec-to-drawio.js'
+import { applyAutoLayout } from './dsl/auto-layout.js'
 import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
 import { drawioToSpec } from './dsl/drawio-to-spec.js'
 import {
@@ -174,6 +181,13 @@ if (themeName) {
   spec.meta.theme = themeName
 }
 
+// Edge-aware auto-layout pre-pass (hierarchical specs without explicit geometry)
+const autoLayoutResult = await applyAutoLayout(spec)
+if (autoLayoutResult.warning) {
+  console.error(`Warning: ${autoLayoutResult.warning}`)
+}
+spec = autoLayoutResult.spec
+
 let xml
 try {
   if (exportSpec) {
@@ -188,6 +202,10 @@ try {
       console.error(`Spec validation: WARNINGS (${problems.length})`)
       problems.forEach((w) => console.error(`  • [${w.level}] ${w.message}`))
     }
+    const metrics = computeLayoutQualityMetrics(spec)
+    console.error(
+      `Layout metrics: node-crossings=${metrics.edgeNodeCrossings}, edge-crossings=${metrics.edgeEdgeCrossings}, total-edge-length=${metrics.totalEdgeLength}px`
+    )
   } else {
     xml = specToDrawioXml(spec, { strict })
   }

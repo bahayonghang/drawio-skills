@@ -492,6 +492,53 @@ function normalizeNodeBounds(node) {
 // Layout Engine
 // ============================================================================
 
+// North-South tiers for layout: tiered — external systems on top, endpoints at
+// the bottom. Explicit node.network.tier wins, then role, then semantic type.
+const NETWORK_ROLE_TIERS = {
+  internet: 0,
+  wan: 0,
+  isp: 0,
+  external: 0,
+  firewall: 1,
+  dmz: 1,
+  router: 1,
+  core: 2,
+  distribution: 3,
+  aggregation: 3,
+  access: 4,
+  switch: 4,
+  wireless: 4,
+  server: 5,
+  endpoint: 5,
+  host: 5,
+  storage: 5,
+  database: 5
+}
+
+const NETWORK_TYPE_TIERS = {
+  cloud: 0,
+  internet: 0,
+  firewall: 1,
+  router: 1,
+  load_balancer: 2,
+  switch: 4,
+  server: 5,
+  database: 5,
+  storage: 5,
+  user: 5,
+  terminal: 5
+}
+
+function resolveNetworkTier(node) {
+  const explicit = node.network?.tier
+  if (typeof explicit === 'number' && Number.isFinite(explicit)) return explicit
+  const role = typeof node.network?.role === 'string' ? node.network.role.toLowerCase() : null
+  if (role && NETWORK_ROLE_TIERS[role] !== undefined) return NETWORK_ROLE_TIERS[role]
+  const semanticType = detectSemanticType(node.label, node.type, node.network)
+  if (NETWORK_TYPE_TIERS[semanticType] !== undefined) return NETWORK_TYPE_TIERS[semanticType]
+  return 2.5
+}
+
 /**
  * Calculate positions for nodes based on layout type
  */
@@ -658,6 +705,42 @@ export function calculateLayout(spec, theme) {
         centerY + Math.sin(angle) * radius - size.height / 2
       )
     })
+  } else if (layout === 'tiered') {
+    // North-South rows: sort tiers ascending, center each row horizontally.
+    const autoNodes = nodes.filter((node) => !manuallyPositioned.has(node.id))
+    const tierBuckets = new Map()
+    for (const node of autoNodes) {
+      const tier = resolveNetworkTier(node)
+      if (!tierBuckets.has(tier)) tierBuckets.set(tier, [])
+      tierBuckets.get(tier).push(node)
+    }
+    const rowGap = 96
+    const nodeGap = 48
+    const rowMetrics = [...tierBuckets.keys()]
+      .sort((a, b) => a - b)
+      .map((tier) => {
+        const rowNodes = tierBuckets.get(tier)
+        const moduleOrder = new Map()
+        for (const node of rowNodes) {
+          const key = node.module || ''
+          if (!moduleOrder.has(key)) moduleOrder.set(key, moduleOrder.size)
+        }
+        rowNodes.sort((a, b) => moduleOrder.get(a.module || '') - moduleOrder.get(b.module || ''))
+        const sizes = rowNodes.map((node) => getNodeMetrics(node).size)
+        const width = sizes.reduce((sum, size) => sum + size.width, 0) + nodeGap * Math.max(rowNodes.length - 1, 0)
+        const height = Math.max(...sizes.map((size) => size.height))
+        return { rowNodes, sizes, width, height }
+      })
+    const maxRowWidth = rowMetrics.reduce((max, row) => Math.max(max, row.width), 0)
+    let rowY = 40
+    for (const row of rowMetrics) {
+      let nodeX = 40 + (maxRowWidth - row.width) / 2
+      row.rowNodes.forEach((node, index) => {
+        placeNode(node, nodeX, rowY)
+        nodeX += row.sizes[index].width + nodeGap
+      })
+      rowY += row.height + rowGap
+    }
   } else {
     // Hierarchical or other: simple grid layout
     let row = 0
@@ -1630,14 +1713,14 @@ function buildRoutedEdges(spec, layout) {
 
   for (const group of sourceGroups.values()) {
     group.forEach((edge, index) => {
-      const slot = getSlot(index)
+      const slot = group.length === 1 ? 0.5 : getSlot(index)
       applyFaceSlot(edge.style, edge.__routing.sourceFace, slot)
     })
   }
 
   for (const group of targetGroups.values()) {
     group.forEach((edge, index) => {
-      const slot = getSlot(index)
+      const slot = group.length === 1 ? 0.5 : getSlot(index)
       applyTargetFaceSlot(edge.style, edge.__routing.targetFace, slot)
     })
   }
@@ -1981,6 +2064,120 @@ export function validateEdgeQuality(spec, layout) {
 }
 
 // ============================================================================
+// Layout Quality Metrics
+// ============================================================================
+
+function rectCenter(rect) {
+  return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }
+}
+
+function clipPointToRect(rect, toward) {
+  const center = rectCenter(rect)
+  const dx = toward.x - center.x
+  const dy = toward.y - center.y
+  if (dx === 0 && dy === 0) return center
+  const halfW = rect.width / 2
+  const halfH = rect.height / 2
+  const scaleX = dx !== 0 ? halfW / Math.abs(dx) : Infinity
+  const scaleY = dy !== 0 ? halfH / Math.abs(dy) : Infinity
+  const t = Math.min(scaleX, scaleY, 1)
+  return { x: center.x + dx * t, y: center.y + dy * t }
+}
+
+function orientationOf(a, b, c) {
+  const value = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+  if (Math.abs(value) < 1e-9) return 0
+  return value > 0 ? 1 : -1
+}
+
+function segmentsProperlyIntersect(p1, p2, p3, p4) {
+  const o1 = orientationOf(p1, p2, p3)
+  const o2 = orientationOf(p1, p2, p4)
+  const o3 = orientationOf(p3, p4, p1)
+  const o4 = orientationOf(p3, p4, p2)
+  return o1 !== o2 && o3 !== o4 && o1 !== 0 && o2 !== 0 && o3 !== 0 && o4 !== 0
+}
+
+function segmentIntersectsRect(p1, p2, rect) {
+  const inside = (p) => p.x > rect.x && p.x < rect.x + rect.width && p.y > rect.y && p.y < rect.y + rect.height
+  if (inside(p1) || inside(p2)) return true
+  const corners = [
+    { x: rect.x, y: rect.y },
+    { x: rect.x + rect.width, y: rect.y },
+    { x: rect.x + rect.width, y: rect.y + rect.height },
+    { x: rect.x, y: rect.y + rect.height }
+  ]
+  for (let i = 0; i < 4; i++) {
+    if (segmentsProperlyIntersect(p1, p2, corners[i], corners[(i + 1) % 4])) return true
+  }
+  return false
+}
+
+/**
+ * Readability metrics over the routed layout: how many edges cut through
+ * unrelated nodes, how many edge pairs cross, and the total polyline length.
+ * Edge endpoints are approximated by center-to-boundary clipping; waypoints
+ * are honored, so orthogonal (elk) routes are measured on their real path.
+ */
+export function computeLayoutQualityMetrics(spec, options = {}) {
+  const theme = options.theme || loadTheme(spec.meta?.theme || 'tech-blue')
+  const layout = options.layout || calculateLayout(spec, theme)
+  const routedEdges = buildRoutedEdges(spec, layout)
+  const { positions } = layout
+
+  let edgeNodeCrossings = 0
+  let edgeEdgeCrossings = 0
+  let totalEdgeLength = 0
+
+  const polylines = []
+  for (const edge of routedEdges) {
+    const sourceRect = positions.get(edge.from)
+    const targetRect = positions.get(edge.to)
+    if (!sourceRect || !targetRect) continue
+    const waypoints = edge.waypoints || []
+    const firstToward = waypoints[0] || rectCenter(targetRect)
+    const lastToward = waypoints[waypoints.length - 1] || rectCenter(sourceRect)
+    const points = [clipPointToRect(sourceRect, firstToward), ...waypoints, clipPointToRect(targetRect, lastToward)]
+    polylines.push({ edge, points })
+    for (let i = 1; i < points.length; i++) {
+      totalEdgeLength += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y)
+    }
+  }
+
+  for (const { edge, points } of polylines) {
+    for (const node of spec.nodes || []) {
+      if (node.id === edge.from || node.id === edge.to) continue
+      const rect = positions.get(node.id)
+      if (!rect) continue
+      let crosses = false
+      for (let i = 1; i < points.length && !crosses; i++) {
+        crosses = segmentIntersectsRect(points[i - 1], points[i], rect)
+      }
+      if (crosses) edgeNodeCrossings++
+    }
+  }
+
+  for (let i = 0; i < polylines.length; i++) {
+    for (let j = i + 1; j < polylines.length; j++) {
+      const a = polylines[i]
+      const b = polylines[j]
+      const shared =
+        a.edge.from === b.edge.from || a.edge.from === b.edge.to || a.edge.to === b.edge.from || a.edge.to === b.edge.to
+      if (shared) continue
+      let crosses = false
+      for (let si = 1; si < a.points.length && !crosses; si++) {
+        for (let sj = 1; sj < b.points.length && !crosses; sj++) {
+          crosses = segmentsProperlyIntersect(a.points[si - 1], a.points[si], b.points[sj - 1], b.points[sj])
+        }
+      }
+      if (crosses) edgeEdgeCrossings++
+    }
+  }
+
+  return { edgeNodeCrossings, edgeEdgeCrossings, totalEdgeLength: Math.round(totalEdgeLength) }
+}
+
+// ============================================================================
 // Main Export Functions
 // ============================================================================
 
@@ -2001,6 +2198,18 @@ export function specToDrawioXml(spec, options = {}) {
 
   // Check complexity
   const warnings = checkComplexity(spec)
+
+  // Direct sync conversion cannot run the async elk pre-pass; surface it.
+  if (
+    spec.meta?.layout === 'hierarchical' &&
+    (spec.nodes || []).some((node) => node.bounds == null && node.position == null)
+  ) {
+    warnings.push({
+      level: 'info',
+      message:
+        'Layout "hierarchical" placed auto nodes with the legacy grid. Convert via the CLI (or run applyAutoLayout first) for edge-aware layered layout.'
+    })
+  }
 
   // Security: always throw on fatal-level warnings regardless of strict mode
   const fatals = warnings.filter((w) => w.level === 'fatal')
@@ -2102,7 +2311,7 @@ export function validateSpec(spec) {
   const VALID_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
   const VALID_THEME = /^[a-z][a-z0-9-]*$/
   const VALID_ICON = /^[a-zA-Z][a-zA-Z0-9._-]*$/
-  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical', 'star', 'mesh']
+  const VALID_LAYOUTS = ['horizontal', 'vertical', 'hierarchical', 'star', 'mesh', 'tiered']
   const VALID_ROUTINGS = ['orthogonal', 'rounded']
   const VALID_PROFILES = ['default', 'academic-paper', 'engineering-review']
   const VALID_FIGURE_TYPES = ['architecture', 'roadmap', 'workflow']

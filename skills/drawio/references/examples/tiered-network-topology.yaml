@@ -1,0 +1,59 @@
+# Tiered Network Topology Example
+# layout: tiered places network tiers in North-South rows: external systems on
+# top, endpoints at the bottom. Rows come from node.network.tier (explicit),
+# node.network.role, or the semantic node type.
+meta:
+  title: Campus North-South Topology
+  description: Internet edge to server farm in classic three-tier rows.
+  theme: tech-blue
+  layout: tiered
+
+nodes:
+  - id: internet
+    label: Internet
+    type: cloud
+    network: { role: internet }
+  - id: edge_fw
+    label: Edge Firewall
+    type: firewall
+    network: { role: firewall }
+  - id: core_sw
+    label: Core Switch
+    type: switch
+    network: { role: core }
+  - id: dist_sw
+    label: Dist Switch
+    type: switch
+    network: { role: distribution }
+  - id: access_a
+    label: Access A
+    type: switch
+    network: { role: access }
+  - id: access_b
+    label: Access B
+    type: switch
+    network: { role: access }
+  - id: app_srv
+    label: App Server
+    type: server
+    network: { role: server }
+  - id: db_srv
+    label: DB Server
+    type: database
+    network: { role: server }
+
+edges:
+  - from: internet
+    to: edge_fw
+  - from: edge_fw
+    to: core_sw
+  - from: core_sw
+    to: dist_sw
+  - from: dist_sw
+    to: access_a
+  - from: dist_sw
+    to: access_b
+  - from: access_a
+    to: app_srv
+  - from: access_b
+    to: db_srv
