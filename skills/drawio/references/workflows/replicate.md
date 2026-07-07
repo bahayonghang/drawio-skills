@@ -40,7 +40,8 @@ Step 3: Structured Extraction
 ├── Text Fidelity Pass:
 │   ├── extract every text-bearing element as shape label, edge label, standalone text, or formula annotation
 │   ├── record text bounds, baseline/anchor, alignment, font family, font size, italic/bold state, and spacing
-│   ├── default text fill to `none` with `labelBackgroundColor=none`; add a restrained tint only when a busy background truly needs separation
+│   ├── plain text boxes are always transparent (`fillColor=none;strokeColor=none;labelBackgroundColor=none`); never assign the canvas/background color to a text fill — the converter ignores such fills and warns; use a `formula` node or a shape node when a filled label is intended
+│   ├── vertical CJK labels are one character per line (`label: "可\n视\n化"`); never a narrow box relying on wrap, never `horizontal=0`
 │   ├── record relative offset from the nearest arrow, connector, node, module, or canvas boundary
 │   └── preserve math delimiters for formulas (`$$...$$`, `\(...\)`, or AsciiMath backticks)
 ├── Extract to YAML specification format:
@@ -92,9 +93,12 @@ Step 7: Review and Refine
 Step 8: Validate
 ├── Check cell ID uniqueness
 ├── Check edge source/target reference validity
+├── Check every connector is a native bound edge (`source` + `target` set); `--validate` warns on floating edges and on arrow shapes (`singleArrow`/`triangle`/`mxgraph.arrows2.*`) posing as connectors
+├── Check straightness: no-waypoint orthogonal edges must be collinear (same absolute exit/entry coordinate); `--validate` reports avoidable bends
+├── Check plain text boxes are transparent (`fillColor=none`); `--validate` warns on white-filled `text;` cells
 ├── Check required root cells present
 ├── Check `--validate` does not report a full-page embedded image cell
-├── Check text-label clearance: no edge label overlaps its connector, no formula is clipped or pasted to a boundary
+├── Check text-label clearance: no edge label overlaps its connector or another label, no formula is clipped or pasted to a boundary (label-collision lint reports these)
 ├── For screenshot/academic replication, record at least one original-vs-export visual comparison from exported SVG/PNG/PDF/JPG when vision or a viewer can inspect it
 ├── Use browser/live screenshots only as a last-resort review aid when the user explicitly requested live review and no exported artifact can be inspected
 └── Use --validate CLI flag or validateXml() from DSL converter
@@ -205,6 +209,8 @@ During extraction, map visual elements to semantic types:
 | Diamond end   | `dependency`    | Solid 1px, diamond       |
 | Double-headed | `bidirectional` | Solid 1.5px, no arrow    |
 
+All connectors are native bound edges (`source`/`target` node ids) — never standalone arrow shapes. Block/classic heads default to a bold solid triangle (`endFill=1;endSize=12`); override via `edge.style.endSize`. Two opposite arrows between the same pair of shapes ("bidirectional pair") render as two parallel straight lines ≥30px apart automatically.
+
 ## Extraction Rules
 
 1. Only use content from the input. Never invent missing labels or structures.
@@ -216,7 +222,7 @@ During extraction, map visual elements to semantic types:
 7. If a live provider is used, treat it as preview/refinement only unless it also satisfies the edit-session capability gate from `/drawio edit`.
 8. Treat standalone text, captions, callouts, legends, and formula annotations as first-class replicated elements; do not force them into nearby shapes when their separate position carries meaning.
 9. Use `bounds: {x, y, width, height}` for high-fidelity text boxes. `bounds` uses top-left coordinates; `position` remains a center-point convenience for ordinary nodes.
-10. For labeled connectors, prefer an off-line offset: horizontal connectors usually use `labelOffset: {x: 0, y: -12}` to `-20`, and vertical connectors usually use `{x: 12, y: 0}` to `{x: 20, y: 0}`. Adjust the sign to match the source side.
+10. For labeled connectors, omitting `labelOffset` now yields a content-aware default (8px clearance plus half the label extent, matching draw.io's center-on-offset-point behavior). Give an explicit `labelOffset` only to pick a side (negative to flip outward) or to clear a neighboring line; on bent fallback edges offset perpendicular to the middle segment.
 11. Fix failures in this order: (a) wrong/missing text, (b) formula delimiters/font, (c) `bounds` and baselines, (d) `labelOffset`, (e) connector waypoints/routing, (f) color/style polish, (g) accidental full-page image cells.
 
 ## Related
