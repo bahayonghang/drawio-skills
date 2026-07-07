@@ -1,0 +1,31 @@
+{
+  "id": "drawio-figure-quality",
+  "name": "drawio-figure-quality",
+  "title": "drawio skills 学术图与网络架构图质量优化",
+  "description": "审计发现的渲染器/布局/主题/文档一致性问题总控：修复 SVG 保真、引入自动布局、修正主题样式、消除学术规则矛盾，目标是更高质量的学术流程图与网络架构图。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-06",
+  "completedAt": "2026-07-07",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-06-svg-renderer-fidelity",
+    "07-06-auto-layout-engine",
+    "07-06-theme-style-fidelity",
+    "07-06-academic-consistency"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
