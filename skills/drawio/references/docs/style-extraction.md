@@ -7,6 +7,7 @@ Loaded on demand by `SKILL.md` when the user asks to learn a style ("learn my st
 After extracting a candidate preset, render this seven-node sample using the candidate's palette/shapes/fonts/edges. Each role appears exactly once; six edges, one dashed, exercise `edges.arrow`, `edges.style`, and `edges.dashedFor`.
 
 **Layout (TB):**
+
 - Row 1 (y=40): `gateway` centered at x=340
 - Row 2 (y=180): `security` (x=80), `service` (x=340), `queue` (x=600)
 - Row 3 (y=340): `database` (x=80), `external` (x=340), `error` (x=600)
@@ -15,17 +16,20 @@ After extracting a candidate preset, render this seven-node sample using the can
 
 The vertex style for role `R` is built as:
 `<shapes[R]>;whiteSpace=wrap;html=1;fillColor=<palette[roles[R]].fillColor>;strokeColor=<palette[roles[R]].strokeColor>;fontFamily=<font.fontFamily>;fontSize=<font.fontSize>`
+
 - If `extras.sketch=true`, append `;sketch=1` to every vertex style AND every edge style.
 - If `extras.globalStrokeWidth !== 1` (i.e., any value other than the drawio default of 1, including `0.5`), append `;strokeWidth=<n>` to every vertex style AND every edge style.
 
 The edge style is built as:
 `<edges.style>;<edges.arrow>`
+
 - Per-edge routing keys (`exitX/entryX/...`) are added as literals below.
 - Edge 15 exercises `edges.dashedFor`:
   - If `edges.dashedFor` is **non-empty**, use its first entry as the edge's `value` (label) AND append `;dashed=1` to the edge style.
   - If `edges.dashedFor` is empty (`[]`), use the label `cross-call` and do NOT append `;dashed=1` — the preset has no dashed convention, so the sample must not fake one.
 
 **Placeholder expansion (applied when filling the XML):**
+
 - `{{VSTYLE:<role>}}` expands to the vertex-style formula above with `R = <role>`. Write the result as a literal string; do not URL-encode.
 - `{{ESTYLE}}` expands to the edge-style formula above.
 - `{{EDGE15_LABEL}}` and `{{EDGE15_DASH}}` follow the Edge-15 rule above.
@@ -149,6 +153,7 @@ Input: a `.drawio` file path. Output: candidate preset JSON. Deterministic, no L
 7. **Extract extras.** `sketch=1` seen on any vertex or edge → `extras.sketch = true`. Modal `strokeWidth` across vertices → `extras.globalStrokeWidth` (default `1`).
 
 8. **Set provenance.**
+
    ```json
    {
      "source": { "type": "xml", "path": "<input absolute path>", "extracted_at": "YYYY-MM-DD" },
@@ -233,12 +238,14 @@ Input: path to a PNG/JPG (or any vision-readable image format). Output: candidat
    - Otherwise default: `extras = { "sketch": false, "globalStrokeWidth": 1 }`.
 
 7. **Set provenance and confidence.**
+
    ```json
    {
      "source": { "type": "image", "path": "<input absolute path>", "extracted_at": "YYYY-MM-DD" },
      "confidence": "medium"
    }
    ```
+
    Adjustments:
    - <3 distinct shapes identifiable → `confidence: "low"`.
    - Image path stays at `"medium"` by default. The only path to `"high"` is a strictly-verifiable signal: the source image was exported from drawio itself (recognizable drawio default chrome, grid, or a visible drawio watermark), **and** all seven palette slots are filled, **and** all seven roles are labeled. This preserves the semantic gap between inference-based (image) and parse-based (XML) provenance.

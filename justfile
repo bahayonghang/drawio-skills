@@ -1,6 +1,9 @@
 # Draw.io 技能项目 Justfile
 # 运行 `just` 或 `just help` 查看可用命令
 
+# Windows does not always have a POSIX `sh`; keep Just recipes runnable there.
+set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
+
 # 默认命令（直接输入 `just` 时执行）
 default:
     @just --list
@@ -81,7 +84,7 @@ tree:
 # 检查 Markdown 文件（需要 markdownlint-cli）
 lint:
     @echo "🔍 正在检查 Markdown 文件..."
-    npx markdownlint-cli docs/**/*.md skills/**/*.md README*.md
+    npx markdownlint-cli "docs/**/*.md" "skills/**/*.md" "README*.md" --ignore "skills/drawio/references/official/**" --ignore "skills/drawio/references/upstream/**" --ignore "skills/drawio/scripts/vendor/**"
 
 # 格式化 Markdown 文件（需要 prettier）
 format:
