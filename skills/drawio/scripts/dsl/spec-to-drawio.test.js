@@ -30,6 +30,7 @@ import {
   computeLayoutQualityMetrics,
   SHAPE_STYLES
 } from './spec-to-drawio.js'
+import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 
 // ============================================================================
@@ -1426,6 +1427,13 @@ describe('Phase 2.4: resolveIconShape', () => {
     assert.strictEqual(resolveIconShape(undefined), null)
   })
 
+  it('should resolve brand and lucide icons as image styles instead of draw.io shape names', () => {
+    assert.strictEqual(resolveIconShape('brand.openai'), null)
+    assert.match(resolveImageIconStyle('brand.openai'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('brand.redis'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lucide.database-zap'), /^shape=image;.*image=data:image\/svg\+xml,/)
+  })
+
   it('should treat unknown prefix as direct shape reference', () => {
     assert.strictEqual(resolveIconShape('customShape'), 'customShape')
   })
@@ -1460,6 +1468,19 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
   it('node with icon gcp.functions should have shape=mxgraph.gcp2.functions in style', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Functions', icon: 'gcp.functions' }, theme)
     assert.ok(style.includes('shape=mxgraph.gcp2.functions'), 'should contain shape=mxgraph.gcp2.functions')
+  })
+
+  it('node with icon brand.openai should emit an embedded image style', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'OpenAI', icon: 'brand.openai' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render brand icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'), 'brand icon should be self-contained SVG data')
+    assert.ok(style.includes('verticalLabelPosition=bottom'), 'should label image icons below the icon')
+  })
+
+  it('node with icon lucide.database-zap should emit an embedded image style', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'Cache', icon: 'lucide.database-zap' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render lucide icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'), 'lucide icon should be self-contained SVG data')
   })
 
   it('node without icon should NOT contain shape=mxgraph', () => {
@@ -2166,7 +2187,9 @@ describe('theme style fidelity', () => {
     const warnings = validateShapeReferences({
       nodes: [
         { id: 'bad', label: 'Broken', icon: 'cisco.wireless.access_point' },
-        { id: 'good', label: 'DB', icon: 'aws.rds' }
+        { id: 'good', label: 'DB', icon: 'aws.rds' },
+        { id: 'brand', label: 'OpenAI', icon: 'brand.openai' },
+        { id: 'lucide', label: 'Cache', icon: 'lucide.database-zap' }
       ]
     })
     assert.equal(warnings.length, 1, 'only the unknown shape should warn')

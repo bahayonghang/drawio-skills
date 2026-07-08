@@ -4,6 +4,7 @@
  */
 
 import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
+import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
@@ -955,6 +956,7 @@ function applyThemeRounding(shapeStyle, themeRounded) {
  */
 export function resolveIconShape(icon) {
   if (!icon) return null
+  if (resolveImageIconStyle(icon)) return null
   const normalizedIcon = ICON_ALIASES[icon] || icon
   for (const [prefix, mxPrefix] of Object.entries(ICON_PREFIXES)) {
     if (normalizedIcon.startsWith(prefix)) {
@@ -1047,10 +1049,24 @@ function generateNodeStyleWithSpec(node, theme, spec) {
   }
 
   // If node has an icon, override shape to use the icon
-  const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
+  const iconName = node.icon || deriveNodeIcon(node)
+  const imageIconStyle = resolveImageIconStyle(iconName)
+  const iconShape = imageIconStyle ? null : resolveIconShape(iconName)
   let effectiveShapeStyle = applyThemeRounding(shapeStyle, nodeTheme.rounded ?? defaultTheme.rounded)
   const parts = []
-  if (iconShape) {
+  if (imageIconStyle) {
+    effectiveShapeStyle = imageIconStyle
+    parts.push(effectiveShapeStyle)
+    parts.push('whiteSpace=wrap')
+    parts.push(`fillColor=${fillColor}`)
+    parts.push(`strokeColor=${strokeColor}`)
+    parts.push(`strokeWidth=${strokeWidth}`)
+    parts.push(`fontColor=${fontColor}`)
+    parts.push(`fontSize=${fontSize}`)
+    parts.push(`fontFamily=${fontFamily}`)
+    parts.push('labelBackgroundColor=none')
+    parts.push(`align=${align}`)
+  } else if (iconShape) {
     // aws4 service icons that only exist as resource icons need the compound style
     effectiveShapeStyle =
       resolveShapeNameKind(iconShape) === 'aws4ResourceIcon'
@@ -2075,7 +2091,9 @@ export function validateConnectionPointPolicy(spec) {
 export function validateShapeReferences(spec) {
   const warnings = []
   for (const node of spec.nodes || []) {
-    const iconShape = resolveIconShape(node.icon || deriveNodeIcon(node))
+    const iconName = node.icon || deriveNodeIcon(node)
+    if (resolveImageIconStyle(iconName)) continue
+    const iconShape = resolveIconShape(iconName)
     if (!iconShape) continue
     if (resolveShapeNameKind(iconShape) === 'unknown') {
       warnings.push(

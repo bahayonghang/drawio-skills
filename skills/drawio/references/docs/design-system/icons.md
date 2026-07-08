@@ -126,6 +126,54 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 ---
 
+## Brand and Lucide Image Icons
+
+Use `brand.*` for non-cloud product identity icons that draw.io does not ship as
+native stencils. These render as embedded SVG image cells, so the exported
+`.drawio` remains self-contained and does not require network access at render
+time.
+
+| Brand | Icon Reference | Rendering |
+|-------|---------------|-----------|
+| OpenAI | `brand.openai` | Embedded SVG image |
+| Redis | `brand.redis` | Embedded SVG image |
+
+Use `lucide.*` for generic semantic fallback icons inspired by the Lucide icon
+vocabulary. Lucide icons are intentionally not brand logos; they are best for
+roles such as AI service, cache, document, server, workflow, and security.
+
+| Need | Icon Reference |
+|------|----------------|
+| AI / LLM service | `lucide.brain-circuit`, `lucide.bot` |
+| Cache / fast database | `lucide.database-zap` |
+| Database | `lucide.database` |
+| Document processing | `lucide.file-text` |
+| Cloud service | `lucide.cloud` |
+| Server / compute | `lucide.server`, `lucide.cpu` |
+| Workflow / pipeline | `lucide.workflow` |
+| Security boundary | `lucide.shield` |
+| Network | `lucide.network` |
+
+```yaml
+nodes:
+  - id: openai
+    label: OpenAI document understanding
+    icon: brand.openai
+
+  - id: cache
+    label: Semantic cache
+    icon: lucide.database-zap
+```
+
+Resolution order for icon-heavy diagrams:
+
+1. Prefer draw.io provider stencils for cloud/vendor infrastructure
+   (`aws.*`, `gcp.*`, `azure.*`, `cisco.*`).
+2. Use `brand.*` when product identity matters and no draw.io stencil exists.
+3. Use `lucide.*` for generic semantic icons, not official logos.
+
+---
+
 ## ML/AI Icons
 
 ### Neural Network Symbols

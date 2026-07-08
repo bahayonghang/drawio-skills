@@ -253,7 +253,7 @@
           "icon": {
             "type": "string",
             "pattern": "^[a-zA-Z][a-zA-Z0-9._-]*$",
-            "description": "Icon identifier (e.g. aws.lambda, gcp.compute)"
+            "description": "Icon identifier (e.g. aws.lambda, gcp.compute, brand.openai, lucide.database-zap)"
           },
           "network": {
             "type": "object",
