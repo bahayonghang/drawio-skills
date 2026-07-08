@@ -150,9 +150,14 @@ Lobe icon assets come from the MIT-licensed
 | Hugging Face | `lobe.huggingface` | Lobe Icons CDN image |
 | Redis | `brand.redis` | Embedded SVG image |
 
-Use `lucide.*` for generic semantic fallback icons inspired by the Lucide icon
-vocabulary. Lucide icons are intentionally not brand logos; they are best for
-roles such as AI service, cache, document, server, workflow, and security.
+Use `lucide.*` for generic semantic fallback icons from the local
+`lucide-static` package. The resolver embeds matching SVG files as data URI
+images, so Lucide icons do not need network access after dependencies are
+installed. Use Lucide's kebab-case SVG file names, such as
+`lucide.alarm-clock`, `lucide.server-cog`, or `lucide.workflow`.
+
+Lucide icons are intentionally not brand logos; they are best for roles such as
+AI service, cache, document, server, workflow, and security.
 
 | Need | Icon Reference |
 |------|----------------|
@@ -162,6 +167,7 @@ roles such as AI service, cache, document, server, workflow, and security.
 | Document processing | `lucide.file-text` |
 | Cloud service | `lucide.cloud` |
 | Server / compute | `lucide.server`, `lucide.cpu` |
+| Server operations | `lucide.server-cog` |
 | Workflow / pipeline | `lucide.workflow` |
 | Security boundary | `lucide.shield` |
 | Network | `lucide.network` |
@@ -179,6 +185,10 @@ nodes:
   - id: cache
     label: Semantic cache
     icon: lucide.database-zap
+
+  - id: ops
+    label: Server operations
+    icon: lucide.server-cog
 ```
 
 Resolution order for icon-heavy diagrams:

@@ -1435,6 +1435,8 @@ describe('Phase 2.4: resolveIconShape', () => {
     assert.match(resolveImageIconStyle('lobe.mistral'), /^shape=image;.*image=https:\/\/unpkg\.com\/@lobehub\/icons-static-svg@1\.91\.0\/icons\/mistral\.svg/)
     assert.match(resolveImageIconStyle('brand.redis'), /^shape=image;.*image=data:image\/svg\+xml,/)
     assert.match(resolveImageIconStyle('lucide.database-zap'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lucide.server-cog'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.strictEqual(resolveImageIconStyle('lucide.not-a-real-icon'), null)
   })
 
   it('should treat unknown prefix as direct shape reference', () => {
@@ -1490,6 +1492,13 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Cache', icon: 'lucide.database-zap' }, theme)
     assert.ok(style.includes('shape=image'), 'should render lucide icons as draw.io image cells')
     assert.ok(style.includes('image=data:image/svg+xml,'), 'lucide icon should be self-contained SVG data')
+  })
+
+  it('node with icon lucide.server-cog should resolve from the full lucide-static package', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'Server Ops', icon: 'lucide.server-cog' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render lucide-static icons as draw.io image cells')
+    assert.ok(style.includes('lucide-server-cog'), 'should embed the lucide-static SVG content')
+    assert.ok(style.includes('%231E293B'), 'should normalize currentColor to the draw.io icon color')
   })
 
   it('node without icon should NOT contain shape=mxgraph', () => {

@@ -3,9 +3,17 @@
  * Resolves non-draw.io image icons to self-contained draw.io image styles.
  */
 
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { createRequire } from 'node:module'
+
 const IMAGE_ICON_STYLE_PREFIX =
   'shape=image;html=1;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;image='
 const LOBE_CDN_BASE = 'https://unpkg.com/@lobehub/icons-static-svg@1.91.0/icons/'
+const require = createRequire(import.meta.url)
+
+let lucideIconsDir
+const lucideSvgCache = new Map()
 
 const LUCIDE_ALIASES = {
   ai: 'brain-circuit',
@@ -84,6 +92,53 @@ function lucideSvg(pathMarkup) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${pathMarkup}</svg>`
 }
 
+function lucideStaticIconsDir() {
+  if (lucideIconsDir !== undefined) return lucideIconsDir
+  try {
+    lucideIconsDir = path.join(path.dirname(require.resolve('lucide-static/package.json')), 'icons')
+  } catch {
+    lucideIconsDir = null
+  }
+  return lucideIconsDir
+}
+
+function safeLucideSlug(slug) {
+  if (!slug || typeof slug !== 'string') return null
+  const normalized = slug.trim().toLowerCase()
+  return /^[a-z][a-z0-9-]*$/.test(normalized) ? normalized : null
+}
+
+function normalizeLucideStaticSvg(svg) {
+  return svg.replace(/currentColor/g, '#1E293B').replace(/\s+/g, ' ').trim()
+}
+
+function loadLucideStaticSvg(slug) {
+  const safeSlug = safeLucideSlug(slug)
+  if (!safeSlug) return null
+  if (lucideSvgCache.has(safeSlug)) return lucideSvgCache.get(safeSlug)
+
+  const iconsDir = lucideStaticIconsDir()
+  if (!iconsDir) return null
+
+  try {
+    const svg = normalizeLucideStaticSvg(readFileSync(path.join(iconsDir, `${safeSlug}.svg`), 'utf8'))
+    lucideSvgCache.set(safeSlug, svg)
+    return svg
+  } catch {
+    lucideSvgCache.set(safeSlug, null)
+    return null
+  }
+}
+
+function lucideIconStyle(slug) {
+  const lucideName = LUCIDE_ALIASES[slug] || slug
+  const svg = loadLucideStaticSvg(lucideName)
+  if (svg) return `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(svg)}`
+
+  const pathMarkup = LUCIDE_PATHS[lucideName]
+  return pathMarkup ? `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(lucideSvg(pathMarkup))}` : null
+}
+
 function lobeSvg(pathMarkup) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#111827" fill-rule="evenodd">${pathMarkup}</svg>`
 }
@@ -128,9 +183,7 @@ export function resolveImageIconStyle(icon) {
   }
 
   if (name.startsWith('lucide.')) {
-    const lucideName = LUCIDE_ALIASES[name.slice('lucide.'.length)] || name.slice('lucide.'.length)
-    const pathMarkup = LUCIDE_PATHS[lucideName]
-    return pathMarkup ? `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(lucideSvg(pathMarkup))}` : null
+    return lucideIconStyle(name.slice('lucide.'.length))
   }
 
   if (name === 'openai') return lobeIconStyle('openai')

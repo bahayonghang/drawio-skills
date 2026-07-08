@@ -27,7 +27,7 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
 - **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.
-- **Lobe, brand, and Lucide icon fallback**: use `lobe.*` / `ai.*` for AI/LLM logos through Lobe Icons, `brand.redis` for supported non-AI brands, and `lucide.*` semantic icons such as `lucide.brain-circuit`, `lucide.database-zap`, `lucide.file-text`, and `lucide.workflow` for generic roles.
+- **Lobe, brand, and full Lucide icon fallback**: use `lobe.*` / `ai.*` for AI/LLM logos through Lobe Icons, `brand.redis` for supported non-AI brands, and any local `lucide-static` SVG through `lucide.*` for generic semantic roles.
 - **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`) and automatic link labels from interface/IP/VLAN/bandwidth metadata.
 - **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec`.
 - **Validation before export**: structure, layout, quality, formula, and replication text-position checks.
@@ -179,13 +179,19 @@ nodes:
   - id: cache
     label: Cache fallback
     icon: lucide.database-zap
+  - id: ops
+    label: Server operations
+    icon: lucide.server-cog
 ```
 
 Common `lobe.*` / `ai.*` icons such as OpenAI, Claude, and Gemini are embedded
 as normalized SVGs for reliable rendering. Other safe Lobe slugs fall back to
 the Lobe Icons CDN and need network access when draw.io renders or reopens the
 diagram. `brand.*` is for supported non-AI brand fallbacks; `lucide.*` icons are
-generic semantic fallbacks and should not be treated as official brand logos.
+loaded from the local `lucide-static` package, embedded as data URI SVGs, and
+should not be treated as official brand logos. Use Lucide's kebab-case file
+names, for example `lucide.alarm-clock`, `lucide.server-cog`, or
+`lucide.workflow`.
 Lobe icon assets come from the MIT-licensed
 [Lobe Icons](https://github.com/lobehub/lobe-icons) project.
 

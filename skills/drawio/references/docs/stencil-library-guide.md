@@ -57,7 +57,8 @@ Common icon prefixes supported by the design system:
 - `lobe.*` / `ai.*` for AI and LLM logos via embedded common Lobe icons or
   Lobe Icons CDN fallback
 - `brand.*` for supported non-cloud product identity icons
-- `lucide.*` for generic semantic SVG image icons
+- `lucide.*` for generic semantic SVG image icons loaded from local
+  `lucide-static` assets
 
 ## Recommended Usage
 
