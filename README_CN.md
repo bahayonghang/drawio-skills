@@ -27,7 +27,7 @@ Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、
 - **Academic Overlay 策略**：venue/audience preflight、caption/legend 校验、公式保真、A4/Word/LaTeX 预期和 figure typing。
 - **学术图类型分流**：出版请求先归类成 `architecture`、`roadmap` 或 `workflow`，再决定布局与导出。
 - **云图标与模板支持**：AWS、GCP、Azure、Kubernetes 以及网络 / provider icon 工作流由 Base references 提供。
-- **品牌图标与 Lucide 语义图标补全**：对 draw.io stencil 缺失的产品图标，可使用内嵌 `brand.openai` / `brand.redis`；对通用语义节点，可使用 `lucide.brain-circuit`、`lucide.database-zap`、`lucide.file-text`、`lucide.workflow` 等 Lucide 风格 fallback。
+- **Lobe、品牌图标与 Lucide 语义图标补全**：AI/LLM logo 使用 `lobe.*` / `ai.*` 接入 Lobe Icons；支持的非 AI 品牌可使用 `brand.redis`；通用语义节点可使用 `lucide.brain-circuit`、`lucide.database-zap`、`lucide.file-text`、`lucide.workflow` 等 Lucide 风格 fallback。
 - **网络拓扑支持**：支持 `router`、`switch`、`firewall`、`server`、`load_balancer`、`subnet`、`internet`、`ap` 等语义节点，以及基于接口/IP/VLAN/带宽元数据自动生成链路标签。
 - **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle。
 - **导出前校验**：结构、布局、质量、公式和复刻文字位置校验齐全。
@@ -160,7 +160,7 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-混合使用云厂商、品牌和 Lucide 图标：
+混合使用云厂商、Lobe、品牌和 Lucide 图标：
 
 ```yaml
 nodes:
@@ -169,14 +169,24 @@ nodes:
     icon: aws.lambda
   - id: openai
     label: OpenAI document understanding
-    icon: brand.openai
+    icon: lobe.openai
+  - id: claude
+    label: Claude reasoning
+    icon: ai.anthropic
+  - id: redis
+    label: Redis cache
+    icon: brand.redis
   - id: cache
     label: Cache fallback
     icon: lucide.database-zap
 ```
 
-`brand.*` 会生成内嵌 SVG image cell，用于产品身份标识；`lucide.*`
-用于通用语义图标补全，不应当当作官方品牌 logo 使用。
+常用 `lobe.*` / `ai.*` 图标（如 OpenAI、Claude、Gemini）会以内嵌标准化 SVG
+渲染，保证稳定导出；其他安全的 Lobe slug 会 fallback 到 Lobe Icons CDN，draw.io
+渲染或重新打开图表时需要网络。`brand.*` 用于支持的非 AI 品牌 fallback；
+`lucide.*` 用于通用语义图标补全，不应当当作官方品牌 logo 使用。
+Lobe 图标资产来自 MIT 许可的 [Lobe Icons](https://github.com/lobehub/lobe-icons)
+项目。
 
 Academic Overlay 仍然调用 sibling Base CLI：
 

@@ -126,16 +126,28 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 ---
 
-## Brand and Lucide Image Icons
+## Lobe, Brand, and Lucide Image Icons
 
-Use `brand.*` for non-cloud product identity icons that draw.io does not ship as
-native stencils. These render as embedded SVG image cells, so the exported
-`.drawio` remains self-contained and does not require network access at render
-time.
+Use `lobe.*` or `ai.*` for AI/LLM product identity icons that draw.io does not
+ship as native stencils. Common icons such as OpenAI, Claude, and Gemini render
+as embedded normalized SVGs for stable export. Other safe Lobe slugs render as
+draw.io image cells backed by the `@lobehub/icons-static-svg` CDN, so draw.io
+needs network access when rendering or reopening those diagrams.
 
-| Brand | Icon Reference | Rendering |
-|-------|---------------|-----------|
-| OpenAI | `brand.openai` | Embedded SVG image |
+`brand.openai` is kept as a compatibility alias for `lobe.openai`; `brand.redis`
+uses an embedded SVG because Redis is not an AI/LLM logo.
+
+Lobe icon assets come from the MIT-licensed
+[Lobe Icons](https://github.com/lobehub/lobe-icons) project.
+
+| Need | Icon Reference | Rendering |
+|------|----------------|-----------|
+| OpenAI | `lobe.openai`, `ai.openai`, `brand.openai` | Embedded Lobe SVG image |
+| Claude / Anthropic | `lobe.claude`, `ai.anthropic` | Embedded Lobe SVG image |
+| Gemini | `lobe.gemini` | Embedded Lobe SVG image |
+| Mistral | `lobe.mistral` | Lobe Icons CDN image fallback |
+| LangChain | `lobe.langchain` | Lobe Icons CDN image |
+| Hugging Face | `lobe.huggingface` | Lobe Icons CDN image |
 | Redis | `brand.redis` | Embedded SVG image |
 
 Use `lucide.*` for generic semantic fallback icons inspired by the Lucide icon
@@ -158,7 +170,11 @@ roles such as AI service, cache, document, server, workflow, and security.
 nodes:
   - id: openai
     label: OpenAI document understanding
-    icon: brand.openai
+    icon: lobe.openai
+
+  - id: claude
+    label: Claude reasoning
+    icon: ai.anthropic
 
   - id: cache
     label: Semantic cache
@@ -169,8 +185,9 @@ Resolution order for icon-heavy diagrams:
 
 1. Prefer draw.io provider stencils for cloud/vendor infrastructure
    (`aws.*`, `gcp.*`, `azure.*`, `cisco.*`).
-2. Use `brand.*` when product identity matters and no draw.io stencil exists.
-3. Use `lucide.*` for generic semantic icons, not official logos.
+2. Use `lobe.*` or `ai.*` for AI/LLM product identity icons.
+3. Use `brand.*` for supported non-AI brand fallbacks such as Redis.
+4. Use `lucide.*` for generic semantic icons, not official logos.
 
 ---
 

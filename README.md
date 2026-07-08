@@ -27,7 +27,7 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
 - **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.
-- **Brand and Lucide icon fallback**: use embedded `brand.openai` / `brand.redis` icons for products missing from draw.io stencils, and `lucide.*` semantic icons such as `lucide.brain-circuit`, `lucide.database-zap`, `lucide.file-text`, and `lucide.workflow` for generic roles.
+- **Lobe, brand, and Lucide icon fallback**: use `lobe.*` / `ai.*` for AI/LLM logos through Lobe Icons, `brand.redis` for supported non-AI brands, and `lucide.*` semantic icons such as `lucide.brain-circuit`, `lucide.database-zap`, `lucide.file-text`, and `lucide.workflow` for generic roles.
 - **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`) and automatic link labels from interface/IP/VLAN/bandwidth metadata.
 - **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec`.
 - **Validation before export**: structure, layout, quality, formula, and replication text-position checks.
@@ -160,7 +160,7 @@ node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-si
 node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars
 ```
 
-Use mixed provider, brand, and Lucide icons:
+Use mixed provider, Lobe, brand, and Lucide icons:
 
 ```yaml
 nodes:
@@ -169,15 +169,25 @@ nodes:
     icon: aws.lambda
   - id: openai
     label: OpenAI document understanding
-    icon: brand.openai
+    icon: lobe.openai
+  - id: claude
+    label: Claude reasoning
+    icon: ai.anthropic
+  - id: redis
+    label: Redis cache
+    icon: brand.redis
   - id: cache
     label: Cache fallback
     icon: lucide.database-zap
 ```
 
-`brand.*` icons are embedded SVG image cells for product identity; `lucide.*`
-icons are generic semantic fallbacks and should not be treated as official
-brand logos.
+Common `lobe.*` / `ai.*` icons such as OpenAI, Claude, and Gemini are embedded
+as normalized SVGs for reliable rendering. Other safe Lobe slugs fall back to
+the Lobe Icons CDN and need network access when draw.io renders or reopens the
+diagram. `brand.*` is for supported non-AI brand fallbacks; `lucide.*` icons are
+generic semantic fallbacks and should not be treated as official brand logos.
+Lobe icon assets come from the MIT-licensed
+[Lobe Icons](https://github.com/lobehub/lobe-icons) project.
 
 Academic overlay still uses the sibling base CLI:
 

@@ -28,10 +28,12 @@ Treat `search_shape_catalog` as an optional enhancement, not a requirement.
 If `search_shape_catalog` is unavailable, fall back to:
 
 1. known icon mappings in the design system
-2. `brand.*` icons for supported product logos such as OpenAI and Redis
-3. `lucide.*` icons for generic semantic roles such as AI, cache, document,
+2. `lobe.*` or `ai.*` icons for AI/LLM product logos such as OpenAI, Claude,
+   Gemini, Mistral, and LangChain
+3. `brand.*` icons for supported non-AI product logos such as Redis
+4. `lucide.*` icons for generic semantic roles such as AI, cache, document,
    server, workflow, and security
-4. semantic shapes when exact icon resolution cannot be guaranteed
+5. semantic shapes when exact icon resolution cannot be guaranteed
 
 Do not fail the task just because shape search is missing.
 
@@ -52,6 +54,8 @@ Common icon prefixes supported by the design system:
 - `gcp.*`
 - `k8s.*`
 - `kubernetes.*`
+- `lobe.*` / `ai.*` for AI and LLM logos via embedded common Lobe icons or
+  Lobe Icons CDN fallback
 - `brand.*` for supported non-cloud product identity icons
 - `lucide.*` for generic semantic SVG image icons
 

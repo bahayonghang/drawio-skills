@@ -1430,6 +1430,9 @@ describe('Phase 2.4: resolveIconShape', () => {
   it('should resolve brand and lucide icons as image styles instead of draw.io shape names', () => {
     assert.strictEqual(resolveIconShape('brand.openai'), null)
     assert.match(resolveImageIconStyle('brand.openai'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lobe.claude'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('ai.anthropic'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lobe.mistral'), /^shape=image;.*image=https:\/\/unpkg\.com\/@lobehub\/icons-static-svg@1\.91\.0\/icons\/mistral\.svg/)
     assert.match(resolveImageIconStyle('brand.redis'), /^shape=image;.*image=data:image\/svg\+xml,/)
     assert.match(resolveImageIconStyle('lucide.database-zap'), /^shape=image;.*image=data:image\/svg\+xml,/)
   })
@@ -1470,11 +1473,17 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
     assert.ok(style.includes('shape=mxgraph.gcp2.functions'), 'should contain shape=mxgraph.gcp2.functions')
   })
 
-  it('node with icon brand.openai should emit an embedded image style', () => {
+  it('node with icon brand.openai should emit a Lobe Icons image style', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'OpenAI', icon: 'brand.openai' }, theme)
     assert.ok(style.includes('shape=image'), 'should render brand icons as draw.io image cells')
-    assert.ok(style.includes('image=data:image/svg+xml,'), 'brand icon should be self-contained SVG data')
+    assert.ok(style.includes('image=data:image/svg+xml,'), 'OpenAI should resolve through embedded normalized Lobe SVG')
     assert.ok(style.includes('verticalLabelPosition=bottom'), 'should label image icons below the icon')
+  })
+
+  it('node with icon lobe.gemini should emit a Lobe Icons image style', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'Gemini', icon: 'lobe.gemini' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render lobe icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'))
   })
 
   it('node with icon lucide.database-zap should emit an embedded image style', () => {
