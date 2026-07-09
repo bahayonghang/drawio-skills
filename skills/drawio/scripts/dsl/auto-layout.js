@@ -10,7 +10,7 @@
  */
 
 import { createRequire } from 'node:module'
-import { detectSemanticType, getNodeSize } from './spec-to-drawio.js'
+import { detectSemanticType, deriveNodeIcon, getNodeSize } from './spec-to-drawio.js'
 
 const require = createRequire(import.meta.url)
 
@@ -77,7 +77,10 @@ export function buildElkGraph(spec) {
   for (const node of nodes) {
     nodeIds.add(node.id)
     const semanticType = detectSemanticType(node.label, node.type, node.network)
-    const size = getNodeSize(node.size, semanticType, node.label)
+    const size = getNodeSize(node.size, semanticType, node.label, {
+      fontSize: node.style?.fontSize,
+      contentAware: !(node.icon || deriveNodeIcon(node))
+    })
     const elkNode = { id: node.id, width: size.width, height: size.height }
     const container = node.module ? moduleContainers.get(node.module) : null
     if (container) {

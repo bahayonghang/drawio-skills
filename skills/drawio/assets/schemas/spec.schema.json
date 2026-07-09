@@ -15,48 +15,27 @@
         },
         "layout": {
           "type": "string",
-          "enum": [
-            "horizontal",
-            "vertical",
-            "hierarchical",
-            "star",
-            "mesh"
-          ],
+          "enum": ["horizontal", "vertical", "hierarchical", "star", "mesh"],
           "description": "Layout direction or topology intent for automatic positioning"
         },
         "routing": {
           "type": "string",
-          "enum": [
-            "orthogonal",
-            "rounded"
-          ],
+          "enum": ["orthogonal", "rounded"],
           "description": "Connector routing style"
         },
         "profile": {
           "type": "string",
-          "enum": [
-            "default",
-            "academic-paper",
-            "engineering-review"
-          ],
+          "enum": ["default", "academic-paper", "engineering-review"],
           "description": "Workflow profile that enables domain-specific validation and defaults"
         },
         "figureType": {
           "type": "string",
-          "enum": [
-            "architecture",
-            "roadmap",
-            "workflow"
-          ],
+          "enum": ["architecture", "roadmap", "workflow"],
           "description": "Academic figure intent used for paper-mode guidance and validation"
         },
         "source": {
           "type": "string",
-          "enum": [
-            "generated",
-            "replicated",
-            "edited"
-          ],
+          "enum": ["generated", "replicated", "edited"],
           "description": "How this spec was produced"
         },
         "canvas": {
@@ -104,11 +83,30 @@
               "description": "Font family for formula-bearing text"
             }
           },
-          "required": [
-            "primary",
-            "cjk",
-            "formula"
-          ],
+          "required": ["primary", "cjk", "formula"],
+          "additionalProperties": false
+        },
+        "print": {
+          "type": "object",
+          "description": "Optional print-readability target: effective pt = fontSize x widthPt / canvas-width-px must stay at or above minPt",
+          "properties": {
+            "target": {
+              "type": "string",
+              "enum": ["cn-thesis", "ieee-single", "ieee-double"],
+              "description": "Named print-width preset (cn-thesis 440pt/9pt, ieee-single 252pt/8pt, ieee-double 516pt/8pt)"
+            },
+            "widthPt": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Custom final print width in pt; overrides the preset width"
+            },
+            "minPt": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Custom minimum label size in pt after scaling; overrides the preset floor"
+            }
+          },
+          "anyOf": [{ "required": ["target"] }, { "required": ["widthPt"] }],
           "additionalProperties": false
         },
         "replication": {
@@ -117,10 +115,7 @@
           "properties": {
             "colorMode": {
               "type": "string",
-              "enum": [
-                "preserve-original",
-                "theme-first"
-              ],
+              "enum": ["preserve-original", "theme-first"],
               "description": "Whether to preserve extracted source colors or normalize them to the selected theme"
             },
             "background": {
@@ -141,21 +136,11 @@
                   },
                   "appliesTo": {
                     "type": "string",
-                    "enum": [
-                      "canvas",
-                      "nodes",
-                      "edges",
-                      "modules",
-                      "mixed"
-                    ]
+                    "enum": ["canvas", "nodes", "edges", "modules", "mixed"]
                   },
                   "confidence": {
                     "type": "string",
-                    "enum": [
-                      "low",
-                      "medium",
-                      "high"
-                    ]
+                    "enum": ["low", "medium", "high"]
                   },
                   "notes": {
                     "type": "string"
@@ -180,10 +165,7 @@
       "description": "Diagram nodes/elements",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "label"
-        ],
+        "required": ["id", "label"],
         "properties": {
           "id": {
             "type": "string",
@@ -242,12 +224,7 @@
           },
           "size": {
             "type": "string",
-            "enum": [
-              "small",
-              "medium",
-              "large",
-              "xl"
-            ],
+            "enum": ["small", "medium", "large", "xl"],
             "description": "Size preset"
           },
           "icon": {
@@ -284,10 +261,7 @@
           "position": {
             "type": "object",
             "description": "Manual position override",
-            "required": [
-              "x",
-              "y"
-            ],
+            "required": ["x", "y"],
             "properties": {
               "x": {
                 "type": "number"
@@ -338,19 +312,11 @@
               },
               "align": {
                 "type": "string",
-                "enum": [
-                  "left",
-                  "center",
-                  "right"
-                ]
+                "enum": ["left", "center", "right"]
               },
               "verticalAlign": {
                 "type": "string",
-                "enum": [
-                  "top",
-                  "middle",
-                  "bottom"
-                ]
+                "enum": ["top", "middle", "bottom"]
               },
               "spacingLeft": {
                 "type": "number"
@@ -369,12 +335,7 @@
           "bounds": {
             "type": "object",
             "description": "Explicit top-left bounds for high-fidelity replication of text boxes and annotations",
-            "required": [
-              "x",
-              "y",
-              "width",
-              "height"
-            ],
+            "required": ["x", "y", "width", "height"],
             "properties": {
               "x": {
                 "type": "number"
@@ -401,10 +362,7 @@
       "description": "Connections between nodes",
       "items": {
         "type": "object",
-        "required": [
-          "from",
-          "to"
-        ],
+        "required": ["from", "to"],
         "properties": {
           "from": {
             "type": "string",
@@ -418,13 +376,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "primary",
-              "data",
-              "optional",
-              "dependency",
-              "bidirectional"
-            ],
+            "enum": ["primary", "data", "optional", "dependency", "bidirectional"],
             "description": "Connector semantic type"
           },
           "label": {
@@ -433,11 +385,7 @@
           },
           "labelPosition": {
             "type": "string",
-            "enum": [
-              "start",
-              "center",
-              "end"
-            ],
+            "enum": ["start", "center", "end"],
             "description": "Label position along edge"
           },
           "bidirectional": {
@@ -533,10 +481,7 @@
             "description": "Optional explicit routing waypoints for orthogonal edges",
             "items": {
               "type": "object",
-              "required": [
-                "x",
-                "y"
-              ],
+              "required": ["x", "y"],
               "properties": {
                 "x": {
                   "type": "number"
@@ -551,10 +496,7 @@
           "labelOffset": {
             "type": "object",
             "description": "Explicit draw.io edge-label offset from the label anchor, in pixels",
-            "required": [
-              "x",
-              "y"
-            ],
+            "required": ["x", "y"],
             "properties": {
               "x": {
                 "type": "number"
@@ -573,10 +515,7 @@
       "description": "Container groups for organizing nodes",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "label"
-        ],
+        "required": ["id", "label"],
         "properties": {
           "id": {
             "type": "string",

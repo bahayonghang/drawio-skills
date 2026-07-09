@@ -1,7 +1,7 @@
 ---
 name: drawio-academic-skills
 version: "2.5.0"
-description: "Publication-figure overlay for draw.io. Use instead of the general drawio skill whenever a diagram is for a paper, thesis, dissertation, journal, conference, IEEE/ACM submission, manuscript, camera-ready, Word/LaTeX figure, or other publication. Applies venue, figure-type, color, caption/legend, formula, and paper-readability gates for architecture, workflow, roadmap, network-topology, and replicated paper figures. Runs offline and YAML-first through the sibling ../drawio base for CLI, references, themes, schemas, styles, and Desktop export; never requires MCP or a live backend."
+description: "Publication-figure overlay for draw.io. Use instead of drawio whenever the diagram is for a paper, thesis, dissertation, journal, conference, IEEE/ACM submission, manuscript, camera-ready, Word/LaTeX figure, or other publication. Applies venue, figure-type, color, caption/legend, formula, and paper-readability gates for architecture, workflow, roadmap, network-topology, and replicated paper figures."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
 compatibility: "Requires sibling ../drawio in the same skills directory. Node 20+ is required for the shared YAML/CLI workflow. draw.io Desktop is optional and only needed for PNG/PDF/JPG or embedded .drawio.svg exports. No MCP server is required."
@@ -113,6 +113,7 @@ meta:
   title: Caption-ready title
   description: One sentence explaining the figure intent
   legend: Required when symbols, colors, line styles, or icons need explanation
+  print: { target: cn-thesis } # optional gate: cn-thesis | ieee-single | ieee-double
 ```
 
 This section defines the default academic final deliverables.
@@ -187,6 +188,8 @@ Do not claim completion until:
 - `meta.profile` is `academic-paper` and `meta.figureType` is `architecture`, `roadmap`, or `workflow`
 - node count satisfies the playbook budget (`references/docs/academic-figure-playbook.md § Node Budget Management`); split or simplify when it is exceeded
 - labels are readable at paper/A4 scale; formulas use official delimiters (`$$...$$`, `\(...\)`, or AsciiMath backticks)
+- label font classes stay uniform (module title / node / edge label follow the font ladder) and no label-fit overflow warnings remain
+- mixed CJK/Latin labels resolve to the Times New Roman + SimSun stack (theme `cjk` stack or `meta.font`)
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
 - legends use compact form (single multi-line text node, not many separate nodes)
 - colors are not the only carrier of meaning

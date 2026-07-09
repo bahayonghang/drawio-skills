@@ -60,14 +60,17 @@ Font policy:
 meta:
   font:
     primary: Times New Roman
-    cjk: Simsun
+    cjk: Times New Roman,SimSun
     formula: Times New Roman
 ```
 
 - `meta.font` activates force mode automatically.
 - `primary` is for Latin text, `cjk` is for Chinese/Japanese/Korean text, and `formula` is for formula surfaces.
+- Comma-separated fallback stacks are supported: `Times New Roman,SimSun` renders Latin glyphs in Times New Roman and CJK glyphs in SimSun inside one label.
 - When `meta.font` is present, it overrides lower-priority font-family settings on the covered text surfaces.
-- When `meta.font` is absent, generic diagrams use `Times New Roman`; academic-paper diagrams use `Times New Roman` for Latin/formula text and `Simsun` for CJK text.
+- When `meta.font` is absent, every profile uses `Times New Roman` for Latin/formula text and the `Times New Roman,SimSun` stack for CJK-bearing text.
+- Font sizes follow the converter ladder when `style.fontSize` is absent: module title 22, node 20, edge label 18, text 16 (floor 12). Boxes grow to fit their labels; explicit-bounds boxes shrink each class uniformly instead.
+- `meta.print` opts into the print-readability gate: `{ target: cn-thesis | ieee-single | ieee-double }` or custom `widthPt`/`minPt`. The validator warns when the smallest label would print below the floor (cn-thesis 440pt/9pt, ieee-single 252pt/8pt, ieee-double 516pt/8pt).
 
 `meta.canvas` sets the minimum draw.io page size. Omit it or use `auto` for content-derived sizing. Use `WIDTHxHEIGHT` for reference-image replication when you are mapping visible elements from source-image coordinates. The renderer expands beyond the explicit canvas if native content exceeds the page, so shapes are not clipped.
 
@@ -185,14 +188,14 @@ Use strict mode when warnings should fail the build.
 
 The old A-H format is legacy guidance. The canonical mapping is now:
 
-| Legacy idea | YAML location |
-|-------------|---------------|
-| layout | `meta.layout` |
-| modules | `modules[]` |
-| nodes | `nodes[]` |
-| edges | `edges[]` |
-| visual style | `meta.theme` and `style` overrides |
-| export intent | local CLI or Desktop export path |
+| Legacy idea   | YAML location                      |
+| ------------- | ---------------------------------- |
+| layout        | `meta.layout`                      |
+| modules       | `modules[]`                        |
+| nodes         | `nodes[]`                          |
+| edges         | `edges[]`                          |
+| visual style  | `meta.theme` and `style` overrides |
+| export intent | local CLI or Desktop export path   |
 
 ## Related
 

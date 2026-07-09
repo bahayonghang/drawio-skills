@@ -83,19 +83,24 @@ Based on an **8px grid system** for consistent alignment.
 | Token       | Stack                                | Usage               |
 | ----------- | ------------------------------------ | ------------------- |
 | `primary`   | Inter, Roboto, system-ui, sans-serif | Node labels, titles |
+| `cjk`       | Times New Roman, SimSun              | CJK-bearing labels  |
 | `monospace` | JetBrains Mono, Fira Code, Consolas  | Code, technical IDs |
 | `formula`   | Latin Modern, STIX Two Math, serif   | LaTeX formulas      |
 
+The `cjk` stack is a per-glyph fallback list: Latin glyphs and digits resolve from Times New Roman, CJK glyphs fall through to SimSun — the standard thesis convention inside one label. When a theme defines no `cjk` stack, the built-in policy applies `Times New Roman,SimSun` to every CJK-bearing surface in all profiles.
+
 ### Font Sizes
 
-| Token | Size | Usage                  |
-| ----- | ---- | ---------------------- |
-| `xs`  | 10px | Tiny annotations       |
-| `sm`  | 11px | Edge labels            |
-| `md`  | 13px | **Default node label** |
-| `lg`  | 14px | Emphasized labels      |
-| `xl`  | 16px | Titles, headings       |
-| `2xl` | 20px | Diagram title          |
+| Token | Size | Usage                              |
+| ----- | ---- | ---------------------------------- |
+| `xs`  | 12px | Absolute floor (`FONT_SIZE_FLOOR`) |
+| `sm`  | 14px | Dense replicate labels             |
+| `md`  | 16px | Captions, legends, text nodes      |
+| `lg`  | 18px | Edge labels                        |
+| `xl`  | 20px | **Default node label**             |
+| `2xl` | 22px | Module titles (bold)               |
+
+These map to the converter font ladder (`FONT_LADDER`: module title 22 / node 20 / edge label 18 / text 16, floor 12). Labels without explicit `style.fontSize` get the ladder automatically and their boxes grow to fit; explicit-bounds boxes (replicate flow) shrink each class uniformly, never below the floor.
 
 ### Font Weights
 
@@ -130,6 +135,8 @@ Standard node dimensions (width × height):
 | `medium` | 120 × 60 px  | **Default size**     |
 | `large`  | 160 × 80 px  | Emphasized nodes     |
 | `xl`     | 200 × 100 px | Major components     |
+
+Presets are minimums, not fixed sizes: once a node carries a plain-text label, the box grows (grid-snapped to 8px) so the label fits its font size — labels must never paint outside the shape. Icon-labeled nodes (label renders below the shape), size-coded shapes (operators, tensors, formulas), and math-bearing labels keep the raw preset.
 
 ---
 

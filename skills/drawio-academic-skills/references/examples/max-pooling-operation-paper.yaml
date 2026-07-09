@@ -60,13 +60,16 @@ edges:
     type: primary
     label: window
     labelOffset: { x: 0, y: -16 }
+    style: { fontSize: 10 }
   - from: operator
     to: outputCell
     type: primary
     label: max value
     labelOffset: { x: 0, y: -16 }
+    style: { fontSize: 10 }
   - from: formula
     to: operator
     type: optional
     label: rule
     labelOffset: { x: 16, y: 0 }
+    style: { fontSize: 10 }

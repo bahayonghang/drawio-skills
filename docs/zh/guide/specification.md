@@ -58,14 +58,17 @@ meta:
 meta:
   font:
     primary: Times New Roman
-    cjk: Simsun
+    cjk: Times New Roman,SimSun
     formula: Times New Roman
 ```
 
 - `meta.font` 会自动启用强制字体模式。
 - `primary` 用于拉丁文本，`cjk` 用于中文/日文/韩文文本，`formula` 用于公式面。
+- 支持逗号分隔的回退字体栈：`Times New Roman,SimSun` 让同一标签内的西文/数字落 Times New Roman、汉字落宋体（SimSun），符合中文论文排版惯例。
 - 当 `meta.font` 存在时，它会覆盖受支持文本面的下层 `fontFamily` 设置。
-- 当 `meta.font` 缺失时，普通图表默认使用 `Times New Roman`；学术论文图表对拉丁/公式文本使用 `Times New Roman`，对 CJK 文本使用 `Simsun`。
+- 当 `meta.font` 缺失时，所有 profile 对拉丁/公式文本使用 `Times New Roman`，对含 CJK 的文本使用 `Times New Roman,SimSun` 回退栈。
+- 未显式指定 `style.fontSize` 时按字号梯子取值：模块标题 22、节点 20、边标签 18、独立文本 16（下限 12）；盒子随标签内容增长，显式 `bounds` 的盒子则按类统一收缩字号以保证不超框。
+- `meta.print` 开启印刷可读性检查：`{ target: cn-thesis | ieee-single | ieee-double }` 或自定义 `widthPt`/`minPt`。当最小标签换算后低于下限（cn-thesis 440pt/9pt、ieee-single 252pt/8pt、ieee-double 516pt/8pt）时输出告警。
 
 ### `modules`
 

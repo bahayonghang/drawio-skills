@@ -57,17 +57,18 @@
   },
   "typography": {
     "fontFamily": {
-      "primary": "Arial, Helvetica, sans-serif",
+      "primary": "Times New Roman, Georgia, serif",
+      "cjk": "Times New Roman, SimSun",
       "monospace": "Courier New, Courier, monospace",
       "formula": "Times New Roman, STIX Two Math, serif"
     },
     "fontSize": {
-      "xs": 9,
-      "sm": 10,
-      "md": 11,
-      "lg": 12,
-      "xl": 14,
-      "2xl": 16
+      "xs": 12,
+      "sm": 14,
+      "md": 16,
+      "lg": 18,
+      "xl": 20,
+      "2xl": 22
     },
     "fontWeight": {
       "normal": 400,
@@ -95,8 +96,8 @@
       "strokeColor": "#2196F3",
       "strokeWidth": 1.5,
       "fontColor": "#212121",
-      "fontSize": 11,
-      "fontFamily": "Arial, Helvetica, sans-serif",
+      "fontSize": 20,
+      "fontFamily": "Times New Roman, Georgia, serif",
       "rounded": 6
     },
     "service": {
@@ -284,7 +285,7 @@
     "strokeWidth": 1.5,
     "rounded": 8,
     "padding": 24,
-    "labelFontSize": 12,
+    "labelFontSize": 22,
     "labelFontWeight": 700,
     "labelFontColor": "#212121",
     "dashed": true,

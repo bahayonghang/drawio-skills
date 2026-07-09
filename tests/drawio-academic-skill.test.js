@@ -96,6 +96,7 @@ test('drawio-academic-skills: overlay shape depends on sibling base without copi
     'docs/publication-overlay.md',
     'examples/ablation-study-pipeline.yaml',
     'examples/ieee-network-paper.yaml',
+    'examples/industrial-architecture-cn-paper.yaml',
     'examples/max-pooling-operation-paper.yaml',
     'examples/research-pipeline.yaml',
     'examples/system-architecture-paper.yaml',

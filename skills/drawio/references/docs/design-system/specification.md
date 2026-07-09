@@ -118,14 +118,16 @@ Use `meta.font` when you need deterministic diagram typography.
 meta:
   font:
     primary: Times New Roman
-    cjk: Simsun
+    cjk: Times New Roman,SimSun
     formula: Times New Roman
 ```
 
 - Presence of `meta.font` enables force mode automatically.
 - `primary` applies to Latin text, `cjk` applies to CJK text, and `formula` applies to formula surfaces.
+- Comma-separated fallback stacks are supported; `Times New Roman,SimSun` renders Latin glyphs in Times New Roman and CJK glyphs in SimSun inside one label.
 - When present, `meta.font` overrides lower-priority font-family settings on covered text surfaces.
-- When absent, generic diagrams default to `Times New Roman`; academic-paper diagrams keep `Times New Roman` for Latin/formula text and use `Simsun` for CJK text.
+- When absent, every profile uses `Times New Roman` for Latin/formula text and the `Times New Roman,SimSun` stack for CJK-bearing text; the academic themes carry the same stack in `typography.fontFamily.cjk`.
+- Font sizes follow the converter ladder when `style.fontSize` is absent: module title 22, node 20, edge label 18, text 16, floor 12. Explicit-bounds boxes shrink each class uniformly so labels stay inside their boxes; `meta.print` (`cn-thesis` 440pt/9pt, `ieee-single` 252pt/8pt, `ieee-double` 516pt/8pt, or custom `widthPt`/`minPt`) adds the print-readability warning.
 
 ### Profile Options
 
@@ -166,13 +168,13 @@ Use `meta.figureType` whenever `meta.profile = academic-paper`.
 
 ### Layout Options
 
-| Layout         | Description                                                                                                       | Best For                |
-| -------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| `horizontal`   | Left-to-right flow                                                                                                  | Process flows           |
-| `vertical`     | Top-to-bottom flow                                                                                                  | Hierarchy               |
+| Layout         | Description                                                                                                           | Best For                |
+| -------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `horizontal`   | Left-to-right flow                                                                                                    | Process flows           |
+| `vertical`     | Top-to-bottom flow                                                                                                    | Hierarchy               |
 | `hierarchical` | Edge-aware layered auto-layout (vendored elkjs) via the CLI when no node has explicit geometry; legacy grid otherwise | Workflows, dependencies |
-| `star`         | Hub-and-spoke ring around a central device                                                                          | Small hub topologies    |
-| `mesh`         | Ring placement with mid waypoints                                                                                   | Full-mesh links         |
+| `star`         | Hub-and-spoke ring around a central device                                                                            | Small hub topologies    |
+| `mesh`         | Ring placement with mid waypoints                                                                                     | Full-mesh links         |
 | `tiered`       | North-South network rows from `network.tier`, `network.role`, or node type (external on top, endpoints at the bottom) | Network topologies      |
 
 `hierarchical` auto-layout fills node bounds and orthogonal edge waypoints; it degrades to the legacy grid with a warning if the vendored engine is unavailable. Any explicit `bounds`/`position` in the spec disables the auto pass (the author owns the geometry).
