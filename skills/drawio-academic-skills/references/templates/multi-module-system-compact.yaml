@@ -115,7 +115,7 @@ nodes:
   - id: s4_notify
     module: services
     label: 'Notification'
-    bounds: { x: 530, y: 190, width: 140, height: 20 }
+    bounds: { x: 530, y: 205, width: 140, height: 25 }
     type: service
 
   # Data Layer

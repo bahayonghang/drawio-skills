@@ -43,7 +43,7 @@ try {
         primary: 'Inter, Roboto, system-ui, sans-serif',
         monospace: 'JetBrains Mono, Fira Code, Consolas, monospace'
       },
-      fontSize: { md: 13, sm: 11 }
+      fontSize: { md: 20, sm: 18 }
     },
     borderRadius: { md: 8, lg: 12 },
     node: {
@@ -52,7 +52,7 @@ try {
         strokeColor: '#2563EB',
         strokeWidth: 1.5,
         fontColor: '#1E293B',
-        fontSize: 13,
+        fontSize: 20,
         rounded: 8
       },
       service: { fillColor: '#DBEAFE', strokeColor: '#2563EB' },
@@ -350,6 +350,22 @@ export function detectSemanticType(label, explicitType, network = null) {
 // Size Presets
 // ============================================================================
 
+// Font-size ladder: create-flow defaults per text class. Labels should fill
+// their boxes (paper-readable) instead of floating in oversized containers.
+// Explicit style.fontSize always wins; explicit-bounds boxes (replicate flow)
+// shrink a class uniformly, never below FONT_SIZE_FLOOR.
+export const FONT_LADDER = {
+  moduleTitle: 22,
+  node: 20,
+  edgeLabel: 18,
+  text: 16
+}
+export const FONT_SIZE_FLOOR = 12
+
+// Shapes whose size encodes meaning (operators, 3D tensors) or whose label is
+// not plain text (formula) keep preset sizes instead of growing with content.
+const CONTENT_SIZE_EXEMPT_TYPES = new Set(['operator', 'tensor3d', 'formula'])
+
 const SIZE_PRESETS = {
   tiny: { width: 32, height: 32 }, // For operators (⊕⊗)
   small: { width: 80, height: 40 },
@@ -389,7 +405,7 @@ const TYPE_DEFAULT_SIZES = {
  * 1.05em; width adds horizontal padding and is clamped so an unusually long
  * label wraps via whiteSpace=wrap instead of overflowing the canvas.
  */
-function estimateTextSize(label, fontSize = 13) {
+function estimateTextSize(label, fontSize = FONT_LADDER.text) {
   const lines = String(label).split(/\n|<br\s*\/?>/i)
   let maxLineWidth = 0
   for (const line of lines) {
@@ -408,7 +424,7 @@ function estimateTextSize(label, fontSize = 13) {
  * Raw text extent without the usability floors of estimateTextSize. Used by
  * lint passes that compare declared bounds or label boxes against content.
  */
-function measureLabelExtent(label, fontSize = 13, padding = 8) {
+function measureLabelExtent(label, fontSize = FONT_LADDER.text, padding = 8) {
   const lines = String(label).split(/\n|<br\s*\/?>/i)
   let maxLineWidth = 0
   for (const line of lines) {
@@ -427,22 +443,39 @@ function measureLabelExtent(label, fontSize = 13, padding = 8) {
 /**
  * Get node dimensions based on size preset or node type
  */
-export function getNodeSize(size, nodeType = null, label = null) {
-  // If explicit size is provided and valid, use it
-  if (size && SIZE_PRESETS[size]) {
-    return SIZE_PRESETS[size]
-  }
+export function getNodeSize(size, nodeType = null, label = null, options = null) {
   // Text nodes without an explicit size fit their content so the box stays just
   // wider than the text and remains easy to select, move, and transform.
-  if (nodeType === 'text' && label) {
-    return estimateTextSize(label)
+  if (!(size && SIZE_PRESETS[size]) && nodeType === 'text' && label) {
+    return estimateTextSize(label, options?.fontSize ?? FONT_LADDER.text)
   }
-  // If node type has a default size, use it
-  if (nodeType && TYPE_DEFAULT_SIZES[nodeType]) {
-    return SIZE_PRESETS[TYPE_DEFAULT_SIZES[nodeType]]
+
+  const preset =
+    size && SIZE_PRESETS[size]
+      ? SIZE_PRESETS[size]
+      : nodeType && TYPE_DEFAULT_SIZES[nodeType]
+        ? SIZE_PRESETS[TYPE_DEFAULT_SIZES[nodeType]]
+        : SIZE_PRESETS.medium
+
+  // Presets act as minimums once a label is present: the box grows so the
+  // label never paints outside the shape. Icon labels render below the shape,
+  // and size-coded shapes (operators, tensors, formulas) keep their preset.
+  if (
+    options?.contentAware &&
+    label &&
+    nodeType !== 'text' &&
+    !CONTENT_SIZE_EXEMPT_TYPES.has(nodeType) &&
+    !hasMathMarkers(label)
+  ) {
+    const extent = measureLabelExtent(label, options.fontSize ?? FONT_LADDER.node, 0)
+    const snapUp = (value) => Math.ceil(value / 8) * 8
+    return {
+      width: Math.max(preset.width, snapUp(extent.width + 28)),
+      height: Math.max(preset.height, snapUp(extent.height + 20))
+    }
   }
-  // Fallback to medium
-  return SIZE_PRESETS.medium
+
+  return preset
 }
 
 // ============================================================================
@@ -574,9 +607,14 @@ export function calculateLayout(spec, theme) {
   const modules = spec.modules || []
   const positions = new Map()
 
+  const sizeOptions = (node) => ({
+    fontSize: node.style?.fontSize,
+    contentAware: !(node.icon || deriveNodeIcon(node))
+  })
+
   const placeNode = (node, x, y) => {
     const semanticType = detectSemanticType(node.label, node.type, node.network)
-    const size = getNodeSize(node.size, semanticType, node.label)
+    const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
     positions.set(node.id, {
       x: snapToGrid(x, gridSize),
       y: snapToGrid(y, gridSize),
@@ -588,7 +626,7 @@ export function calculateLayout(spec, theme) {
 
   const getNodeMetrics = (node) => {
     const semanticType = detectSemanticType(node.label, node.type, node.network)
-    const size = getNodeSize(node.size, semanticType, node.label)
+    const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
     return { semanticType, size }
   }
 
@@ -601,7 +639,7 @@ export function calculateLayout(spec, theme) {
       manuallyPositioned.add(node.id)
     } else if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
       const semanticType = detectSemanticType(node.label, node.type, node.network)
-      const size = getNodeSize(node.size, semanticType, node.label)
+      const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
       positions.set(node.id, {
         x: snapToGrid(node.position.x - size.width / 2, gridSize),
         y: snapToGrid(node.position.y - size.height / 2, gridSize),
@@ -644,7 +682,7 @@ export function calculateLayout(spec, theme) {
       for (const node of moduleNodes) {
         if (manuallyPositioned.has(node.id)) continue
         const semanticType = detectSemanticType(node.label, node.type, node.network)
-        const size = getNodeSize(node.size, semanticType, node.label)
+        const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
         const nodeX = snapToGrid(moduleX + containerPadding, gridSize)
         positions.set(node.id, {
           x: nodeX,
@@ -671,7 +709,7 @@ export function calculateLayout(spec, theme) {
       for (const node of moduleNodes) {
         if (manuallyPositioned.has(node.id)) continue
         const semanticType = detectSemanticType(node.label, node.type, node.network)
-        const size = getNodeSize(node.size, semanticType, node.label)
+        const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
         positions.set(node.id, {
           x: snapToGrid(nodeX, gridSize),
           y: snapToGrid(moduleY + containerPadding + moduleHeaderHeight, gridSize),
@@ -770,7 +808,7 @@ export function calculateLayout(spec, theme) {
     for (const node of nodes) {
       if (manuallyPositioned.has(node.id)) continue
       const semanticType = detectSemanticType(node.label, node.type, node.network)
-      const size = getNodeSize(node.size, semanticType, node.label)
+      const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
       positions.set(node.id, {
         x: snapToGrid(40 + col * (size.width + nodeMargin), gridSize),
         y: snapToGrid(40 + row * (size.height + nodeMargin), gridSize),
@@ -884,18 +922,13 @@ function containsCjk(text) {
   return typeof text === 'string' && /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/.test(text)
 }
 
-function getDefaultFontPolicy(spec) {
-  if (resolveProfile(spec) === 'academic-paper') {
-    return {
-      primary: 'Times New Roman',
-      cjk: 'Simsun',
-      formula: 'Times New Roman'
-    }
-  }
-
+// Latin glyphs resolve from Times New Roman and CJK glyphs fall through to
+// SimSun (per-glyph CSS fallback), matching the thesis convention of Times New
+// Roman for Western text and SimSun for Chinese text inside one label.
+function getDefaultFontPolicy() {
   return {
     primary: 'Times New Roman',
-    cjk: 'Times New Roman',
+    cjk: 'Times New Roman,SimSun',
     formula: 'Times New Roman'
   }
 }
@@ -912,7 +945,7 @@ function resolveFontFamily(spec, theme, { text, semanticType, styleFontFamily = 
   if (forcedFontFamily) return forcedFontFamily
 
   const themeFontFamily = safeStyleText(theme?.typography?.fontFamily?.[bucket], null)
-  const fallbackFontFamily = themeFontFamily || safeStyleText(getDefaultFontPolicy(spec)[bucket], 'Times New Roman')
+  const fallbackFontFamily = themeFontFamily || safeStyleText(getDefaultFontPolicy()[bucket], 'Times New Roman')
   return safeStyleText(styleFontFamily, fallbackFontFamily)
 }
 
@@ -1016,7 +1049,7 @@ function generateNodeStyleWithSpec(node, theme, spec) {
     theme,
     nodeTheme.fontColor || defaultTheme.fontColor || '#1E293B'
   )
-  const fontSize = node.style?.fontSize ?? nodeTheme.fontSize ?? defaultTheme.fontSize ?? 13
+  const fontSize = node.style?.fontSize ?? nodeTheme.fontSize ?? defaultTheme.fontSize ?? FONT_LADDER.node
   const fontFamily = resolveFontFamily(spec, theme, {
     text: node.label,
     semanticType,
@@ -1179,7 +1212,7 @@ function generateModuleStyleWithSpec(module, theme, spec) {
   const strokeWidth = moduleTheme.strokeWidth ?? 1
   const rounded = moduleTheme.rounded ?? 12
   const fontColor = resolveThemeColor(module.style?.fontColor, theme, moduleTheme.labelFontColor || '#1E293B')
-  const fontSize = moduleTheme.labelFontSize ?? 14
+  const fontSize = moduleTheme.labelFontSize ?? FONT_LADDER.moduleTitle
   const fontWeight = moduleTheme.labelFontWeight ?? 600
   const fontFamily = resolveFontFamily(spec, theme, {
     text: module.label,
@@ -1214,6 +1247,10 @@ function generateModuleStyleWithSpec(module, theme, spec) {
   return parts.join(';')
 }
 
+function resolveEdgeLabelFontSize(edge) {
+  return edge.style?.fontSize ?? FONT_LADDER.edgeLabel
+}
+
 function formatNetworkEdgeLabel(edge) {
   if (edge.label) return edge.label
 
@@ -1238,7 +1275,7 @@ function defaultEdgeLabelOffset(edge) {
   // its label on the middle segment, which runs perpendicular to the overall
   // orientation, so the clearing axis flips.
   const label = formatNetworkEdgeLabel(edge)
-  const extent = label ? measureLabelExtent(label, edge.style?.fontSize ?? 11, 2) : { width: 0, height: 0 }
+  const extent = label ? measureLabelExtent(label, resolveEdgeLabelFontSize(edge), 2) : { width: 0, height: 0 }
   const vertical = edge.__routing?.orientation === 'vertical'
   const clearHorizontally = edge.__bent ? !vertical : vertical
   if (clearHorizontally) {
@@ -1381,7 +1418,7 @@ export function buildXml(spec, theme, layout) {
       const labelX = edge.labelPosition === 'start' ? '0.2' : edge.labelPosition === 'end' ? '0.8' : '0.5' // center (default)
       const offset = resolveEdgeLabelOffset(edge)
       const labelOffset = `<mxPoint x="${offset.x}" y="${offset.y}" as="offset"/>`
-      const labelFontSize = edge.style?.fontSize || 11
+      const labelFontSize = resolveEdgeLabelFontSize(edge)
       const labelFontColor = resolveThemeColor(edge.style?.fontColor, theme, theme.colors?.textMuted || '#64748B')
       const labelFontFamily = resolveFontFamily(spec, theme, {
         text: rawEdgeLabel,
@@ -1643,7 +1680,7 @@ export function validateTextNodeStyles(spec) {
 
     const bounds = node.bounds
     if (bounds && isFiniteNumber(bounds.width) && isFiniteNumber(bounds.height) && node.label) {
-      const fontSize = node.style?.fontSize ?? 13
+      const fontSize = node.style?.fontSize ?? FONT_LADDER.text
       const extent = measureLabelExtent(node.label, fontSize, 8)
       if (bounds.width + 2 < extent.width || bounds.height + 2 < extent.height) {
         warnings.push(
@@ -2087,8 +2124,25 @@ export function validateShapeReferences(spec) {
   return warnings
 }
 
-const IEEE_SINGLE_COLUMN_PT = 252
+// Print-width targets for the paper-readability gate: `effective pt` =
+// fontSize x widthPt / canvas-width-px once the figure is scaled to the target
+// column. cn-thesis uses an A4 text block (~155mm = 440pt) with the CN
+// xiao-wu 9pt floor; IEEE columns follow the IEEE graphics guidelines (8pt).
+const PRINT_TARGETS = {
+  'cn-thesis': { widthPt: 440, minPt: 9, label: 'CN thesis text width (155mm = 440pt)' },
+  'ieee-single': { widthPt: 252, minPt: 8, label: 'IEEE single-column width (3.5in = 252pt)' },
+  'ieee-double': { widthPt: 516, minPt: 8, label: 'IEEE double-column width (7.16in = 516pt)' }
+}
+const DEFAULT_PRINT_TARGET = 'ieee-single'
 const ACADEMIC_CANVAS_REVIEW_WIDTH = 1500
+
+function resolvePrintTarget(print) {
+  const base = PRINT_TARGETS[print?.target] || PRINT_TARGETS[DEFAULT_PRINT_TARGET]
+  const widthPt = isFiniteNumber(print?.widthPt) && print.widthPt > 0 ? print.widthPt : base.widthPt
+  const minPt = isFiniteNumber(print?.minPt) && print.minPt > 0 ? print.minPt : base.minPt
+  const label = widthPt === base.widthPt ? base.label : `custom print width (${widthPt}pt)`
+  return { widthPt, minPt, label }
+}
 
 /**
  * Warn when an academic canvas is so wide that labels drop below 8pt after
@@ -2112,21 +2166,24 @@ function collectAcademicLayoutSizeWarning(spec) {
     }
     if (maxX > 0) canvasWidth = maxX + 80
   }
-  if (canvasWidth == null || canvasWidth <= ACADEMIC_CANVAS_REVIEW_WIDTH) return []
+  const print = spec.meta?.print
+  if (canvasWidth == null) return []
+  if (!print && canvasWidth <= ACADEMIC_CANVAS_REVIEW_WIDTH) return []
+  const target = resolvePrintTarget(print)
 
   let minFontSize = Infinity
   for (const node of spec.nodes || []) {
     const fontSize = node.style?.fontSize
     if (typeof fontSize === 'number') minFontSize = Math.min(minFontSize, fontSize)
   }
-  if (!Number.isFinite(minFontSize)) minFontSize = 11
+  if (!Number.isFinite(minFontSize)) minFontSize = FONT_LADDER.node
 
-  const effectivePt = (minFontSize * IEEE_SINGLE_COLUMN_PT) / canvasWidth
-  if (effectivePt >= 8) return []
+  const effectivePt = (minFontSize * target.widthPt) / canvasWidth
+  if (effectivePt >= target.minPt) return []
 
-  const requiredFontSize = Math.ceil(canvasWidth / (IEEE_SINGLE_COLUMN_PT / 8))
+  const requiredFontSize = Math.ceil((canvasWidth * target.minPt) / target.widthPt)
   return [
-    `Academic figure canvas is ${canvasWidth}px wide. Scaled to IEEE single-column width (3.5in = 252pt), the smallest label font (${minFontSize}px) prints at ~${effectivePt.toFixed(1)}pt (fontSize x 252 / canvas width), below the 8pt floor. Raise label fontSize to >= ${requiredFontSize}, narrow the canvas, target a double-column figure (7.16in = 516pt), or split the figure.`
+    `Academic figure canvas is ${canvasWidth}px wide. Scaled to ${target.label}, the smallest label font (${minFontSize}px) prints at ~${effectivePt.toFixed(1)}pt (fontSize x ${target.widthPt} / canvas width), below the ${target.minPt}pt floor. Raise label fontSize to >= ${requiredFontSize}, narrow the canvas, set meta.print to a wider target, or split the figure.`
   ]
 }
 
@@ -2141,6 +2198,7 @@ const KNOWN_META_KEYS = new Set([
   'source',
   'canvas',
   'font',
+  'print',
   'legend',
   'replication',
   'template'
@@ -2227,25 +2285,6 @@ export function validateAcademicProfile(spec) {
   const connectorTypes = new Set((spec.edges || []).map((edge) => edge.type || 'primary'))
   if ((usesIcons || connectorTypes.size > 1) && !spec.meta?.legend) {
     warnings.push('Academic-paper profile should include meta.legend when icons or multiple connector styles are used.')
-  }
-
-  const smallFonts = []
-  for (const node of spec.nodes || []) {
-    const fontSize = node.style?.fontSize
-    if (typeof fontSize === 'number' && (fontSize < 8 || fontSize > 10)) {
-      smallFonts.push(`node "${node.id}"`)
-    }
-  }
-  for (const edge of spec.edges || []) {
-    const fontSize = edge.style?.fontSize
-    if (typeof fontSize === 'number' && (fontSize < 8 || fontSize > 10)) {
-      smallFonts.push(`edge "${edge.from}->${edge.to}"`)
-    }
-  }
-  if (smallFonts.length > 0) {
-    warnings.push(
-      `Academic-paper profile expects 8-10pt labels. Out-of-range overrides found on ${smallFonts.join(', ')}.`
-    )
   }
 
   const verboseLabels = []
@@ -2481,7 +2520,7 @@ export function validateLabelCollisions(spec, layout) {
     const fraction = edge.labelPosition === 'start' ? 0.2 : edge.labelPosition === 'end' ? 0.8 : 0.5
     const anchor = pointAlongPolyline(points, fraction)
     const offset = resolveEdgeLabelOffset(edge)
-    const extent = measureLabelExtent(label, edge.style?.fontSize ?? 11, 2)
+    const extent = measureLabelExtent(label, resolveEdgeLabelFontSize(edge), 2)
     labelRects.push({
       key,
       isTextNode: false,
@@ -2595,7 +2634,7 @@ function segmentIntersectsRect(p1, p2, rect) {
  */
 export function computeLayoutQualityMetrics(spec, options = {}) {
   const theme = options.theme || loadTheme(spec.meta?.theme || 'tech-blue')
-  const layout = options.layout || calculateLayout(spec, theme)
+  const layout = options.layout || calculateLayout(planFontSizes(spec, theme).planned, theme)
   const routedEdges = buildRoutedEdges(spec, layout)
   const { positions } = layout
 
@@ -2661,6 +2700,113 @@ export function computeLayoutQualityMetrics(spec, options = {}) {
  * @param {Object} options - Optional settings
  * @returns {string} draw.io XML
  */
+/**
+ * Materialize the font-size ladder into a cloned spec so layout, style
+ * assembly, and validators all see one consistent value per text surface.
+ * Only fills sizes the author left blank; explicit style.fontSize wins.
+ */
+function planFontSizes(spec, theme) {
+  const planned = structuredClone(spec)
+  const autoNodes = new Set()
+  for (const node of planned.nodes || []) {
+    if (isFiniteNumber(node.style?.fontSize)) continue
+    const semanticType = detectSemanticType(node.label, node.type, node.network)
+    const nodeTheme = theme.node?.[semanticType] || theme.node?.default || {}
+    const fontSize =
+      semanticType === 'text'
+        ? (theme.node?.text?.fontSize ?? FONT_LADDER.text)
+        : (nodeTheme.fontSize ?? theme.node?.default?.fontSize ?? FONT_LADDER.node)
+    node.style = { ...(node.style || {}), fontSize }
+    autoNodes.add(node.id)
+  }
+  for (const edge of planned.edges || []) {
+    if (isFiniteNumber(edge.style?.fontSize)) continue
+    if (!formatNetworkEdgeLabel(edge)) continue
+    edge.style = { ...(edge.style || {}), fontSize: FONT_LADDER.edgeLabel }
+  }
+  return { planned, autoNodes }
+}
+
+// MathJax renders delimited math much narrower than its LaTeX source text,
+// so every per-glyph width estimate must skip math-bearing labels.
+function hasMathMarkers(label) {
+  return /\$\$|\\\(|\\\)/.test(String(label || ''))
+}
+
+/** Largest font size whose estimated label extent stays inside bounds. */
+function maxFontSizeForBounds(label, bounds) {
+  const lines = String(label).split(/\n|<br\s*\/?>/i)
+  let maxUnits = 0
+  for (const line of lines) {
+    let units = 0
+    for (const ch of line) {
+      units += /[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? 1.05 : 0.6
+    }
+    maxUnits = Math.max(maxUnits, units)
+  }
+  const widthFit = maxUnits > 0 ? (bounds.width - 8) / maxUnits : Infinity
+  const heightFit = (bounds.height - 4) / (lines.length * 1.4)
+  return Math.min(widthFit, heightFit)
+}
+
+/**
+ * Uniformly shrink auto-assigned label fonts so explicit-bounds boxes
+ * (replicate flow) contain their labels: per class (node/text), take the
+ * largest size every box can hold, clamped to [FONT_SIZE_FLOOR, assigned].
+ * Author-set fontSize values are never touched; leftover overflows are
+ * reported by validateLabelFit.
+ */
+function shrinkFontsToBounds(spec, autoNodes) {
+  const limits = { node: Infinity, text: Infinity }
+  const members = []
+  for (const node of spec.nodes || []) {
+    if (!autoNodes.has(node.id) || !node.label) continue
+    if (node.icon || deriveNodeIcon(node)) continue
+    const semanticType = detectSemanticType(node.label, node.type, node.network)
+    if (CONTENT_SIZE_EXEMPT_TYPES.has(semanticType)) continue
+    const cls = semanticType === 'text' ? 'text' : 'node'
+    members.push({ node, cls })
+    if (hasMathMarkers(node.label)) continue
+    const bounds = normalizeNodeBounds(node)
+    if (!bounds) continue
+    limits[cls] = Math.min(limits[cls], maxFontSizeForBounds(node.label, bounds))
+  }
+  for (const { node, cls } of members) {
+    const limit = limits[cls]
+    if (!Number.isFinite(limit) || limit >= node.style.fontSize) continue
+    node.style.fontSize = Math.max(FONT_SIZE_FLOOR, Math.floor(limit))
+  }
+}
+
+/**
+ * Report labels that cannot fit their explicit bounds even after the class
+ * shrink bottomed out at FONT_SIZE_FLOOR, or whose author-set fontSize is too
+ * large for the declared box.
+ */
+export function validateLabelFit(spec) {
+  const warnings = []
+  for (const node of spec.nodes || []) {
+    if (!node.label) continue
+    if (node.icon || deriveNodeIcon(node)) continue
+    const semanticType = detectSemanticType(node.label, node.type, node.network)
+    if (semanticType === 'text' || CONTENT_SIZE_EXEMPT_TYPES.has(semanticType)) continue
+    if (hasMathMarkers(node.label)) continue
+    const bounds = normalizeNodeBounds(node)
+    if (!bounds) continue
+    const fontSize = node.style?.fontSize ?? FONT_LADDER.node
+    const extent = measureLabelExtent(node.label, fontSize, 0)
+    const neededWidth = extent.width + 8
+    const neededHeight = extent.height + 4
+    if (neededWidth > bounds.width || neededHeight > bounds.height) {
+      warnings.push(
+        `Node "${node.id}" label needs ~${neededWidth}x${neededHeight}px at fontSize ${fontSize} but bounds are ` +
+          `${bounds.width}x${bounds.height}. Widen the box, shorten the label, or lower style.fontSize.`
+      )
+    }
+  }
+  return warnings
+}
+
 export function specToDrawioXml(spec, options = {}) {
   // Validate spec
   if (!spec || typeof spec !== 'object') {
@@ -2702,6 +2848,13 @@ export function specToDrawioXml(spec, options = {}) {
   // Load theme
   const themeName = spec.meta?.theme || 'tech-blue'
   const theme = options.theme || loadTheme(themeName)
+
+  // Materialize font sizes on an internal clone (author YAML stays untouched)
+  // and shrink classes whose explicit-bounds boxes cannot hold the ladder, so
+  // layout sizes boxes with the final per-class font.
+  const { planned, autoNodes } = planFontSizes(spec, theme)
+  spec = planned
+  shrinkFontsToBounds(spec, autoNodes)
   const layout = calculateLayout(spec, theme)
 
   // Run validation passes
@@ -2710,6 +2863,7 @@ export function specToDrawioXml(spec, options = {}) {
   const connectionPointWarnings = validateConnectionPointPolicy(spec)
   const edgeWarnings = validateEdgeQuality(spec, layout)
   const textNodeWarnings = validateTextNodeStyles(spec)
+  const labelFitWarnings = validateLabelFit(spec)
   const labelCollisionWarnings = validateLabelCollisions(spec, layout)
   const academicWarnings = validateAcademicProfile(spec)
   const shapeWarnings = validateShapeReferences(spec)
@@ -2720,6 +2874,7 @@ export function specToDrawioXml(spec, options = {}) {
     ...connectionPointWarnings,
     ...edgeWarnings,
     ...textNodeWarnings,
+    ...labelFitWarnings,
     ...labelCollisionWarnings,
     ...academicWarnings,
     ...shapeWarnings,
@@ -2883,6 +3038,25 @@ export function validateSpec(spec) {
       if (typeof spec.meta.font[field] !== 'string' || !SAFE_STYLE_TEXT.test(spec.meta.font[field])) {
         throw new Error(`meta.font.${field} must be a safe font-family string`)
       }
+    }
+  }
+  if (spec.meta?.print != null) {
+    const print = spec.meta.print
+    if (typeof print !== 'object' || Array.isArray(print)) {
+      throw new Error('meta.print must be an object when provided')
+    }
+    if (print.target != null && !PRINT_TARGETS[print.target]) {
+      throw new Error(
+        `Invalid meta.print.target "${print.target}": must be one of ${Object.keys(PRINT_TARGETS).join(', ')}`
+      )
+    }
+    for (const field of ['widthPt', 'minPt']) {
+      if (print[field] != null && (!isFiniteNumber(print[field]) || print[field] <= 0)) {
+        throw new Error(`meta.print.${field} must be a positive number when provided`)
+      }
+    }
+    if (print.target == null && print.widthPt == null) {
+      throw new Error('meta.print requires target or widthPt')
     }
   }
   if (spec.meta?.replication != null) {

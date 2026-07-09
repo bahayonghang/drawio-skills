@@ -38,6 +38,7 @@ edges:
     to: access
     type: data
     label: Control
+    style: { fontSize: 10 }
   - from: access
     to: users
     type: primary

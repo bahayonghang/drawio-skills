@@ -197,10 +197,9 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
 
     ■ Zone A: Feature extraction
     ■ Zone B: Conditional embedding
-  bounds: { x: 1000, y: 400, width: 280, height: 140 }
   style:
     align: left
-    fontSize: 11
+  # no bounds/fontSize: the converter sizes the box and applies the 16px text ladder
 ```
 
 **Savings**: 12 nodes → 1 node (11 nodes saved)
@@ -226,12 +225,11 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
 
 ```yaml
 - id: attention_weights
-  label: "ωₜ weight visualization (bar chart, t=1..L)"
-  bounds: { x: 100, y: 512, width: 180, height: 40 }
+  label: "ωₜ weight bars (t=1..L)"
+  bounds: { x: 100, y: 512, width: 320, height: 48 }
   style:
     fillColor: "#E8F5E9"
     strokeColor: "#16A34A"
-    fontSize: 9
 ```
 
 **Savings**: 8 nodes → 1 node (7 nodes saved)
@@ -276,27 +274,34 @@ Split into multiple figures when:
 A figure is scaled to the column width of the paper, so canvas pixels have no fixed print size. When a figure is placed at full column width:
 
 ```
-effective pt = fontSize x column-width-pt / canvas-width-px
+effective pt = fontSize x print-width-pt / canvas-width-px
 ```
 
-IEEE column widths: single column 3.5in = 252pt, double column 7.16in = 516pt. Keep every label at 8pt or larger after scaling.
+Print targets (set `meta.print` to opt in):
 
-**Minimum label fontSize for an 8pt print result**:
+| `meta.print.target` | Width          | Label floor |
+| ------------------- | -------------- | ----------- |
+| `cn-thesis`         | 155mm = 440pt  | 9pt (小五)  |
+| `ieee-single`       | 3.5in = 252pt  | 8pt         |
+| `ieee-double`       | 7.16in = 516pt | 8pt         |
 
-| Canvas width | Single column (252pt) | Double column (516pt) |
-| ------------ | --------------------- | --------------------- |
-| 315px        | 10                    | 5                     |
-| 630px        | 20                    | 10                    |
-| 800px        | 26                    | 13                    |
-| 1000px       | 32                    | 16                    |
-| 1200px       | 39                    | 19                    |
-| 1600px       | 51                    | 25                    |
+`meta.print: { target: cn-thesis }` (or custom `widthPt` / `minPt`) makes the validator check every figure. Without `meta.print`, only canvases wider than 1500px are checked, against the IEEE single-column floor.
+
+**Minimum label fontSize for the floor to hold**:
+
+| Canvas width | cn-thesis (440pt/9pt) | Single column (252pt/8pt) | Double column (516pt/8pt) |
+| ------------ | --------------------- | ------------------------- | ------------------------- |
+| 630px        | 13                    | 20                        | 10                        |
+| 800px        | 17                    | 26                        | 13                        |
+| 1000px       | 21                    | 32                        | 16                        |
+| 1200px       | 25                    | 39                        | 19                        |
+| 1600px       | 33                    | 51                        | 25                        |
 
 Practical prescriptions:
 
-- Design the canvas for the target column from the start: about 315px for a single-column figure with 10px labels, about 630px for a double-column figure with 10px labels.
-- Wide architecture figures are double-column material; do not squeeze them into a single column.
-- Past 1500px canvas width, the validator warns when the smallest label falls below the single-column 8pt floor; raise font sizes, narrow the canvas, or split the figure (see When to Split).
+- Let the font ladder work: without explicit `style.fontSize`, labels get module 22 / node 20 / edge 18 / text 16 and boxes grow to fit, so layout density — not font size — decides the canvas width.
+- Pick `meta.print` from the venue first, then keep the canvas narrow enough for the table above; split the figure before shrinking fonts.
+- Wide architecture figures are double-column or full-text-width material; do not squeeze them into a single column.
 - IEEE vector submissions accept PS/EPS/PDF only (SVG is not on the list). Export a PDF via draw.io Desktop for IEEE targets.
 
 ## Final Quality Gate
