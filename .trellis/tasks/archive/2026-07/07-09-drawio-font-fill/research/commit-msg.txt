@@ -1,0 +1,21 @@
+feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统
+
+Why: 产出图字体过小且中西文字族混乱——学术主题默认 11px、"8-10pt" 门禁把
+px 当 pt 反向压字号、固定 SIZE_PRESETS 使字号与盒子解耦、混排标签整段落入
+单一 Simsun（英文数字不走 Times New Roman）。
+
+- 字族：全 profile 默认 cjk 回退栈 Times New Roman,SimSun（Latin→Times、
+  汉字→宋体，逐字形回退），academic/academic-color 主题补 typography
+  cjk 栈并统一衬线
+- 字号：FONT_LADDER（模块 22 / 节点 20 / 边标签 18 / 文本 16，下限 12）
+  经 planFontSizes 物化到内部克隆，作者 YAML 不被污染；SIZE_PRESETS 变为
+  最小值，盒子按内容增长并对齐 8px 栅格
+- 收缩与校验：shrinkFontsToBounds 对显式 bounds 按类统一收缩；新增
+  validateLabelFit 溢出告警；数学标签（$$…$$）豁免估宽
+- 门禁：删除误导性 8-10pt 检查，新增 meta.print（cn-thesis 440pt/9pt、
+  ieee-single 252pt/8pt、ieee-double 516pt/8pt）印刷换算告警与 schema 校验
+- 文档/模板/测试：tokens、playbook、export-checklist、SKILL.md 质量门、
+  双语 specification、font-policy spec 同步；新增中文架构论文示例与字体
+  系统测试组，npm test 393/393、just ci 通过
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
