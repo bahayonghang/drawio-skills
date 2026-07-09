@@ -1,0 +1,3 @@
+{"file": ".trellis/tasks/07-09-skill-desc-slim/prd.md", "reason": "需求、现状测量基线、冗余分析、方向B草案、验收标准"}
+{"file": ".trellis/tasks/07-09-skill-desc-slim/implement.md", "reason": "执行顺序（评测先于改写）与回滚点"}
+{"file": ".trellis/tasks/07-09-skill-desc-slim/research/trigger-probes.md", "reason": "探针集、期望路由标签与 classification-probe 评测方法"}

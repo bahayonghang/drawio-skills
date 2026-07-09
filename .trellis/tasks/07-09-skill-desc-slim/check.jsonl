@@ -1,0 +1,3 @@
+{"file": ".trellis/tasks/07-09-skill-desc-slim/prd.md", "reason": "验收标准四条：基线先行、不回退、≤800字符、证据落盘"}
+{"file": ".trellis/tasks/07-09-skill-desc-slim/research/baseline-results.md", "reason": "改写前基线 recall/precision"}
+{"file": ".trellis/tasks/07-09-skill-desc-slim/research/after-results.md", "reason": "改写后复测与基线对比结论"}
