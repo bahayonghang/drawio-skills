@@ -277,3 +277,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 8: drawio 字体统一与填充式字号系统
+
+**Date**: 2026-07-09
+**Task**: drawio 字体统一与填充式字号系统
+**Branch**: `dev`
+
+### Summary
+
+全 profile 统一 Times New Roman,SimSun 逐字形回退栈并引入 FONT_LADDER（模块22/节点20/边18/文本16，下限12）：SIZE_PRESETS 变为最小值、盒随内容增长（8px 栅格），显式 bounds 按类统一收缩，validateLabelFit 溢出告警。删除把 px 当 pt 的 8-10pt 误导门禁，代之 meta.print（cn-thesis 440pt/9pt 等）印刷换算。教训：字号规则矛盾会被模型放大成系统性小字；数学标签的 LaTeX 源长与渲染宽无关，估宽必须豁免；393 测试全绿 + just ci 通过。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `55a9f07` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
