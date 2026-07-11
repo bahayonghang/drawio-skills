@@ -160,6 +160,46 @@
       "dashPattern": null,
       "endArrow": "none",
       "endFill": false
+    },
+    "control": {
+      "strokeColor": "#EA580C",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_read": {
+      "strokeColor": "#059669",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_write": {
+      "strokeColor": "#059669",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "async": {
+      "strokeColor": "#6B7280",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "feedback": {
+      "strokeColor": "#7C3AED",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
     }
   },
   "module": {

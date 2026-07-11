@@ -10,19 +10,46 @@ The Design System automatically maps semantic node types to appropriate draw.io 
 
 When a node's label or type matches certain keywords, the system automatically selects the appropriate shape:
 
-| Semantic Type | Shape | mxCell Style | Keywords |
-|---------------|-------|--------------|----------|
-| `service` | Rounded Rectangle | `rounded=1` | service, api, component, microservice |
-| `database` | Cylinder | `shape=cylinder3` | database, db, sql, storage, redis, mongo |
-| `decision` | Diamond | `shape=rhombus` | decision, condition, if, check, gateway |
-| `terminal` | Stadium/Pill | `rounded=1;arcSize=50` | start, begin, end, finish, stop |
-| `queue` | Parallelogram | `shape=parallelogram` | queue, buffer, kafka, rabbitmq, stream |
-| `user` | Circle/Ellipse | `ellipse` | user, actor, client, person |
-| `document` | Document | `shape=document` | document, report, file, log |
-| `formula` | Rectangle | `rounded=1` | formula, equation, $$, math |
-| `process` | Rectangle | `rounded=1` | process, task, action, step |
-| `cloud` | Cloud | `shape=cloud` | cloud, internet, external |
-| `container` | Swimlane | `swimlane` | container, module, group, layer |
+| Semantic Type | Shape             | mxCell Style           | Keywords                                 |
+| ------------- | ----------------- | ---------------------- | ---------------------------------------- |
+| `service`     | Rounded Rectangle | `rounded=1`            | service, api, component, microservice    |
+| `database`    | Cylinder          | `shape=cylinder3`      | database, db, sql, storage, redis, mongo |
+| `decision`    | Diamond           | `shape=rhombus`        | decision, condition, if, check, gateway  |
+| `terminal`    | Stadium/Pill      | `rounded=1;arcSize=50` | start, begin, end, finish, stop          |
+| `queue`       | Parallelogram     | `shape=parallelogram`  | queue, buffer, kafka, rabbitmq, stream   |
+| `user`        | Circle/Ellipse    | `ellipse`              | user, actor, client, person              |
+| `document`    | Document          | `shape=document`       | document, report, file, log              |
+| `formula`     | Rectangle         | `rounded=1`            | formula, equation, $$, math              |
+| `process`     | Rectangle         | `rounded=1`            | process, task, action, step              |
+| `cloud`       | Cloud             | `shape=cloud`          | cloud, internet, external                |
+| `container`   | Swimlane          | `swimlane`             | container, module, group, layer          |
+
+---
+
+## Agentic / LLM System Vocabulary
+
+For LLM-agent and RAG architectures, the following semantic types map fireworks-style
+concepts onto existing shape primitives (no new drawing code — only color and dash differ).
+Reuse the existing `graph`, `queue`, `user`, `document`, and `cloud` types for graph DBs,
+message streams, actors, files, and external services respectively.
+
+| Semantic Type      | Concept                     | Shape (reused primitive) | mxCell Style                    | Suggested Icon                   |
+| ------------------ | --------------------------- | ------------------------ | ------------------------------- | -------------------------------- |
+| `llm`              | LLM / foundation model      | Rounded Rectangle        | `rounded=1;arcSize=20`          | `lucide.brain-circuit`, `lobe.*` |
+| `agent`            | Agent / orchestrator        | Hexagon                  | `shape=hexagon`                 | `lucide.bot`                     |
+| `vector_store`     | Vector / embedding store    | Cylinder                 | `shape=cylinder3`               | `lucide.database-zap`            |
+| `memory`           | Short-term / working memory | Dashed Rounded Rectangle | `rounded=1;arcSize=20;dashed=1` | `lucide.brain`                   |
+| `tool`             | Tool / function / plugin    | Rounded Rectangle        | `rounded=1;arcSize=20`          | `lucide.wrench`                  |
+| `gateway`          | API gateway / ingress       | Hexagon                  | `shape=hexagon`                 | `lucide.git-fork`                |
+| (reuse) `graph`    | Graph / knowledge DB        | Rounded Rectangle        | —                               | `lucide.workflow`                |
+| (reuse) `queue`    | Queue / stream              | Parallelogram            | —                               | —                                |
+| (reuse) `document` | File                        | Document                 | —                               | —                                |
+| (reuse) `cloud`    | External service            | Cloud                    | —                               | —                                |
+
+The dashed border on `memory` encodes ephemerality. `agent` and `gateway` share the hexagon
+primitive and are told apart by theme color. See [icons.md](icons.md) for the AI icon set
+(cross-referenced, not duplicated here) and [connectors.md](connectors.md) for the arrow
+semantics that pair with these nodes.
 
 ---
 
@@ -36,7 +63,7 @@ Specify the semantic type directly in the specification:
 nodes:
   - id: db
     label: User Database
-    type: database  # → Cylinder shape
+    type: database # → Cylinder shape
 ```
 
 ### Auto-Detection
@@ -46,7 +73,7 @@ If no type is specified, the system analyzes the label:
 ```yaml
 nodes:
   - id: db
-    label: PostgreSQL Storage  # Contains "storage" → database type
+    label: PostgreSQL Storage # Contains "storage" → database type
 ```
 
 Detection priority:
@@ -63,16 +90,16 @@ Each theme defines colors for semantic shapes:
 
 ### Tech Blue
 
-| Type | Fill | Stroke |
-|------|------|--------|
-| service | `#DBEAFE` | `#2563EB` |
+| Type     | Fill      | Stroke    |
+| -------- | --------- | --------- |
+| service  | `#DBEAFE` | `#2563EB` |
 | database | `#D1FAE5` | `#059669` |
 | decision | `#FEF3C7` | `#D97706` |
 | terminal | `#F1F5F9` | `#64748B` |
-| queue | `#EDE9FE` | `#7C3AED` |
-| user | `#E0F2FE` | `#0284C7` |
+| queue    | `#EDE9FE` | `#7C3AED` |
+| user     | `#E0F2FE` | `#0284C7` |
 | document | `#FFFFFF` | `#CBD5E1` |
-| formula | `#FFFFFF` | `#2563EB` |
+| formula  | `#FFFFFF` | `#2563EB` |
 
 ### Academic
 
@@ -80,17 +107,17 @@ All shapes use white fill with black stroke for grayscale compatibility.
 
 ### Nature
 
-| Type | Fill | Stroke |
-|------|------|--------|
-| service | `#D1FAE5` | `#059669` |
+| Type     | Fill      | Stroke    |
+| -------- | --------- | --------- |
+| service  | `#D1FAE5` | `#059669` |
 | database | `#ECFCCB` | `#84CC16` |
 | decision | `#FEF9C3` | `#CA8A04` |
 
 ### Dark Mode
 
-| Type | Fill | Stroke |
-|------|------|--------|
-| service | `#1E3A5F` | `#60A5FA` |
+| Type     | Fill      | Stroke    |
+| -------- | --------- | --------- |
+| service  | `#1E3A5F` | `#60A5FA` |
 | database | `#064E3B` | `#34D399` |
 | decision | `#713F12` | `#FBBF24` |
 
@@ -100,18 +127,18 @@ All shapes use white fill with black stroke for grayscale compatibility.
 
 Shapes support multiple size presets:
 
-| Size | Width | Height | Usage |
-|------|-------|--------|-------|
-| `small` | 80px | 40px | Compact diagrams, icons |
-| `medium` | 120px | 60px | **Default** |
-| `large` | 160px | 80px | Emphasized nodes |
-| `xl` | 200px | 100px | Major components |
+| Size     | Width | Height | Usage                   |
+| -------- | ----- | ------ | ----------------------- |
+| `small`  | 80px  | 40px   | Compact diagrams, icons |
+| `medium` | 120px | 60px   | **Default**             |
+| `large`  | 160px | 80px   | Emphasized nodes        |
+| `xl`     | 200px | 100px  | Major components        |
 
 ```yaml
 nodes:
   - id: main
     label: Main Service
-    size: large  # 160×80 px
+    size: large # 160×80 px
 ```
 
 ---
@@ -216,7 +243,7 @@ For cloud architecture diagrams, use icon references:
 nodes:
   - id: lambda
     label: Lambda Function
-    icon: aws.lambda  # Uses mxgraph.aws4.lambda shape
+    icon: aws.lambda # Uses mxgraph.aws4.lambda shape
 ```
 
 See [icons.md](icons.md) for cloud provider icon references.

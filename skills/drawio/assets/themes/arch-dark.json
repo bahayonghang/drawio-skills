@@ -127,6 +127,30 @@
       "fillColor": "#0F172A",
       "strokeColor": "#64748B",
       "strokeWidth": 1
+    },
+    "llm": {
+      "fillColor": "#3B2A63",
+      "strokeColor": "#A78BFA"
+    },
+    "agent": {
+      "fillColor": "#0E3A47",
+      "strokeColor": "#22D3EE"
+    },
+    "vector_store": {
+      "fillColor": "#064E3B",
+      "strokeColor": "#34D399"
+    },
+    "memory": {
+      "fillColor": "#4A3410",
+      "strokeColor": "#FBBF24"
+    },
+    "tool": {
+      "fillColor": "#1E293B",
+      "strokeColor": "#94A3B8"
+    },
+    "gateway": {
+      "fillColor": "#4A2A12",
+      "strokeColor": "#FB923C"
     }
   },
   "connector": {
@@ -169,6 +193,46 @@
       "dashPattern": null,
       "endArrow": "none",
       "endFill": false
+    },
+    "control": {
+      "strokeColor": "#FB923C",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_read": {
+      "strokeColor": "#34D399",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_write": {
+      "strokeColor": "#34D399",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "async": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "feedback": {
+      "strokeColor": "#A78BFA",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
     }
   },
   "module": {

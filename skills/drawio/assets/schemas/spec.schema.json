@@ -213,7 +213,13 @@
               "load_balancer",
               "subnet",
               "internet",
-              "ap"
+              "ap",
+              "llm",
+              "agent",
+              "vector_store",
+              "memory",
+              "tool",
+              "gateway"
             ],
             "description": "Semantic type for automatic shape selection"
           },
@@ -376,7 +382,18 @@
           },
           "type": {
             "type": "string",
-            "enum": ["primary", "data", "optional", "dependency", "bidirectional"],
+            "enum": [
+              "primary",
+              "data",
+              "optional",
+              "dependency",
+              "bidirectional",
+              "control",
+              "memory_read",
+              "memory_write",
+              "async",
+              "feedback"
+            ],
             "description": "Connector semantic type"
           },
           "label": {
