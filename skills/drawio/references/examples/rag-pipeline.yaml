@@ -1,0 +1,67 @@
+# RAG (Retrieval-Augmented Generation) pipeline.
+# Linear retrieval flow: the query is embedded, matched against a vector store,
+# retrieved context augments the prompt, and the LLM produces a grounded answer.
+# Theme arch-dark renders the agentic connector palette (memory_read = green).
+meta:
+  title: RAG Pipeline
+  theme: arch-dark
+  layout: horizontal
+
+nodes:
+  - id: query
+    label: User Query
+    type: user
+    position: { x: 80, y: 160 }
+  - id: embed
+    label: "Embed\nText to Vector"
+    type: process
+    position: { x: 260, y: 160 }
+  - id: search
+    label: Vector Search
+    type: process
+    position: { x: 440, y: 160 }
+  - id: store
+    label: "Vector Store\nEmbeddings"
+    type: vector_store
+    position: { x: 440, y: 320 }
+  - id: retrieve
+    label: "Retrieve\nTop-k Context"
+    type: process
+    position: { x: 620, y: 160 }
+  - id: llm
+    label: "LLM\nAnswer"
+    type: llm
+    position: { x: 800, y: 160 }
+  - id: response
+    label: Response
+    type: user
+    position: { x: 980, y: 160 }
+
+  # Compact single-node legend for the two edge semantics in use.
+  - id: legend
+    label: 'Legend:  solid = primary path   dashed = data   green = memory read'
+    type: text
+    position: { x: 530, y: 400 }
+
+edges:
+  - from: query
+    to: embed
+    type: primary
+  - from: embed
+    to: search
+    type: data
+    label: query vector
+  - from: search
+    to: store
+    type: memory_read
+  - from: store
+    to: retrieve
+    type: memory_read
+    label: top-k
+  - from: retrieve
+    to: llm
+    type: data
+    label: context
+  - from: llm
+    to: response
+    type: primary

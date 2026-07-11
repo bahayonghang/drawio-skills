@@ -1,0 +1,67 @@
+# Multi-agent orchestration: an orchestrator dispatches work to specialized
+# sub-agents (control), which return results asynchronously to an aggregator.
+meta:
+  title: Multi-Agent Orchestration
+  theme: arch-dark
+  layout: horizontal
+
+nodes:
+  - id: input
+    label: "Task\nRequest"
+    type: user
+    position: { x: 80, y: 260 }
+  - id: orchestrator
+    label: "Orchestrator\nPlanner"
+    type: agent
+    position: { x: 300, y: 260 }
+  - id: agentA
+    label: "Sub-Agent A\nResearch"
+    type: agent
+    position: { x: 560, y: 120 }
+  - id: agentB
+    label: "Sub-Agent B\nCode"
+    type: agent
+    position: { x: 560, y: 260 }
+  - id: agentC
+    label: "Sub-Agent C\nReview"
+    type: agent
+    position: { x: 560, y: 400 }
+  - id: aggregator
+    label: "Aggregator\nMerge"
+    type: agent
+    position: { x: 820, y: 260 }
+  - id: output
+    label: Output
+    type: user
+    position: { x: 1040, y: 260 }
+
+  - id: legend
+    label: 'Legend:  gray = primary   orange = control (dispatch)   gray dashed = async (result)'
+    type: text
+    position: { x: 540, y: 500 }
+
+edges:
+  - from: input
+    to: orchestrator
+    type: primary
+  - from: orchestrator
+    to: agentA
+    type: control
+  - from: orchestrator
+    to: agentB
+    type: control
+  - from: orchestrator
+    to: agentC
+    type: control
+  - from: agentA
+    to: aggregator
+    type: async
+  - from: agentB
+    to: aggregator
+    type: async
+  - from: agentC
+    to: aggregator
+    type: async
+  - from: aggregator
+    to: output
+    type: primary

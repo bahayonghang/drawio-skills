@@ -1,0 +1,63 @@
+# Mem0 / MemGPT-style memory layer. The write path (dashed green) persists to
+# the vector and graph stores; the read path (solid green) recalls and ranks.
+# Separating the two connector types is the whole point of this diagram.
+meta:
+  title: Mem0 Memory Layer
+  theme: arch-dark
+  layout: horizontal
+
+nodes:
+  - id: input
+    label: "Input\nConversation"
+    type: user
+    position: { x: 80, y: 260 }
+  - id: manager
+    label: "Memory Manager\nExtract / Route"
+    type: agent
+    position: { x: 300, y: 260 }
+  - id: vecdb
+    label: "Vector DB\nSemantic"
+    type: vector_store
+    position: { x: 540, y: 120 }
+  - id: graphdb
+    label: "Graph DB\nRelations"
+    type: database
+    position: { x: 540, y: 400 }
+  - id: retrieve
+    label: 'Retrieve + Rank'
+    type: process
+    position: { x: 780, y: 260 }
+  - id: context
+    label: "Context\nWindow"
+    type: memory
+    position: { x: 1000, y: 260 }
+
+  - id: legend
+    label: 'Legend:  green dashed = memory write (store)   green solid = memory read (recall)   gray = primary'
+    type: text
+    position: { x: 540, y: 500 }
+
+edges:
+  - from: input
+    to: manager
+    type: primary
+  - from: manager
+    to: vecdb
+    type: memory_write
+    label: store
+  - from: manager
+    to: graphdb
+    type: memory_write
+    label: store
+  - from: vecdb
+    to: retrieve
+    type: memory_read
+    label: recall
+  - from: graphdb
+    to: retrieve
+    type: memory_read
+    label: recall
+  - from: retrieve
+    to: context
+    type: primary
+    label: ranked
