@@ -1,0 +1,244 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "dark-terminal",
+  "displayName": "Dark Terminal",
+  "description": "Neon-on-near-black hacker aesthetic with monospace-first typography, adapted from fireworks style-2. Purple/orange/green/blue accents on slate panels. Non-portable: background gradient and node glow filters (see style-triage).",
+  "colors": {
+    "primary": "#A855F7",
+    "primaryLight": "#1E1B4B",
+    "secondary": "#10B981",
+    "secondaryLight": "#052E16",
+    "accent": "#F97316",
+    "accentLight": "#1C1917",
+    "background": "#0F0F1A",
+    "surface": "#0F172A",
+    "surfaceAlt": "#1A1A2E",
+    "text": "#E2E8F0",
+    "textMuted": "#94A3B8",
+    "textInverse": "#0F0F1A",
+    "border": "#334155",
+    "borderStrong": "#475569",
+    "success": "#10B981",
+    "successLight": "#052E16",
+    "warning": "#EAB308",
+    "warningLight": "#422006",
+    "error": "#EF4444",
+    "errorLight": "#450A0A",
+    "info": "#3B82F6",
+    "infoLight": "#1E3A5F"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "SF Mono, Fira Code, Cascadia Code, JetBrains Mono, Consolas, monospace",
+      "monospace": "SF Mono, Fira Code, Cascadia Code, Consolas, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 6,
+    "lg": 10,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0,0,0,0.4)",
+    "md": "0 4px 6px rgba(0,0,0,0.5)",
+    "lg": "0 10px 15px rgba(0,0,0,0.6)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#0F172A",
+      "strokeColor": "#334155",
+      "strokeWidth": 1,
+      "fontColor": "#E2E8F0",
+      "fontSize": 13,
+      "fontFamily": "SF Mono, Fira Code, Cascadia Code, Consolas, monospace",
+      "rounded": 6
+    },
+    "service": {
+      "fillColor": "#1C1917",
+      "strokeColor": "#F97316",
+      "rounded": 6
+    },
+    "database": {
+      "fillColor": "#052E16",
+      "strokeColor": "#10B981"
+    },
+    "decision": {
+      "fillColor": "#422006",
+      "strokeColor": "#EAB308"
+    },
+    "terminal": {
+      "fillColor": "#0F172A",
+      "strokeColor": "#475569"
+    },
+    "queue": {
+      "fillColor": "#1E1B4B",
+      "strokeColor": "#7C3AED"
+    },
+    "user": {
+      "fillColor": "#1E3A5F",
+      "strokeColor": "#3B82F6"
+    },
+    "document": {
+      "fillColor": "#0F172A",
+      "strokeColor": "#475569"
+    },
+    "formula": {
+      "fillColor": "#0F172A",
+      "strokeColor": "#334155",
+      "strokeWidth": 1
+    },
+    "llm": {
+      "fillColor": "#1E1B4B",
+      "strokeColor": "#A855F7"
+    },
+    "agent": {
+      "fillColor": "#1E1B4B",
+      "strokeColor": "#7C3AED"
+    },
+    "vector_store": {
+      "fillColor": "#052E16",
+      "strokeColor": "#10B981"
+    },
+    "memory": {
+      "fillColor": "#422006",
+      "strokeColor": "#EAB308"
+    },
+    "tool": {
+      "fillColor": "#1C1917",
+      "strokeColor": "#F97316"
+    },
+    "gateway": {
+      "fillColor": "#1E3A5F",
+      "strokeColor": "#3B82F6"
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#E2E8F0",
+      "strokeWidth": 2,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "6 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "2 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    },
+    "control": {
+      "strokeColor": "#F97316",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_read": {
+      "strokeColor": "#10B981",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_write": {
+      "strokeColor": "#10B981",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "async": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "feedback": {
+      "strokeColor": "#A855F7",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    }
+  },
+  "module": {
+    "fillColor": "#0F172A",
+    "strokeColor": "#334155",
+    "strokeWidth": 1,
+    "rounded": 8,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 700,
+    "labelFontColor": "#E2E8F0"
+  },
+  "canvas": {
+    "background": "#0F0F1A",
+    "gridSize": 8,
+    "gridColor": "#1A1A2E"
+  }
+}

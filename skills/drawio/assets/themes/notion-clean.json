@@ -1,0 +1,246 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "notion-clean",
+  "displayName": "Notion Clean",
+  "description": "Minimal grayscale documentation style for Notion / Confluence / GitHub wiki embeds. Flat, no shadows, blue accent arrows. Adapted from fireworks style-4. Note: source spec favors a single arrow color; semantic connector types are kept but muted to grayscale (see style-triage).",
+  "colors": {
+    "primary": "#3B82F6",
+    "primaryLight": "#EFF6FF",
+    "secondary": "#6B7280",
+    "secondaryLight": "#F3F4F6",
+    "accent": "#3B82F6",
+    "accentLight": "#DBEAFE",
+    "background": "#FFFFFF",
+    "surface": "#F9FAFB",
+    "surfaceAlt": "#F3F4F6",
+    "text": "#111827",
+    "textMuted": "#9CA3AF",
+    "textInverse": "#FFFFFF",
+    "border": "#E5E7EB",
+    "borderStrong": "#D1D5DB",
+    "success": "#16A34A",
+    "successLight": "#DCFCE7",
+    "warning": "#D97706",
+    "warningLight": "#FEF3C7",
+    "error": "#DC2626",
+    "errorLight": "#FEE2E2",
+    "info": "#3B82F6",
+    "infoLight": "#DBEAFE"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif",
+      "monospace": "JetBrains Mono, Fira Code, Consolas, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 4,
+    "lg": 8,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "none",
+    "md": "none",
+    "lg": "none"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#E5E7EB",
+      "strokeWidth": 1,
+      "fontColor": "#111827",
+      "fontSize": 13,
+      "fontFamily": "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif",
+      "rounded": 4
+    },
+    "service": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#D1D5DB",
+      "rounded": 4
+    },
+    "database": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#9CA3AF"
+    },
+    "decision": {
+      "fillColor": "#FFFBEB",
+      "strokeColor": "#D97706"
+    },
+    "terminal": {
+      "fillColor": "#F3F4F6",
+      "strokeColor": "#9CA3AF"
+    },
+    "queue": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#9CA3AF"
+    },
+    "user": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#3B82F6"
+    },
+    "document": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#E5E7EB"
+    },
+    "formula": {
+      "fillColor": "#FFFFFF",
+      "strokeColor": "#D1D5DB",
+      "strokeWidth": 1
+    },
+    "llm": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#6B7280"
+    },
+    "agent": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#3B82F6"
+    },
+    "vector_store": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#9CA3AF"
+    },
+    "memory": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#9CA3AF"
+    },
+    "tool": {
+      "fillColor": "#F3F4F6",
+      "strokeColor": "#9CA3AF"
+    },
+    "gateway": {
+      "fillColor": "#F9FAFB",
+      "strokeColor": "#6B7280"
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#3B82F6",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#9CA3AF",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#D1D5DB",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "4 3",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#9CA3AF",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#D1D5DB",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    },
+    "control": {
+      "strokeColor": "#6B7280",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_read": {
+      "strokeColor": "#16A34A",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_write": {
+      "strokeColor": "#16A34A",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "async": {
+      "strokeColor": "#9CA3AF",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "feedback": {
+      "strokeColor": "#3B82F6",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    }
+  },
+  "module": {
+    "fillColor": "#FFFFFF",
+    "strokeColor": "#E5E7EB",
+    "strokeWidth": 1,
+    "rounded": 4,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 500,
+    "labelFontColor": "#6B7280",
+    "dashed": true,
+    "dashPattern": "4 3"
+  },
+  "canvas": {
+    "background": "#FFFFFF",
+    "gridSize": 8,
+    "gridColor": "#F3F4F6"
+  }
+}
