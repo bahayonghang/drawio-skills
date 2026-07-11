@@ -417,3 +417,30 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - 若后续实测发现模型手排坐标返工率高，可另立任务给 --validate 增加"图例在边界外"专项检查
+
+---
+
+## 2026-07-11: fireworks-tech-graph 知识融合进 drawio 技能
+
+### Session Summary
+
+任务树 07-11-fireworks-into-drawio(1 父 + 3 子)全部完成并归档。将 ref/fireworks-tech-graph 的语义图知识融入 skills/drawio,不新建技能、不引入 SVG 直绘引擎(其手写 SVG 管线劣于现有 CLI,只移植知识)。
+
+### Deliverables
+
+- R2: schema 新增 6 节点类型(llm/agent/vector_store/memory/tool/gateway)+ 5 边类型(control/memory_read/memory_write/async/feedback);渲染复用现有原语;shapes/connectors/color-guide/icons 文档更新;图例强制规则落档。
+- R1: agent-diagrams.md(Agent/Memory/MindMap/Timeline 布局规则)+ 5 个模式示例(rag-pipeline 等);SKILL.md 仅改路由行,frontmatter 未动。
+- R3: 8 套风格 triage,4 套入选移植为主题(blueprint/dark-terminal/notion-clean/dark-luxury);style-presets.md 增适配章节。
+- Spec: 新增 .trellis/spec/drawio-skill/semantic-types.md(类型扩展触点清单)。
+
+### Key Lessons
+
+- **主题静默回退坑**:主题 JSON 缺 connector 类型条目不报错,直接回退 primary 样式——语义色悄悄消失。新增类型必须 grep 全部 themes/*.json 确认覆盖(已写入 spec)。
+- 子代理汇报需独立验证:impl-r3 声称的样张目录实际不存在,重渲染后其余结论属实。
+- YAML 边字段是 from/to 不是 source/target。
+
+### Commits
+
+4128433 / be8be47 / a8c62ea / db228cf / 68a04dd + 4 个归档提交。
+
+[OK] **Completed**
