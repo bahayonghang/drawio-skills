@@ -379,3 +379,41 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+## Session 11: 引入 arch-dark 架构图设计语言
+
+**Date**: 2026-07-11
+**Task**: 吸收 architecture-diagram-generator 设计语言，增强 drawio 架构图能力
+**Branch**: `dev`
+
+### Summary
+
+将 ref/architecture-diagram-generator（MIT, Cocoon AI）的设计语言移植进 drawio 基座：新增 arch-dark 主题（slate-950 + 七类角色语义色）、architecture-diagrams.md 授权规范（角色映射/双行标注/虚线边界/总线间隙/图例出界规则）、三个移植示例与中文端到端验证；SKILL.md 仅加 architecture 路由行，两条 skill description 零变更（免探针回归）。零 JS 代码改动。
+
+### Main Changes
+
+- skills/drawio/assets/themes/arch-dark.json（新主题，schema 结构等价校验通过）
+- skills/drawio/references/docs/architecture-diagrams.md（新设计语言文档，含 module 顶部预留空间经验）
+- references/examples/arch-dark-{web-app,aws-serverless,microservices}.yaml（--validate 全 0 节点交叉）
+- SKILL.md architecture 路由 + themes.md / design-system README / 根 README 中英文 6→7
+- assets/licenses/architecture-diagram-generator-MIT.txt
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8ebaa56` | feat(drawio): [AI] ✨ 引入 arch-dark 架构图设计语言 |
+
+### Testing
+
+- [OK] 三示例 + 中文端到端 cli --validate：0 node-crossings，边界/图例几何核对通过
+- [OK] just ci：400/400 tests，docs build 成功
+- [OK] git diff 确认两条 SKILL.md description 行零变更
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 若后续实测发现模型手排坐标返工率高，可另立任务给 --validate 增加"图例在边界外"专项检查
