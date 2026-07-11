@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 8
-- **Last Active**: 2026-07-09
+- **Total Sessions**: 9
+- **Last Active**: 2026-07-11
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~312 | Active |
+| `journal-1.md` | ~346 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 9 | 2026-07-11 | 完成 skill description 精简 | `74987fa`, `e28506a` | `dev` |
 | 8 | 2026-07-09 | drawio 字体统一与填充式字号系统 | `55a9f07` | `dev` |
 | 7 | 2026-07-07 | drawio 复刻质量专项收尾 | `726ab64`, `12db410`, `97254d2` | `dev` |
 | 6 | 2026-06-17 | Drawio font policy | `c097a6d` | `dev` |
