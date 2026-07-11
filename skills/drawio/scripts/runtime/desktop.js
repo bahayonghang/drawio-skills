@@ -13,12 +13,8 @@ function looksLikePath(value) {
   return value.includes('/') || value.includes('\\') || /^[A-Za-z]:/.test(value)
 }
 
-function resolveForPlatform(platform, value) {
-  return platform === 'win32' ? win32.resolve(value) : resolve(value)
-}
-
-function joinForPlatform(platform, ...parts) {
-  return platform === 'win32' ? win32.join(...parts) : resolve(...parts)
+function resolveForPlatform(platform, ...parts) {
+  return platform === 'win32' ? win32.resolve(...parts) : resolve(...parts)
 }
 
 function isSafeExecutableCandidate(value, platform = process.platform) {
@@ -47,10 +43,10 @@ export function listDrawioDesktopCandidates({ platform = process.platform, env =
 
   if (platform === 'win32') {
     if (env.ProgramFiles) {
-      candidates.push(joinForPlatform(platform, env.ProgramFiles, 'draw.io', 'draw.io.exe'))
+      candidates.push(resolveForPlatform(platform, env.ProgramFiles, 'draw.io', 'draw.io.exe'))
     }
     if (env.LOCALAPPDATA) {
-      candidates.push(joinForPlatform(platform, env.LOCALAPPDATA, 'Programs', 'draw.io', 'draw.io.exe'))
+      candidates.push(resolveForPlatform(platform, env.LOCALAPPDATA, 'Programs', 'draw.io', 'draw.io.exe'))
     }
     candidates.push('draw.io.exe', 'drawio.exe')
   } else if (platform === 'darwin') {
