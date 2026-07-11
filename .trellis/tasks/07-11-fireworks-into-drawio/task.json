@@ -1,0 +1,30 @@
+{
+  "id": "fireworks-into-drawio",
+  "name": "fireworks-into-drawio",
+  "title": "引入 fireworks-tech-graph 图形生成能力优化 drawio 技能",
+  "description": "将 ref/fireworks-tech-graph 的语义化图形生成知识(图类型布局、形状/箭头词汇、AI/agent 模式、视觉风格)融入现有 drawio 基础技能的 references/examples,不新建技能、不引入 SVG 直绘引擎。父任务:拥有需求集、跨子任务验收、集成评审。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-11",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-11-fw-agent-diagram-types",
+    "07-11-fw-shape-arrow-semantics",
+    "07-11-fw-style-presets"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
