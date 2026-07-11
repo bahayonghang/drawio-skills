@@ -1,5 +1,24 @@
 # Changelog — drawio base skill
 
+## Unreleased
+
+### Architecture design language (arch-dark)
+
+- New built-in theme `assets/themes/arch-dark.json`: slate-950 background with
+  role-coded semantic colors (cyan frontend, emerald backend, violet database,
+  amber cloud, orange message bus, rose security accents), adapted from
+  architecture-diagram-generator v1.1 (MIT, Cocoon AI); attribution in
+  `assets/licenses/architecture-diagram-generator-MIT.txt`.
+- New reference `references/docs/architecture-diagrams.md`: role-to-type
+  mapping, two-line component labeling, dashed amber region / rose security
+  group boundary conventions via module style overrides, message-bus gap
+  placement, legend-outside-boundaries rule, and module headroom guidance.
+- New `architecture` task route in SKILL.md wiring the design language into
+  the create flow; frontmatter description unchanged.
+- Three ported examples: `arch-dark-web-app.yaml`,
+  `arch-dark-aws-serverless.yaml`, `arch-dark-microservices.yaml`, all clean
+  under `--validate` (0 node crossings).
+
 ## 2.5.0 (2026-07-07)
 
 Replication-quality round driven by an original-vs-replica comparison (industrial

@@ -1,0 +1,189 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "arch-dark",
+  "displayName": "Architecture Dark",
+  "description": "Slate-950 architecture palette adapted from architecture-diagram-generator (MIT, Cocoon AI): cyan frontend, emerald backend, violet database, amber cloud, orange message bus, rose security accents",
+  "colors": {
+    "primary": "#22D3EE",
+    "primaryLight": "#0E3A47",
+    "secondary": "#34D399",
+    "secondaryLight": "#064E3B",
+    "accent": "#A78BFA",
+    "accentLight": "#3B2A63",
+    "background": "#020617",
+    "surface": "#0F172A",
+    "surfaceAlt": "#1E293B",
+    "text": "#F1F5F9",
+    "textMuted": "#94A3B8",
+    "textInverse": "#020617",
+    "border": "#1E293B",
+    "borderStrong": "#334155",
+    "success": "#34D399",
+    "successLight": "#064E3B",
+    "warning": "#FBBF24",
+    "warningLight": "#4A3410",
+    "error": "#FB7185",
+    "errorLight": "#4C0519",
+    "info": "#22D3EE",
+    "infoLight": "#0E3A47"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Inter, Roboto, system-ui, -apple-system, sans-serif",
+      "monospace": "JetBrains Mono, Fira Code, Consolas, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 8,
+    "lg": 12,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0,0,0,0.3)",
+    "md": "0 4px 6px rgba(0,0,0,0.4)",
+    "lg": "0 10px 15px rgba(0,0,0,0.5)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#1E293B",
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1.5,
+      "fontColor": "#F1F5F9",
+      "fontSize": 13,
+      "fontFamily": "Inter, Roboto, system-ui, sans-serif",
+      "rounded": 8
+    },
+    "service": {
+      "fillColor": "#064E3B",
+      "strokeColor": "#34D399",
+      "rounded": 8
+    },
+    "process": {
+      "fillColor": "#064E3B",
+      "strokeColor": "#34D399",
+      "rounded": 8
+    },
+    "database": {
+      "fillColor": "#3B2A63",
+      "strokeColor": "#A78BFA"
+    },
+    "cloud": {
+      "fillColor": "#4A3410",
+      "strokeColor": "#FBBF24"
+    },
+    "decision": {
+      "fillColor": "#4A3410",
+      "strokeColor": "#FBBF24"
+    },
+    "terminal": {
+      "fillColor": "#1E293B",
+      "strokeColor": "#94A3B8"
+    },
+    "queue": {
+      "fillColor": "#4A2A12",
+      "strokeColor": "#FB923C"
+    },
+    "user": {
+      "fillColor": "#0E3A47",
+      "strokeColor": "#22D3EE"
+    },
+    "document": {
+      "fillColor": "#1E293B",
+      "strokeColor": "#94A3B8"
+    },
+    "formula": {
+      "fillColor": "#0F172A",
+      "strokeColor": "#64748B",
+      "strokeWidth": 1
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#94A3B8",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "6 4",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#FB7185",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 5",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#64748B",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    }
+  },
+  "module": {
+    "fillColor": "#0F172A",
+    "strokeColor": "#334155",
+    "strokeWidth": 1,
+    "rounded": 12,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 600,
+    "labelFontColor": "#F1F5F9"
+  },
+  "canvas": {
+    "background": "#020617",
+    "gridSize": 8,
+    "gridColor": "#1E293B"
+  }
+}

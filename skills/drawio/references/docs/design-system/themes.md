@@ -1,6 +1,6 @@
 # Themes
 
-The Draw.io Design System provides 6 built-in themes optimized for different use cases. Custom themes can be created using the JSON theme format.
+The Draw.io Design System provides 7 built-in themes optimized for different use cases. Custom themes can be created using the JSON theme format.
 
 ---
 
@@ -24,12 +24,12 @@ meta:
   theme: tech-blue
 ```
 
-| Element | Color |
-|---------|-------|
-| Primary nodes | Blue (#2563EB) |
-| Database nodes | Green (#059669) |
-| Decision nodes | Amber (#D97706) |
-| Connectors | Dark gray (#1E293B) |
+| Element        | Color               |
+| -------------- | ------------------- |
+| Primary nodes  | Blue (#2563EB)      |
+| Database nodes | Green (#059669)     |
+| Decision nodes | Amber (#D97706)     |
+| Connectors     | Dark gray (#1E293B) |
 
 ---
 
@@ -51,13 +51,13 @@ meta:
   theme: academic-color
 ```
 
-| Element | Fill | Stroke |
-|---------|------|--------|
-| service | 💙 `#DBEAFE` | `#2563EB` |
+| Element  | Fill         | Stroke    |
+| -------- | ------------ | --------- |
+| service  | 💙 `#DBEAFE` | `#2563EB` |
 | database | 💚 `#D1FAE5` | `#059669` |
 | decision | 🟡 `#FEF3C7` | `#D97706` |
-| queue | 💜 `#EDE9FE` | `#7C3AED` |
-| user | 🩵 `#E0F2FE` | `#0284C7` |
+| queue    | 💜 `#EDE9FE` | `#7C3AED` |
+| user     | 🩵 `#E0F2FE` | `#0284C7` |
 
 > **Recommended**: Use this theme for academic diagrams unless grayscale printing is required.
 
@@ -81,11 +81,11 @@ meta:
   theme: academic
 ```
 
-| Element | Color |
-|---------|-------|
-| All nodes | White fill, black stroke |
-| Labels | Black (#1E1E1E) |
-| Connectors | Black (#1E1E1E) |
+| Element    | Color                    |
+| ---------- | ------------------------ |
+| All nodes  | White fill, black stroke |
+| Labels     | Black (#1E1E1E)          |
+| Connectors | Black (#1E1E1E)          |
 
 > **Print-safe**: This theme remains readable when printed in grayscale.
 
@@ -109,12 +109,12 @@ meta:
   theme: nature
 ```
 
-| Element | Color |
-|---------|-------|
-| Primary nodes | Green (#059669) |
-| Database nodes | Lime (#84CC16) |
-| Decision nodes | Yellow (#CA8A04) |
-| Background | White with green tint |
+| Element        | Color                 |
+| -------------- | --------------------- |
+| Primary nodes  | Green (#059669)       |
+| Database nodes | Lime (#84CC16)        |
+| Decision nodes | Yellow (#CA8A04)      |
+| Background     | White with green tint |
 
 ---
 
@@ -136,12 +136,45 @@ meta:
   theme: dark
 ```
 
-| Element | Color |
-|---------|-------|
-| Background | Dark slate (#0F172A) |
-| Primary nodes | Blue (#60A5FA) |
-| Database nodes | Emerald (#34D399) |
-| Text | Light gray (#F1F5F9) |
+| Element        | Color                |
+| -------------- | -------------------- |
+| Background     | Dark slate (#0F172A) |
+| Primary nodes  | Blue (#60A5FA)       |
+| Database nodes | Emerald (#34D399)    |
+| Text           | Light gray (#F1F5F9) |
+
+---
+
+### Architecture Dark
+
+Slate-950 architecture palette with role-based semantic colors, adapted from
+architecture-diagram-generator (MIT, Cocoon AI). Pair with
+`references/docs/architecture-diagrams.md` for the full design language
+(role mapping, boundary conventions, legend rules).
+
+**Best for**: System/software architecture, microservice maps, cloud service diagrams
+
+**Characteristics**:
+
+- Near-black slate background (#020617)
+- Role-coded strokes: cyan frontend, emerald backend, violet database, amber cloud, orange message bus, rose security
+- Dashed amber region boundaries, dashed rose security groups (via module style overrides)
+- Muted slate connectors so role colors stay dominant
+
+```yaml
+meta:
+  theme: arch-dark
+```
+
+| Element                       | Color                    |
+| ----------------------------- | ------------------------ |
+| Background                    | Slate 950 (#020617)      |
+| Frontend (`user`)             | Cyan stroke (#22D3EE)    |
+| Backend (`service`/`process`) | Emerald stroke (#34D399) |
+| Database nodes                | Violet stroke (#A78BFA)  |
+| Cloud nodes                   | Amber stroke (#FBBF24)   |
+| Queue / bus nodes             | Orange stroke (#FB923C)  |
+| Text                          | Light gray (#F1F5F9)     |
 
 ---
 
@@ -163,11 +196,11 @@ meta:
   theme: high-contrast
 ```
 
-| Element | Color |
-|---------|-------|
-| All nodes | White fill (#FFFFFF), black stroke (#000000) |
-| Labels | Black (#000000) |
-| Connectors | Black (#000000), 2px minimum |
+| Element    | Color                                        |
+| ---------- | -------------------------------------------- |
+| All nodes  | White fill (#FFFFFF), black stroke (#000000) |
+| Labels     | Black (#000000)                              |
+| Connectors | Black (#000000), 2px minimum                 |
 
 ---
 
@@ -177,7 +210,7 @@ meta:
 
 ```yaml
 meta:
-  theme: tech-blue  # or: academic, academic-color, nature, dark, high-contrast
+  theme: tech-blue # or: academic, academic-color, nature, dark, arch-dark, high-contrast
   layout: horizontal
 ```
 
@@ -190,7 +223,7 @@ nodes:
   - id: critical
     label: Critical Service
     style:
-      fillColor: "#FEE2E2"  # Override with error color
+      fillColor: "#FEE2E2" # Override with error color
       strokeColor: "#DC2626"
 ```
 
@@ -235,8 +268,15 @@ Create custom themes by providing a JSON file following the theme schema.
   "spacing": {
     "unit": 8,
     "scale": {
-      "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32,
-      "2xl": 40, "3xl": 48, "4xl": 64, "5xl": 80
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
     }
   },
   "typography": {
@@ -246,14 +286,26 @@ Create custom themes by providing a JSON file following the theme schema.
       "formula": "STIX Two Math, serif"
     },
     "fontSize": {
-      "xs": 10, "sm": 11, "md": 13, "lg": 14, "xl": 16, "2xl": 20
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
     },
     "fontWeight": {
-      "normal": 400, "medium": 500, "semibold": 600, "bold": 700
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
     }
   },
   "borderRadius": {
-    "none": 0, "sm": 4, "md": 8, "lg": 12, "full": 9999
+    "none": 0,
+    "sm": 4,
+    "md": 8,
+    "lg": 12,
+    "full": 9999
   },
   "shadows": {
     "none": "none",
@@ -306,7 +358,7 @@ Place the JSON file in `themes/` directory and reference by name:
 
 ```yaml
 meta:
-  theme: my-theme  # Loads themes/my-theme.json
+  theme: my-theme # Loads themes/my-theme.json
 ```
 
 ---
@@ -347,16 +399,16 @@ Themes are validated against `theme.schema.json`. Required fields:
 
 The renderer consumes these theme tokens directly; others are advisory for now:
 
-| Token | Effect |
-|-------|--------|
-| `colors.*` | `$token` references in specs and default fallbacks |
-| `node.<type>.fillColor/strokeColor/strokeWidth/fontColor/fontSize` | Node styles (`<type>` falls back to `node.default`) |
-| `node.<type>.rounded` (incl. `default`) | Corner radius: `0` emits square `rounded=0`, `>0` overrides the built-in arcSize. Stadium shapes (`terminal`, arcSize>=50) keep their semantic rounding |
-| `typography.fontFamily.primary/cjk/formula` | Font fallback layer: `meta.font.<bucket>` > `node.style.fontFamily` > theme bucket > built-in policy (academic-paper CJK falls back to SimSun) |
-| `connector.<type>.*` | Edge stroke, arrows, dash patterns |
-| `module.fillColor/strokeColor/strokeWidth/rounded/labelFontSize/labelFontWeight/labelFontColor/dashed/dashPattern` | Module containers; `rounded: 0` emits square corners |
-| `module.padding` | Layout padding inside module containers |
-| `canvas.background`, `canvas.gridSize` | Page background and layout snapping grid |
+| Token                                                                                                              | Effect                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `colors.*`                                                                                                         | `$token` references in specs and default fallbacks                                                                                                      |
+| `node.<type>.fillColor/strokeColor/strokeWidth/fontColor/fontSize`                                                 | Node styles (`<type>` falls back to `node.default`)                                                                                                     |
+| `node.<type>.rounded` (incl. `default`)                                                                            | Corner radius: `0` emits square `rounded=0`, `>0` overrides the built-in arcSize. Stadium shapes (`terminal`, arcSize>=50) keep their semantic rounding |
+| `typography.fontFamily.primary/cjk/formula`                                                                        | Font fallback layer: `meta.font.<bucket>` > `node.style.fontFamily` > theme bucket > built-in policy (academic-paper CJK falls back to SimSun)          |
+| `connector.<type>.*`                                                                                               | Edge stroke, arrows, dash patterns                                                                                                                      |
+| `module.fillColor/strokeColor/strokeWidth/rounded/labelFontSize/labelFontWeight/labelFontColor/dashed/dashPattern` | Module containers; `rounded: 0` emits square corners                                                                                                    |
+| `module.padding`                                                                                                   | Layout padding inside module containers                                                                                                                 |
+| `canvas.background`, `canvas.gridSize`                                                                             | Page background and layout snapping grid                                                                                                                |
 
 Not yet consumed: `spacing.*`, `borderRadius.*`, `shadows.*`, `typography.fontSize/fontWeight`, `node.*.fontFamily` (use `typography.fontFamily` instead), `canvas.gridColor`.
 

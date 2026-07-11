@@ -1,0 +1,62 @@
+# Web application architecture in the arch-dark design language.
+# Adapted from architecture-diagram-generator examples/web-app.html (MIT, Cocoon AI).
+meta:
+  title: Web App Architecture
+  theme: arch-dark
+  source: replicated
+
+nodes:
+  - id: users
+    label: "Users\nBrowser"
+    type: terminal
+    position: { x: 80, y: 120 }
+
+  - id: frontend
+    label: "Frontend\nReact + TS :3000"
+    type: user
+    position: { x: 320, y: 120 }
+
+  - id: backend
+    label: "Backend\nNode.js :8080"
+    type: service
+    position: { x: 560, y: 120 }
+
+  - id: db
+    label: "Database\nPostgreSQL :5432"
+    type: database
+    position: { x: 800, y: 120 }
+
+  # Legend row: below the diagram, one entry per role in use
+  - id: legend-frontend
+    label: Frontend
+    type: user
+    position: { x: 320, y: 280 }
+    size: small
+
+  - id: legend-backend
+    label: Backend
+    type: service
+    position: { x: 440, y: 280 }
+    size: small
+
+  - id: legend-db
+    label: Database
+    type: database
+    position: { x: 560, y: 280 }
+    size: small
+
+edges:
+  - from: users
+    to: frontend
+    label: HTTPS
+    type: primary
+
+  - from: frontend
+    to: backend
+    label: REST
+    type: primary
+
+  - from: backend
+    to: db
+    label: SQL
+    type: data

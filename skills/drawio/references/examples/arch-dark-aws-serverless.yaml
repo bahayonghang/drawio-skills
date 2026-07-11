@@ -1,0 +1,103 @@
+# AWS serverless architecture in the arch-dark design language.
+# Adapted from architecture-diagram-generator examples/aws-serverless.html (MIT, Cocoon AI).
+meta:
+  title: AWS Serverless Architecture
+  theme: arch-dark
+  source: replicated
+
+nodes:
+  - id: clients
+    label: "Clients\nWeb / Mobile"
+    type: user
+    position: { x: 70, y: 120 }
+
+  - id: cloudfront
+    label: "CloudFront\nCDN"
+    type: cloud
+    position: { x: 320, y: 120 }
+    module: region
+
+  - id: apigw
+    label: "API Gateway\nREST + WebSocket"
+    type: cloud
+    position: { x: 560, y: 120 }
+    module: region
+
+  - id: lambda
+    label: "Lambda\nNode.js / Python"
+    type: service
+    position: { x: 800, y: 120 }
+    module: region
+
+  - id: s3
+    label: "S3\nStatic Assets"
+    type: cloud
+    position: { x: 320, y: 280 }
+    module: region
+
+  - id: sqs
+    label: "SQS\nQueue"
+    type: queue
+    position: { x: 560, y: 280 }
+    module: region
+
+  - id: dynamodb
+    label: "DynamoDB\nNoSQL On-demand"
+    type: database
+    position: { x: 800, y: 280 }
+    module: region
+
+  # Legend row: outside the region boundary, below it with clearance
+  - id: legend-cloud
+    label: AWS Service
+    type: cloud
+    position: { x: 320, y: 460 }
+    size: small
+
+  - id: legend-compute
+    label: Compute
+    type: service
+    position: { x: 460, y: 460 }
+    size: small
+
+  - id: legend-db
+    label: Database
+    type: database
+    position: { x: 580, y: 460 }
+    size: small
+
+edges:
+  - from: clients
+    to: cloudfront
+    label: HTTPS
+    type: primary
+
+  - from: cloudfront
+    to: apigw
+    type: primary
+
+  - from: apigw
+    to: lambda
+    type: primary
+
+  - from: cloudfront
+    to: s3
+    label: OAI
+    type: data
+
+  - from: lambda
+    to: sqs
+    type: data
+
+  - from: lambda
+    to: dynamodb
+    type: primary
+
+modules:
+  - id: region
+    label: 'AWS Region: us-east-1'
+    style:
+      fillColor: none
+      strokeColor: '#FBBF24'
+      dashed: true
+      dashPattern: '8 4'

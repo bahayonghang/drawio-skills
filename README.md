@@ -23,7 +23,7 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Desktop-aware export**: use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` when available.
 - **Optional live refinement**: configure next-ai MCP only for base-skill browser refinement; academic overlay stays offline.
 - **3 core routes**: `create`, `edit`, and `replicate`.
-- **6 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast`.
+- **7 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `arch-dark`, `high-contrast`. `arch-dark` carries the architecture design language adapted from architecture-diagram-generator (MIT, Cocoon AI).
 - **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
 - **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.
