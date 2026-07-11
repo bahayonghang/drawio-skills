@@ -126,6 +126,81 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 ---
 
+## Lobe, Brand, and Lucide Image Icons
+
+Use `lobe.*` or `ai.*` for AI/LLM product identity icons that draw.io does not
+ship as native stencils. Common icons such as OpenAI, Claude, and Gemini render
+as embedded normalized SVGs for stable export. Other safe Lobe slugs render as
+draw.io image cells backed by the `@lobehub/icons-static-svg` CDN, so draw.io
+needs network access when rendering or reopening those diagrams.
+
+`brand.openai` is kept as a compatibility alias for `lobe.openai`; `brand.redis`
+uses an embedded SVG because Redis is not an AI/LLM logo.
+
+Lobe icon assets come from the MIT-licensed
+[Lobe Icons](https://github.com/lobehub/lobe-icons) project.
+
+| Need | Icon Reference | Rendering |
+|------|----------------|-----------|
+| OpenAI | `lobe.openai`, `ai.openai`, `brand.openai` | Embedded Lobe SVG image |
+| Claude / Anthropic | `lobe.claude`, `ai.anthropic` | Embedded Lobe SVG image |
+| Gemini | `lobe.gemini` | Embedded Lobe SVG image |
+| Mistral | `lobe.mistral` | Lobe Icons CDN image fallback |
+| LangChain | `lobe.langchain` | Lobe Icons CDN image |
+| Hugging Face | `lobe.huggingface` | Lobe Icons CDN image |
+| Redis | `brand.redis` | Embedded SVG image |
+
+Use `lucide.*` for generic semantic fallback icons from the local
+`lucide-static` package. The resolver embeds matching SVG files as data URI
+images, so Lucide icons do not need network access after dependencies are
+installed. Use Lucide's kebab-case SVG file names, such as
+`lucide.alarm-clock`, `lucide.server-cog`, or `lucide.workflow`.
+
+Lucide icons are intentionally not brand logos; they are best for roles such as
+AI service, cache, document, server, workflow, and security.
+
+| Need | Icon Reference |
+|------|----------------|
+| AI / LLM service | `lucide.brain-circuit`, `lucide.bot` |
+| Cache / fast database | `lucide.database-zap` |
+| Database | `lucide.database` |
+| Document processing | `lucide.file-text` |
+| Cloud service | `lucide.cloud` |
+| Server / compute | `lucide.server`, `lucide.cpu` |
+| Server operations | `lucide.server-cog` |
+| Workflow / pipeline | `lucide.workflow` |
+| Security boundary | `lucide.shield` |
+| Network | `lucide.network` |
+
+```yaml
+nodes:
+  - id: openai
+    label: OpenAI document understanding
+    icon: lobe.openai
+
+  - id: claude
+    label: Claude reasoning
+    icon: ai.anthropic
+
+  - id: cache
+    label: Semantic cache
+    icon: lucide.database-zap
+
+  - id: ops
+    label: Server operations
+    icon: lucide.server-cog
+```
+
+Resolution order for icon-heavy diagrams:
+
+1. Prefer draw.io provider stencils for cloud/vendor infrastructure
+   (`aws.*`, `gcp.*`, `azure.*`, `cisco.*`).
+2. Use `lobe.*` or `ai.*` for AI/LLM product identity icons.
+3. Use `brand.*` for supported non-AI brand fallbacks such as Redis.
+4. Use `lucide.*` for generic semantic icons, not official logos.
+
+---
+
 ## ML/AI Icons
 
 ### Neural Network Symbols
