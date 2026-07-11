@@ -1,0 +1,101 @@
+# Example: CN industrial algorithm-server architecture (thesis figure)
+# Mirrors the layered Chinese architecture figures used in CN theses:
+# mixed CJK/Latin labels, Times New Roman + SimSun stacks, and the
+# font ladder (module 22 / node 20 / edge 18) with content-fitted boxes.
+
+meta:
+  profile: academic-paper
+  figureType: architecture
+  theme: academic
+  layout: vertical
+  title: "智能算法服务器分层架构"
+  description: "服务接口、统一调度、计算服务、算法适配与数据存储五层的职责与调用关系。"
+
+modules:
+  - id: interface
+    label: "服务接口层"
+  - id: scheduler
+    label: "统一调度层"
+  - id: compute
+    label: "计算服务层"
+  - id: adapter
+    label: "算法适配层"
+  - id: storage
+    label: "数据存储层"
+
+nodes:
+  - id: train_api
+    module: interface
+    label: "训练接口"
+    type: service
+  - id: predict_api
+    module: interface
+    label: "实时预测接口"
+    type: service
+  - id: decision_api
+    module: interface
+    label: "优化决策接口"
+    type: service
+  - id: schedule_api
+    module: interface
+    label: "调度管理接口"
+    type: service
+
+  - id: apscheduler
+    module: scheduler
+    label: "APScheduler 单实例（周期触发 · 任务登记 · 作业库持久化）"
+    type: service
+
+  - id: train_svc
+    module: compute
+    label: "训练服务\n独立子进程 · GPU绑定"
+    type: service
+  - id: predict_svc
+    module: compute
+    label: "预测服务\n线程池 · 模型缓存 · 无梯度推理"
+    type: service
+  - id: decision_svc
+    module: compute
+    label: "决策服务\n进程池 · CPU隔离 · 可取消"
+    type: service
+
+  - id: factory
+    module: adapter
+    label: "industrytslib 统一工厂接口\n训练 / 预测 / 决策统一入口"
+    type: service
+  - id: algolib
+    module: adapter
+    label: "算法库（预测算法 / 优化算法）"
+    type: service
+
+  - id: history_db
+    module: storage
+    label: "历史库"
+    type: database
+  - id: sample_db
+    module: storage
+    label: "样本库"
+    type: database
+  - id: result_db
+    module: storage
+    label: "结果库"
+    type: database
+
+edges:
+  - from: train_api
+    to: apscheduler
+    type: primary
+    label: "操作请求"
+  - from: apscheduler
+    to: predict_svc
+    type: primary
+  - from: predict_svc
+    to: factory
+    type: primary
+  - from: factory
+    to: algolib
+    type: primary
+  - from: factory
+    to: sample_db
+    type: primary
+    label: "读 / 写"
