@@ -46,3 +46,4 @@ examples/
 !skills/drawio/references/examples/
 !skills/drawio/references/examples/**
 skills-lock.json
+.drawio-tmp/
