@@ -12,40 +12,40 @@ Icons use the `mxgraph.aws4.*` shape prefix.
 
 #### Compute
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| Lambda | `aws.lambda` | `mxgraph.aws4.lambda` |
-| EC2 | `aws.ec2` | `mxgraph.aws4.ec2` |
-| ECS | `aws.ecs` | `mxgraph.aws4.ecs` |
-| EKS | `aws.eks` | `mxgraph.aws4.eks` |
-| Fargate | `aws.fargate` | `mxgraph.aws4.fargate` |
+| Service | Icon Reference | Shape                  |
+| ------- | -------------- | ---------------------- |
+| Lambda  | `aws.lambda`   | `mxgraph.aws4.lambda`  |
+| EC2     | `aws.ec2`      | `mxgraph.aws4.ec2`     |
+| ECS     | `aws.ecs`      | `mxgraph.aws4.ecs`     |
+| EKS     | `aws.eks`      | `mxgraph.aws4.eks`     |
+| Fargate | `aws.fargate`  | `mxgraph.aws4.fargate` |
 
 #### Storage & Database
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| S3 | `aws.s3` | `mxgraph.aws4.s3` |
-| DynamoDB | `aws.dynamodb` | `mxgraph.aws4.dynamodb` |
-| RDS | `aws.rds` | `mxgraph.aws4.rds` |
+| Service     | Icon Reference    | Shape                      |
+| ----------- | ----------------- | -------------------------- |
+| S3          | `aws.s3`          | `mxgraph.aws4.s3`          |
+| DynamoDB    | `aws.dynamodb`    | `mxgraph.aws4.dynamodb`    |
+| RDS         | `aws.rds`         | `mxgraph.aws4.rds`         |
 | ElastiCache | `aws.elasticache` | `mxgraph.aws4.elasticache` |
 
 #### Networking
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| API Gateway | `aws.api-gateway` | `mxgraph.aws4.api_gateway` |
-| CloudFront | `aws.cloudfront` | `mxgraph.aws4.cloudfront` |
-| Route 53 | `aws.route53` | `mxgraph.aws4.route_53` |
-| VPC | `aws.vpc` | `mxgraph.aws4.vpc` |
-| ALB | `aws.alb` | `mxgraph.aws4.application_load_balancer` |
+| Service     | Icon Reference    | Shape                                    |
+| ----------- | ----------------- | ---------------------------------------- |
+| API Gateway | `aws.api-gateway` | `mxgraph.aws4.api_gateway`               |
+| CloudFront  | `aws.cloudfront`  | `mxgraph.aws4.cloudfront`                |
+| Route 53    | `aws.route53`     | `mxgraph.aws4.route_53`                  |
+| VPC         | `aws.vpc`         | `mxgraph.aws4.vpc`                       |
+| ALB         | `aws.alb`         | `mxgraph.aws4.application_load_balancer` |
 
 #### Integration
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| SQS | `aws.sqs` | `mxgraph.aws4.sqs` |
-| SNS | `aws.sns` | `mxgraph.aws4.sns` |
-| EventBridge | `aws.eventbridge` | `mxgraph.aws4.eventbridge` |
+| Service        | Icon Reference       | Shape                         |
+| -------------- | -------------------- | ----------------------------- |
+| SQS            | `aws.sqs`            | `mxgraph.aws4.sqs`            |
+| SNS            | `aws.sns`            | `mxgraph.aws4.sns`            |
+| EventBridge    | `aws.eventbridge`    | `mxgraph.aws4.eventbridge`    |
 | Step Functions | `aws.step-functions` | `mxgraph.aws4.step_functions` |
 
 ---
@@ -56,29 +56,29 @@ Icons use the `mxgraph.gcp2.*` shape prefix.
 
 #### Compute
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| Cloud Run | `gcp.cloud-run` | `mxgraph.gcp2.cloud_run` |
-| Cloud Functions | `gcp.functions` | `mxgraph.gcp2.cloud_functions` |
-| Compute Engine | `gcp.compute` | `mxgraph.gcp2.compute_engine` |
-| GKE | `gcp.gke` | `mxgraph.gcp2.kubernetes_engine` |
+| Service         | Icon Reference  | Shape                            |
+| --------------- | --------------- | -------------------------------- |
+| Cloud Run       | `gcp.cloud-run` | `mxgraph.gcp2.cloud_run`         |
+| Cloud Functions | `gcp.functions` | `mxgraph.gcp2.cloud_functions`   |
+| Compute Engine  | `gcp.compute`   | `mxgraph.gcp2.compute_engine`    |
+| GKE             | `gcp.gke`       | `mxgraph.gcp2.kubernetes_engine` |
 
 #### Storage & Database
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| Cloud Storage | `gcp.storage` | `mxgraph.gcp2.cloud_storage` |
-| Cloud SQL | `gcp.sql` | `mxgraph.gcp2.cloud_sql` |
-| Firestore | `gcp.firestore` | `mxgraph.gcp2.firestore` |
-| BigQuery | `gcp.bigquery` | `mxgraph.gcp2.bigquery` |
+| Service       | Icon Reference  | Shape                        |
+| ------------- | --------------- | ---------------------------- |
+| Cloud Storage | `gcp.storage`   | `mxgraph.gcp2.cloud_storage` |
+| Cloud SQL     | `gcp.sql`       | `mxgraph.gcp2.cloud_sql`     |
+| Firestore     | `gcp.firestore` | `mxgraph.gcp2.firestore`     |
+| BigQuery      | `gcp.bigquery`  | `mxgraph.gcp2.bigquery`      |
 
 #### Networking
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| Cloud Load Balancing | `gcp.lb` | `mxgraph.gcp2.cloud_load_balancing` |
-| Cloud CDN | `gcp.cdn` | `mxgraph.gcp2.cloud_cdn` |
-| Cloud DNS | `gcp.dns` | `mxgraph.gcp2.cloud_dns` |
+| Service              | Icon Reference | Shape                               |
+| -------------------- | -------------- | ----------------------------------- |
+| Cloud Load Balancing | `gcp.lb`       | `mxgraph.gcp2.cloud_load_balancing` |
+| Cloud CDN            | `gcp.cdn`      | `mxgraph.gcp2.cloud_cdn`            |
+| Cloud DNS            | `gcp.dns`      | `mxgraph.gcp2.cloud_dns`            |
 
 ---
 
@@ -88,20 +88,20 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 #### Compute
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| Functions | `azure.functions` | `mxgraph.azure.functions` |
-| App Service | `azure.app-service` | `mxgraph.azure.app_services` |
-| AKS | `azure.aks` | `mxgraph.azure.kubernetes_services` |
-| VM | `azure.vm` | `mxgraph.azure.virtual_machine` |
+| Service     | Icon Reference      | Shape                               |
+| ----------- | ------------------- | ----------------------------------- |
+| Functions   | `azure.functions`   | `mxgraph.azure.functions`           |
+| App Service | `azure.app-service` | `mxgraph.azure.app_services`        |
+| AKS         | `azure.aks`         | `mxgraph.azure.kubernetes_services` |
+| VM          | `azure.vm`          | `mxgraph.azure.virtual_machine`     |
 
 #### Storage & Database
 
-| Service | Icon Reference | Shape |
-|---------|---------------|-------|
-| Blob Storage | `azure.blob` | `mxgraph.azure.blob_storage` |
-| SQL Database | `azure.sql` | `mxgraph.azure.sql_database` |
-| Cosmos DB | `azure.cosmos` | `mxgraph.azure.cosmos_db` |
+| Service      | Icon Reference | Shape                        |
+| ------------ | -------------- | ---------------------------- |
+| Blob Storage | `azure.blob`   | `mxgraph.azure.blob_storage` |
+| SQL Database | `azure.sql`    | `mxgraph.azure.sql_database` |
+| Cosmos DB    | `azure.cosmos` | `mxgraph.azure.cosmos_db`    |
 
 ---
 
@@ -109,20 +109,20 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 ### Container & Orchestration
 
-| Tool | Icon Reference | Shape |
-|------|---------------|-------|
-| Docker | `devops.docker` | `mxgraph.docker.docker` |
+| Tool       | Icon Reference      | Shape                           |
+| ---------- | ------------------- | ------------------------------- |
+| Docker     | `devops.docker`     | `mxgraph.docker.docker`         |
 | Kubernetes | `devops.kubernetes` | `mxgraph.kubernetes.kubernetes` |
-| Helm | `devops.helm` | Custom SVG |
+| Helm       | `devops.helm`       | Custom SVG                      |
 
 ### CI/CD
 
-| Tool | Icon Reference | Shape |
-|------|---------------|-------|
+| Tool           | Icon Reference          | Shape      |
+| -------------- | ----------------------- | ---------- |
 | GitHub Actions | `devops.github-actions` | Custom SVG |
-| Jenkins | `devops.jenkins` | Custom SVG |
-| GitLab CI | `devops.gitlab` | Custom SVG |
-| ArgoCD | `devops.argocd` | Custom SVG |
+| Jenkins        | `devops.jenkins`        | Custom SVG |
+| GitLab CI      | `devops.gitlab`         | Custom SVG |
+| ArgoCD         | `devops.argocd`         | Custom SVG |
 
 ---
 
@@ -130,47 +130,48 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 Use `lobe.*` or `ai.*` for AI/LLM product identity icons that draw.io does not
 ship as native stencils. Common icons such as OpenAI, Claude, and Gemini render
-as embedded normalized SVGs for stable export. Other safe Lobe slugs render as
-draw.io image cells backed by the `@lobehub/icons-static-svg` CDN, so draw.io
-needs network access when rendering or reopening those diagrams.
+as embedded normalized SVGs for stable offline export. Unsupported names fail
+shape validation instead of producing remote image links.
 
 `brand.openai` is kept as a compatibility alias for `lobe.openai`; `brand.redis`
 uses an embedded SVG because Redis is not an AI/LLM logo.
 
 Lobe icon assets come from the MIT-licensed
-[Lobe Icons](https://github.com/lobehub/lobe-icons) project.
+[Lobe Icons](https://github.com/lobehub/lobe-icons) project. Lobe and Lucide
+license texts ship under [`assets/licenses`](../../../assets/licenses/).
 
-| Need | Icon Reference | Rendering |
-|------|----------------|-----------|
-| OpenAI | `lobe.openai`, `ai.openai`, `brand.openai` | Embedded Lobe SVG image |
-| Claude / Anthropic | `lobe.claude`, `ai.anthropic` | Embedded Lobe SVG image |
-| Gemini | `lobe.gemini` | Embedded Lobe SVG image |
-| Mistral | `lobe.mistral` | Lobe Icons CDN image fallback |
-| LangChain | `lobe.langchain` | Lobe Icons CDN image |
-| Hugging Face | `lobe.huggingface` | Lobe Icons CDN image |
-| Redis | `brand.redis` | Embedded SVG image |
+| Need               | Icon Reference                             | Rendering               |
+| ------------------ | ------------------------------------------ | ----------------------- |
+| OpenAI             | `lobe.openai`, `ai.openai`, `brand.openai` | Embedded Lobe SVG image |
+| Claude / Anthropic | `lobe.claude`, `ai.anthropic`              | Embedded Lobe SVG image |
+| Gemini             | `lobe.gemini`                              | Embedded Lobe SVG image |
+| Redis              | `brand.redis`                              | Embedded SVG image      |
 
-Use `lucide.*` for generic semantic fallback icons from the local
-`lucide-static` package. The resolver embeds matching SVG files as data URI
-images, so Lucide icons do not need network access after dependencies are
-installed. Use Lucide's kebab-case SVG file names, such as
+Use `lucide.*` for the curated generic semantic fallback set bundled with this
+skill. The resolver embeds matching SVG data as data URI images, so these icons
+do not need package installation or network access. Use the documented
+kebab-case names, such as
 `lucide.alarm-clock`, `lucide.server-cog`, or `lucide.workflow`.
 
 Lucide icons are intentionally not brand logos; they are best for roles such as
 AI service, cache, document, server, workflow, and security.
 
-| Need | Icon Reference |
-|------|----------------|
-| AI / LLM service | `lucide.brain-circuit`, `lucide.bot` |
-| Cache / fast database | `lucide.database-zap` |
-| Database | `lucide.database` |
-| Document processing | `lucide.file-text` |
-| Cloud service | `lucide.cloud` |
-| Server / compute | `lucide.server`, `lucide.cpu` |
-| Server operations | `lucide.server-cog` |
-| Workflow / pipeline | `lucide.workflow` |
-| Security boundary | `lucide.shield` |
-| Network | `lucide.network` |
+| Need                  | Icon Reference                       |
+| --------------------- | ------------------------------------ |
+| AI / LLM service      | `lucide.brain-circuit`, `lucide.bot` |
+| Cache / fast database | `lucide.database-zap`                |
+| Database              | `lucide.database`                    |
+| Document processing   | `lucide.file-text`                   |
+| Cloud service         | `lucide.cloud`                       |
+| Server / compute      | `lucide.server`, `lucide.cpu`        |
+| Server operations     | `lucide.server-cog`                  |
+| Workflow / pipeline   | `lucide.workflow`                    |
+| Security boundary     | `lucide.shield`                      |
+| Network               | `lucide.network`                     |
+
+> For the agentic node types (`llm`, `agent`, `vector_store`, `memory`, `tool`, `gateway`) and
+> their recommended icon pairings, see the Agentic / LLM System Vocabulary table in
+> [shapes.md](shapes.md). Icons here are not duplicated there.
 
 ```yaml
 nodes:
@@ -205,22 +206,22 @@ Resolution order for icon-heavy diagrams:
 
 ### Neural Network Symbols
 
-| Symbol | Icon Reference | Description |
-|--------|---------------|-------------|
-| Input Layer | `ml.input` | Circle with arrows in |
-| Hidden Layer | `ml.hidden` | Stacked circles |
-| Output Layer | `ml.output` | Circle with arrows out |
-| Convolution | `ml.conv` | Grid pattern |
-| Pooling | `ml.pool` | Shrinking grid |
+| Symbol       | Icon Reference | Description            |
+| ------------ | -------------- | ---------------------- |
+| Input Layer  | `ml.input`     | Circle with arrows in  |
+| Hidden Layer | `ml.hidden`    | Stacked circles        |
+| Output Layer | `ml.output`    | Circle with arrows out |
+| Convolution  | `ml.conv`      | Grid pattern           |
+| Pooling      | `ml.pool`      | Shrinking grid         |
 
 ### Data Pipeline
 
-| Symbol | Icon Reference | Description |
-|--------|---------------|-------------|
+| Symbol      | Icon Reference   | Description         |
+| ----------- | ---------------- | ------------------- |
 | Data Source | `ml.data-source` | Database with arrow |
-| Transform | `ml.transform` | Gears |
-| Model | `ml.model` | Brain/network icon |
-| Prediction | `ml.predict` | Target/bullseye |
+| Transform   | `ml.transform`   | Gears               |
+| Model       | `ml.model`       | Brain/network icon  |
+| Prediction  | `ml.predict`     | Target/bullseye     |
 
 ---
 
@@ -233,7 +234,7 @@ nodes:
   - id: lambda
     label: Order Handler
     icon: aws.lambda
-    
+
   - id: db
     label: Orders DB
     icon: aws.dynamodb
@@ -243,12 +244,12 @@ nodes:
 
 The system normalizes common variations:
 
-| User Input | Resolved To |
-|------------|-------------|
+| User Input    | Resolved To                |
+| ------------- | -------------------------- |
 | `api-gateway` | `mxgraph.aws4.api_gateway` |
-| `lambda` | `mxgraph.aws4.lambda` |
-| `s3` | `mxgraph.aws4.s3` |
-| `cloud-run` | `mxgraph.gcp2.cloud_run` |
+| `lambda`      | `mxgraph.aws4.lambda`      |
+| `s3`          | `mxgraph.aws4.s3`          |
+| `cloud-run`   | `mxgraph.gcp2.cloud_run`   |
 
 ### Icon with Custom Size
 
@@ -257,7 +258,7 @@ nodes:
   - id: logo
     label: AWS Lambda
     icon: aws.lambda
-    size: large  # 160×80 px with icon
+    size: large # 160×80 px with icon
 ```
 
 ---

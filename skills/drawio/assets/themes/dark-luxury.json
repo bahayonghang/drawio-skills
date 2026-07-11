@@ -1,0 +1,246 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "dark-luxury",
+  "displayName": "Dark Luxury",
+  "description": "Premium editorial style: pure-black canvas, champagne-gold accents, unified dark node fills with color-coded borders. For README heroes, keynote slides and knowledge-base diagrams. Adapted from fireworks style-8. Non-portable: serif titles (theme has no title-only font slot, so gold identity is color-only), radial ambient glow, per-container opacity (see style-triage).",
+  "colors": {
+    "primary": "#D4A574",
+    "primaryLight": "#2A2114",
+    "secondary": "#A78BFA",
+    "secondaryLight": "#241A3D",
+    "accent": "#E8C49A",
+    "accentLight": "#33281A",
+    "background": "#0A0A0A",
+    "surface": "#111111",
+    "surfaceAlt": "#1A1A1A",
+    "text": "#F5F0EB",
+    "textMuted": "#A39787",
+    "textInverse": "#0A0A0A",
+    "border": "#2A2A2A",
+    "borderStrong": "#C9A96E",
+    "success": "#5A9E6F",
+    "successLight": "#10241A",
+    "warning": "#FBBF24",
+    "warningLight": "#2A2410",
+    "error": "#F87171",
+    "errorLight": "#2A1414",
+    "info": "#38BDF8",
+    "infoLight": "#0A2436"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "-apple-system, Helvetica Neue, Arial, sans-serif",
+      "monospace": "Cascadia Code, SF Mono, Courier New, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 21
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 4,
+    "md": 6,
+    "lg": 10,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0,0,0,0.5)",
+    "md": "0 4px 6px rgba(0,0,0,0.6)",
+    "lg": "0 10px 15px rgba(0,0,0,0.7)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#111111",
+      "strokeColor": "#A39787",
+      "strokeWidth": 1.5,
+      "fontColor": "#F5F0EB",
+      "fontSize": 13,
+      "fontFamily": "-apple-system, Helvetica Neue, Arial, sans-serif",
+      "rounded": 6
+    },
+    "service": {
+      "fillColor": "#111111",
+      "strokeColor": "#A78BFA",
+      "rounded": 6
+    },
+    "database": {
+      "fillColor": "#111111",
+      "strokeColor": "#38BDF8"
+    },
+    "decision": {
+      "fillColor": "#111111",
+      "strokeColor": "#FBBF24"
+    },
+    "terminal": {
+      "fillColor": "#111111",
+      "strokeColor": "#94A3B8"
+    },
+    "queue": {
+      "fillColor": "#111111",
+      "strokeColor": "#FBBF24"
+    },
+    "user": {
+      "fillColor": "#111111",
+      "strokeColor": "#A78BFA"
+    },
+    "document": {
+      "fillColor": "#111111",
+      "strokeColor": "#94A3B8"
+    },
+    "formula": {
+      "fillColor": "#111111",
+      "strokeColor": "#5A9E6F",
+      "strokeWidth": 1
+    },
+    "llm": {
+      "fillColor": "#111111",
+      "strokeColor": "#A78BFA"
+    },
+    "agent": {
+      "fillColor": "#111111",
+      "strokeColor": "#5A9E6F"
+    },
+    "vector_store": {
+      "fillColor": "#111111",
+      "strokeColor": "#38BDF8"
+    },
+    "memory": {
+      "fillColor": "#111111",
+      "strokeColor": "#FBBF24"
+    },
+    "tool": {
+      "fillColor": "#111111",
+      "strokeColor": "#94A3B8"
+    },
+    "gateway": {
+      "fillColor": "#111111",
+      "strokeColor": "#A78BFA"
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#D4A574",
+      "strokeWidth": 2,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#6EE7B7",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#A39787",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "4 3",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#A78BFA",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "6 3",
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#A39787",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    },
+    "control": {
+      "strokeColor": "#FDBA74",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_read": {
+      "strokeColor": "#6EE7B7",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_write": {
+      "strokeColor": "#6EE7B7",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "async": {
+      "strokeColor": "#A39787",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "feedback": {
+      "strokeColor": "#D4A574",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    }
+  },
+  "module": {
+    "fillColor": "#0A0A0A",
+    "strokeColor": "#C9A96E",
+    "strokeWidth": 1,
+    "rounded": 8,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 700,
+    "labelFontColor": "#C9A96E",
+    "dashed": true,
+    "dashPattern": "6 4"
+  },
+  "canvas": {
+    "background": "#0A0A0A",
+    "gridSize": 8,
+    "gridColor": "#1A1A1A"
+  }
+}

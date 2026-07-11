@@ -1,0 +1,63 @@
+# Tool-call loop: the LLM selects a tool, the tool executes, its result is
+# parsed and fed back into the LLM until the answer is ready.
+# The feedback edge (violet) closes the iterative reasoning loop.
+meta:
+  title: Tool Call Loop
+  theme: arch-dark
+  layout: horizontal
+
+nodes:
+  - id: query
+    label: User Query
+    type: user
+    position: { x: 80, y: 200 }
+  - id: llm
+    label: "LLM\nReason"
+    type: llm
+    position: { x: 300, y: 200 }
+  - id: selector
+    label: 'Tool Selector'
+    type: process
+    position: { x: 520, y: 200 }
+  - id: exec
+    label: "Tool Execution\nAPI / Code"
+    type: tool
+    position: { x: 740, y: 200 }
+  - id: parser
+    label: 'Result Parser'
+    type: process
+    position: { x: 520, y: 380 }
+  - id: response
+    label: Response
+    type: user
+    position: { x: 80, y: 380 }
+
+  - id: legend
+    label: 'Legend:  gray = primary   orange = control   violet = feedback (loop back to LLM)'
+    type: text
+    position: { x: 430, y: 480 }
+
+edges:
+  - from: query
+    to: llm
+    type: primary
+  - from: llm
+    to: selector
+    type: control
+    label: call
+  - from: selector
+    to: exec
+    type: control
+    label: invoke
+  - from: exec
+    to: parser
+    type: primary
+    label: raw result
+  - from: parser
+    to: llm
+    type: feedback
+    label: parsed
+  - from: llm
+    to: response
+    type: primary
+    label: done

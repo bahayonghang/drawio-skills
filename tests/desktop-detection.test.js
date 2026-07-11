@@ -18,7 +18,11 @@ test('listDrawioDesktopCandidates prefers explicit DRAWIO_CMD when safe', () => 
     }
   })
 
-  assert.equal(candidates[0], 'C:\\Tools\\draw.io\\draw.io.exe')
+  assert.deepEqual(candidates.slice(0, 3), [
+    'C:\\Tools\\draw.io\\draw.io.exe',
+    'C:\\Program Files\\draw.io\\draw.io.exe',
+    'C:\\Users\\me\\AppData\\Local\\Programs\\draw.io\\draw.io.exe'
+  ])
 })
 
 test('detectDrawioDesktop rejects suspicious DRAWIO_CMD values', () => {

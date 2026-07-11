@@ -64,6 +64,7 @@ Choose the route first, then load only the references needed for that route.
 | Route              | When to use                                                                                                    | Required references                                                                                                                                                              |
 | ------------------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `create`           | New diagram from text, YAML, Mermaid, CSV, or a concise spec                                                   | `references/workflows/create.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`                                                    |
+| `architecture`     | System/software architecture, microservice or cloud-service maps with role-based color coding, plus AI agent / RAG / memory diagrams（架构图、微服务、云架构、agent 架构图、RAG 图、记忆架构、multi-agent、工具调用循环；非拓扑、非论文） | `references/workflows/create.md`, `references/docs/architecture-diagrams.md`, `references/docs/agent-diagrams.md`, `references/docs/design-system/README.md`                                                          |
 | `edit`             | Modify an existing sidecar bundle or imported `.drawio`                                                        | `references/workflows/edit.md`, `references/docs/migration-readiness.md`                                                                                                         |
 | `replicate`        | Redraw an uploaded image, screenshot, SVG, or reference diagram                                                | `references/workflows/replicate.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`, `references/docs/design-system/color-guide.md` |
 | `math-formula`     | Labels contain formulas, equations, LaTeX, AsciiMath, MathJax, or Chinese formula keywords                     | `references/docs/math-typesetting.md`, `references/docs/design-system/formulas.md`                                                                                               |
@@ -186,6 +187,7 @@ End with a concise report containing:
 - `references/docs/design-system/specification.md`: YAML schema and authoring contract
 - `references/docs/math-typesetting.md`: formula delimiters and export guidance
 - `references/docs/edge-quality-rules.md`: routing and label-clearance checks
+- `references/docs/architecture-diagrams.md`: arch-dark design language — role-to-color mapping, boundary/legend rules, spacing discipline for architecture diagrams
 - `references/docs/stencil-library-guide.md`: provider-icon and stencil fallback rules
 - `references/docs/ieee-network-diagrams.md`: IEEE-style network topology and infrastructure reference
 - `references/docs/mcp-tools.md`: optional live-refinement capability vocabulary

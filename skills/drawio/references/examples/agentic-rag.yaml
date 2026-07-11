@@ -1,0 +1,71 @@
+# Agentic RAG: a reasoning agent orchestrates retrieval and tool use in a loop
+# before handing the grounded context to an LLM for synthesis.
+# arch-dark renders control (orange), memory_read (green), feedback (violet).
+meta:
+  title: Agentic RAG
+  theme: arch-dark
+  layout: horizontal
+
+nodes:
+  - id: query
+    label: User Query
+    type: user
+    position: { x: 80, y: 200 }
+  - id: agent
+    label: "Agent Core\nPlan / Reason"
+    type: agent
+    position: { x: 320, y: 200 }
+  - id: retriever
+    label: Retriever
+    type: process
+    position: { x: 320, y: 380 }
+  - id: store
+    label: "Vector Store\nEmbeddings"
+    type: vector_store
+    position: { x: 100, y: 380 }
+  - id: tool
+    label: "Tool\nSearch / Code"
+    type: tool
+    position: { x: 560, y: 380 }
+  - id: llm
+    label: "LLM\nSynthesis"
+    type: llm
+    position: { x: 760, y: 200 }
+  - id: response
+    label: Response
+    type: user
+    position: { x: 980, y: 200 }
+
+  - id: legend
+    label: 'Legend:  gray = primary   orange = control   green = memory read   violet = feedback loop'
+    type: text
+    position: { x: 530, y: 620 }
+
+edges:
+  - from: query
+    to: agent
+    type: primary
+  - from: agent
+    to: retriever
+    type: control
+  - from: retriever
+    to: store
+    type: memory_read
+  - from: retriever
+    to: agent
+    type: memory_read
+    label: context
+  - from: agent
+    to: tool
+    type: control
+    label: call
+  - from: tool
+    to: agent
+    type: feedback
+    label: result
+  - from: agent
+    to: llm
+    type: primary
+  - from: llm
+    to: response
+    type: primary

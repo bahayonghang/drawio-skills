@@ -77,7 +77,13 @@ try {
       norm: { fillColor: '#DCEDC8', strokeColor: '#8BC34A' },
       graph: { fillColor: '#B2EBF2', strokeColor: '#26C6DA' },
       matrix: { fillColor: '#E8EAF6', strokeColor: '#7986CB' },
-      operator: { fillColor: '#FFFFFF', strokeColor: '#424242' }
+      operator: { fillColor: '#FFFFFF', strokeColor: '#424242' },
+      llm: { fillColor: '#EDE9FE', strokeColor: '#7C3AED' },
+      agent: { fillColor: '#DBEAFE', strokeColor: '#2563EB' },
+      vector_store: { fillColor: '#D1FAE5', strokeColor: '#059669' },
+      memory: { fillColor: '#FEF9C3', strokeColor: '#CA8A04' },
+      tool: { fillColor: '#F1F5F9', strokeColor: '#475569' },
+      gateway: { fillColor: '#FFEDD5', strokeColor: '#EA580C' }
     },
     connector: {
       primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
@@ -98,7 +104,26 @@ try {
         endFill: false
       },
       dependency: { strokeColor: '#1E293B', strokeWidth: 1, dashed: false, endArrow: 'diamond', endFill: true },
-      bidirectional: { strokeColor: '#64748B', strokeWidth: 1.5, dashed: false, endArrow: 'none', endFill: false }
+      bidirectional: { strokeColor: '#64748B', strokeWidth: 1.5, dashed: false, endArrow: 'none', endFill: false },
+      control: { strokeColor: '#EA580C', strokeWidth: 1.5, dashed: false, endArrow: 'block', endFill: true },
+      memory_read: { strokeColor: '#059669', strokeWidth: 1.5, dashed: false, endArrow: 'block', endFill: true },
+      memory_write: {
+        strokeColor: '#059669',
+        strokeWidth: 1.5,
+        dashed: true,
+        dashPattern: '5 3',
+        endArrow: 'block',
+        endFill: true
+      },
+      async: {
+        strokeColor: '#6B7280',
+        strokeWidth: 1.5,
+        dashed: true,
+        dashPattern: '4 2',
+        endArrow: 'open',
+        endFill: false
+      },
+      feedback: { strokeColor: '#7C3AED', strokeWidth: 1.5, dashed: false, endArrow: 'block', endFill: true }
     },
     module: {
       fillColor: '#F8FAFC',
@@ -305,7 +330,16 @@ export const SHAPE_STYLES = {
   graph: 'rounded=1;arcSize=15',
   matrix: 'rounded=1;arcSize=5',
   operator: 'ellipse',
-  tensor3d: 'shape=cube;size=10;direction=south'
+  tensor3d: 'shape=cube;size=10;direction=south',
+
+  // Agentic / LLM system shapes (fireworks vocabulary) -- reuse existing
+  // primitives, distinguished by theme color; no new drawing code paths.
+  llm: 'rounded=1;arcSize=20',
+  agent: 'shape=hexagon;perimeter=hexagonPerimeter2',
+  vector_store: 'shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15',
+  memory: 'rounded=1;arcSize=20;dashed=1',
+  tool: 'rounded=1;arcSize=20',
+  gateway: 'shape=hexagon;perimeter=hexagonPerimeter2'
 }
 
 /**

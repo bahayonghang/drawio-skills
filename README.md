@@ -23,11 +23,11 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Desktop-aware export**: use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` when available.
 - **Optional live refinement**: configure next-ai MCP only for base-skill browser refinement; academic overlay stays offline.
 - **3 core routes**: `create`, `edit`, and `replicate`.
-- **6 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast`.
+- **7 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `arch-dark`, `high-contrast`. `arch-dark` carries the architecture design language adapted from architecture-diagram-generator (MIT, Cocoon AI).
 - **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
 - **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.
-- **Lobe, brand, and full Lucide icon fallback**: use `lobe.*` / `ai.*` for AI/LLM logos through Lobe Icons, `brand.redis` for supported non-AI brands, and any local `lucide-static` SVG through `lucide.*` for generic semantic roles.
+- **Embedded Lobe, brand, and Lucide icons**: use bundled `lobe.*` / `ai.*` AI/LLM logos, `brand.redis`, and a curated `lucide.*` set for common semantic roles without runtime network access.
 - **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`) and automatic link labels from interface/IP/VLAN/bandwidth metadata.
 - **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec`.
 - **Validation before export**: structure, layout, quality, formula, and replication text-position checks.
@@ -185,15 +185,12 @@ nodes:
 ```
 
 Common `lobe.*` / `ai.*` icons such as OpenAI, Claude, and Gemini are embedded
-as normalized SVGs for reliable rendering. Other safe Lobe slugs fall back to
-the Lobe Icons CDN and need network access when draw.io renders or reopens the
-diagram. `brand.*` is for supported non-AI brand fallbacks; `lucide.*` icons are
-loaded from the local `lucide-static` package, embedded as data URI SVGs, and
-should not be treated as official brand logos. Use Lucide's kebab-case file
-names, for example `lucide.alarm-clock`, `lucide.server-cog`, or
-`lucide.workflow`.
-Lobe icon assets come from the MIT-licensed
-[Lobe Icons](https://github.com/lobehub/lobe-icons) project.
+as normalized SVGs for reliable offline rendering. Unsupported Lobe names fail
+shape validation instead of creating remote image links. `brand.*` is for the
+bundled non-AI brand fallbacks; the curated `lucide.*` set is embedded as data
+URI SVGs and should not be treated as official brand logos. Supported examples
+include `lucide.alarm-clock`, `lucide.server-cog`, and `lucide.workflow`.
+Lobe and Lucide attribution files ship under `skills/drawio/assets/licenses/`.
 
 Academic overlay still uses the sibling base CLI:
 

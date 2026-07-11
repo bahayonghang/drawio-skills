@@ -1,0 +1,7 @@
+{"file": "skills/drawio/references/docs/design-system/specification.md", "reason": "YAML spec 节点类型/modules/style 覆盖的权威契约"}
+{"file": "skills/drawio/references/docs/design-system/themes.md", "reason": "主题体系文档，新主题需按此形制登记"}
+{"file": "skills/drawio/references/docs/design-system/tokens.md", "reason": "文本/标签样式与语义类型默认值约定"}
+{"file": "skills/drawio/assets/themes/dark.json", "reason": "现有深色主题，arch-dark 的结构模板"}
+{"file": "skills/drawio/references/theme.schema.json", "reason": "主题 JSON schema 校验依据"}
+{"file": "ref/architecture-diagram-generator/architecture-diagram/SKILL.md", "reason": "设计语言来源：配色表、间距、legend、边界规则"}
+{"file": "ref/architecture-diagram-generator/examples", "reason": "三个待逆向移植的示例 HTML"}

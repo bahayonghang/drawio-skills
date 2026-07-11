@@ -310,3 +310,137 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 9: 完成 skill description 精简
+
+**Date**: 2026-07-11
+**Task**: 完成 skill description 精简
+**Branch**: `dev`
+
+### Summary
+
+精简 drawio 与 academic skill description，触发探针保持 26/26，并完成任务归档。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `74987fa` | (see git log) |
+| `e28506a` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 10: 合并并加固 PR #7 图标解析
+
+**Date**: 2026-07-11
+**Task**: 合并并加固 PR #7 图标解析
+**Branch**: `dev`
+
+### Summary
+
+在 PR #7 留言并合并；本地移除 lucide-static 与 Lobe CDN fallback，补齐内嵌图标、许可证、未知图标告警、Desktop 路径解析和遗漏 academic fixture；just ci 400/400 通过。
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9d9e794` | (see git log) |
+| `8caab09` | (see git log) |
+| `47df195` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+## Session 11: 引入 arch-dark 架构图设计语言
+
+**Date**: 2026-07-11
+**Task**: 吸收 architecture-diagram-generator 设计语言，增强 drawio 架构图能力
+**Branch**: `dev`
+
+### Summary
+
+将 ref/architecture-diagram-generator（MIT, Cocoon AI）的设计语言移植进 drawio 基座：新增 arch-dark 主题（slate-950 + 七类角色语义色）、architecture-diagrams.md 授权规范（角色映射/双行标注/虚线边界/总线间隙/图例出界规则）、三个移植示例与中文端到端验证；SKILL.md 仅加 architecture 路由行，两条 skill description 零变更（免探针回归）。零 JS 代码改动。
+
+### Main Changes
+
+- skills/drawio/assets/themes/arch-dark.json（新主题，schema 结构等价校验通过）
+- skills/drawio/references/docs/architecture-diagrams.md（新设计语言文档，含 module 顶部预留空间经验）
+- references/examples/arch-dark-{web-app,aws-serverless,microservices}.yaml（--validate 全 0 节点交叉）
+- SKILL.md architecture 路由 + themes.md / design-system README / 根 README 中英文 6→7
+- assets/licenses/architecture-diagram-generator-MIT.txt
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8ebaa56` | feat(drawio): [AI] ✨ 引入 arch-dark 架构图设计语言 |
+
+### Testing
+
+- [OK] 三示例 + 中文端到端 cli --validate：0 node-crossings，边界/图例几何核对通过
+- [OK] just ci：400/400 tests，docs build 成功
+- [OK] git diff 确认两条 SKILL.md description 行零变更
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 若后续实测发现模型手排坐标返工率高，可另立任务给 --validate 增加"图例在边界外"专项检查
+
+---
+
+## 2026-07-11: fireworks-tech-graph 知识融合进 drawio 技能
+
+### Session Summary
+
+任务树 07-11-fireworks-into-drawio(1 父 + 3 子)全部完成并归档。将 ref/fireworks-tech-graph 的语义图知识融入 skills/drawio,不新建技能、不引入 SVG 直绘引擎(其手写 SVG 管线劣于现有 CLI,只移植知识)。
+
+### Deliverables
+
+- R2: schema 新增 6 节点类型(llm/agent/vector_store/memory/tool/gateway)+ 5 边类型(control/memory_read/memory_write/async/feedback);渲染复用现有原语;shapes/connectors/color-guide/icons 文档更新;图例强制规则落档。
+- R1: agent-diagrams.md(Agent/Memory/MindMap/Timeline 布局规则)+ 5 个模式示例(rag-pipeline 等);SKILL.md 仅改路由行,frontmatter 未动。
+- R3: 8 套风格 triage,4 套入选移植为主题(blueprint/dark-terminal/notion-clean/dark-luxury);style-presets.md 增适配章节。
+- Spec: 新增 .trellis/spec/drawio-skill/semantic-types.md(类型扩展触点清单)。
+
+### Key Lessons
+
+- **主题静默回退坑**:主题 JSON 缺 connector 类型条目不报错,直接回退 primary 样式——语义色悄悄消失。新增类型必须 grep 全部 themes/*.json 确认覆盖(已写入 spec)。
+- 子代理汇报需独立验证:impl-r3 声称的样张目录实际不存在,重渲染后其余结论属实。
+- YAML 边字段是 from/to 不是 source/target。
+
+### Commits
+
+4128433 / be8be47 / a8c62ea / db228cf / 68a04dd + 4 个归档提交。
+
+[OK] **Completed**

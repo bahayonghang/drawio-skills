@@ -10,11 +10,11 @@ The Design System defines a semantic connector system with clear visual hierarch
 
 **Purpose**: Main process flow, critical paths
 
-| Property | Value |
-|----------|-------|
-| Line | Solid, 2px |
-| Arrow | Filled block |
-| Color | Text color (`#1E293B` in Tech Blue) |
+| Property | Value                               |
+| -------- | ----------------------------------- |
+| Line     | Solid, 2px                          |
+| Arrow    | Filled block                        |
+| Color    | Text color (`#1E293B` in Tech Blue) |
 
 ```yaml
 edges:
@@ -34,11 +34,11 @@ edges:
 
 **Purpose**: Data transmission, async communication, API calls
 
-| Property | Value |
-|----------|-------|
-| Line | Dashed (6 4), 2px |
-| Arrow | Filled block |
-| Color | Text color |
+| Property | Value             |
+| -------- | ----------------- |
+| Line     | Dashed (6 4), 2px |
+| Arrow    | Filled block      |
+| Color    | Text color        |
 
 ```yaml
 edges:
@@ -59,11 +59,11 @@ edges:
 
 **Purpose**: Weak relationships, optional paths, fallbacks
 
-| Property | Value |
-|----------|-------|
-| Line | Dotted (2 2), 1px |
-| Arrow | Open block |
-| Color | Muted text (`#64748B`) |
+| Property | Value                  |
+| -------- | ---------------------- |
+| Line     | Dotted (2 2), 1px      |
+| Arrow    | Open block             |
+| Color    | Muted text (`#64748B`) |
 
 ```yaml
 edges:
@@ -83,11 +83,11 @@ edges:
 
 **Purpose**: Dependencies, constraints, composition
 
-| Property | Value |
-|----------|-------|
-| Line | Solid, 1px |
-| Arrow | Filled diamond |
-| Color | Text color |
+| Property | Value          |
+| -------- | -------------- |
+| Line     | Solid, 1px     |
+| Arrow    | Filled diamond |
+| Color    | Text color     |
 
 ```yaml
 edges:
@@ -107,11 +107,11 @@ edges:
 
 **Purpose**: Associations, mutual relationships, two-way communication
 
-| Property | Value |
-|----------|-------|
-| Line | Solid, 1.5px |
-| Arrow | None (both ends) |
-| Color | Muted text |
+| Property | Value            |
+| -------- | ---------------- |
+| Line     | Solid, 1.5px     |
+| Arrow    | None (both ends) |
+| Color    | Muted text       |
 
 ```yaml
 edges:
@@ -127,16 +127,56 @@ edges:
 
 ---
 
+## Agentic / LLM Flow Semantics
+
+For LLM-agent and RAG diagrams, these typed connectors carry flow meaning. The color/dash
+values below are the **default (Tech Blue / light) defaults only**. Inside a theme, the
+theme's own connector palette overrides them — arch-dark and academic remap these to their
+own tokens (see Theme Variations). Precedence is always: **explicit edge `style` > theme
+token > type default**.
+
+| Type           | Meaning                    | Default Line               | Default Color      |
+| -------------- | -------------------------- | -------------------------- | ------------------ |
+| `control`      | Trigger / control signal   | Solid, 1.5px, block        | `#EA580C` (orange) |
+| `memory_read`  | Read from store / memory   | Solid, 1.5px, block        | `#059669` (green)  |
+| `memory_write` | Write to store / memory    | Dashed (5 3), 1.5px, block | `#059669` (green)  |
+| `async`        | Async / non-blocking event | Dashed (4 2), 1.5px, open  | `#6B7280` (gray)   |
+| `feedback`     | Iterative feedback loop    | Solid, 1.5px, block        | `#7C3AED` (violet) |
+
+`primary` remains the main data path, `data` a secondary/dashed data path. Read vs. write to
+the same store share a hue and differ by dash (write = dashed). `async` uses an open arrow to
+signal non-blocking delivery.
+
+```yaml
+edges:
+  - from: agent
+    to: memory
+    type: memory_write
+    label: persist
+```
+
+### Legend requirement
+
+When a diagram uses **two or more arrow semantics** (any mix of the typed connectors above,
+or icons), it **must** include a legend via `meta.legend`. Use the compact single text-node
+form — one multi-line text box mapping each line style/color to its meaning — matching the
+academic overlay's compact-legend convention (see academic-figure-playbook). Under the
+`academic-paper` profile the validator enforces this — it warns when `meta.legend` is absent
+while icons or multiple connector types are present; for other profiles treat it as a
+required authoring convention.
+
+---
+
 ## Arrow Types
 
-| Type | Style | mxCell Value | Usage |
-|------|-------|--------------|-------|
-| Filled Block | ▶ | `endArrow=block;endFill=1` | Primary, data flow |
-| Open Block | ▷ | `endArrow=open;endFill=0` | Optional flow |
-| Filled Diamond | ◆ | `endArrow=diamond;endFill=1` | Composition |
-| Open Diamond | ◇ | `endArrow=diamondThin;endFill=0` | Aggregation |
-| Classic | → | `endArrow=classic` | Simple arrow |
-| None | — | `endArrow=none` | Bidirectional |
+| Type           | Style | mxCell Value                     | Usage              |
+| -------------- | ----- | -------------------------------- | ------------------ |
+| Filled Block   | ▶     | `endArrow=block;endFill=1`       | Primary, data flow |
+| Open Block     | ▷     | `endArrow=open;endFill=0`        | Optional flow      |
+| Filled Diamond | ◆     | `endArrow=diamond;endFill=1`     | Composition        |
+| Open Diamond   | ◇     | `endArrow=diamondThin;endFill=0` | Aggregation        |
+| Classic        | →     | `endArrow=classic`               | Simple arrow       |
+| None           | —     | `endArrow=none`                  | Bidirectional      |
 
 > **Format note**: In draw.io XML style strings, boolean-like values use `1`/`0` (e.g., `endFill=1`), while theme JSON definitions use `true`/`false` (e.g., `"endFill": true`). The converter handles this translation automatically.
 
@@ -223,12 +263,12 @@ When connectors cross, jumps prevent ambiguity:
 <mxCell style="jumpStyle=arc;jumpSize=8;" />
 ```
 
-| Style | Appearance |
-|-------|------------|
-| `arc` | Small arc over crossing |
-| `gap` | Gap in line |
-| `sharp` | Sharp angle |
-| `none` | No jump (lines cross) |
+| Style   | Appearance              |
+| ------- | ----------------------- |
+| `arc`   | Small arc over crossing |
+| `gap`   | Gap in line             |
+| `sharp` | Sharp angle             |
+| `none`  | No jump (lines cross)   |
 
 ---
 
@@ -241,7 +281,7 @@ edges:
   - from: a
     to: b
     label: "Request"
-    labelPosition: center  # center, start, end
+    labelPosition: center # center, start, end
 ```
 
 ### Styling
@@ -263,27 +303,35 @@ Labels use the theme's edge label settings:
 
 ### Tech Blue
 
-| Type | Stroke Color |
-|------|--------------|
-| primary | `#1E293B` |
-| data | `#1E293B` |
-| optional | `#64748B` |
-| dependency | `#1E293B` |
-| bidirectional | `#64748B` |
+| Type          | Stroke Color       |
+| ------------- | ------------------ |
+| primary       | `#1E293B`          |
+| data          | `#1E293B`          |
+| optional      | `#64748B`          |
+| dependency    | `#1E293B`          |
+| bidirectional | `#64748B`          |
+| control       | `#EA580C`          |
+| memory_read   | `#059669`          |
+| memory_write  | `#059669` (dashed) |
+| async         | `#6B7280`          |
+| feedback      | `#7C3AED`          |
 
 ### Academic
 
-All connectors use black (`#1E1E1E`) for print compatibility.
+All connectors use grayscale (`#1E1E1E` / `#4B4B4B` / `#6B6B6B`) for print compatibility.
+The agentic semantics (`control`, `memory_read`/`memory_write`, `async`, `feedback`) are
+distinguished by dash pattern and arrow head rather than color, since the academic palette
+carries no hue.
 
 ### Dark Mode
 
-| Type | Stroke Color |
-|------|--------------|
-| primary | `#F1F5F9` |
-| data | `#94A3B8` |
-| optional | `#64748B` |
-| dependency | `#94A3B8` |
-| bidirectional | `#64748B` |
+| Type          | Stroke Color |
+| ------------- | ------------ |
+| primary       | `#F1F5F9`    |
+| data          | `#94A3B8`    |
+| optional      | `#64748B`    |
+| dependency    | `#94A3B8`    |
+| bidirectional | `#64748B`    |
 
 ---
 

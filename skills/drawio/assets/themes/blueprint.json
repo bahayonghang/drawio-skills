@@ -1,0 +1,246 @@
+{
+  "$schema": "./theme.schema.json",
+  "name": "blueprint",
+  "displayName": "Blueprint",
+  "description": "Engineering blueprint aesthetic: navy canvas, cyan sharp-cornered panels, monospace type, for formal architecture and infrastructure docs. Adapted from fireworks style-3. Non-portable: grid pattern overlay (approximated via gridColor), corner brackets, uppercase/letter-spacing, title block (see style-triage).",
+  "colors": {
+    "primary": "#00B4D8",
+    "primaryLight": "#0D1F3C",
+    "secondary": "#06D6A0",
+    "secondaryLight": "#042F27",
+    "accent": "#48CAE4",
+    "accentLight": "#0D2A44",
+    "background": "#0A1628",
+    "surface": "#0D1F3C",
+    "surfaceAlt": "#112240",
+    "text": "#CAF0F8",
+    "textMuted": "#90E0EF",
+    "textInverse": "#0A1628",
+    "border": "#1D4A6E",
+    "borderStrong": "#00B4D8",
+    "success": "#06D6A0",
+    "successLight": "#042F27",
+    "warning": "#F77F00",
+    "warningLight": "#3D2000",
+    "error": "#FF5C5C",
+    "errorLight": "#4A0E0E",
+    "info": "#48CAE4",
+    "infoLight": "#0D2A44"
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 40,
+      "3xl": 48,
+      "4xl": 64,
+      "5xl": 80
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Courier New, Lucida Console, Consolas, monospace",
+      "monospace": "Courier New, Lucida Console, Consolas, monospace",
+      "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+    },
+    "fontSize": {
+      "xs": 10,
+      "sm": 11,
+      "md": 13,
+      "lg": 14,
+      "xl": 16,
+      "2xl": 20
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "sm": 2,
+    "md": 2,
+    "lg": 4,
+    "full": 9999
+  },
+  "shadows": {
+    "none": "none",
+    "sm": "0 1px 2px rgba(0,0,0,0.35)",
+    "md": "0 4px 6px rgba(0,0,0,0.45)",
+    "lg": "0 10px 15px rgba(0,0,0,0.55)"
+  },
+  "node": {
+    "default": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#00B4D8",
+      "strokeWidth": 1,
+      "fontColor": "#CAF0F8",
+      "fontSize": 13,
+      "fontFamily": "Courier New, Lucida Console, Consolas, monospace",
+      "rounded": 2
+    },
+    "service": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#00B4D8",
+      "rounded": 2
+    },
+    "database": {
+      "fillColor": "#0A2F28",
+      "strokeColor": "#06D6A0"
+    },
+    "decision": {
+      "fillColor": "#3D2000",
+      "strokeColor": "#F77F00"
+    },
+    "terminal": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#48CAE4"
+    },
+    "queue": {
+      "fillColor": "#0D2A44",
+      "strokeColor": "#48CAE4"
+    },
+    "user": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#90E0EF"
+    },
+    "document": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#48CAE4"
+    },
+    "formula": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#00B4D8",
+      "strokeWidth": 1
+    },
+    "llm": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#00B4D8"
+    },
+    "agent": {
+      "fillColor": "#0D2A44",
+      "strokeColor": "#48CAE4"
+    },
+    "vector_store": {
+      "fillColor": "#0A2F28",
+      "strokeColor": "#06D6A0"
+    },
+    "memory": {
+      "fillColor": "#3D2000",
+      "strokeColor": "#F77F00"
+    },
+    "tool": {
+      "fillColor": "#0D1F3C",
+      "strokeColor": "#90E0EF"
+    },
+    "gateway": {
+      "fillColor": "#0D2A44",
+      "strokeColor": "#48CAE4"
+    }
+  },
+  "connector": {
+    "primary": {
+      "strokeColor": "#00B4D8",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "data": {
+      "strokeColor": "#48CAE4",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "6 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "optional": {
+      "strokeColor": "#6096B4",
+      "strokeWidth": 1,
+      "dashed": true,
+      "dashPattern": "2 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "dependency": {
+      "strokeColor": "#90E0EF",
+      "strokeWidth": 1,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "diamond",
+      "endFill": true
+    },
+    "bidirectional": {
+      "strokeColor": "#6096B4",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "none",
+      "endFill": false
+    },
+    "control": {
+      "strokeColor": "#F77F00",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_read": {
+      "strokeColor": "#06D6A0",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    },
+    "memory_write": {
+      "strokeColor": "#06D6A0",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "5 3",
+      "endArrow": "block",
+      "endFill": true
+    },
+    "async": {
+      "strokeColor": "#6096B4",
+      "strokeWidth": 1.5,
+      "dashed": true,
+      "dashPattern": "4 2",
+      "endArrow": "open",
+      "endFill": false
+    },
+    "feedback": {
+      "strokeColor": "#48CAE4",
+      "strokeWidth": 1.5,
+      "dashed": false,
+      "dashPattern": null,
+      "endArrow": "block",
+      "endFill": true
+    }
+  },
+  "module": {
+    "fillColor": "#0D1F3C",
+    "strokeColor": "#00B4D8",
+    "strokeWidth": 1,
+    "rounded": 2,
+    "padding": 24,
+    "labelFontSize": 14,
+    "labelFontWeight": 700,
+    "labelFontColor": "#CAF0F8",
+    "dashed": true,
+    "dashPattern": "6 3"
+  },
+  "canvas": {
+    "background": "#0A1628",
+    "gridSize": 30,
+    "gridColor": "#112240"
+  }
+}

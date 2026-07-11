@@ -95,3 +95,32 @@ endArrow=block;endFill=1;strokeColor=#333333;strokeWidth=2;dashed=1;dashPattern=
 edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;
 endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=1;html=1
 ```
+
+## Theme × Diagram-Type Fit
+
+Distilled from the fireworks `style-diagram-matrix` after triage. Covers the four
+fireworks-derived themes ported into `assets/themes/` plus the closest existing
+themes. Pick by diagram type; avoid the **Poor** combinations.
+
+| Theme (`--theme`) | Register | Best for | Avoid (Poor) |
+|---|---|---|---|
+| `tech-blue` (default) | Light, cool | Architecture, flowchart, data flow, general | — |
+| `notion-clean` | Light, grayscale minimal | Class/ER, sequence, use-case, comparison tables, Notion/wiki embeds | — |
+| `blueprint` | Dark navy, cyan, sharp | Formal architecture, UML (class/sequence/state), network topology, data flow | Mind map, comparison tables (grid fights radial/tabular layout) |
+| `dark-terminal` | Near-black, neon, monospace | Dev-blog architecture, agent/memory systems, network topology, data flow | Use-case (stick figures wash out on dark) |
+| `dark-luxury` | Pure-black, champagne gold | Premium/editorial architecture, agent systems, mind map, network, keynote heroes | Comparison tables, use-case, standard UML (dark bg non-standard) |
+| `arch-dark` | Dark slate, multicolor | Cloud/service architecture (existing house dark theme) | — |
+| `nature` | Light, green | Warm/organic light docs | — |
+| `high-contrast` | Accessibility | Any diagram needing max legibility | — |
+
+Notes:
+
+- **Academic policy is unchanged.** Academic/paper figures still default to the
+  `academic` / `academic-color` themes (SimSun + Times CJK stack, IEEE conventions).
+  The themes above target product/architecture/dev-doc contexts and do not override
+  academic overlay selection.
+- **Glassmorphism, Flat Icon, Claude Official, OpenAI Official were not ported** —
+  see `.trellis/tasks/07-11-fw-style-presets/research/style-triage.md` for the
+  token-level rationale (overlap or non-portable gradients/blur/rgba).
+- Dark themes rely on solid color tokens only; source SVG gradients, glow/blur
+  filters and drop-shadows are intentionally dropped (recorded in the triage).

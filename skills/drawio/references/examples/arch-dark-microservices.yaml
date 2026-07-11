@@ -1,0 +1,146 @@
+# Microservices architecture in the arch-dark design language.
+# Adapted from architecture-diagram-generator examples/microservices.html (MIT, Cocoon AI).
+meta:
+  title: Microservices Architecture
+  theme: arch-dark
+  source: replicated
+
+nodes:
+  - id: webapp
+    label: "Web App\nReact SPA"
+    type: user
+    position: { x: 80, y: 160 }
+
+  - id: mobile
+    label: "Mobile App\niOS / Android"
+    type: user
+    position: { x: 80, y: 300 }
+
+  - id: gateway
+    label: "API Gateway\nKong :443"
+    type: service
+    position: { x: 320, y: 230 }
+    module: sg-gateway
+
+  - id: auth
+    label: "Auth Service\nOAuth 2.0 / JWT"
+    type: terminal
+    position: { x: 320, y: 380 }
+
+  - id: user-svc
+    label: "User Service\nGo :8081"
+    type: service
+    position: { x: 560, y: 120 }
+    module: cluster
+
+  - id: order-svc
+    label: "Order Service\nJava :8082"
+    type: service
+    position: { x: 560, y: 230 }
+    module: cluster
+
+  - id: product-svc
+    label: "Product Service\nPython :8083"
+    type: service
+    position: { x: 560, y: 340 }
+    module: cluster
+
+  # Event bus sits in the gap between the service column and the data column
+  - id: bus
+    label: "Event Bus\nKafka / RabbitMQ"
+    type: queue
+    position: { x: 780, y: 285 }
+    module: cluster
+
+  - id: users-db
+    label: "Users DB\nPostgreSQL"
+    type: database
+    position: { x: 1000, y: 120 }
+    module: cluster
+
+  - id: orders-db
+    label: "Orders DB\nMongoDB"
+    type: database
+    position: { x: 1000, y: 230 }
+    module: cluster
+
+  - id: products-db
+    label: "Products\nElasticsearch"
+    type: database
+    position: { x: 1000, y: 340 }
+    module: cluster
+
+  # Legend row: outside the cluster boundary, below it with clearance
+  - id: legend-service
+    label: Service
+    type: service
+    position: { x: 320, y: 500 }
+    size: small
+
+  - id: legend-db
+    label: Database
+    type: database
+    position: { x: 440, y: 500 }
+    size: small
+
+  - id: legend-bus
+    label: Message Bus
+    type: queue
+    position: { x: 560, y: 500 }
+    size: small
+
+edges:
+  - from: webapp
+    to: gateway
+    label: HTTPS
+    type: primary
+  - from: mobile
+    to: gateway
+    type: primary
+  - from: gateway
+    to: auth
+    label: JWT
+    type: optional
+  - from: gateway
+    to: user-svc
+    type: primary
+  - from: gateway
+    to: order-svc
+    type: primary
+  - from: gateway
+    to: product-svc
+    type: primary
+  - from: user-svc
+    to: bus
+    type: data
+  - from: order-svc
+    to: bus
+    type: data
+  - from: product-svc
+    to: bus
+    type: data
+  - from: user-svc
+    to: users-db
+    type: primary
+  - from: order-svc
+    to: orders-db
+    type: primary
+  - from: product-svc
+    to: products-db
+    type: primary
+
+modules:
+  - id: cluster
+    label: 'Kubernetes Cluster'
+    style:
+      fillColor: none
+      strokeColor: '#FBBF24'
+      dashed: true
+      dashPattern: '8 4'
+  - id: sg-gateway
+    label: 'sg-gateway :443'
+    style:
+      fillColor: none
+      strokeColor: '#FB7185'
+      dashed: true
+      dashPattern: '4 4'
