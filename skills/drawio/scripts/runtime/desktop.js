@@ -1,6 +1,6 @@
 import { execFile, execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { resolve, win32 } from 'node:path'
 
 const EMBEDDABLE_FORMATS = new Set(['png', 'svg', 'pdf'])
 const EXPORTABLE_FORMATS = new Set(['png', 'svg', 'pdf', 'jpg', 'jpeg'])
@@ -13,14 +13,22 @@ function looksLikePath(value) {
   return value.includes('/') || value.includes('\\') || /^[A-Za-z]:/.test(value)
 }
 
-function isSafeExecutableCandidate(value) {
+function resolveForPlatform(platform, value) {
+  return platform === 'win32' ? win32.resolve(value) : resolve(value)
+}
+
+function joinForPlatform(platform, ...parts) {
+  return platform === 'win32' ? win32.join(...parts) : resolve(...parts)
+}
+
+function isSafeExecutableCandidate(value, platform = process.platform) {
   if (!value || typeof value !== 'string') return false
   const trimmed = value.trim()
   if (!trimmed) return false
   if (isShellUnsafe(trimmed)) return false
 
   if (looksLikePath(trimmed)) {
-    return trimmed === resolve(trimmed)
+    return trimmed === resolveForPlatform(platform, trimmed)
   }
 
   return /^[A-Za-z0-9._-]+(?:\.exe)?$/.test(trimmed)
@@ -33,16 +41,16 @@ function uniq(values) {
 export function listDrawioDesktopCandidates({ platform = process.platform, env = process.env } = {}) {
   const candidates = []
 
-  if (isSafeExecutableCandidate(env.DRAWIO_CMD)) {
+  if (isSafeExecutableCandidate(env.DRAWIO_CMD, platform)) {
     candidates.push(env.DRAWIO_CMD.trim())
   }
 
   if (platform === 'win32') {
     if (env.ProgramFiles) {
-      candidates.push(resolve(env.ProgramFiles, 'draw.io', 'draw.io.exe'))
+      candidates.push(joinForPlatform(platform, env.ProgramFiles, 'draw.io', 'draw.io.exe'))
     }
     if (env.LOCALAPPDATA) {
-      candidates.push(resolve(env.LOCALAPPDATA, 'Programs', 'draw.io', 'draw.io.exe'))
+      candidates.push(joinForPlatform(platform, env.LOCALAPPDATA, 'Programs', 'draw.io', 'draw.io.exe'))
     }
     candidates.push('draw.io.exe', 'drawio.exe')
   } else if (platform === 'darwin') {

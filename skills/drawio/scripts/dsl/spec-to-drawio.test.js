@@ -30,6 +30,7 @@ import {
   computeLayoutQualityMetrics,
   SHAPE_STYLES
 } from './spec-to-drawio.js'
+import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 
 // ============================================================================
@@ -1442,6 +1443,18 @@ describe('Phase 2.4: resolveIconShape', () => {
     assert.strictEqual(resolveIconShape(undefined), null)
   })
 
+  it('should resolve brand and lucide icons as image styles instead of draw.io shape names', () => {
+    assert.strictEqual(resolveIconShape('brand.openai'), null)
+    assert.match(resolveImageIconStyle('brand.openai'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lobe.claude'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('ai.anthropic'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lobe.mistral'), /^shape=image;.*image=https:\/\/unpkg\.com\/@lobehub\/icons-static-svg@1\.91\.0\/icons\/mistral\.svg/)
+    assert.match(resolveImageIconStyle('brand.redis'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lucide.database-zap'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.match(resolveImageIconStyle('lucide.server-cog'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    assert.strictEqual(resolveImageIconStyle('lucide.not-a-real-icon'), null)
+  })
+
   it('should treat unknown prefix as direct shape reference', () => {
     assert.strictEqual(resolveIconShape('customShape'), 'customShape')
   })
@@ -1476,6 +1489,32 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
   it('node with icon gcp.functions should have shape=mxgraph.gcp2.functions in style', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Functions', icon: 'gcp.functions' }, theme)
     assert.ok(style.includes('shape=mxgraph.gcp2.functions'), 'should contain shape=mxgraph.gcp2.functions')
+  })
+
+  it('node with icon brand.openai should emit a Lobe Icons image style', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'OpenAI', icon: 'brand.openai' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render brand icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'), 'OpenAI should resolve through embedded normalized Lobe SVG')
+    assert.ok(style.includes('verticalLabelPosition=bottom'), 'should label image icons below the icon')
+  })
+
+  it('node with icon lobe.gemini should emit a Lobe Icons image style', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'Gemini', icon: 'lobe.gemini' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render lobe icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'))
+  })
+
+  it('node with icon lucide.database-zap should emit an embedded image style', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'Cache', icon: 'lucide.database-zap' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render lucide icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'), 'lucide icon should be self-contained SVG data')
+  })
+
+  it('node with icon lucide.server-cog should resolve from the full lucide-static package', () => {
+    const style = generateNodeStyle({ id: 'n1', label: 'Server Ops', icon: 'lucide.server-cog' }, theme)
+    assert.ok(style.includes('shape=image'), 'should render lucide-static icons as draw.io image cells')
+    assert.ok(style.includes('lucide-server-cog'), 'should embed the lucide-static SVG content')
+    assert.ok(style.includes('%231E293B'), 'should normalize currentColor to the draw.io icon color')
   })
 
   it('node without icon should NOT contain shape=mxgraph', () => {
@@ -2182,7 +2221,9 @@ describe('theme style fidelity', () => {
     const warnings = validateShapeReferences({
       nodes: [
         { id: 'bad', label: 'Broken', icon: 'cisco.wireless.access_point' },
-        { id: 'good', label: 'DB', icon: 'aws.rds' }
+        { id: 'good', label: 'DB', icon: 'aws.rds' },
+        { id: 'brand', label: 'OpenAI', icon: 'brand.openai' },
+        { id: 'lucide', label: 'Cache', icon: 'lucide.database-zap' }
       ]
     })
     assert.equal(warnings.length, 1, 'only the unknown shape should warn')
