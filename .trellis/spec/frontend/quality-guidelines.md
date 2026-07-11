@@ -200,6 +200,74 @@ edges:
     labelOffset: { x: 0, y: -16 }
 ```
 
+### Bundled Image Icon Contract
+
+#### 1. Scope / Trigger
+
+- Trigger: changes to non-stencil `lobe.*`, `ai.*`, `brand.*`, or `lucide.*`
+  resolution, documentation, dependencies, or validation.
+- Applies to `skills/drawio/scripts/dsl/icon-resolver.js`, DSL tests, package
+  metadata, icon references, and third-party license assets.
+
+#### 2. Signatures
+
+- `resolveImageIconStyle(icon)` returns a complete Draw.io image style or
+  `null`.
+- `validateShapeReferences(spec)` reports unsupported image-icon names through
+  the existing unknown-shape warning path.
+
+#### 3. Contracts
+
+- Every successful image-icon resolution embeds an SVG data URI; normal
+  rendering and reopening must not require HTTP(S) access.
+- Runtime support is a finite set owned by `LOBE_PATHS`, `LUCIDE_PATHS`, and
+  `BRAND_SVGS`. Aliases must resolve into that same finite set.
+- The resolver must not discover root packages or read icon files at runtime.
+  A copied `skills/drawio` directory keeps the same image-icon support set.
+- New embedded third-party icon data must include its license under
+  `skills/drawio/assets/licenses/`.
+
+#### 4. Validation & Error Matrix
+
+- Documented embedded icon -> `shape=image` style containing
+  `image=data:image/svg+xml,...`.
+- Supported alias -> same embedded result as its canonical name.
+- Unknown `lobe.*`, `ai.*`, `brand.*`, or `lucide.*` -> resolver returns
+  `null`; shape-reference validation emits an unknown-shape warning.
+- Unsafe icon characters -> existing icon validation rejects the spec before
+  rendering.
+
+#### 5. Good/Base/Bad Cases
+
+- Good: `lobe.openai` and `lucide.server-cog` resolve to embedded SVG data.
+- Base: provider stencils such as `aws.lambda` continue through the existing
+  Draw.io stencil resolver.
+- Bad: constructing a CDN URL for any syntactically safe slug, or requiring a
+  repository-root icon package that a skill-only install does not carry.
+
+#### 6. Tests Required
+
+- Assert every documented embedded name and alias returns a data URI with no
+  remote image URL.
+- Assert representative unknown names return `null` and produce warnings.
+- Assert package metadata and resolver source do not reintroduce the removed
+  runtime icon dependency, package discovery, or CDN fallback.
+
+#### 7. Wrong vs Correct
+
+Wrong:
+
+```js
+return `shape=image;image=https://cdn.example/icons/${slug}.svg`
+```
+
+Correct:
+
+```js
+const pathMarkup = Object.hasOwn(LUCIDE_PATHS, slug) ? LUCIDE_PATHS[slug] : null
+return pathMarkup ? embeddedImageStyle(pathMarkup) : null
+```
+
 ### Academic Overlay Image Preview Contract
 
 #### 1. Scope / Trigger

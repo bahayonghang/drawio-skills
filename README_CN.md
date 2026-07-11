@@ -27,7 +27,7 @@ Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、
 - **Academic Overlay 策略**：venue/audience preflight、caption/legend 校验、公式保真、A4/Word/LaTeX 预期和 figure typing。
 - **学术图类型分流**：出版请求先归类成 `architecture`、`roadmap` 或 `workflow`，再决定布局与导出。
 - **云图标与模板支持**：AWS、GCP、Azure、Kubernetes 以及网络 / provider icon 工作流由 Base references 提供。
-- **Lobe、品牌图标与完整 Lucide 语义图标补全**：AI/LLM logo 使用 `lobe.*` / `ai.*` 接入 Lobe Icons；支持的非 AI 品牌可使用 `brand.redis`；通用语义节点可通过 `lucide.*` 使用本地 `lucide-static` SVG。
+- **内嵌 Lobe、品牌与 Lucide 图标**：AI/LLM logo 使用内置 `lobe.*` / `ai.*`，非 AI 品牌可使用 `brand.redis`，常用语义节点使用精选 `lucide.*`；运行时不需要网络。
 - **网络拓扑支持**：支持 `router`、`switch`、`firewall`、`server`、`load_balancer`、`subnet`、`internet`、`ap` 等语义节点，以及基于接口/IP/VLAN/带宽元数据自动生成链路标签。
 - **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle。
 - **导出前校验**：结构、布局、质量、公式和复刻文字位置校验齐全。
@@ -185,13 +185,11 @@ nodes:
 ```
 
 常用 `lobe.*` / `ai.*` 图标（如 OpenAI、Claude、Gemini）会以内嵌标准化 SVG
-渲染，保证稳定导出；其他安全的 Lobe slug 会 fallback 到 Lobe Icons CDN，draw.io
-渲染或重新打开图表时需要网络。`brand.*` 用于支持的非 AI 品牌 fallback；
-`lucide.*` 会从本地 `lucide-static` 包读取并以内嵌 data URI SVG 渲染，
-不应当当作官方品牌 logo 使用。Lucide 名称使用 kebab-case 文件名，例如
+渲染，保证离线稳定导出；不支持的 Lobe 名称会触发 shape 校验告警，不会生成
+远程图片链接。`brand.*` 用于内置的非 AI 品牌 fallback；精选 `lucide.*` 集合
+以内嵌 data URI SVG 渲染，不应当作官方品牌 logo 使用。支持的示例包括
 `lucide.alarm-clock`、`lucide.server-cog`、`lucide.workflow`。
-Lobe 图标资产来自 MIT 许可的 [Lobe Icons](https://github.com/lobehub/lobe-icons)
-项目。
+Lobe 与 Lucide 的归属和许可证文件随 `skills/drawio/assets/licenses/` 分发。
 
 Academic Overlay 仍然调用 sibling Base CLI：
 

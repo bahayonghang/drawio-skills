@@ -3,17 +3,8 @@
  * Resolves non-draw.io image icons to self-contained draw.io image styles.
  */
 
-import { readFileSync } from 'node:fs'
-import path from 'node:path'
-import { createRequire } from 'node:module'
-
 const IMAGE_ICON_STYLE_PREFIX =
   'shape=image;html=1;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;image='
-const LOBE_CDN_BASE = 'https://unpkg.com/@lobehub/icons-static-svg@1.91.0/icons/'
-const require = createRequire(import.meta.url)
-
-let lucideIconsDir
-const lucideSvgCache = new Map()
 
 const LUCIDE_ALIASES = {
   ai: 'brain-circuit',
@@ -33,8 +24,6 @@ const BRAND_ALIASES = {
 const LOBE_ALIASES = {
   anthropic: 'claude',
   chatgpt: 'openai',
-  hugging_face: 'huggingface',
-  'hugging-face': 'huggingface',
   open_ai: 'openai',
   'open-ai': 'openai'
 }
@@ -51,6 +40,8 @@ const LOBE_PATHS = {
 }
 
 const LUCIDE_PATHS = {
+  'alarm-clock':
+    '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/>',
   bot: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
   'brain-circuit':
     '<path d="M12 5a3 3 0 0 0-5.7-1.4A3.5 3.5 0 0 0 2 7c0 1.7 1.2 3.1 2.8 3.4A4 4 0 0 0 8 17h1"/><path d="M12 5a3 3 0 0 1 5.7-1.4A3.5 3.5 0 0 1 22 7c0 1.7-1.2 3.1-2.8 3.4A4 4 0 0 1 16 17h-1"/><path d="M9 17v3"/><path d="M15 17v3"/><path d="M9 20h6"/><path d="M12 12h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/>',
@@ -69,14 +60,14 @@ const LUCIDE_PATHS = {
   search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   server:
     '<rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/>',
+  'server-cog':
+    '<path d="m10.852 14.772-.383.923"/><path d="M13.148 14.772a3 3 0 1 0-2.296-5.544l-.383-.923"/><path d="m13.148 9.228.383-.923"/><path d="m13.53 15.696-.382-.924a3 3 0 1 1-2.296-5.544"/><path d="m14.772 10.852.923-.383"/><path d="m14.772 13.148.923.383"/><path d="M4.5 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-.5"/><path d="M4.5 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-.5"/><path d="M6 18h.01"/><path d="M6 6h.01"/><path d="m9.228 10.852-.923-.383"/><path d="m9.228 13.148-.923.383"/>',
   shield: '<path d="M20 13c0 5-3.5 7.5-7.3 8.8a2 2 0 0 1-1.4 0C7.5 20.5 4 18 4 13V5l8-3 8 3Z"/>',
   workflow:
     '<rect width="8" height="8" x="3" y="3" rx="2"/><rect width="8" height="8" x="13" y="13" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><path d="M11 7h4a2 2 0 0 1 2 2v4"/>'
 }
 
 const BRAND_SVGS = {
-  openai:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#ffffff"/><g fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M32 10c8 0 14 6 14 14 5 3 8 8 8 14 0 8-6 14-14 14-3 5-8 8-14 8-8 0-14-6-14-14-5-3-8-8-8-14 0-8 6-14 14-14 3-5 8-8 14-8z"/><path d="M24 25h16v14H24z"/><path d="M32 10v15M46 24l-14 8M47 46l-15-7M32 54V39M17 46l15-7M17 18l15 7"/></g></svg>',
   redis:
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#DC382D"/><g fill="#ffffff"><path d="M12 21 32 12l20 9-20 9z"/><path d="M12 32v7l20 9 20-9v-7L32 41z"/><path d="M12 43v7l20 9 20-9v-7L32 52z"/></g></svg>'
 }
@@ -92,50 +83,13 @@ function lucideSvg(pathMarkup) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1E293B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${pathMarkup}</svg>`
 }
 
-function lucideStaticIconsDir() {
-  if (lucideIconsDir !== undefined) return lucideIconsDir
-  try {
-    lucideIconsDir = path.join(path.dirname(require.resolve('lucide-static/package.json')), 'icons')
-  } catch {
-    lucideIconsDir = null
-  }
-  return lucideIconsDir
-}
-
-function safeLucideSlug(slug) {
-  if (!slug || typeof slug !== 'string') return null
-  const normalized = slug.trim().toLowerCase()
-  return /^[a-z][a-z0-9-]*$/.test(normalized) ? normalized : null
-}
-
-function normalizeLucideStaticSvg(svg) {
-  return svg.replace(/currentColor/g, '#1E293B').replace(/\s+/g, ' ').trim()
-}
-
-function loadLucideStaticSvg(slug) {
-  const safeSlug = safeLucideSlug(slug)
-  if (!safeSlug) return null
-  if (lucideSvgCache.has(safeSlug)) return lucideSvgCache.get(safeSlug)
-
-  const iconsDir = lucideStaticIconsDir()
-  if (!iconsDir) return null
-
-  try {
-    const svg = normalizeLucideStaticSvg(readFileSync(path.join(iconsDir, `${safeSlug}.svg`), 'utf8'))
-    lucideSvgCache.set(safeSlug, svg)
-    return svg
-  } catch {
-    lucideSvgCache.set(safeSlug, null)
-    return null
-  }
+function ownValue(record, key) {
+  return Object.hasOwn(record, key) ? record[key] : null
 }
 
 function lucideIconStyle(slug) {
-  const lucideName = LUCIDE_ALIASES[slug] || slug
-  const svg = loadLucideStaticSvg(lucideName)
-  if (svg) return `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(svg)}`
-
-  const pathMarkup = LUCIDE_PATHS[lucideName]
+  const lucideName = ownValue(LUCIDE_ALIASES, slug) || slug
+  const pathMarkup = ownValue(LUCIDE_PATHS, lucideName)
   return pathMarkup ? `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(lucideSvg(pathMarkup))}` : null
 }
 
@@ -150,11 +104,10 @@ function safeIconSlug(slug) {
 }
 
 function lobeIconStyle(slug) {
-  const safeSlug = safeIconSlug(LOBE_ALIASES[slug] || slug)
+  const safeSlug = safeIconSlug(ownValue(LOBE_ALIASES, slug) || slug)
   if (!safeSlug) return null
-  const pathMarkup = LOBE_PATHS[safeSlug]
-  if (pathMarkup) return `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(lobeSvg(pathMarkup))}`
-  return `${IMAGE_ICON_STYLE_PREFIX}${LOBE_CDN_BASE}${safeSlug}.svg`
+  const pathMarkup = ownValue(LOBE_PATHS, safeSlug)
+  return pathMarkup ? `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(lobeSvg(pathMarkup))}` : null
 }
 
 function normalizeImageIconName(icon) {
@@ -173,8 +126,8 @@ export function resolveImageIconStyle(icon) {
   if (name.startsWith('brand.')) {
     const brandKey = name.slice('brand.'.length)
     if (brandKey === 'openai') return lobeIconStyle('openai')
-    const brandName = BRAND_ALIASES[brandKey] || brandKey
-    const svg = BRAND_SVGS[brandName]
+    const brandName = ownValue(BRAND_ALIASES, brandKey) || brandKey
+    const svg = ownValue(BRAND_SVGS, brandName)
     return svg ? `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(svg)}` : null
   }
 
@@ -188,7 +141,7 @@ export function resolveImageIconStyle(icon) {
 
   if (name === 'openai') return lobeIconStyle('openai')
 
-  const brandName = BRAND_ALIASES[name]
+  const brandName = ownValue(BRAND_ALIASES, name)
   if (brandName) {
     return `${IMAGE_ICON_STYLE_PREFIX}${svgDataUri(BRAND_SVGS[brandName])}`
   }

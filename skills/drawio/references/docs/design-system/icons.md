@@ -130,30 +130,27 @@ Icons use the `mxgraph.azure.*` shape prefix.
 
 Use `lobe.*` or `ai.*` for AI/LLM product identity icons that draw.io does not
 ship as native stencils. Common icons such as OpenAI, Claude, and Gemini render
-as embedded normalized SVGs for stable export. Other safe Lobe slugs render as
-draw.io image cells backed by the `@lobehub/icons-static-svg` CDN, so draw.io
-needs network access when rendering or reopening those diagrams.
+as embedded normalized SVGs for stable offline export. Unsupported names fail
+shape validation instead of producing remote image links.
 
 `brand.openai` is kept as a compatibility alias for `lobe.openai`; `brand.redis`
 uses an embedded SVG because Redis is not an AI/LLM logo.
 
 Lobe icon assets come from the MIT-licensed
-[Lobe Icons](https://github.com/lobehub/lobe-icons) project.
+[Lobe Icons](https://github.com/lobehub/lobe-icons) project. Lobe and Lucide
+license texts ship under [`assets/licenses`](../../../assets/licenses/).
 
 | Need | Icon Reference | Rendering |
 |------|----------------|-----------|
 | OpenAI | `lobe.openai`, `ai.openai`, `brand.openai` | Embedded Lobe SVG image |
 | Claude / Anthropic | `lobe.claude`, `ai.anthropic` | Embedded Lobe SVG image |
 | Gemini | `lobe.gemini` | Embedded Lobe SVG image |
-| Mistral | `lobe.mistral` | Lobe Icons CDN image fallback |
-| LangChain | `lobe.langchain` | Lobe Icons CDN image |
-| Hugging Face | `lobe.huggingface` | Lobe Icons CDN image |
 | Redis | `brand.redis` | Embedded SVG image |
 
-Use `lucide.*` for generic semantic fallback icons from the local
-`lucide-static` package. The resolver embeds matching SVG files as data URI
-images, so Lucide icons do not need network access after dependencies are
-installed. Use Lucide's kebab-case SVG file names, such as
+Use `lucide.*` for the curated generic semantic fallback set bundled with this
+skill. The resolver embeds matching SVG data as data URI images, so these icons
+do not need package installation or network access. Use the documented
+kebab-case names, such as
 `lucide.alarm-clock`, `lucide.server-cog`, or `lucide.workflow`.
 
 Lucide icons are intentionally not brand logos; they are best for roles such as

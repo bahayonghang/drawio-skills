@@ -51,3 +51,15 @@ test('skill metadata descriptions stay within installer limits', () => {
     )
   }
 })
+
+test('image icon resolver stays bundled and offline', () => {
+  const packageJson = JSON.parse(readFileSync(resolve(PROJECT_ROOT, 'package.json'), 'utf8'))
+  const resolverText = readFileSync(
+    resolve(PROJECT_ROOT, 'skills/drawio/scripts/dsl/icon-resolver.js'),
+    'utf8'
+  )
+
+  assert.equal(packageJson.dependencies['lucide-static'], undefined)
+  assert.doesNotMatch(resolverText, /readFileSync|createRequire|require\.resolve|LOBE_CDN_BASE/)
+  assert.doesNotMatch(resolverText, /image=https?:\/\//)
+})

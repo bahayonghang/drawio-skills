@@ -1443,15 +1443,48 @@ describe('Phase 2.4: resolveIconShape', () => {
     assert.strictEqual(resolveIconShape(undefined), null)
   })
 
-  it('should resolve brand and lucide icons as image styles instead of draw.io shape names', () => {
+  it('should resolve supported image icons to self-contained data URI styles', () => {
     assert.strictEqual(resolveIconShape('brand.openai'), null)
-    assert.match(resolveImageIconStyle('brand.openai'), /^shape=image;.*image=data:image\/svg\+xml,/)
-    assert.match(resolveImageIconStyle('lobe.claude'), /^shape=image;.*image=data:image\/svg\+xml,/)
-    assert.match(resolveImageIconStyle('ai.anthropic'), /^shape=image;.*image=data:image\/svg\+xml,/)
-    assert.match(resolveImageIconStyle('lobe.mistral'), /^shape=image;.*image=https:\/\/unpkg\.com\/@lobehub\/icons-static-svg@1\.91\.0\/icons\/mistral\.svg/)
-    assert.match(resolveImageIconStyle('brand.redis'), /^shape=image;.*image=data:image\/svg\+xml,/)
-    assert.match(resolveImageIconStyle('lucide.database-zap'), /^shape=image;.*image=data:image\/svg\+xml,/)
-    assert.match(resolveImageIconStyle('lucide.server-cog'), /^shape=image;.*image=data:image\/svg\+xml,/)
+    const supported = [
+      'brand.openai',
+      'brand.redis',
+      'openai',
+      'redis',
+      'lobe.openai',
+      'lobe.claude',
+      'lobe.gemini',
+      'lobe.chatgpt',
+      'lobe.open-ai',
+      'ai.anthropic',
+      'lucide.alarm-clock',
+      'lucide.bot',
+      'lucide.brain-circuit',
+      'lucide.cloud',
+      'lucide.cpu',
+      'lucide.database',
+      'lucide.database-zap',
+      'lucide.file-text',
+      'lucide.layers',
+      'lucide.network',
+      'lucide.search',
+      'lucide.server',
+      'lucide.server-cog',
+      'lucide.shield',
+      'lucide.ai',
+      'lucide.cache',
+      'lucide.workflow'
+    ]
+    for (const icon of supported) {
+      const style = resolveImageIconStyle(icon)
+      assert.match(style, /^shape=image;.*image=data:image\/svg\+xml,/, `${icon} should be embedded`)
+      assert.doesNotMatch(style, /https?:\/\//, `${icon} should not require network access`)
+    }
+  })
+
+  it('should reject unsupported image icon names', () => {
+    assert.strictEqual(resolveImageIconStyle('lobe.mistral'), null)
+    assert.strictEqual(resolveImageIconStyle('lobe.definitely-not-real'), null)
+    assert.strictEqual(resolveImageIconStyle('brand.not-real'), null)
     assert.strictEqual(resolveImageIconStyle('lucide.not-a-real-icon'), null)
   })
 
@@ -1510,11 +1543,11 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
     assert.ok(style.includes('image=data:image/svg+xml,'), 'lucide icon should be self-contained SVG data')
   })
 
-  it('node with icon lucide.server-cog should resolve from the full lucide-static package', () => {
+  it('node with icon lucide.server-cog should resolve from the bundled icon set', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Server Ops', icon: 'lucide.server-cog' }, theme)
-    assert.ok(style.includes('shape=image'), 'should render lucide-static icons as draw.io image cells')
-    assert.ok(style.includes('lucide-server-cog'), 'should embed the lucide-static SVG content')
-    assert.ok(style.includes('%231E293B'), 'should normalize currentColor to the draw.io icon color')
+    assert.ok(style.includes('shape=image'), 'should render bundled Lucide icons as draw.io image cells')
+    assert.ok(style.includes('image=data:image/svg+xml,'), 'should embed the bundled SVG content')
+    assert.ok(style.includes('%231E293B'), 'should use the normalized draw.io icon color')
   })
 
   it('node without icon should NOT contain shape=mxgraph', () => {
@@ -2223,11 +2256,17 @@ describe('theme style fidelity', () => {
         { id: 'bad', label: 'Broken', icon: 'cisco.wireless.access_point' },
         { id: 'good', label: 'DB', icon: 'aws.rds' },
         { id: 'brand', label: 'OpenAI', icon: 'brand.openai' },
-        { id: 'lucide', label: 'Cache', icon: 'lucide.database-zap' }
+        { id: 'lucide', label: 'Cache', icon: 'lucide.database-zap' },
+        { id: 'badLobe', label: 'Missing Lobe', icon: 'lobe.definitely-not-real' },
+        { id: 'badBrand', label: 'Missing Brand', icon: 'brand.not-real' },
+        { id: 'badLucide', label: 'Missing Lucide', icon: 'lucide.not-a-real-icon' }
       ]
     })
-    assert.equal(warnings.length, 1, 'only the unknown shape should warn')
+    assert.equal(warnings.length, 4, 'every unknown shape should warn')
     assert.match(warnings[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
+    assert.match(warnings[1], /unknown shape "lobe\.definitely-not-real"/)
+    assert.match(warnings[2], /unknown shape "brand\.not-real"/)
+    assert.match(warnings[3], /unknown shape "lucide\.not-a-real-icon"/)
   })
 })
 
