@@ -40,13 +40,13 @@ when a one-off deviation is needed.
 
 | Flow                     | Edge `type`    | Rendering (arch-dark)          |
 | ------------------------ | -------------- | ------------------------------ |
-| Main request/response    | `primary`      | solid gray, block head         |
-| Secondary/async data     | `data`         | dashed gray, block head        |
-| Trigger / control signal | `control`      | solid orange, block head       |
-| Read from store/memory   | `memory_read`  | solid green, block head        |
-| Write to store/memory    | `memory_write` | dashed green, block head       |
+| Main request/response    | `primary`      | solid gray, open head          |
+| Secondary/async data     | `data`         | dashed gray, open head         |
+| Trigger / control signal | `control`      | solid orange, open head        |
+| Read from store/memory   | `memory_read`  | solid green, open head         |
+| Write to store/memory    | `memory_write` | dashed green, open head        |
 | Async / non-blocking     | `async`        | dashed gray, open head         |
-| Iterative feedback loop  | `feedback`     | solid violet, block head       |
+| Iterative feedback loop  | `feedback`     | solid violet, open head        |
 
 Read and write to the same store share a hue and differ by dash — this is why
 memory diagrams read clearly even in grayscale. Always add a legend when two or

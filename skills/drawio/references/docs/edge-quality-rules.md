@@ -34,8 +34,9 @@ Use these rules for professional draw.io routing. They apply to architecture dia
 
 ## Arrowhead Defaults
 
-- Connectors default to a bold solid triangular head: `endArrow=block;endFill=1;endSize=12` (and `startSize=12` when a start arrow exists). Small stock arrowheads read as afterthoughts on 2px architecture connectors.
-- Override per edge via `edge.style.endSize` or per theme via `theme.connector.<type>.endSize`.
+- Connectors default to a bold **open** head: `endArrow=open;endSize=12` (an unfilled two-line "V"; and `startSize=12` when a start arrow exists). Small stock arrowheads read as afterthoughts on 2px architecture connectors, so open heads still carry `endSize=12`.
+- Filled heads are opt-in: explicitly-requested `block`/`classic` and UML/ER semantic markers (e.g. inheritance `endArrow=block;endFill=0`, composition `endArrow=diamond;endFill=1`) keep their own fill and also get `endSize=12`.
+- Override per edge via `edge.style.endArrow` / `edge.style.endSize`, or per theme via `theme.connector.<type>.endSize`.
 
 ## Audit Checklist
 

@@ -1,5 +1,14 @@
 # Changelog — drawio academic skills overlay
 
+## Unreleased
+
+- Sync with base: flow connectors default to open heads (`endArrow=open;endSize=12`,
+  unfilled "V") instead of filled block; `publication-overlay.md` § Text and Callout
+  Styling updated. UML/ER semantic markers and explicit `block` requests are unchanged.
+- Default final deliverable is now a 300dpi PNG (via draw.io Desktop; falls back to SVG when
+  Desktop is absent) instead of SVG. Journal / IEEE vector submission still requires an explicit
+  PDF (or SVG) export — `SKILL.md` Export Policy and `academic-export-checklist.md` flag this.
+
 ## 2.5.0 (2026-07-07)
 
 Sync with base 2.5.0 (straight routing / transparent text / native connectors):

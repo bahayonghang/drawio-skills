@@ -7,14 +7,14 @@ Draw.io Skill treats export as part of the offline bundle workflow, not as a bro
 Keep final delivery directories focused on the files users normally keep:
 
 - `<name>.drawio`
-- `<name>.svg`
+- `<name>.png` (300dpi, via draw.io Desktop; falls back to `<name>.svg` when Desktop is unavailable)
 
 Keep sidecars in a project-local work directory such as `.drawio-tmp/<name>/` unless the user explicitly asks for a persistent sidecar bundle beside the output:
 
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-This split supports local iteration without polluting final figure directories. Add `.png` only when the request is thesis, A4, Word, raster-first, screenshot rebuild, or explicitly asks for PNG, and only when draw.io Desktop export is available.
+This split supports local iteration without polluting final figure directories. The default delivered image is a 300dpi PNG (draw.io Desktop; `--dpi` defaults to 300). Generate SVG, PDF, or JPG only when explicitly requested; when Desktop is unavailable the PNG export automatically falls back to a standalone SVG.
 
 ## Common Export Commands
 
@@ -32,9 +32,11 @@ node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidec
 
 ### Generate PNG, PDF, or JPG with draw.io Desktop
 
+The PNG export is 300dpi by default (`--dpi` defaults to 300; pass e.g. `--dpi 96` for screen scale).
+
 ```bash
+node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop  # default 300dpi PNG
 node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
-node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop
 ```
 
 ## Import an Existing `.drawio` File
@@ -64,8 +66,8 @@ That path is optional. The default export model remains local CLI generation.
 
 Use exported artifacts for visual checks before any browser screenshot:
 
-1. Check the generated SVG when the environment can view SVG.
-2. If a raster or final-fidelity check is needed and draw.io Desktop is available, check the Desktop-exported PNG/PDF/JPG or embedded `.drawio.svg`.
+1. Check the exported 300dpi PNG (or the fallback SVG when Desktop is unavailable).
+2. For vector fidelity or journal submission, check an explicitly-exported `.pdf`/`.svg` or embedded `.drawio.svg`.
 3. Use browser or Playwright screenshots only as a live-refinement fallback when explicitly requested and no exported artifact can be inspected.
 
 ## Recommended Export Choices
@@ -73,8 +75,8 @@ Use exported artifacts for visual checks before any browser screenshot:
 | Need | Best output |
 |------|-------------|
 | ongoing editing | `.drawio` + work-dir sidecars |
-| paper figure | `.svg` |
-| paper figure + editable source | final `.drawio` + `.svg`, sidecars in `.drawio-tmp/<name>/` |
+| paper figure | `.png` (300dpi); `.pdf`/`.svg` for journal vector submission |
+| paper figure + editable source | final `.drawio` + `.png`, sidecars in `.drawio-tmp/<name>/` |
 | slide deck image | `.png` or `.jpg` with Desktop |
 | printable handoff | `.pdf` with Desktop |
 

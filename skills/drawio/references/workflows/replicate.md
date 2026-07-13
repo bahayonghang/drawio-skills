@@ -203,13 +203,13 @@ During extraction, map visual elements to semantic types:
 
 | Visual Style  | Connector Type  | Output Style             |
 | ------------- | --------------- | ------------------------ |
-| Solid arrow   | `primary`       | Solid 2px, filled arrow  |
-| Dashed arrow  | `data`          | Dashed 2px, filled arrow |
+| Solid arrow   | `primary`       | Solid 2px, open arrow    |
+| Dashed arrow  | `data`          | Dashed 2px, open arrow   |
 | Dotted line   | `optional`      | Dotted 1px, open arrow   |
 | Diamond end   | `dependency`    | Solid 1px, diamond       |
 | Double-headed | `bidirectional` | Solid 1.5px, no arrow    |
 
-All connectors are native bound edges (`source`/`target` node ids) — never standalone arrow shapes. Block/classic heads default to a bold solid triangle (`endFill=1;endSize=12`); override via `edge.style.endSize`. Two opposite arrows between the same pair of shapes ("bidirectional pair") render as two parallel straight lines ≥30px apart automatically.
+All connectors are native bound edges (`source`/`target` node ids) — never standalone arrow shapes. Connector heads default to a bold open "V" (`endArrow=open;endSize=12`); explicitly-requested `block`/`classic` and UML/ER markers stay filled (`endFill=1;endSize=12`); override via `edge.style.endArrow` / `edge.style.endSize`. Two opposite arrows between the same pair of shapes ("bidirectional pair") render as two parallel straight lines ≥30px apart automatically.
 
 ## Extraction Rules
 

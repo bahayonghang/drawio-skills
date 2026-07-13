@@ -313,13 +313,13 @@ edges:
 
 ### Connector Types
 
-| Type            | Line        | Arrow        | Usage         |
-| --------------- | ----------- | ------------ | ------------- |
-| `primary`       | Solid 2px   | Filled block | Main flow     |
-| `data`          | Dashed 2px  | Filled block | Data/async    |
-| `optional`      | Dotted 1px  | Open block   | Weak relation |
-| `dependency`    | Solid 1px   | Diamond      | Dependencies  |
-| `bidirectional` | Solid 1.5px | None         | Two-way       |
+| Type            | Line        | Arrow    | Usage         |
+| --------------- | ----------- | -------- | ------------- |
+| `primary`       | Solid 2px   | Open (V) | Main flow     |
+| `data`          | Dashed 2px  | Open (V) | Data/async    |
+| `optional`      | Dotted 1px  | Open (V) | Weak relation |
+| `dependency`    | Solid 1px   | Diamond  | Dependencies  |
+| `bidirectional` | Solid 1.5px | None     | Two-way       |
 
 ### Input Adapter Notes
 

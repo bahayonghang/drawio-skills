@@ -7,10 +7,10 @@ Use this checklist for `meta.profile: academic-paper`.
 - `meta.figureType` is present and is `architecture`, `roadmap`, or `workflow`.
 - `meta.title` is present and suitable for figure captioning.
 - Theme is `academic` or `academic-color`.
-- Output bundle includes `.drawio`, `.spec.yaml`, `.arch.json`, and `.svg`.
+- Output bundle includes `.drawio`, `.spec.yaml`, `.arch.json`, and a 300dpi `.png` (falls back to `.svg` when draw.io Desktop is unavailable).
 - All formulas use the math typesetting guidance.
 - Colors are not the only carrier of meaning.
-- Visual checks use the exported SVG or Desktop-exported final artifact before any browser/live screenshot.
+- Visual checks use the exported PNG (or fallback SVG) or Desktop-exported final artifact before any browser/live screenshot.
 
 ## Recommended
 
@@ -19,7 +19,7 @@ Use this checklist for `meta.profile: academic-paper`.
 - Label font classes stay uniform (module title 22 / node 20 / edge label 18 / text 16 by default); manual `style.fontSize` overrides stay class-consistent and inside their boxes.
 - Extra whitespace is cropped before final export.
 - Line styles, node sizes, and stroke widths are consistent across the figure.
-- A matching `.png` is included for thesis, A4, Word, raster-first, screenshot rebuild, or explicit PNG requests when Desktop export is available.
+- The default 300dpi `.png` covers thesis, A4, Word, and raster-first workflows (draw.io Desktop required; falls back to SVG when absent).
 - For Word/thesis delivery prefer a Desktop-exported PNG; SVG text needs Times New Roman and SimSun installed on the viewing machine.
 - IEEE vector submissions accept PS/EPS/PDF only (no SVG); attach a Desktop-exported PDF when targeting IEEE.
 
@@ -42,4 +42,4 @@ Set `meta.print: { target: cn-thesis | ieee-single | ieee-double }` (or custom `
 - Would this still be readable when printed in grayscale?
 - Does the figure still make sense if the reader cannot distinguish red vs green?
 - Are caption, legend, and abbreviations clear without the surrounding paragraph?
-- Is the final export vector-based and suitable for journal submission?
+- For journal / IEEE submission, did you export vector (PDF/EPS) **explicitly** rather than relying on the default raster PNG?

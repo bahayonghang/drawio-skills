@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+### Open arrowheads by default
+
+- Flow connectors (`primary`, `data`, `control`, `memory_read`, `memory_write`,
+  `feedback`) and the untyped-edge fallback now default to an open head
+  (`endArrow=open`, unfilled "V") instead of a filled `block`. Applied in the base
+  connector map (`scripts/dsl/spec-to-drawio.js`), the AH adapter, and all 11 theme
+  JSONs under `assets/themes/`.
+- Open heads keep the bold `endSize=12` for visibility on 2px connectors;
+  `optional`/`async` (already open) now also receive `endSize=12`.
+- `endFill` now follows the arrowhead's own convention: an explicit `endArrow=block`
+  renders filled again, while UML/ER markers (inheritance `block;endFill=0`,
+  composition `diamond;endFill=1`) and `dependency` diamonds are untouched.
+- `block`/`classic` heads remain available on explicit request.
+
+### Default export: 300dpi PNG
+
+- The default delivered image is now a **300dpi PNG** via draw.io Desktop instead of a
+  standalone SVG. `cli.js` gains `--dpi` (default 300; scale = `dpi / 96` passed to Desktop for
+  raster formats only), and `buildDrawioExportArgs` adds `-s <scale>` for PNG/JPG.
+- When draw.io Desktop is unavailable, a requested PNG/PDF/JPG automatically falls back to a
+  standalone SVG with a stderr warning (exit 0), preserving offline authoring.
+- SVG, PDF, and JPG remain available on explicit request.
+
 ### Architecture design language (arch-dark)
 
 - New built-in theme `assets/themes/arch-dark.json`: slate-950 background with
