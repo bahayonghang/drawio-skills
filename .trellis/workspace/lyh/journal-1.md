@@ -444,3 +444,26 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 4128433 / be8be47 / a8c62ea / db228cf / 68a04dd + 4 个归档提交。
 
 [OK] **Completed**
+
+## 2026-07-13: drawio 两项默认变更(Open 箭头 + 300dpi PNG 导出)
+
+### Session Summary
+
+两个独立姊妹任务(07-13-open-arrow-default + 07-13-png-export-default)实现并归档。用户两项要求:连线默认箭头由实心 block 改为开放式 Open(无填充 V 形);默认导出改为仅 300dpi PNG,不明确要求不出 SVG/PDF。两者都推翻了旧约定(记忆 #4 粗实心大三角 / SVG-离线优先默认)。
+
+### Deliverables
+
+- 箭头:流向类(primary/data/control/memory_read/memory_write/feedback)+ 无类型兜底默认 open;endSize=12 扩展到 open;endFill 改为随箭头类型走约定。base 表 + 11 主题 JSON + spec-to-drawio.test.js 同步;文档 7 处 + 记忆 #4 改写。UML/ER/菱形语义标记保留。
+- 导出:cli.js 加 --dpi(默认 300,scale=dpi/96);desktop.js 栅格加 -s;Desktop 缺失自动回退 SVG+告警+exit0;两 skill 文档默认 PNG(academic 保留矢量投稿出口);desktop.test.js 新增。真机 Desktop 实测 300dpi(1203x774 vs 96dpi 394x257)。
+
+### Key Lessons
+
+- **改箭头默认必须同步 11 个主题 JSON**:主题 connector.<type> 自带 endArrow/endFill 会覆盖 base map,只改 spec-to-drawio.js 会被主题回退回 block(semantic-types.md 静默回退坑的反向)。
+- **endFill 必须随箭头类型走约定**:兜底一刀切 endFill=false 让显式 block 变空心(回归);改为 open/none 不填充、block/diamond 填充,且显式 override 用自身约定而非主题 endFill。端到端(explicit block / UML 继承 / dependency)才抓得到。
+- **收尾跑 canonical `npm test`**:root tests/ 有 SKILL.md 措辞契约测试(visual-verification-policy),per-skill `node --test skills/drawio` 漏掉;改交付/导出措辞后才被 root 门禁抓到失败。已记为 memory。
+
+### Commits
+
+1995193(feat 箭头) / 13c52b5(feat 导出) / 5eab366(docs) + 2 个归档提交。
+
+[OK] **Completed**

@@ -150,16 +150,16 @@
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "data": {
       "strokeColor": "#48CAE4",
       "strokeWidth": 1.5,
       "dashed": true,
       "dashPattern": "6 3",
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "optional": {
       "strokeColor": "#6096B4",
@@ -190,24 +190,24 @@
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "memory_read": {
       "strokeColor": "#06D6A0",
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "memory_write": {
       "strokeColor": "#06D6A0",
       "strokeWidth": 1.5,
       "dashed": true,
       "dashPattern": "5 3",
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "async": {
       "strokeColor": "#6096B4",
@@ -222,8 +222,8 @@
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     }
   },
   "module": {

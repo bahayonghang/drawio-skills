@@ -4,6 +4,7 @@ import { resolve, win32 } from 'node:path'
 
 const EMBEDDABLE_FORMATS = new Set(['png', 'svg', 'pdf'])
 const EXPORTABLE_FORMATS = new Set(['png', 'svg', 'pdf', 'jpg', 'jpeg'])
+const RASTER_FORMATS = new Set(['png', 'jpg', 'jpeg'])
 
 function isShellUnsafe(value) {
   return /["'`;&|><\n\r]/.test(value) || value.includes('..')
@@ -87,7 +88,7 @@ export function isDesktopExportFormat(format) {
   return EXPORTABLE_FORMATS.has(String(format || '').toLowerCase())
 }
 
-export function buildDrawioExportArgs({ inputFile, outputFile, format, embedDiagram = true, border = 10 }) {
+export function buildDrawioExportArgs({ inputFile, outputFile, format, embedDiagram = true, border = 10, scale }) {
   const normalizedFormat = String(format).toLowerCase()
   const args = ['-x', '-f', normalizedFormat]
 
@@ -96,6 +97,9 @@ export function buildDrawioExportArgs({ inputFile, outputFile, format, embedDiag
   }
   if (typeof border === 'number') {
     args.push('-b', String(border))
+  }
+  if (typeof scale === 'number' && scale > 0 && RASTER_FORMATS.has(normalizedFormat)) {
+    args.push('-s', String(scale))
   }
 
   args.push('-o', outputFile, inputFile)
@@ -106,11 +110,12 @@ export function exportWithDrawioDesktop({
   inputFile,
   outputFile,
   format,
+  scale,
   env = process.env,
   platform = process.platform,
   exists = existsSync
 }) {
-  const args = buildDrawioExportArgs({ inputFile, outputFile, format })
+  const args = buildDrawioExportArgs({ inputFile, outputFile, format, scale })
   const failures = []
 
   for (const executable of listDrawioDesktopCandidates({ platform, env })) {

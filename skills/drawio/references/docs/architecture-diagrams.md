@@ -99,12 +99,12 @@ Keep `fillColor: none` on boundaries so connectors and members stay readable.
 
 ## Connector semantics
 
-| Flow                      | Edge `type`  | Rendering                          |
-| ------------------------- | ------------ | ---------------------------------- |
-| Primary request path      | `primary`    | solid `#94A3B8`, filled block head |
-| Data/async flow           | `data`       | dashed `#64748B` (6 4)             |
-| Auth / security flow      | `optional`   | dashed rose `#FB7185` (5 5), open  |
-| Infrastructure dependency | `dependency` | thin `#64748B`, diamond head       |
+| Flow                      | Edge `type`  | Rendering                         |
+| ------------------------- | ------------ | --------------------------------- |
+| Primary request path      | `primary`    | solid `#94A3B8`, open head        |
+| Data/async flow           | `data`       | dashed `#64748B` (6 4)            |
+| Auth / security flow      | `optional`   | dashed rose `#FB7185` (5 5), open |
+| Infrastructure dependency | `dependency` | thin `#64748B`, diamond head      |
 
 Label protocols and ports on edges (`label: HTTPS`, `label: "JWT"`). Keep
 edges bound to node ids — never floating arrows (base rule 14).

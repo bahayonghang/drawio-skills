@@ -13,7 +13,7 @@ The Design System defines a semantic connector system with clear visual hierarch
 | Property | Value                               |
 | -------- | ----------------------------------- |
 | Line     | Solid, 2px                          |
-| Arrow    | Filled block                        |
+| Arrow    | Open (`endArrow=open`)              |
 | Color    | Text color (`#1E293B` in Tech Blue) |
 
 ```yaml
@@ -24,7 +24,7 @@ edges:
 ```
 
 ```xml
-<mxCell style="endArrow=block;endFill=1;strokeWidth=2;
+<mxCell style="endArrow=open;endSize=12;strokeWidth=2;
   strokeColor=#1E293B;" />
 ```
 
@@ -37,7 +37,7 @@ edges:
 | Property | Value             |
 | -------- | ----------------- |
 | Line     | Dashed (6 4), 2px |
-| Arrow    | Filled block      |
+| Arrow    | Open              |
 | Color    | Text color        |
 
 ```yaml
@@ -49,7 +49,7 @@ edges:
 ```
 
 ```xml
-<mxCell style="endArrow=block;endFill=1;strokeWidth=2;
+<mxCell style="endArrow=open;endSize=12;strokeWidth=2;
   dashed=1;dashPattern=6 4;strokeColor=#1E293B;" />
 ```
 
@@ -137,15 +137,15 @@ token > type default**.
 
 | Type           | Meaning                    | Default Line               | Default Color      |
 | -------------- | -------------------------- | -------------------------- | ------------------ |
-| `control`      | Trigger / control signal   | Solid, 1.5px, block        | `#EA580C` (orange) |
-| `memory_read`  | Read from store / memory   | Solid, 1.5px, block        | `#059669` (green)  |
-| `memory_write` | Write to store / memory    | Dashed (5 3), 1.5px, block | `#059669` (green)  |
+| `control`      | Trigger / control signal   | Solid, 1.5px, open         | `#EA580C` (orange) |
+| `memory_read`  | Read from store / memory   | Solid, 1.5px, open         | `#059669` (green)  |
+| `memory_write` | Write to store / memory    | Dashed (5 3), 1.5px, open  | `#059669` (green)  |
 | `async`        | Async / non-blocking event | Dashed (4 2), 1.5px, open  | `#6B7280` (gray)   |
-| `feedback`     | Iterative feedback loop    | Solid, 1.5px, block        | `#7C3AED` (violet) |
+| `feedback`     | Iterative feedback loop    | Solid, 1.5px, open         | `#7C3AED` (violet) |
 
 `primary` remains the main data path, `data` a secondary/dashed data path. Read vs. write to
-the same store share a hue and differ by dash (write = dashed). `async` uses an open arrow to
-signal non-blocking delivery.
+the same store share a hue and differ by dash (write = dashed). All flow connectors now default to an open (`endArrow=open`) head; filled `block`/`diamond`
+heads are reserved for explicit emphasis and UML/ER semantics.
 
 ```yaml
 edges:
@@ -171,8 +171,8 @@ required authoring convention.
 
 | Type           | Style | mxCell Value                     | Usage              |
 | -------------- | ----- | -------------------------------- | ------------------ |
-| Filled Block   | ▶     | `endArrow=block;endFill=1`       | Primary, data flow |
-| Open Block     | ▷     | `endArrow=open;endFill=0`        | Optional flow      |
+| Filled Block   | ▶     | `endArrow=block;endFill=1`       | Explicit emphasis  |
+| Open (V)       | ▷     | `endArrow=open;endFill=0`        | Default flow head  |
 | Filled Diamond | ◆     | `endArrow=diamond;endFill=1`     | Composition        |
 | Open Diamond   | ◇     | `endArrow=diamondThin;endFill=0` | Aggregation        |
 | Classic        | →     | `endArrow=classic`               | Simple arrow       |

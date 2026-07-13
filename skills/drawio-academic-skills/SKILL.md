@@ -4,7 +4,7 @@ version: "2.5.0"
 description: "Publication-figure overlay for draw.io. Use instead of drawio whenever the diagram is for a paper, thesis, dissertation, journal, conference, IEEE/ACM submission, manuscript, camera-ready, Word/LaTeX figure, or other publication. Applies venue, figure-type, color, caption/legend, formula, and paper-readability gates for architecture, workflow, roadmap, network-topology, and replicated paper figures."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
-compatibility: "Requires sibling ../drawio in the same skills directory. Node 20+ is required for the shared YAML/CLI workflow. draw.io Desktop is optional and only needed for PNG/PDF/JPG or embedded .drawio.svg exports. No MCP server is required."
+compatibility: "Requires sibling ../drawio in the same skills directory. Node 20+ is required for the shared YAML/CLI workflow. draw.io Desktop produces the default 300dpi PNG (plus PDF/JPG or embedded .drawio.svg); without it, image exports fall back to a standalone SVG. No MCP server is required."
 platforms: [macos, linux, windows]
 metadata:
   category: visual-design
@@ -58,11 +58,11 @@ If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base 
 
 - Keep academic authoring YAML-first and offline-first.
 - Never create, require, or route through `.mcp.json`, MCP, or a live backend.
-- Treat `.drawio` and `.svg` as the default academic final deliverables.
+- Treat `.drawio` and a 300dpi `.png` (via draw.io Desktop) as the default academic final deliverables; SVG is the offline fallback when Desktop is unavailable.
 - Keep `.spec.yaml`, `.arch.json`, raw YAML, and diagnostics in a project-local work directory such as `.drawio-tmp/<name>/`, unless the user explicitly asks for a reproducible sidecar bundle beside the final output.
-- Use draw.io Desktop only as an optional export enhancer for PNG/PDF/JPG or embedded `.drawio.svg`.
-- If a requested Desktop export cannot be produced locally, still deliver the editable `.drawio` and SVG, then report the unavailable export clearly.
-- Perform paper-readability and visual self-checks on exported SVG first, or on Desktop-exported PNG/PDF/JPG/embedded SVG when available. Do not substitute browser or Playwright screenshots when an exported artifact exists.
+- draw.io Desktop is required for the default 300dpi PNG; use it also for PDF/JPG or embedded `.drawio.svg` on request.
+- If draw.io Desktop is unavailable, the PNG export falls back to a standalone `.svg` (with a warning); still deliver the editable `.drawio` and report the fallback clearly.
+- Perform paper-readability and visual self-checks on the exported PNG (or the fallback SVG) first, or on another Desktop-exported artifact when that is the requested format. Do not substitute browser or Playwright screenshots when an exported artifact exists.
 - Treat external image-generation previews as optional concept previews only. They never replace YAML, `.drawio`, SVG, sidecars, or exported-artifact verification.
 - Keep academic-specific policy in this overlay; keep shared execution in `../drawio`.
 - Do not create or modify scratch JS scripts under a user's project-local `.agents/skills/drawio`; port durable fixes to the sibling base skill source instead.
@@ -121,7 +121,7 @@ This section defines the default academic final deliverables.
 Default deliverables:
 
 - `<name>.drawio`
-- `<name>.svg`
+- `<name>.png` (300dpi, via draw.io Desktop; falls back to `<name>.svg` when Desktop is unavailable)
 
 Intermediate work directory:
 
@@ -129,7 +129,7 @@ Intermediate work directory:
 - `<name>.arch.json`
 - raw or normalized YAML and diagnostics
 
-Add `<name>.png` / `.pdf` / `.jpg` only when requested or needed for Word/A4/thesis/raster workflows, and only when draw.io Desktop export is available.
+The default `<name>.png` is 300dpi. **For journal / IEEE vector submission, explicitly export `<name>.pdf` (or `.svg`)** -- those venues require vector (PS/EPS/PDF), not a raster PNG. Add other formats only when requested.
 
 ## Create Flow
 
@@ -158,14 +158,14 @@ Use paths relative to the overlay directory, or absolute paths when running from
 Use the sibling base CLI for deterministic exports.
 
 ```bash
-# Editable .drawio + offline SVG with work-dir sidecars
+# Default deliverable: editable .drawio + 300dpi PNG (--dpi defaults to 300)
 node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
-node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
-
-# Desktop-enhanced exports
-node ../drawio/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --use-desktop
 node ../drawio/scripts/cli.js input.yaml figure.png --validate --use-desktop
+
+# Journal / IEEE vector submission -- export PDF (or SVG) explicitly:
 node ../drawio/scripts/cli.js input.yaml figure.pdf --validate --use-desktop
+node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure
+node ../drawio/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --use-desktop
 ```
 
 If Desktop is unavailable, generate a diagrams.net URL from the `.drawio` artifact and report the missing export honestly:
@@ -174,7 +174,7 @@ If Desktop is unavailable, generate a diagrams.net URL from the `.drawio` artifa
 node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 ```
 
-Do not claim PNG/PDF/JPG files exist when Desktop export was unavailable.
+When Desktop is unavailable the default PNG falls back to `.svg` (reported on stderr); do not claim PNG/PDF/JPG files exist when they were not produced.
 
 ## Style Presets
 
@@ -184,7 +184,7 @@ Use overlay-specific user presets first (`~/.drawio-academic-skills/styles/`), t
 
 Do not claim completion until:
 
-- final `.drawio` and `.svg` are aligned with work-dir `.spec.yaml` and `.arch.json`
+- final `.drawio` and `.png` (or fallback `.svg`) are aligned with work-dir `.spec.yaml` and `.arch.json`
 - `meta.profile` is `academic-paper` and `meta.figureType` is `architecture`, `roadmap`, or `workflow`
 - node count satisfies the playbook budget (`references/docs/academic-figure-playbook.md § Node Budget Management`); split or simplify when it is exceeded
 - labels are readable at paper/A4 scale; formulas use official delimiters (`$$...$$`, `\(...\)`, or AsciiMath backticks)
@@ -193,7 +193,7 @@ Do not claim completion until:
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
 - legends use compact form (single multi-line text node, not many separate nodes)
 - colors are not the only carrier of meaning
-- visual self-check used the exported SVG or Desktop-exported artifact before any live/browser preview, checking overlap, clipped text, connector-label clearance, arrows crossing text/nodes, missing modules, and mismatch from the confirmed plan/source
+- visual self-check used the exported PNG (or fallback SVG) or Desktop-exported artifact before any live/browser preview, checking overlap, clipped text, connector-label clearance, arrows crossing text/nodes, missing modules, and mismatch from the confirmed plan/source
 - if a visible defect was found, the YAML spec was corrected and rerendered once before final reporting
 - requested Desktop exports were attempted or clearly reported as unavailable
 - no MCP config, MCP server, or live backend is required for the result

@@ -4,7 +4,7 @@ version: "2.5.0"
 description: "Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow: architecture, network topologies, flowcharts, UML/ER, org charts, Mermaid/CSV conversion, existing .drawio bundles, style presets, themes, and non-publication formula diagrams. For publication figures (paper, thesis, IEEE, camera-ready) use drawio-academic-skills instead."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
-compatibility: "Node 20+ for the YAML/CLI workflow. draw.io Desktop is optional and only needed for PNG/PDF/JPG or embedded .drawio.svg exports. No MCP server is required for offline authoring; the optional live-refinement backend needs a browser/MCP provider."
+compatibility: "Node 20+ for the YAML/CLI workflow. draw.io Desktop produces the default 300dpi PNG (plus PDF/JPG or embedded .drawio.svg); without it, image exports fall back to a standalone SVG. No MCP server is required for offline authoring; the optional live-refinement backend needs a browser/MCP provider."
 platforms: [macos, linux, windows]
 metadata:
   category: visual-design
@@ -50,8 +50,8 @@ Use the lightest path that satisfies the request.
 
 | Runtime                 | Role                                        | Source of truth                  | Notes                                                                                                                                                           |
 | ----------------------- | ------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Offline Authoring Path  | Default create/edit/replicate/import/export | YAML spec in project work dir    | Generates final `.drawio` and standalone SVG locally; keeps `.spec.yaml` and `.arch.json` in a separate work dir unless explicitly requested beside the output. |
-| Desktop-Enhanced Export | Optional final export                       | Existing offline bundle          | Adds PNG/PDF/JPG or embedded `.drawio.svg` when draw.io Desktop is available.                                                                                   |
+| Offline Authoring Path  | Default create/edit/replicate/import/export | YAML spec in project work dir    | Generates the final `.drawio`; the default delivered image is a **300dpi PNG** via draw.io Desktop, falling back to a standalone SVG when Desktop is unavailable. Keeps `.spec.yaml` and `.arch.json` in a separate work dir unless explicitly requested beside the output. |
+| Desktop-Enhanced Export | Default image export (300dpi PNG)           | Existing offline bundle          | Produces the default 300dpi PNG, plus PDF/JPG or embedded `.drawio.svg` on explicit request, when draw.io Desktop is available.                                 |
 | Live Refinement Backend | Optional browser refinement provider        | Offline bundle remains canonical | Use only when the user explicitly wants browser/inline iteration and required live capabilities exist.                                                          |
 | Direct XML Exception    | Tiny one-off or raw mxGraph handoff         | `.drawio` XML                    | Use only when YAML/CLI is unavailable or exact XML control is the real requirement.                                                                             |
 
@@ -81,9 +81,9 @@ Academic triggers such as `paper`, `thesis`, `IEEE`, `journal`, `manuscript`, or
 ## Default Operating Rules
 
 1. Keep YAML spec as the canonical representation. Mermaid, CSV, natural language, and imported `.drawio` files are input surfaces that normalize into YAML before rendering.
-2. Keep final delivery directories clean by default: deliver `<name>.drawio` and `<name>.svg`; keep canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` in a project-local work directory such as `.drawio-tmp/<name>/`.
-3. Generate standalone SVG locally when requested; use draw.io Desktop only for PNG/PDF/JPG and embedded `.drawio.svg`.
-4. Perform visual self-checks on exported artifacts first: use the generated SVG, or Desktop-exported PNG/PDF/JPG/embedded SVG when available. Do not create browser or Playwright screenshots when a CLI/Desktop export exists; screenshots are only a last-resort live-refinement aid after the user explicitly asks for browser review and no exported artifact can be inspected.
+2. Keep final delivery directories clean by default: deliver `<name>.drawio` and a 300dpi `<name>.png` (via draw.io Desktop; falls back to `<name>.svg` when Desktop is unavailable); keep canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` in a project-local work directory such as `.drawio-tmp/<name>/`.
+3. The default delivered image is a 300dpi PNG via draw.io Desktop (`--use-desktop`; `--dpi` defaults to 300). Generate SVG, PDF, or JPG only when the user explicitly requests them; when Desktop is unavailable the PNG export automatically falls back to a standalone SVG.
+4. Perform visual self-checks on exported artifacts first: use the exported PNG (or the fallback SVG when Desktop is unavailable), or another Desktop-exported artifact when that is the requested final format. Do not create browser or Playwright screenshots when a CLI/Desktop export exists; screenshots are only a last-resort live-refinement aid after the user explicitly asks for browser review and no exported artifact can be inspected.
 5. Treat live backends as optional refinement providers. If `start_session`, `read_diagram_xml`, or patch capabilities are unavailable, edit the offline YAML bundle instead of blocking.
 6. Do not apply academic publication defaults in the base route. Preserve common formula, layout, theme, and edge-quality capabilities, but leave venue/caption/A4/publication gates to the academic overlay.
 7. For formulas, generate only official delimiters: `$$...$$` for standalone formulas, `\(...\)` for inline formulas, and AsciiMath backticks. Do not generate `$...$`, `\[...\]`, or bare LaTeX commands.
@@ -93,7 +93,7 @@ Academic triggers such as `paper`, `thesis`, `IEEE`, `journal`, `manuscript`, or
 11. Do not create or modify scratch JS scripts under a user's project-local `.agents/skills/drawio` as part of normal diagram generation. If renderer or CLI behavior needs a fix, port it to this repository's skill source and verify it there.
 12. Standalone SVG export resolves container-relative coordinates, fixed exit/entry connection points, waypoint playback, boundary-clipped endpoints, and multi-line labels. Orthogonal edges without explicit waypoints use an L/Z-shaped approximation, so draw.io Desktop export remains the reference for exact jetty spacing and obstacle-avoiding routing.
 13. Keep text and labels transparent and content-sized. Plain text nodes always render `fillColor=none;strokeColor=none;labelBackgroundColor=none` (the converter ignores white fills on `type: text` and warns) and text boxes are sized just wider than their content. Vertical CJK labels are one character per line (`"可\n视\n化"`), never `horizontal=0` or wrap-faked. See `references/docs/design-system/tokens.md` § Text & Label Styling.
-14. Keep connectors native, straight, and boldly headed. Every connector is a bound edge (`source`/`target` node ids; never standalone arrow shapes or floating edges), no-waypoint orthogonal edges must be collinear (same absolute exit/entry coordinate — auto-routing handles this; `--validate` flags avoidable bends), and block arrows default to `endFill=1;endSize=12`. See `references/docs/edge-quality-rules.md`.
+14. Keep connectors native, straight, and boldly headed. Every connector is a bound edge (`source`/`target` node ids; never standalone arrow shapes or floating edges), no-waypoint orthogonal edges must be collinear (same absolute exit/entry coordinate — auto-routing handles this; `--validate` flags avoidable bends), and connector arrows default to a bold **open** head (`endArrow=open;endSize=12`, unfilled "V"). Filled `block`/`diamond` heads are used only on explicit request or for UML/ER semantics. See `references/docs/edge-quality-rules.md`.
 
 ## Create Flow
 
@@ -131,19 +131,21 @@ Use `/drawio replicate` for uploaded images or screenshots that need structured 
 2. Decide whether to preserve source colors or normalize to a theme.
 3. Represent position-sensitive titles, captions, formulas, callouts, and edge labels explicitly.
 4. Generate YAML spec with `meta.source: replicated`.
-5. Render and perform a text-position self-check against the exported SVG or Desktop-exported image before claiming completion.
+5. Render and perform a text-position self-check against the exported PNG (or the fallback SVG) before claiming completion.
 
 ## Desktop and Diagrams.net Export
 
-Desktop-enhanced exports require draw.io Desktop:
+The default deliverable is a 300dpi PNG, which requires draw.io Desktop. Desktop-enhanced exports:
 
 ```bash
-node <base-skill-dir>/scripts/cli.js input.yaml output.pdf --validate --use-desktop
+# Default deliverable: 300dpi PNG (--dpi defaults to 300)
 node <base-skill-dir>/scripts/cli.js input.yaml output.png --validate --use-desktop
+# Explicit vector / other formats only when the user asks:
+node <base-skill-dir>/scripts/cli.js input.yaml output.pdf --validate --use-desktop
 node <base-skill-dir>/scripts/cli.js input.yaml output.drawio.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output --use-desktop
 ```
 
-If Desktop is unavailable, still deliver the final `.drawio` and SVG, with sidecars in the work directory. For browser handoff, generate a diagrams.net URL from the `.drawio` file:
+If Desktop is unavailable, the PNG export automatically falls back to a standalone `.svg` (with a warning on stderr), so you still deliver the final `.drawio` and an image, with sidecars in the work directory. For browser handoff, generate a diagrams.net URL from the `.drawio` file:
 
 ```bash
 node <base-skill-dir>/scripts/runtime/diagrams-net-url.js output.drawio
@@ -166,7 +168,7 @@ Validate before claiming completion.
 - Structure validation: schema, IDs, theme/layout/profile correctness.
 - Layout validation: complexity, manual position consistency, overlap risk.
 - Quality validation: edge-quality rules, label clearance, connection-point policy, and text-placement checks for replication.
-- Visual verification: inspect exported SVG first, or Desktop-exported PNG/PDF/JPG/embedded SVG when that is the requested final artifact. Use browser/live screenshots only when the user explicitly requested live review and no exported artifact can be inspected.
+- Visual verification: inspect the exported PNG (or the fallback SVG when Desktop is unavailable) first, or another Desktop-exported format when that is the requested final artifact. Use browser/live screenshots only when the user explicitly requested live review and no exported artifact can be inspected.
 
 If validation fails, fix the YAML or imported XML first and rerun validation. If an optional export cannot run because Desktop or a live backend is unavailable, report the missing provider and provide the offline bundle fallback.
 
