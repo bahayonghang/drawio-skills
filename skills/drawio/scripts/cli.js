@@ -70,7 +70,7 @@ Options:
 }
 
 // Extract positional arguments (non-flag args, excluding values of --flags)
-const flagsWithValues = new Set(['--theme', '--input-format', '--page', '--sidecar-dir'])
+const flagsWithValues = new Set(['--theme', '--input-format', '--page', '--sidecar-dir', '--dpi'])
 const positional = []
 for (let i = 0; i < args.length; i++) {
   if (flagsWithValues.has(args[i])) {
@@ -91,6 +91,8 @@ const strict = args.includes('--strict') || args.includes('--strict-warnings')
 const doValidate = args.includes('--validate')
 const writeSidecars = args.includes('--write-sidecars')
 const useDesktop = args.includes('--use-desktop')
+const dpiIndex = args.indexOf('--dpi')
+const dpi = dpiIndex !== -1 ? Number(args[dpiIndex + 1]) : 300
 const exportSpec = args.includes('--export-spec')
 const pageIndex = args.indexOf('--page')
 const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
@@ -364,13 +366,32 @@ try {
       exportWithDrawioDesktop({
         inputFile: ensureDesktopInput(),
         outputFile: resolve(outputFile),
-        format: ext.slice(1)
+        format: ext.slice(1),
+        scale: dpi / 96
       })
       writeCanonicalSidecars()
       console.error(`Saved: ${outputFile}`)
     } catch (err) {
-      console.error(`Error: ${err.message}`)
-      exitCode = 1
+      const desktopMissing = /draw\.io Desktop CLI was not found/.test(err.message)
+      if (desktopMissing && drawioToSvg) {
+        // Preserve offline authoring: fall back to a standalone SVG so the user still gets an artifact.
+        try {
+          const svgOutput = outputFile.replace(/\.[^.]+$/, '.svg')
+          writeFileSync(resolve(svgOutput), drawioToSvg(xml), 'utf-8')
+          if (writeSidecars) writeFileSync(resolve(artifactPaths.drawioPath), drawioContent, 'utf-8')
+          writeCanonicalSidecars()
+          console.error(
+            `draw.io Desktop not found — fell back to SVG: ${svgOutput}. ` +
+              `Install draw.io Desktop or set DRAWIO_CMD to export ${ext.slice(1).toUpperCase()}.`
+          )
+        } catch (svgErr) {
+          console.error(`Error: ${err.message}`)
+          exitCode = 1
+        }
+      } else {
+        console.error(`Error: ${err.message}`)
+        exitCode = 1
+      }
     }
   } else if (ext === '.svg') {
     if (!drawioToSvg) {

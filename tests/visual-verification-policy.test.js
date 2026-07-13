@@ -24,7 +24,7 @@ test('drawio visual verification policy prefers exported artifacts over screensh
 
   assert.match(baseSkill, /Perform visual self-checks on exported artifacts first/)
   assert.match(baseSkill, /Do not create browser or Playwright screenshots when a CLI\/Desktop export exists/)
-  assert.match(baseSkill, /inspect exported SVG first, or Desktop-exported PNG\/PDF\/JPG\/embedded SVG/i)
+  assert.match(baseSkill, /inspect the exported PNG \(or the fallback SVG when Desktop is unavailable\) first/i)
 
   assert.match(createWorkflow, /Exported-Artifact Verification/)
   assert.match(createWorkflow, /Do not create browser or Playwright screenshots when an exported SVG\/PNG\/PDF\/JPG exists/)
@@ -41,7 +41,7 @@ test('drawio skills keep final deliverables separate from intermediate sidecars'
   const baseSkill = readProjectFile('skills/drawio/SKILL.md')
   const academicSkill = readProjectFile('skills/drawio-academic-skills/SKILL.md')
 
-  assert.match(baseSkill, /deliver `<name>\.drawio` and `<name>\.svg`/)
+  assert.match(baseSkill, /deliver `<name>\.drawio` and a 300dpi `<name>\.png`/)
   assert.match(baseSkill, /`\.drawio-tmp\/<name>\/`/)
   assert.match(baseSkill, /--sidecar-dir \.drawio-tmp\/output/)
   assert.match(baseSkill, /Do not create or modify scratch JS scripts under a user's project-local `\.agents\/skills\/drawio`/)
