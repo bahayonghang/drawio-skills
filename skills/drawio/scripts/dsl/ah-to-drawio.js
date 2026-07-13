@@ -162,8 +162,8 @@ function buildXml({ modules, nodes, edges, page, theme }) {
 
   const containerStyle = `rounded=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fillColor=${containerFill};strokeColor=${containerStroke};fontSize=${containerFontSize};fontColor=${containerFontColor};spacingLeft=12;spacingRight=12;spacingTop=10;spacingBottom=10`
   const nodeStyle = `rounded=1;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fillColor=${nodeFill};strokeColor=${nodeStroke};fontSize=${nodeFontSize};fontColor=${nodeFontColor};spacingLeft=10;spacingRight=10;spacingTop=6;spacingBottom=6`
-  const edgeStyle = `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;endFill=1;strokeColor=${edgeStroke};strokeWidth=${edgeWidth};html=1`
-  const dashedEdgeStyle = `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=block;endFill=1;strokeColor=${dashedStroke};strokeWidth=${dashedWidth};dashed=1;dashPattern=${dashedPattern};html=1`
+  const edgeStyle = `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=open;endFill=0;endSize=12;strokeColor=${edgeStroke};strokeWidth=${edgeWidth};html=1`
+  const dashedEdgeStyle = `edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;endArrow=open;endFill=0;endSize=12;strokeColor=${dashedStroke};strokeWidth=${dashedWidth};dashed=1;dashPattern=${dashedPattern};html=1`
 
   const moduleOrder = new Map()
   for (let i = 0; i < modules.length; i++) moduleOrder.set(modules[i].key, i)

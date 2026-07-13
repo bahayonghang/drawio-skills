@@ -217,16 +217,16 @@
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "data": {
       "strokeColor": "#424242",
       "strokeWidth": 1.5,
       "dashed": true,
       "dashPattern": "6 4",
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "optional": {
       "strokeColor": "#9E9E9E",
@@ -249,8 +249,8 @@
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true,
+      "endArrow": "open",
+      "endFill": false,
       "startArrow": "block",
       "startFill": true
     },
@@ -259,16 +259,16 @@
       "strokeWidth": 1.5,
       "dashed": true,
       "dashPattern": "8 4",
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "residual": {
       "strokeColor": "#9C27B0",
       "strokeWidth": 1.5,
       "dashed": false,
       "dashPattern": null,
-      "endArrow": "block",
-      "endFill": true
+      "endArrow": "open",
+      "endFill": false
     },
     "attention": {
       "strokeColor": "#FF5722",

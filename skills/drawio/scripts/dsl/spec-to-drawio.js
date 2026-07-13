@@ -86,14 +86,14 @@ try {
       gateway: { fillColor: '#FFEDD5', strokeColor: '#EA580C' }
     },
     connector: {
-      primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
+      primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'open', endFill: false },
       data: {
         strokeColor: '#1E293B',
         strokeWidth: 2,
         dashed: true,
         dashPattern: '6 4',
-        endArrow: 'block',
-        endFill: true
+        endArrow: 'open',
+        endFill: false
       },
       optional: {
         strokeColor: '#64748B',
@@ -105,15 +105,15 @@ try {
       },
       dependency: { strokeColor: '#1E293B', strokeWidth: 1, dashed: false, endArrow: 'diamond', endFill: true },
       bidirectional: { strokeColor: '#64748B', strokeWidth: 1.5, dashed: false, endArrow: 'none', endFill: false },
-      control: { strokeColor: '#EA580C', strokeWidth: 1.5, dashed: false, endArrow: 'block', endFill: true },
-      memory_read: { strokeColor: '#059669', strokeWidth: 1.5, dashed: false, endArrow: 'block', endFill: true },
+      control: { strokeColor: '#EA580C', strokeWidth: 1.5, dashed: false, endArrow: 'open', endFill: false },
+      memory_read: { strokeColor: '#059669', strokeWidth: 1.5, dashed: false, endArrow: 'open', endFill: false },
       memory_write: {
         strokeColor: '#059669',
         strokeWidth: 1.5,
         dashed: true,
         dashPattern: '5 3',
-        endArrow: 'block',
-        endFill: true
+        endArrow: 'open',
+        endFill: false
       },
       async: {
         strokeColor: '#6B7280',
@@ -123,7 +123,7 @@ try {
         endArrow: 'open',
         endFill: false
       },
-      feedback: { strokeColor: '#7C3AED', strokeWidth: 1.5, dashed: false, endArrow: 'block', endFill: true }
+      feedback: { strokeColor: '#7C3AED', strokeWidth: 1.5, dashed: false, endArrow: 'open', endFill: false }
     },
     module: {
       fillColor: '#F8FAFC',
@@ -1174,6 +1174,9 @@ function generateNodeStyleWithSpec(node, theme, spec) {
 }
 
 const DEFAULT_ARROW_HEAD_SIZE = 12
+// Open/none arrowheads render unfilled; block/classic/diamond render filled by convention.
+const UNFILLED_ARROWS = new Set(['open', 'openThin', 'none'])
+const defaultArrowFill = (arrow) => !UNFILLED_ARROWS.has(arrow)
 
 /**
  * Generate mxCell style string for a connector
@@ -1186,10 +1189,18 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
   const strokeWidth = edge.style?.strokeWidth ?? connectorTheme.strokeWidth ?? 2
   const dashed = edge.style?.dashed ?? connectorTheme.dashed ?? false
   const dashPattern = edge.style?.dashPattern || connectorTheme.dashPattern || '6 4'
-  const endArrow = edge.style?.endArrow || connectorTheme.endArrow || 'block'
-  const endFill = edge.style?.endFill ?? connectorTheme.endFill ?? true
+  const endArrow = edge.style?.endArrow || connectorTheme.endArrow || 'open'
+  const endFill =
+    edge.style?.endFill ??
+    (edge.style?.endArrow
+      ? defaultArrowFill(edge.style.endArrow)
+      : (connectorTheme.endFill ?? defaultArrowFill(endArrow)))
   const startArrow = edge.style?.startArrow || connectorTheme.startArrow
-  const startFill = edge.style?.startFill ?? connectorTheme.startFill
+  const startFill =
+    edge.style?.startFill ??
+    (edge.style?.startArrow
+      ? defaultArrowFill(edge.style.startArrow)
+      : (connectorTheme.startFill ?? defaultArrowFill(startArrow)))
 
   const parts = [
     'edgeStyle=orthogonalEdgeStyle',
@@ -1203,12 +1214,12 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
     `endFill=${endFill ? 1 : 0}`
   ]
 
-  // Bold solid triangular heads by default: small stock arrowheads read as
+  // Bold arrowheads by default (block, classic, open): small stock arrowheads read as
   // afterthoughts on 2px architecture connectors.
   const endSize =
     edge.style?.endSize ??
     connectorTheme.endSize ??
-    (endArrow === 'block' || endArrow === 'classic' ? DEFAULT_ARROW_HEAD_SIZE : undefined)
+    (endArrow === 'block' || endArrow === 'classic' || endArrow === 'open' ? DEFAULT_ARROW_HEAD_SIZE : undefined)
   if (endSize !== undefined) parts.push(`endSize=${endSize}`)
 
   if (startArrow) {
@@ -1217,7 +1228,7 @@ export function generateConnectorStyle(edge, theme, routing = 'orthogonal') {
     const startSize =
       edge.style?.startSize ??
       connectorTheme.startSize ??
-      (startArrow === 'block' || startArrow === 'classic' ? DEFAULT_ARROW_HEAD_SIZE : undefined)
+      (startArrow === 'block' || startArrow === 'classic' || startArrow === 'open' ? DEFAULT_ARROW_HEAD_SIZE : undefined)
     if (startSize !== undefined) parts.push(`startSize=${startSize}`)
   }
 
@@ -3453,7 +3464,7 @@ export function validateXml(xml) {
     if (arrowShape) {
       warnings.push(
         `Cell "${cellId}" uses arrow shape "${arrowShape[1]}" as a connector look-alike. ` +
-          'Connect modules with a native bound edge (endArrow=block;endFill=1) instead of standalone arrow shapes.'
+          'Connect modules with a native bound edge (endArrow=open) instead of standalone arrow shapes.'
       )
     }
 

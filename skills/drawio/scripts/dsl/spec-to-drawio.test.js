@@ -291,14 +291,14 @@ describe('generateNodeStyle', () => {
 describe('generateConnectorStyle', () => {
   const theme = {
     connector: {
-      primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'block', endFill: true },
+      primary: { strokeColor: '#1E293B', strokeWidth: 2, dashed: false, endArrow: 'open', endFill: false },
       data: {
         strokeColor: '#1E293B',
         strokeWidth: 2,
         dashed: true,
         dashPattern: '6 4',
-        endArrow: 'block',
-        endFill: true
+        endArrow: 'open',
+        endFill: false
       },
       optional: {
         strokeColor: '#64748B',
@@ -314,7 +314,7 @@ describe('generateConnectorStyle', () => {
   it('should generate primary connector style', () => {
     const style = generateConnectorStyle({ from: 'a', to: 'b', type: 'primary' }, theme)
     assert.ok(style.includes('strokeWidth=2'), 'should contain strokeWidth=2')
-    assert.ok(style.includes('endArrow=block'), 'should contain endArrow=block')
+    assert.ok(style.includes('endArrow=open'), 'should contain endArrow=open')
     assert.ok(!style.includes('dashed=1'), 'should not contain dashed=1')
   })
 
@@ -1806,10 +1806,10 @@ describe('specToDrawioXml additional integration tests', () => {
   })
 
   it('each of the 5 connector types produces the correct endArrow in XML', () => {
-    // tech-blue theme defaults: primary=block, data=block, optional=open, dependency=diamond, bidirectional=none
+    // tech-blue theme defaults: primary=open, data=open, optional=open, dependency=diamond, bidirectional=none
     const edgeTypes = [
-      { type: 'primary', expectedArrow: 'endArrow=block' },
-      { type: 'data', expectedArrow: 'endArrow=block' },
+      { type: 'primary', expectedArrow: 'endArrow=open' },
+      { type: 'data', expectedArrow: 'endArrow=open' },
       { type: 'optional', expectedArrow: 'endArrow=open' },
       { type: 'dependency', expectedArrow: 'endArrow=diamond' },
       { type: 'bidirectional', expectedArrow: 'endArrow=none' }
@@ -2759,11 +2759,14 @@ describe('replicate quality gates', () => {
     assert.equal(clipWarnings.length, 1)
   })
 
-  it('adds a bold default endSize to block arrows and honors overrides', () => {
+  it('adds a bold default endSize to default (open) and explicit block arrows, honoring overrides', () => {
     const theme = loadTheme('tech-blue')
     const defaultStyle = generateConnectorStyle({ from: 'a', to: 'b' }, theme)
-    assert.match(defaultStyle, /endArrow=block/)
+    assert.match(defaultStyle, /endArrow=open/)
     assert.match(defaultStyle, /endSize=12/)
+    const blockStyle = generateConnectorStyle({ from: 'a', to: 'b', style: { endArrow: 'block' } }, theme)
+    assert.match(blockStyle, /endArrow=block/)
+    assert.match(blockStyle, /endSize=12/)
     const overridden = generateConnectorStyle({ from: 'a', to: 'b', style: { endSize: 6 } }, theme)
     assert.match(overridden, /endSize=6/)
   })
