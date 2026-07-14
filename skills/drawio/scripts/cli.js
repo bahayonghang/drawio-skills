@@ -17,6 +17,7 @@ import {
 import { applyAutoLayout } from './dsl/auto-layout.js'
 import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
 import { drawioToSpec } from './dsl/drawio-to-spec.js'
+import { searchShapeCatalogBatch } from './dsl/catalog-search.js'
 import {
   buildArchMetadata,
   createDrawioFileContent,
@@ -34,6 +35,40 @@ const DRAWIO_COMPAT_VERSION = '21.0.0'
 
 const args = process.argv.slice(2)
 
+if (args[0] === 'search') {
+  const prefixIndex = args.indexOf('--prefix')
+  const limitIndex = args.indexOf('--limit')
+  const prefix = prefixIndex === -1 ? null : args[prefixIndex + 1]
+  const limit = limitIndex === -1 ? 8 : Number(args[limitIndex + 1])
+  const json = args.includes('--json')
+  const query = args
+    .slice(1)
+    .filter((arg, index, all) => {
+      if (arg.startsWith('--')) return false
+      return all[index - 1] !== '--prefix' && all[index - 1] !== '--limit'
+    })
+    .join(' ')
+
+  if (!query || (prefixIndex !== -1 && (!prefix || prefix.startsWith('--'))) || !Number.isInteger(limit) || limit < 1) {
+    console.error('Usage: node cli.js search <query> [--prefix <library>] [--limit <n>] [--json]')
+    process.exit(1)
+  }
+
+  const groups = searchShapeCatalogBatch(query, { prefix, limit })
+  if (json) {
+    console.log(JSON.stringify(groups, null, 2))
+  } else {
+    for (const group of groups) {
+      console.log(`${group.query}:`)
+      for (const result of group.results) {
+        console.log(`  ${result.name}${result.title ? ` | ${result.title}` : ''}${result.spec ? ` | spec: ${result.spec}` : ''}`)
+      }
+      if (group.results.length === 0) console.log('  No matching catalog entries.')
+    }
+  }
+  process.exit(groups.every((group) => group.results.length > 0) ? 0 : 1)
+}
+
 if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
   console.log(
     `
@@ -41,6 +76,7 @@ draw.io YAML → XML/SVG Converter
 
 Usage:
   node cli.js <input> [output.drawio|output.svg] [options]
+  node cli.js search <query> [--prefix <library>] [--limit <n>] [--json]
 
 Arguments:
   input               Path to input file, or - for stdin
@@ -59,10 +95,12 @@ Options:
   --export-spec       Export the canonical YAML spec instead of generating XML/SVG
   --strict            Fail on complexity and spec validation warnings
   --strict-warnings   Alias of --strict (recommended for paper-grade validation)
+  --allow-unknown-shapes  Downgrade unknown covered stencil names to warnings
   --validate          Run XML validation and print results (also summarizes spec warnings)
   --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
   --sidecar-dir <dir> Emit sidecars in this directory when --write-sidecars is set
   --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
+  search              Search the bundled shape catalog without network access
   --help, -h          Show this help message
 `.trim()
   )
@@ -88,6 +126,7 @@ const themeName = themeIndex !== -1 ? args[themeIndex + 1] : null
 const inputFormatIndex = args.indexOf('--input-format')
 const inputFormat = inputFormatIndex !== -1 ? args[inputFormatIndex + 1] : 'yaml'
 const strict = args.includes('--strict') || args.includes('--strict-warnings')
+const allowUnknownShapes = args.includes('--allow-unknown-shapes')
 const doValidate = args.includes('--validate')
 const writeSidecars = args.includes('--write-sidecars')
 const useDesktop = args.includes('--use-desktop')
@@ -195,7 +234,7 @@ try {
   if (exportSpec) {
     xml = null
   } else if (doValidate) {
-    const result = specToDrawioXml(spec, { strict, returnWarnings: true, silent: true })
+    const result = specToDrawioXml(spec, { strict, allowUnknownShapes, returnWarnings: true, silent: true })
     xml = result.xml
     const problems = (result.warnings || []).filter((w) => w.level && w.level !== 'fatal')
     if (problems.length === 0) {
@@ -209,7 +248,7 @@ try {
       `Layout metrics: node-crossings=${metrics.edgeNodeCrossings}, edge-crossings=${metrics.edgeEdgeCrossings}, total-edge-length=${metrics.totalEdgeLength}px`
     )
   } else {
-    xml = specToDrawioXml(spec, { strict })
+    xml = specToDrawioXml(spec, { strict, allowUnknownShapes })
   }
 } catch (err) {
   console.error(`Error: Conversion failed: ${err.message}`)
