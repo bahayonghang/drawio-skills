@@ -467,3 +467,41 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 1995193(feat 箭头) / 13c52b5(feat 导出) / 5eab366(docs) + 2 个归档提交。
 
 [OK] **Completed**
+
+
+## Session 11: ai-kit 集成 review 与 catalog-search 修复任务
+
+**Date**: 2026-07-14
+**Task**: ai-kit 集成 review 与 catalog-search 修复任务
+**Branch**: `dev`
+
+### Summary
+
+对已归档 07-14-drawio-ai-kit-integration 三子任务实施做六维 review：验收全过（npm test 413 绿、目录零丢失、拒绝闭环/aspect=fixed/可复现构建实测通过），产出 4 条建议修改与 6 条观察。随后以轻量任务 07-14-catalog-search-review-fixes 落地修复：k8s 导入反推 prIcon、k8s 自然词别名+search 同义词、29 示例零误杀基线测试、search 最后段精确匹配排序与建议按库前缀过滤；npm test 418 绿、just ci 绿。按回滚点拆 5 个 drawio 工作提交 + 1 个 Trellis 0.6.7 模板升级 chore。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `374d270` | (see git log) |
+| `8b8435b` | (see git log) |
+| `60e039c` | (see git log) |
+| `32f6583` | (see git log) |
+| `e344320` | (see git log) |
+| `130782a` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
