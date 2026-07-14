@@ -1,8 +1,142 @@
 import { defineConfig } from 'vitepress'
 
+const englishNav = [
+  { text: 'Start', link: '/guide/getting-started' },
+  { text: 'Workflows', link: '/guide/workflows' },
+  { text: 'Authoring', link: '/guide/design-system' },
+  { text: 'CLI & Delivery', link: '/guide/cli' },
+  { text: 'Examples', link: '/examples/' },
+  { text: 'GitHub', link: 'https://github.com/bahayonghang/drawio-skills' },
+]
+
+const englishSidebar = [
+  {
+    text: 'Introduction',
+    items: [
+      { text: 'Overview', link: '/' },
+      { text: 'Getting Started', link: '/guide/getting-started' },
+      { text: 'Installation', link: '/guide/installation' },
+    ],
+  },
+  {
+    text: 'Workflows',
+    items: [
+      { text: 'Route Overview', link: '/guide/workflows' },
+      { text: 'Create', link: '/guide/creating-diagrams' },
+      { text: 'Edit and Import', link: '/guide/editing-diagrams' },
+      { text: 'Replicate', link: '/guide/scientific-workflows' },
+      { text: 'Academic Overlay', link: '/guide/academic-overlay' },
+    ],
+  },
+  {
+    text: 'Authoring',
+    items: [
+      { text: 'Specification', link: '/guide/specification' },
+      { text: 'Design System', link: '/guide/design-system' },
+      { text: 'Architecture Diagrams', link: '/guide/architecture-diagrams' },
+      { text: 'Agent and Memory Diagrams', link: '/guide/agent-diagrams' },
+      { text: 'Icons and Stencil Search', link: '/guide/icons-stencils' },
+      { text: 'Themes and Presets', link: '/guide/themes-presets' },
+      { text: 'Connectors and Edge Quality', link: '/guide/connectors' },
+      { text: 'Math Typesetting', link: '/guide/math-typesetting' },
+    ],
+  },
+  {
+    text: 'CLI and Delivery',
+    items: [
+      { text: 'CLI Reference', link: '/guide/cli' },
+      { text: 'Export and Artifacts', link: '/guide/export' },
+    ],
+  },
+  {
+    text: 'Reference',
+    items: [
+      { text: 'Optional MCP Tools', link: '/api/mcp-tools' },
+      { text: 'XML Format', link: '/api/xml-format' },
+      { text: 'SVG Converter', link: '/api/svg-converter' },
+    ],
+  },
+  {
+    text: 'Examples',
+    items: [
+      { text: 'Overview', link: '/examples/' },
+      { text: 'Flowchart', link: '/examples/flowchart' },
+      { text: 'Architecture Diagram', link: '/examples/architecture' },
+      { text: 'YAML Examples', link: '/examples/yaml-examples' },
+    ],
+  },
+]
+
+const chineseNav = [
+  { text: '开始', link: '/zh/guide/getting-started' },
+  { text: '工作流', link: '/zh/guide/workflows' },
+  { text: '图表编写', link: '/zh/guide/design-system' },
+  { text: 'CLI 与交付', link: '/zh/guide/cli' },
+  { text: '示例', link: '/zh/examples/' },
+  { text: 'GitHub', link: 'https://github.com/bahayonghang/drawio-skills' },
+]
+
+const chineseSidebar = [
+  {
+    text: '简介',
+    items: [
+      { text: '概览', link: '/zh/' },
+      { text: '快速开始', link: '/zh/guide/getting-started' },
+      { text: '安装', link: '/zh/guide/installation' },
+    ],
+  },
+  {
+    text: '工作流',
+    items: [
+      { text: '路线概览', link: '/zh/guide/workflows' },
+      { text: '创建', link: '/zh/guide/creating-diagrams' },
+      { text: '编辑与导入', link: '/zh/guide/editing-diagrams' },
+      { text: '复刻', link: '/zh/guide/scientific-workflows' },
+      { text: '学术出版 Overlay', link: '/zh/guide/academic-overlay' },
+    ],
+  },
+  {
+    text: '图表编写',
+    items: [
+      { text: '规格格式', link: '/zh/guide/specification' },
+      { text: '设计系统', link: '/zh/guide/design-system' },
+      { text: '架构图', link: '/zh/guide/architecture-diagrams' },
+      { text: 'Agent 与记忆图', link: '/zh/guide/agent-diagrams' },
+      { text: '图标与 Stencil 搜索', link: '/zh/guide/icons-stencils' },
+      { text: '主题与样式预设', link: '/zh/guide/themes-presets' },
+      { text: '连接线与边质量', link: '/zh/guide/connectors' },
+      { text: '数学公式排版', link: '/zh/guide/math-typesetting' },
+    ],
+  },
+  {
+    text: 'CLI 与交付',
+    items: [
+      { text: 'CLI 参考', link: '/zh/guide/cli' },
+      { text: '导出与产物', link: '/zh/guide/export' },
+    ],
+  },
+  {
+    text: '参考',
+    items: [
+      { text: '可选 MCP 工具', link: '/zh/api/mcp-tools' },
+      { text: 'XML 格式', link: '/zh/api/xml-format' },
+      { text: 'SVG 转换器', link: '/zh/api/svg-converter' },
+    ],
+  },
+  {
+    text: '示例',
+    items: [
+      { text: '概览', link: '/zh/examples/' },
+      { text: '流程图', link: '/zh/examples/flowchart' },
+      { text: '架构图', link: '/zh/examples/architecture' },
+      { text: 'YAML 示例', link: '/zh/examples/yaml-examples' },
+    ],
+  },
+]
+
 export default defineConfig({
   title: 'Draw.io Skill',
-  description: 'Desktop-first, offline-first draw.io diagrams for Claude, Gemini, and Codex.',
+  description: 'YAML-first, offline-first draw.io authoring with a publication overlay.',
   base: '/drawio-skills/',
   lastUpdated: true,
   cleanUrls: true,
@@ -25,117 +159,25 @@ export default defineConfig({
       lang: 'zh-CN',
       link: '/zh/',
       title: 'Draw.io Skill',
-      description: '面向 Claude、Gemini 和 Codex 的桌面优先、离线优先 draw.io 图表工作流。',
+      description: 'YAML 优先、离线优先的 draw.io 图表工作流与学术出版 Overlay。',
     },
   },
   themeConfig: {
-    nav: [
-      { text: 'Guide', link: '/guide/getting-started' },
-      { text: 'Workflows', link: '/guide/workflows' },
-      { text: 'CLI & Export', link: '/guide/cli' },
-      { text: 'API', link: '/api/mcp-tools' },
-      { text: 'Examples', link: '/examples/' },
-      { text: 'GitHub', link: 'https://github.com/bahayonghang/drawio-skills' },
-    ],
-    sidebar: {
-      '/': [
-        {
-          text: 'Introduction',
-          items: [
-            { text: 'What is Draw.io Skill?', link: '/' },
-            { text: 'Getting Started', link: '/guide/getting-started' },
-            { text: 'Installation', link: '/guide/installation' },
-          ],
-        },
-        {
-          text: 'Workflows',
-          items: [
-            { text: 'Overview', link: '/guide/workflows' },
-            { text: '/drawio create', link: '/guide/creating-diagrams' },
-            { text: '/drawio replicate', link: '/guide/scientific-workflows' },
-            { text: '/drawio edit', link: '/guide/editing-diagrams' },
-          ],
-        },
-        {
-          text: 'Authoring & Validation',
-          items: [
-            { text: 'Design System', link: '/guide/design-system' },
-            { text: 'Specification Format', link: '/guide/specification' },
-            { text: 'Math Typesetting', link: '/guide/math-typesetting' },
-            { text: 'CLI Tool', link: '/guide/cli' },
-            { text: 'Export & Save', link: '/guide/export' },
-          ],
-        },
-        {
-          text: 'API Reference',
-          items: [
-            { text: 'Optional MCP Tools', link: '/api/mcp-tools' },
-            { text: 'XML Format', link: '/api/xml-format' },
-            { text: 'SVG Converter', link: '/api/svg-converter' },
-          ],
-        },
-        {
-          text: 'Examples',
-          items: [
-            { text: 'Overview', link: '/examples/' },
-            { text: 'Flowchart', link: '/examples/flowchart' },
-            { text: 'Architecture Diagram', link: '/examples/architecture' },
-            { text: 'YAML Examples', link: '/examples/yaml-examples' },
-          ],
-        },
-      ],
-      '/zh/': [
-        {
-          text: '介绍',
-          items: [
-            { text: '什么是 Draw.io Skill？', link: '/zh/' },
-            { text: '快速开始', link: '/zh/guide/getting-started' },
-            { text: '安装', link: '/zh/guide/installation' },
-          ],
-        },
-        {
-          text: '工作流',
-          items: [
-            { text: '概览', link: '/zh/guide/workflows' },
-            { text: '/drawio create', link: '/zh/guide/creating-diagrams' },
-            { text: '/drawio replicate', link: '/zh/guide/scientific-workflows' },
-            { text: '/drawio edit', link: '/zh/guide/editing-diagrams' },
-          ],
-        },
-        {
-          text: '编写与校验',
-          items: [
-            { text: '设计系统', link: '/zh/guide/design-system' },
-            { text: '规格格式', link: '/zh/guide/specification' },
-            { text: '数学公式排版', link: '/zh/guide/math-typesetting' },
-            { text: 'CLI 工具', link: '/zh/guide/cli' },
-            { text: '导出与保存', link: '/zh/guide/export' },
-          ],
-        },
-        {
-          text: 'API 参考',
-          items: [
-            { text: '可选 MCP 工具', link: '/zh/api/mcp-tools' },
-            { text: 'XML 格式', link: '/zh/api/xml-format' },
-            { text: 'SVG 转换器', link: '/zh/api/svg-converter' },
-          ],
-        },
-        {
-          text: '示例',
-          items: [
-            { text: '概览', link: '/zh/examples/' },
-            { text: '流程图', link: '/zh/examples/flowchart' },
-            { text: '架构图', link: '/zh/examples/architecture' },
-            { text: 'YAML 示例', link: '/zh/examples/yaml-examples' },
-          ],
-        },
-      ],
+    locales: {
+      root: {
+        nav: englishNav,
+        sidebar: englishSidebar,
+      },
+      zh: {
+        nav: chineseNav,
+        sidebar: chineseSidebar,
+      },
     },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/bahayonghang/drawio-skills' },
     ],
     footer: {
-      message: 'Draw.io Skill v2.2.0 documentation.',
+      message: 'Draw.io Skill v2.6.0 documentation.',
       copyright: 'Copyright © 2024-present',
     },
   },

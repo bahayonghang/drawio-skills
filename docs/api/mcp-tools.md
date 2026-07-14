@@ -1,6 +1,6 @@
 # Optional MCP Tools
 
-These MCP tools support base-skill live browser refinement. They are **not** the default runtime for Draw.io Skill 2.2.0.
+These MCP tools support base-skill live browser refinement. They are **not** the default runtime for Draw.io Skill 2.6.0.
 
 Use them only when:
 

@@ -1,92 +1,100 @@
-# CLI Tool
+# CLI Reference
 
-The CLI converts diagram sources into `.drawio`, SVG, or imported YAML bundles.
+The offline CLI converts YAML, Mermaid, CSV, or existing Draw.io bundles into native `.drawio`, standalone SVG, Desktop exports, or canonical YAML.
 
 ## Usage
 
 ```bash
 node skills/drawio/scripts/cli.js <input> [output] [options]
+node skills/drawio/scripts/cli.js search <query> [--prefix <library>] [--limit <n>] [--json]
 ```
 
 ## Inputs
 
-| Input | How to use it |
-|-------|---------------|
-| YAML | default input format |
+| Input | Option |
+|---|---|
+| YAML | default |
 | Mermaid | `--input-format mermaid` |
 | CSV | `--input-format csv` |
-| `.drawio` | `--input-format drawio --export-spec` |
+| `.drawio` | `--input-format drawio` |
 | stdin | use `-` as the input path |
 
-## Key Options
+## Rendering And Import Options
 
-| Flag | Description |
-|------|-------------|
-| `--input-format <f>` | `yaml`, `mermaid`, `csv`, or `drawio` |
-| `--theme <name>` | Override the theme: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `high-contrast` |
-| `--page <selector>` | Select a page by index or diagram name during drawio import |
-| `--export-spec` | Export canonical YAML instead of rendering XML/SVG |
-| `--write-sidecars` | Emit `.spec.yaml` and `.arch.json` next to the output, or into `--sidecar-dir` when provided |
-| `--sidecar-dir <dir>` | Write sidecars to a separate work directory instead of the final output directory |
-| `--use-desktop` | Use draw.io Desktop for PNG, PDF, JPG, or embedded SVG exports |
-| `--validate` | Print spec warnings and run XML validation |
-| `--strict` | Fail on validation warnings and strict complexity errors |
-| `--strict-warnings` | Alias of `--strict` |
+| Option | Purpose |
+|---|---|
+| `--theme <name>` | override the YAML theme |
+| `--page <selector>` | select an imported Draw.io page by index or name |
+| `--export-spec` | write canonical YAML instead of rendering |
+| `--validate` | report spec and XML validation results |
+| `--strict` | fail on warnings and strict quality findings |
+| `--strict-warnings` | alias of `--strict` |
+| `--allow-unknown-shapes` | temporarily downgrade unknown covered stencils to warnings |
+
+## Artifact And Desktop Options
+
+| Option | Purpose |
+|---|---|
+| `--write-sidecars` | emit `.spec.yaml` and `.arch.json` |
+| `--sidecar-dir <dir>` | place sidecars in an explicit work directory |
+| `--use-desktop` | use draw.io Desktop for PNG/PDF/JPG or embedded SVG |
+| `--dpi <n>` | raster export DPI; defaults to 300 |
+
+`--sidecar-dir` requires `--write-sidecars`. Keep sidecars outside the final delivery directory unless a beside-output reproducible bundle is explicitly requested.
 
 ## Output Formats
 
 | Output | Result |
-|--------|--------|
-| no output path | XML to stdout |
-| `.drawio` | draw.io XML file |
-| `.svg` | standalone SVG |
-| `.png` | desktop export |
-| `.pdf` | desktop export |
-| `.jpg` | desktop export |
+|---|---|
+| no output path | Draw.io XML on stdout |
+| `.drawio` | editable Draw.io XML |
+| `.svg` | standalone SVG, or Desktop SVG with `--use-desktop` |
+| `.png` | Desktop raster export at 300 DPI by default |
+| `.pdf` | Desktop PDF export |
+| `.jpg` | Desktop raster export |
 
-## Examples
-
-### Render a clean `.drawio` final artifact with work-dir sidecars
+## Search The Bundled Catalog
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
+node skills/drawio/scripts/cli.js search "s3, lambda" --prefix aws4 --limit 5
+node skills/drawio/scripts/cli.js search pod --prefix kubernetes --json
 ```
 
-### Render a strict SVG
+Search requires no network or MCP. Use returned aliases in YAML. Unknown covered stencil names are rejected with suggestions.
+
+## Common Commands
+
+Render an editable final artifact and keep sidecars in a work directory:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output --strict-warnings
+node skills/drawio/scripts/cli.js input.yaml final/diagram.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/diagram
 ```
 
-### Override the theme
+Create the default 300 DPI PNG:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --theme high-contrast
+node skills/drawio/scripts/cli.js input.yaml final/diagram.png --validate --use-desktop
 ```
 
-### Import an existing `.drawio` file
+Import an existing Draw.io page into canonical YAML:
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --page 0 --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
-### Convert Mermaid
+Convert Mermaid with strict validation:
 
 ```bash
-node skills/drawio/scripts/cli.js flow.mmd output.drawio --input-format mermaid --validate
+node skills/drawio/scripts/cli.js flow.mmd final/flow.drawio --input-format mermaid --validate --strict
 ```
 
-## Validation Output
+## Failure Semantics
 
-`--validate` reports two layers:
-
-1. spec warnings
-2. XML validation results
-
-Use `--strict` or `--strict-warnings` when those warnings should block the output.
+Invalid YAML, malformed XML, unknown covered stencils, missing flag values, unsafe icon names, and failed requested exports produce explicit errors. When draw.io Desktop is unavailable, image export falls back to standalone SVG where supported and reports the fallback; do not claim a missing PNG/PDF/JPG was produced.
 
 ## Related
 
-- [Specification Format](./specification.md)
-- [Export & Save](./export.md)
+- [Icons and Stencil Search](./icons-stencils.md)
+- [Specification](./specification.md)
+- [Export and Artifacts](./export.md)
 - [SVG Converter](/api/svg-converter.md)

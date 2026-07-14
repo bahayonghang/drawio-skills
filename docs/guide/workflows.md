@@ -20,7 +20,7 @@ The skill keeps final delivery directories focused on:
 
 - `<name>.drawio`
 
-Canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` should live in a project-local work directory such as `.drawio-tmp/<name>/` unless the user explicitly asks for a beside-output bundle. Academic overlay adds `<name>.svg` to the default publication final delivery set.
+Canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` should live in a project-local work directory such as `.drawio-tmp/<name>/` unless the user explicitly asks for a beside-output bundle. The Academic Overlay defaults to editable `.drawio` plus a 300 DPI PNG, with SVG fallback when Desktop is unavailable.
 
 ## Route Comparison
 
@@ -29,7 +29,7 @@ Canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` should live
 | `create` | Text, YAML, Mermaid, CSV | New `.drawio` plus work-dir sidecars | Build a new general diagram |
 | `edit` | Existing bundle or `.drawio` file | Updated `.drawio` plus work-dir sidecars | Modify or restyle a diagram |
 | `replicate` | Uploaded image or screenshot | Redrawn `.drawio` plus work-dir sidecars | Recreate a reference diagram |
-| `academic overlay` | Paper/thesis/manuscript prompt | final `.drawio + .svg`, sidecars in work dir | Publication-ready figures |
+| `academic overlay` | Paper/thesis/manuscript prompt | final `.drawio + 300dpi .png`, SVG fallback, sidecars in work dir | Publication-ready figures |
 
 ## `/drawio create`
 
@@ -137,7 +137,7 @@ See [Replicating Diagrams](./scientific-workflows.md).
 
 ### Design system
 
-- 6 built-in themes
+- 11 built-in themes
 - shared style presets in `skills/drawio/styles/built-in/`
 - semantic node types
 - typed connectors

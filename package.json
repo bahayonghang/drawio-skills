@@ -1,6 +1,6 @@
 {
   "name": "drawio-skills",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "A desktop-first Draw.io skill with YAML DSL, offline sidecars, and optional live browser editing.",
   "type": "module",
   "scripts": {

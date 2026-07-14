@@ -20,7 +20,7 @@ Draw.io Skill 暴露三条 Base 路线和一个 Academic Overlay 策略层：
 
 - `<name>.drawio`
 
-`.spec.yaml` 和 `.arch.json` 这类 sidecars 默认放在 `.drawio-tmp/<name>/` 这样的项目工作目录；只有用户明确要求 sidecar bundle 时才放到输出旁边。Academic Overlay 默认还会把 `<name>.svg` 加入出版最终交付集。
+`.spec.yaml` 和 `.arch.json` 这类 sidecars 默认放在 `.drawio-tmp/<name>/` 这样的项目工作目录；只有用户明确要求 sidecar bundle 时才放到输出旁边。Academic Overlay 默认交付可编辑 `.drawio` 和 300 DPI PNG；Desktop 不可用时回退到 SVG。
 
 ## 路线对比
 
@@ -29,7 +29,7 @@ Draw.io Skill 暴露三条 Base 路线和一个 Academic Overlay 策略层：
 | `create` | 文本、YAML、Mermaid、CSV | 新 `.drawio` + 工作目录 sidecars | 新建通用图表 |
 | `edit` | 现有 bundle 或 `.drawio` 文件 | 更新后的 `.drawio` + 工作目录 sidecars | 修改或重构图表 |
 | `replicate` | 上传图片或截图 | 重绘后的 `.drawio` + 工作目录 sidecars | 复刻参考图 |
-| `academic overlay` | paper/thesis/manuscript prompt | 最终 `.drawio + .svg`，sidecars 在工作目录 | 出版级图表 |
+| `academic overlay` | paper/thesis/manuscript prompt | 最终 `.drawio + 300dpi .png`、SVG 回退，sidecars 在工作目录 | 出版级图表 |
 
 ## `/drawio create`
 
@@ -137,7 +137,7 @@ Overlay 会执行 academic preflight：
 
 ### 设计系统
 
-- 6 个内置主题
+- 11 个内置主题
 - `skills/drawio/styles/built-in/` 下的共享 style presets
 - 语义节点类型
 - 类型化连接器

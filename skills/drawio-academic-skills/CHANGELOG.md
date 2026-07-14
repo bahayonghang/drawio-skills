@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.6.0 (2026-07-14)
+
 - Sync with base: flow connectors default to open heads (`endArrow=open;endSize=12`,
   unfilled "V") instead of filled block; `publication-overlay.md` § Text and Callout
   Styling updated. UML/ER semantic markers and explicit `block` requests are unchanged.

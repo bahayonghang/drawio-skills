@@ -30,7 +30,7 @@
 - `meta.profile: academic-paper`
 - `meta.figureType`：`architecture`、`roadmap` 或 `workflow`
 - caption、legend 和 A4/Word/LaTeX 导出检查
-- 默认最终交付 `.drawio + .svg`，`.spec.yaml + .arch.json` 放在项目工作目录
+- 默认最终交付 `.drawio + 300dpi .png`；Desktop 不可用时回退 SVG，`.spec.yaml + .arch.json` 放在项目工作目录
 - 不需要 MCP/live backend
 
 Overlay 仍然通过 sibling Base CLI：`../drawio/scripts/cli.js` 执行。
@@ -102,7 +102,7 @@ Overlay 仍然通过 sibling Base CLI：`../drawio/scripts/cli.js` 执行。
 ```text
 /drawio-academic-skills replicate
 [上传论文配图]
-请按 IEEE 投稿要求重绘，确保灰度打印可读，并交付最终 .drawio + .svg，sidecars 放在工作目录
+请按 IEEE 投稿要求重绘，确保灰度打印可读，交付可编辑 .drawio 和投稿用 PDF，sidecars 放在工作目录
 ```
 
 ### 归一到演示主题

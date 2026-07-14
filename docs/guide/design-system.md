@@ -1,107 +1,72 @@
 # Design System
 
-The Draw.io design system gives the skill a stable visual vocabulary across engineering, academic, and presentation diagrams.
+The design system turns semantic YAML into consistent nodes, modules, typography, connectors, and canvas styling. Use semantic types and themes first; use raw Draw.io styles only for small XML exceptions.
 
-## Core Concepts
+## Authoring Layers
 
-### Profiles
+1. **Profile** sets workflow policy: `default`, `academic-paper`, or `engineering-review`.
+2. **Theme** sets visual tokens for canvas, type, nodes, modules, and connectors.
+3. **Semantic types** express roles such as service, database, Agent, memory, or tool.
+4. **Typed connectors** express primary, data, dependency, control, memory, and feedback flows.
+5. **Explicit overrides** preserve source-specific details when replication or branding requires them.
 
-| Profile | Purpose |
-|---------|---------|
-| `default` | Standard diagrams |
-| `academic-paper` | IEEE, thesis, journal, and paper-ready figures |
-| `engineering-review` | Dense architecture or network diagrams with stricter routing review |
+## Bundled Themes
 
-### 6 Built-In Themes
+| Theme | Primary use |
+|---|---|
+| `tech-blue` | general technical diagrams |
+| `notion-clean` | minimal documentation and structured tables |
+| `blueprint` | formal architecture, UML, and networks |
+| `arch-dark` | role-coded cloud and service architecture |
+| `dark-terminal` | developer and Agent systems |
+| `dark-luxury` | editorial or keynote diagrams |
+| `nature` | lifecycle and organic topics |
+| `dark` | general presentation work |
+| `high-contrast` | accessibility and maximum legibility |
+| `academic` | grayscale-safe publication figures |
+| `academic-color` | color publication figures |
 
-| Theme | Best for |
-|-------|----------|
-| `tech-blue` | Software architecture, DevOps, general technical diagrams |
-| `academic` | Grayscale-safe papers and IEEE figures |
-| `academic-color` | Color paper figures and research presentations |
-| `nature` | Lifecycle, biology, environment, sustainability |
-| `dark` | Slides and presentation assets |
-| `high-contrast` | Accessibility-first and maximum legibility |
+See [Themes and Style Presets](./themes-presets.md) before selecting or customizing a theme.
 
-### Semantic Node Types
+## Semantic Node Types
 
-| Type | Shape |
-|------|-------|
-| `service` | Rounded rectangle |
-| `database` | Cylinder |
-| `decision` | Diamond |
-| `terminal` | Stadium |
-| `queue` | Parallelogram |
-| `user` | Ellipse |
-| `document` | Document |
-| `formula` | Rectangle tuned for math content |
+Core types include `service`, `process`, `database`, `decision`, `terminal`, `queue`, `user`, `document`, `cloud`, `formula`, and transparent `text`.
 
-### Typed Connectors
+Agentic diagrams add `llm`, `agent`, `vector_store`, `memory`, `tool`, and `gateway`. Provider-specific identity is expressed through validated icons or stencils, not invented shape names.
 
-| Type | Purpose |
-|------|---------|
-| `primary` | Main flow |
-| `data` | Data or async flow |
-| `optional` | Weak relation |
-| `dependency` | Dependency annotation |
-| `bidirectional` | Mutual relationship |
+## Modules And Layout
 
-### 8px Grid Defaults
+Use `modules` for regions, layers, networks, swimlanes, accounts, and security boundaries. Prefer `horizontal`, `vertical`, `hierarchical`, `tiered`, or `star` layout before adding explicit positions. Use explicit `bounds` when replicating a source or preserving text placement.
 
-- node spacing: `32px`
-- module padding: `24px`
-- canvas padding: `32px`
+The base grid uses 8-unit increments, with typical node gaps around 32 and module padding around 24. Treat those as defaults rather than reasons to force every diagram into one density.
 
-## Theme Switching
+## Typed Connectors
 
-Change the theme in the spec and re-render. Token-based styles will follow the new theme automatically.
+General flow types are `primary`, `data`, `optional`, `dependency`, and `bidirectional`. Agent and memory systems add `control`, `memory_read`, `memory_write`, `async`, and `feedback`.
 
-Explicit color overrides do **not** change when the theme changes.
+Every connector must bind to node ids. See [Connectors and Edge Quality](./connectors.md) for routing and validation rules.
 
-## Replication Color Modes
+## Text, Math, And Replication
 
-| Mode | Meaning |
-|------|---------|
-| `preserve-original` | Keep extracted source colors as explicit overrides |
-| `theme-first` | Normalize the redraw to the selected theme |
+- `text` nodes are transparent and content-sized.
+- `formula` nodes and labels use supported MathJax or AsciiMath delimiters.
+- replication uses `bounds`, `labelOffset`, alignment, and spacing to preserve visible text geometry.
+- explicit source colors remain explicit under later theme switches.
 
-## Text Fidelity in Replication
+## Task-Specific Guides
 
-When you are recreating a screenshot or reference figure, treat text as a design element:
+- [Architecture Diagrams](./architecture-diagrams.md)
+- [Agent and Memory Diagrams](./agent-diagrams.md)
+- [Icons and Stencil Search](./icons-stencils.md)
+- [Math Typesetting](./math-typesetting.md)
+- [Academic Overlay](./academic-overlay.md)
 
-- use `type: text` for standalone titles, captions, notes, and callouts;
-- use `type: formula` or official math delimiters for formula annotations;
-- use `bounds` when the original text box position matters;
-- use `labelOffset` so edge labels do not sit on the connector line;
-- use `align`, `verticalAlign`, and `spacing*` to preserve visible typography.
+## Custom Themes And Presets
 
-## Academic Notes
-
-For `academic-paper` output:
-
-- prefer `academic` unless the user explicitly wants color
-- include `title` and, when needed, a `legend`
-- avoid using color as the only semantic carrier
-
-## Custom Themes
-
-Custom themes are JSON files that extend the theme schema. At minimum, define:
-
-- `name`
-- `displayName`
-- `colors`
-- `spacing`
-- `typography`
-- `node`
-- `connector`
-- `module`
-- `canvas`
-
-See the reference docs under `skills/drawio/references/docs/design-system/`.
+Custom themes are schema-validated JSON token sets. User style presets should be copied from bundled presets before modification. Do not mutate bundled base presets or duplicate themes into the Academic Overlay.
 
 ## Related
 
-- [Specification Format](./specification.md)
+- [Specification](./specification.md)
 - [Creating Diagrams](./creating-diagrams.md)
 - [Replicating Diagrams](./scientific-workflows.md)
-- [Math Typesetting](./math-typesetting.md)

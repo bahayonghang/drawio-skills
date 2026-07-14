@@ -1,92 +1,100 @@
-# CLI 工具
+# CLI 参考
 
-CLI 用于把图表输入转换成 `.drawio`、SVG，或者把现有图导入成 YAML bundle。
+离线 CLI 将 YAML、Mermaid、CSV 或现有 Draw.io bundle 转换为原生 `.drawio`、独立 SVG、Desktop 导出或 canonical YAML。
 
 ## 用法
 
 ```bash
 node skills/drawio/scripts/cli.js <input> [output] [options]
+node skills/drawio/scripts/cli.js search <query> [--prefix <library>] [--limit <n>] [--json]
 ```
 
-## 输入类型
+## 输入
 
-| 输入 | 用法 |
-|------|------|
-| YAML | 默认输入格式 |
+| 输入 | 选项 |
+|---|---|
+| YAML | 默认 |
 | Mermaid | `--input-format mermaid` |
 | CSV | `--input-format csv` |
-| `.drawio` | `--input-format drawio --export-spec` |
-| stdin | 把输入路径写成 `-` |
+| `.drawio` | `--input-format drawio` |
+| stdin | 输入路径使用 `-` |
 
-## 关键参数
+## 渲染与导入选项
 
-| 参数 | 说明 |
-|------|------|
-| `--input-format <f>` | `yaml`、`mermaid`、`csv` 或 `drawio` |
-| `--theme <name>` | 覆盖主题：`tech-blue`、`academic`、`academic-color`、`nature`、`dark`、`high-contrast` |
-| `--page <selector>` | 导入 `.drawio` 时按索引或页面名选择页面 |
-| `--export-spec` | 导出规范 YAML，而不是直接渲染 XML/SVG |
-| `--write-sidecars` | 写出 `.spec.yaml` 和 `.arch.json`；如果提供 `--sidecar-dir`，则写入该目录 |
-| `--sidecar-dir <dir>` | 把 sidecars 写到单独工作目录，而不是最终输出目录 |
-| `--use-desktop` | 借助 draw.io Desktop 生成 PNG、PDF、JPG 或 embedded SVG |
-| `--validate` | 打印规格 warning 并执行 XML 校验 |
-| `--strict` | 把 warning 和严格复杂度错误都视为失败 |
+| 选项 | 用途 |
+|---|---|
+| `--theme <name>` | 覆盖 YAML theme |
+| `--page <selector>` | 按索引或名称选择导入的 Draw.io page |
+| `--export-spec` | 写出 canonical YAML 而不是渲染 |
+| `--validate` | 报告 spec 与 XML 校验结果 |
+| `--strict` | warning 和严格质量问题也会导致失败 |
 | `--strict-warnings` | `--strict` 的别名 |
+| `--allow-unknown-shapes` | 临时把 covered stencil 的未知名称降级为 warning |
+
+## 产物与 Desktop 选项
+
+| 选项 | 用途 |
+|---|---|
+| `--write-sidecars` | 生成 `.spec.yaml` 和 `.arch.json` |
+| `--sidecar-dir <dir>` | 将 sidecar 放入指定工作目录 |
+| `--use-desktop` | 使用 draw.io Desktop 生成 PNG/PDF/JPG 或 embedded SVG |
+| `--dpi <n>` | 栅格导出 DPI，默认 300 |
+
+`--sidecar-dir` 必须与 `--write-sidecars` 一起使用。除非用户明确要求 beside-output reproducible bundle，否则 sidecar 应位于最终交付目录之外。
 
 ## 输出格式
 
 | 输出 | 结果 |
-|------|------|
-| 不写输出路径 | XML 打到 stdout |
-| `.drawio` | draw.io XML 文件 |
-| `.svg` | 独立 SVG |
-| `.png` | Desktop 导出 |
-| `.pdf` | Desktop 导出 |
-| `.jpg` | Desktop 导出 |
+|---|---|
+| 不提供输出路径 | 在 stdout 输出 Draw.io XML |
+| `.drawio` | 可编辑 Draw.io XML |
+| `.svg` | 独立 SVG；配合 `--use-desktop` 时为 Desktop SVG |
+| `.png` | Desktop 栅格导出，默认 300 DPI |
+| `.pdf` | Desktop PDF 导出 |
+| `.jpg` | Desktop 栅格导出 |
 
-## 示例
-
-### 生成干净的 `.drawio` 最终产物和工作目录 sidecars
+## 搜索 Bundled Catalog
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
+node skills/drawio/scripts/cli.js search "s3, lambda" --prefix aws4 --limit 5
+node skills/drawio/scripts/cli.js search pod --prefix kubernetes --json
 ```
 
-### 生成严格校验 SVG
+搜索不需要网络或 MCP。应在 YAML 中使用返回的 alias。Covered stencil 中的未知名称会被拒绝并给出建议。
+
+## 常用命令
+
+生成可编辑最终产物，并把 sidecars 放入工作目录：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output --strict-warnings
+node skills/drawio/scripts/cli.js input.yaml final/diagram.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/diagram
 ```
 
-### 覆盖主题
+生成默认 300 DPI PNG：
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --theme high-contrast
+node skills/drawio/scripts/cli.js input.yaml final/diagram.png --validate --use-desktop
 ```
 
-### 导入现有 `.drawio`
+将现有 Draw.io page 导入为 canonical YAML：
 
 ```bash
-node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --page 0 --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
-### 转换 Mermaid
+使用严格校验转换 Mermaid：
 
 ```bash
-node skills/drawio/scripts/cli.js flow.mmd output.drawio --input-format mermaid --validate
+node skills/drawio/scripts/cli.js flow.mmd final/flow.drawio --input-format mermaid --validate --strict
 ```
 
-## 校验输出
+## 失败语义
 
-`--validate` 会输出两层结果：
+无效 YAML、异常 XML、covered library 中的未知 stencil、缺少 flag 值、不安全 icon 名称和请求导出失败都会产生明确错误。draw.io Desktop 不可用时，支持的图像导出会回退为独立 SVG 并报告；不能声称不存在的 PNG/PDF/JPG 已生成。
 
-1. 规格 warning
-2. XML 校验结果
+## 相关内容
 
-如果希望这些 warning 直接阻断产物，使用 `--strict` 或 `--strict-warnings`。
-
-## 相关
-
+- [图标与 Stencil 搜索](./icons-stencils.md)
 - [规格格式](./specification.md)
-- [导出与保存](./export.md)
+- [导出与产物](./export.md)
 - [SVG 转换器](/zh/api/svg-converter.md)
