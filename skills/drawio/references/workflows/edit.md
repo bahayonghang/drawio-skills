@@ -1,5 +1,9 @@
 # Workflow: /drawio edit
 
+## Provider Icon Changes
+
+When adding or replacing a provider/device icon, search before editing YAML: `node scripts/cli.js search <keyword> [--prefix <library>]`. Keep the returned skill syntax, rerun validation, and use `--allow-unknown-shapes` only to retain an intentional legacy raw stencil.
+
 Edit existing diagrams with natural-language modifications while preserving design-system consistency and explicit live-backend fallback rules.
 
 ## Trigger

@@ -1,0 +1,30 @@
+{
+  "id": "drawio-ai-kit-integration",
+  "name": "drawio-ai-kit-integration",
+  "title": "整合 drawio-ai-kit 防幻觉与质量校验特性到 drawio skill",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-14",
+  "completedAt": "2026-07-14",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-14-stencil-catalog-search",
+    "07-14-stencil-validate-hardening",
+    "07-14-search-first-workflow-docs"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

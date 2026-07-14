@@ -36,6 +36,8 @@ help:
     @echo "  just ci             - 运行 CI 检查（version-sync + version-check + lint + test + docs-build）"
     @echo ""
     @echo "📁 实用工具："
+    @echo "  just zip            - 将两个 skill 分别打包到项目根目录"
+    @echo "  just clean-zip      - 清理项目根目录下的 skill 压缩包"
     @echo "  just tree           - 显示项目目录结构"
     @echo "  just help           - 显示此帮助信息"
     @echo ""
@@ -75,6 +77,33 @@ start: install docs
 
 # 完整重建文档（清理 + 安装 + 构建）
 rebuild: clean install docs-build
+
+# 将两个 skill 分别打包到项目根目录
+[script('python')]
+zip:
+    from shutil import make_archive
+
+    for skill_name in ('drawio', 'drawio-academic-skills'):
+        archive_path = make_archive(
+            skill_name,
+            'zip',
+            root_dir='skills',
+            base_dir=skill_name,
+        )
+        print(f'Created {archive_path}')
+
+# 清理项目根目录下的 skill 压缩包
+[script('python')]
+clean-zip:
+    from pathlib import Path
+
+    for archive_name in ('drawio.zip', 'drawio-academic-skills.zip'):
+        archive_path = Path(archive_name)
+        if archive_path.exists():
+            archive_path.unlink()
+            print(f'Removed {archive_path}')
+        else:
+            print(f'Not found: {archive_path}')
 
 # 显示项目目录结构
 tree:

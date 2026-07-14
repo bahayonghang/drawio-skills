@@ -32,6 +32,8 @@ import {
 } from './spec-to-drawio.js'
 import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
+import { drawioToSpec } from './drawio-to-spec.js'
+import { createDrawioFileContent } from '../runtime/artifacts.js'
 
 // ============================================================================
 // Semantic Type Detection Tests
@@ -1430,8 +1432,8 @@ describe('Phase 2.4: resolveIconShape', () => {
     assert.strictEqual(resolveIconShape('azure.vm'), 'mxgraph.azure.vm')
   })
 
-  it('should resolve k8s.pod to mxgraph.kubernetes.pod', () => {
-    assert.strictEqual(resolveIconShape('k8s.pod'), 'mxgraph.kubernetes.pod')
+  it('should resolve k8s.pod to the kubernetes icon2 parameter family', () => {
+    assert.strictEqual(resolveIconShape('k8s.pod'), 'mxgraph.kubernetes.icon2:prIcon=pod')
   })
 
   it('should pass through mxgraph. prefix directly', () => {
@@ -1522,6 +1524,20 @@ describe('Phase 2.4: generateNodeStyle with icon', () => {
   it('node with icon gcp.functions should have shape=mxgraph.gcp2.functions in style', () => {
     const style = generateNodeStyle({ id: 'n1', label: 'Functions', icon: 'gcp.functions' }, theme)
     assert.ok(style.includes('shape=mxgraph.gcp2.functions'), 'should contain shape=mxgraph.gcp2.functions')
+  })
+
+  it('node with icon k8s.pod should emit the kubernetes icon2 compound style', () => {
+    const style = generateNodeStyle({ id: 'pod', label: 'Pod', icon: 'k8s.pod' }, theme)
+    assert.match(style, /shape=mxgraph\.kubernetes\.icon2;prIcon=pod;aspect=fixed/)
+  })
+
+  it('imports kubernetes icon2 compound styles back to k8s.<prIcon> syntax', () => {
+    const xml = specToDrawioXml(
+      { meta: { title: 'K8s' }, nodes: [{ id: 'pod1', label: 'Pod', icon: 'k8s.pod' }], edges: [] },
+      { silent: true }
+    )
+    const roundTripped = drawioToSpec(createDrawioFileContent(xml))
+    assert.equal(roundTripped.nodes.find((node) => node.label === 'Pod')?.icon, 'k8s.pod')
   })
 
   it('node with icon brand.openai should emit a Lobe Icons image style', () => {
@@ -2233,7 +2249,7 @@ describe('theme style fidelity', () => {
       techBlue
     )
     assert.ok(
-      style.includes('shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2'),
+      style.includes('shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ec2;aspect=fixed'),
       'aws4 resource-only icons need shape=resourceIcon;resIcon=<name>'
     )
   })
@@ -2250,8 +2266,8 @@ describe('theme style fidelity', () => {
     }
   })
 
-  it('warns on icons that resolve to unknown shape names', () => {
-    const warnings = validateShapeReferences({
+  it('reports errors with search suggestions for unknown covered shape names', () => {
+    const result = validateShapeReferences({
       nodes: [
         { id: 'bad', label: 'Broken', icon: 'cisco.wireless.access_point' },
         { id: 'good', label: 'DB', icon: 'aws.rds' },
@@ -2262,11 +2278,29 @@ describe('theme style fidelity', () => {
         { id: 'badLucide', label: 'Missing Lucide', icon: 'lucide.not-a-real-icon' }
       ]
     })
-    assert.equal(warnings.length, 4, 'every unknown shape should warn')
-    assert.match(warnings[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
-    assert.match(warnings[1], /unknown shape "lobe\.definitely-not-real"/)
-    assert.match(warnings[2], /unknown shape "brand\.not-real"/)
-    assert.match(warnings[3], /unknown shape "lucide\.not-a-real-icon"/)
+    assert.equal(result.errors.length, 1, 'covered stencil names should be errors')
+    assert.equal(result.warnings.length, 3, 'uncovered image names should remain warnings')
+    assert.match(result.errors[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
+    assert.match(result.errors[0], /Did you mean:/)
+    assert.match(result.warnings[0], /unknown shape "lobe\.definitely-not-real"/)
+    assert.match(result.warnings[1], /unknown shape "brand\.not-real"/)
+    assert.match(result.warnings[2], /unknown shape "lucide\.not-a-real-icon"/)
+  })
+
+  it('rejects unknown covered stencil names by default and allows an explicit downgrade', () => {
+    const spec = {
+      nodes: [
+        { id: 'badAws', label: 'Bad AWS', icon: 'aws.s3_bucket_magic' },
+        { id: 'badK8s', label: 'Bad Kubernetes', icon: 'k8s.podd' }
+      ]
+    }
+    assert.throws(
+      () => specToDrawioXml(spec, { silent: true }),
+      (error) => error.validationErrors?.length === 2 && /k8s\.pod/.test(error.message)
+    )
+    const result = specToDrawioXml(spec, { silent: true, returnWarnings: true, allowUnknownShapes: true })
+    assert.equal(typeof result.xml, 'string')
+    assert.equal(result.warnings.filter((warning) => warning.level === 'warning').length, 2)
   })
 })
 

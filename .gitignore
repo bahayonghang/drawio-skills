@@ -4,6 +4,8 @@ node_modules/
 # Build output
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+/drawio.zip
+/drawio-academic-skills.zip
 
 # Local AI agent configs
 .agent/
