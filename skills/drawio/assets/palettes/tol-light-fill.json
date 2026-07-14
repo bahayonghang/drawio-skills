@@ -1,0 +1,22 @@
+{
+  "name": "tol-light-fill",
+  "displayName": "Paul Tol Light Fill",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": false,
+  "maxCategories": 9,
+  "source": "https://personal.sron.nl/~pault/",
+  "venues": ["elsevier", "generic-journal", "labeled-cells"],
+  "notes": "Tol light colors are used as labeled-cell fills with explicit darker boundaries.",
+  "entries": [
+    { "name": "blue", "base": "#4477AA", "fill": "#77AADD", "stroke": "#4477AA", "text": "#000000" },
+    { "name": "cyan", "base": "#0072B2", "fill": "#99DDFF", "stroke": "#0072B2", "text": "#000000" },
+    { "name": "green", "base": "#117733", "fill": "#44BB99", "stroke": "#117733", "text": "#000000" },
+    { "name": "yellow-green", "base": "#999933", "fill": "#BBCC33", "stroke": "#999933", "text": "#000000" },
+    { "name": "olive", "base": "#997700", "fill": "#AAAA00", "stroke": "#997700", "text": "#000000" },
+    { "name": "sand", "base": "#DDAA33", "fill": "#EEDD88", "stroke": "#DDAA33", "text": "#000000" },
+    { "name": "coral", "base": "#CC6677", "fill": "#EE8866", "stroke": "#CC6677", "text": "#000000" },
+    { "name": "pink", "base": "#AA3377", "fill": "#FFAABB", "stroke": "#AA3377", "text": "#000000" },
+    { "name": "gray", "base": "#555555", "fill": "#DDDDDD", "stroke": "#555555", "text": "#000000" }
+  ]
+}

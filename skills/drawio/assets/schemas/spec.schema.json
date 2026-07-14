@@ -13,6 +13,11 @@
           "pattern": "^[a-z][a-z0-9-]*$",
           "description": "Theme name (e.g. tech-blue, academic, nature, dark, high-contrast)"
         },
+        "palette": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Palette name layered over the selected theme colors"
+        },
         "layout": {
           "type": "string",
           "enum": ["horizontal", "vertical", "hierarchical", "star", "mesh"],

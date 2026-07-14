@@ -1,6 +1,6 @@
 {
   "skill_name": "drawio-academic-skills",
-  "version": "2.4.0",
+  "version": "2.7.0",
   "_runner": "No automated runner. Each eval is a prompt plus an assertion checklist; verify manually or with an agent, assertion by assertion.",
   "evals": [
     {
@@ -170,6 +170,46 @@
         "Still delivers final .drawio and .svg, with sidecars in a work directory",
         "Provides a diagrams.net URL or exact Desktop command fallback",
         "Does not substitute Playwright screenshots for unavailable Desktop exports"
+      ]
+    },
+    {
+      "id": "academic-ieee-print-palette",
+      "prompt": "Create an IEEE camera-ready workflow figure for single-column print. I have not selected a palette.",
+      "expected_output": "An academic preflight that recommends an IEEE print-safe palette, records it independently from the theme, and passes the print gate.",
+      "files": [],
+      "assertions": [
+        "Determines the IEEE print venue before asking one palette question",
+        "Offers ieee-bw first with (Recommended), followed by relevant alternatives such as tol-high-contrast and ieee-color",
+        "States colorblind and grayscale safety in the option descriptions",
+        "Sets meta.palette to the selected palette and meta.print.target to ieee-single",
+        "Uses the academic theme for typography and layout independently from palette colors",
+        "Runs strict validation and reports the selected palette plus its safety flags"
+      ]
+    },
+    {
+      "id": "academic-explicit-palette",
+      "prompt": "Create a Nature-style online journal figure using the journal-npg palette. This is a color PDF, not a grayscale print deliverable.",
+      "expected_output": "An academic workflow that applies the explicitly named palette without asking again and reports its accessibility metadata.",
+      "files": [],
+      "assertions": [
+        "Maps journal-npg directly to meta.palette and does not ask a palette-selection question",
+        "Keeps academic theme typography, layout, shapes, and line styles independent from the palette",
+        "Surfaces PALETTE_CVD_NOTICE as non-blocking info because journal-npg is not colorblind-safe",
+        "Does not invent a grayscale print requirement for the explicitly online color deliverable",
+        "Names journal-npg and its colorblind and grayscale safety flags in the completion report"
+      ]
+    },
+    {
+      "id": "academic-print-gate-downgrade",
+      "prompt": "Create an IEEE single-column camera-ready workflow figure using the morandi palette.",
+      "expected_output": "An academic print workflow that honors the explicit palette request, surfaces the grayscale print risk, and recommends a print-safe downgrade.",
+      "files": [],
+      "assertions": [
+        "Maps morandi directly to meta.palette and does not ask a palette-selection question",
+        "Sets meta.print.target to ieee-single for the camera-ready deliverable",
+        "Surfaces PALETTE_PRINT_GATE because morandi is not grayscale-safe for the print target",
+        "Recommends downgrading to ieee-bw or tol-high-contrast, or keeps the strict validation failure explicit",
+        "Reports morandi's colorblind and grayscale safety flags in the completion report"
       ]
     }
   ]

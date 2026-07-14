@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Draw.io palette",
+  "type": "object",
+  "required": [
+    "name",
+    "displayName",
+    "category",
+    "colorblindSafe",
+    "grayscaleSafe",
+    "maxCategories",
+    "source",
+    "venues",
+    "notes",
+    "entries"
+  ],
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "displayName": { "type": "string", "minLength": 1 },
+    "category": { "type": "string", "enum": ["academic", "engineering", "general"] },
+    "colorblindSafe": { "type": "boolean" },
+    "grayscaleSafe": { "type": "boolean" },
+    "maxCategories": { "type": "integer", "minimum": 1, "maximum": 16 },
+    "source": { "type": "string", "minLength": 1 },
+    "venues": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "required": ["name", "base"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "base": { "$ref": "#/$defs/color" },
+          "fill": { "$ref": "#/$defs/color" },
+          "stroke": { "$ref": "#/$defs/color" },
+          "text": { "$ref": "#/$defs/color" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "roles": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_-]*$" },
+      "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 15 }
+    },
+    "connector": {
+      "type": "object",
+      "properties": { "default": { "$ref": "#/$defs/color" } },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+  },
+  "additionalProperties": false
+}

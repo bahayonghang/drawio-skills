@@ -1,6 +1,6 @@
 ---
 name: drawio
-version: "2.6.0"
+version: "2.7.0"
 description: "Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow: architecture, network topologies, flowcharts, UML/ER, org charts, Mermaid/CSV conversion, existing .drawio bundles, style presets, themes, and non-publication formula diagrams. For publication figures (paper, thesis, IEEE, camera-ready) use drawio-academic-skills instead."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
@@ -67,6 +67,7 @@ Choose the route first, then load only the references needed for that route.
 | `architecture`     | System/software architecture, microservice or cloud-service maps with role-based color coding, plus AI agent / RAG / memory diagrams（架构图、微服务、云架构、agent 架构图、RAG 图、记忆架构、multi-agent、工具调用循环；非拓扑、非论文） | `references/workflows/create.md`, `references/docs/architecture-diagrams.md`, `references/docs/agent-diagrams.md`, `references/docs/design-system/README.md`                                                          |
 | `edit`             | Modify an existing sidecar bundle or imported `.drawio`                                                        | `references/workflows/edit.md`, `references/docs/migration-readiness.md`                                                                                                         |
 | `replicate`        | Redraw an uploaded image, screenshot, SVG, or reference diagram                                                | `references/workflows/replicate.md`, `references/docs/design-system/README.md`, `references/docs/design-system/specification.md`, `references/docs/design-system/color-guide.md` |
+| `palette`          | Request mentions palette, colorblind safety, grayscale/black-and-white printing, or multi-category distinction | `references/docs/design-system/color-guide.md`, `references/docs/design-system/themes.md`, `references/docs/design-system/specification.md`, `references/examples/palettes/README.md` |
 | `math-formula`     | Labels contain formulas, equations, LaTeX, AsciiMath, MathJax, or Chinese formula keywords                     | `references/docs/math-typesetting.md`, `references/docs/design-system/formulas.md`                                                                                               |
 | `stencil-heavy`    | Cloud, provider icon, network gear, or exact draw.io shape work                                                | `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md`, `references/official/style-reference.md`                                                     |
 | `network-topology` | Network topology, VLAN / subnet / gateway, campus / data-center / cloud network maps（拓扑、子网、网关、VLAN） | `references/docs/ieee-network-diagrams.md`, `references/docs/stencil-library-guide.md`, `references/official/xml-reference.md`                                                   |
@@ -95,6 +96,7 @@ Academic triggers such as `paper`, `thesis`, `IEEE`, `journal`, `manuscript`, or
 13. Keep text and labels transparent and content-sized. Plain text nodes always render `fillColor=none;strokeColor=none;labelBackgroundColor=none` (the converter ignores white fills on `type: text` and warns) and text boxes are sized just wider than their content. Vertical CJK labels are one character per line (`"可\n视\n化"`), never `horizontal=0` or wrap-faked. See `references/docs/design-system/tokens.md` § Text & Label Styling.
 14. Keep connectors native, straight, and boldly headed. Every connector is a bound edge (`source`/`target` node ids; never standalone arrow shapes or floating edges), no-waypoint orthogonal edges must be collinear (same absolute exit/entry coordinate — auto-routing handles this; `--validate` flags avoidable bends), and connector arrows default to a bold **open** head (`endArrow=open;endSize=12`, unfilled "V"). Filled `block`/`diamond` heads are used only on explicit request or for UML/ER semantics. See `references/docs/edge-quality-rules.md`.
 15. For cloud, Kubernetes, Cisco, or raw `mxgraph.*` icons, search the bundled catalog before writing YAML: `node scripts/cli.js search <keyword>`. Unknown names in covered libraries are rejected with suggestions; use `--allow-unknown-shapes` only as a temporary compatibility escape hatch.
+16. Ask about a palette only when the request mentions palette/color choice, colorblind safety, grayscale or black-and-white printing, or multi-category distinction and does not name a palette. Otherwise do not ask and omit `meta.palette`. Replication is the exception: preserve the source palette and skip palette selection unless the user explicitly asks to normalize or replace the colors.
 
 ## Create Flow
 
@@ -162,6 +164,16 @@ To learn a reusable preset from an existing diagram ("learn my style from `<path
 
 Never mutate bundled presets. Copy a bundled preset to the user preset directory before making it the default or editing it.
 
+## Palette Selection
+
+Theme and palette are independent: theme owns typography, spacing, shapes, line styles, modules, and canvas; `meta.palette` optionally replaces semantic/category colors. Omitting `meta.palette` preserves the selected theme byte-for-byte.
+
+Use `AskUserQuestion` as a single-select only when the base trigger in rule 16 applies. Offer 3-4 relevant palettes, put the best fit first with `(Recommended)`, use each palette's `displayName` as the label, and summarize colorblind/grayscale safety plus intended use in the description. If the user already specified a palette, apply it directly and do not ask.
+
+For `replicate`, preserve source colors by default and do not ask for a palette. Ask only when the user explicitly requests normalization or a replacement palette; record that choice in `meta.replication.colorMode` and set `meta.palette` only for the normalized result.
+
+Bundled palette metadata and previews live under `assets/palettes/` and `references/examples/palettes/`. User palettes live under `~/.drawio-skill/palettes/`; an explicit invalid palette is an error, never a silent fallback.
+
 ## Validation Policy
 
 Validate before claiming completion.
@@ -181,6 +193,7 @@ End with a concise report containing:
 - intermediate work directory, when sidecars or diagnostics were generated
 - validation and export commands run
 - exported artifact used for visual verification, or why no visual check could be performed
+- selected palette and its colorblind/grayscale safety flags, when `meta.palette` is present
 - unavailable optional exports or live-refinement providers
 - any remaining manual visual checks
 
@@ -198,4 +211,6 @@ End with a concise report containing:
 - `references/official/style-reference.md`: upstream style-property mirror
 - `references/upstream/pure-drawio-skill.md`: vendored upstream pure-XML skill, for the direct-XML exception path only
 - `references/docs/style-extraction.md`: learn a reusable style preset from an existing diagram
+- `references/docs/design-system/color-guide.md`: theme/palette decision rules and palette-selection interaction
+- `references/examples/palettes/README.md`: bundled palette catalog, safety metadata, sources, and previews
 - `references/examples/`: reusable YAML examples

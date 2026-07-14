@@ -1,6 +1,6 @@
 {
   "skill_name": "drawio",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "evals": [
     {
       "id": "base-general-architecture",
@@ -173,6 +173,34 @@
         "Escapes YAML/XML-sensitive math text correctly",
         "Keeps formula content readable in SVG",
         "Does not require academic-paper profile unless explicitly requested"
+      ]
+    },
+    {
+      "id": "base-palette-selection",
+      "prompt": "Create a multi-category service map that remains readable for colorblind reviewers. I have not chosen a palette.",
+      "expected_output": "A base-skill palette selection that asks once before recording a metadata-backed palette in the YAML spec.",
+      "files": [],
+      "assertions": [
+        "Uses AskUserQuestion as a single-select because palette and colorblind intent are explicit but no palette was named",
+        "Offers 3-4 relevant palettes with the best fit first and marked (Recommended)",
+        "Uses palette display names and describes colorblind and grayscale safety for each option",
+        "Records the selected palette in meta.palette without changing theme-owned typography, layout, shapes, or line styles",
+        "Reports the selected palette and its safety flags after validation"
+      ]
+    },
+    {
+      "id": "base-replicate-palette-preservation",
+      "prompt": "Replicate the uploaded architecture diagram and preserve its existing blue, teal, and gray colors exactly. Do not normalize the style.",
+      "expected_output": "A base replication workflow that preserves source colors and skips palette selection.",
+      "files": [
+        "skills/drawio/evals/fixtures/replicate-brand-architecture.svg"
+      ],
+      "assertions": [
+        "Preserves the source palette and does not ask a palette-selection question",
+        "Does not set meta.palette because normalization or recoloring was not requested",
+        "May record extracted source colors in meta.replication.palette without treating them as a reusable rendering palette",
+        "Keeps the final diagram native and editable rather than embedding the uploaded image as a full page",
+        "Verifies the exported SVG or Desktop-exported artifact against the source colors"
       ]
     }
   ]

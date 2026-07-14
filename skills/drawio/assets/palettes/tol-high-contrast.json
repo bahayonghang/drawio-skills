@@ -1,0 +1,18 @@
+{
+  "name": "tol-high-contrast",
+  "displayName": "Paul Tol High Contrast",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": true,
+  "maxCategories": 5,
+  "source": "https://personal.sron.nl/~pault/",
+  "venues": ["ieee-camera-ready", "cn-thesis", "generic-journal"],
+  "notes": "High-contrast qualitative colors plus black and white for print-oriented figures.",
+  "entries": [
+    { "name": "blue", "base": "#004488" },
+    { "name": "yellow", "base": "#DDAA33" },
+    { "name": "red", "base": "#BB5566" },
+    { "name": "black", "base": "#000000", "fill": "#000000", "stroke": "#000000", "text": "#FFFFFF" },
+    { "name": "white", "base": "#FFFFFF", "fill": "#FFFFFF", "stroke": "#000000", "text": "#000000" }
+  ]
+}

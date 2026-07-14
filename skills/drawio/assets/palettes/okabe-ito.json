@@ -1,0 +1,21 @@
+{
+  "name": "okabe-ito",
+  "displayName": "Okabe-Ito (CUD)",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": false,
+  "maxCategories": 8,
+  "source": "https://jfly.uni-koeln.de/color/",
+  "venues": ["elsevier", "nature", "science", "generic-journal"],
+  "notes": "Color Universal Design palette cited by Nature; yellow requires a strong boundary on white.",
+  "entries": [
+    { "name": "orange", "base": "#E69F00" },
+    { "name": "sky-blue", "base": "#56B4E9" },
+    { "name": "bluish-green", "base": "#009E73" },
+    { "name": "yellow", "base": "#F0E442" },
+    { "name": "blue", "base": "#0072B2" },
+    { "name": "vermillion", "base": "#D55E00" },
+    { "name": "reddish-purple", "base": "#CC79A7" },
+    { "name": "black", "base": "#000000" }
+  ]
+}

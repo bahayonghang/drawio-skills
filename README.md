@@ -3,7 +3,7 @@
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
-> **Important**: Draw.io Skill 2.6.0 is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
+> **Important**: Draw.io Skill 2.7.0 is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
 
 [English](./README.md) | [中文文档](./README_CN.md) | [Documentation](https://bahayonghang.github.io/drawio-skills/)
 
@@ -23,6 +23,7 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Optional live refinement**: configure next-ai MCP only for base-skill browser refinement; academic overlay stays offline.
 - **3 core routes**: `create`, `edit`, and `replicate`.
 - **7 built-in themes**: `tech-blue`, `academic`, `academic-color`, `nature`, `dark`, `arch-dark`, `high-contrast`. `arch-dark` carries the architecture design language adapted from architecture-diagram-generator (MIT, Cocoon AI).
+- **15 built-in palettes**: academic, engineering, and general color groups compose independently with themes and carry colorblind, grayscale, category-capacity, and source metadata.
 - **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
 - **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.

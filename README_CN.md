@@ -24,6 +24,7 @@ Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、
 - **可选浏览器精修**：只在 Base Skill 需要浏览器精修时配置 next-ai MCP；Academic Overlay 保持离线。
 - **3 条核心路线**：`create`、`edit`、`replicate`。
 - **7 个内置主题**：`tech-blue`、`academic`、`academic-color`、`nature`、`dark`、`arch-dark`、`high-contrast`。其中 `arch-dark` 为架构图设计语言主题，改编自 architecture-diagram-generator（MIT，Cocoon AI）。
+- **15 组内置配色**：学术、工程与通用配色可独立叠加到主题，并携带色盲安全、灰度安全、类别容量与来源元数据。
 - **Academic Overlay 策略**：venue/audience preflight、caption/legend 校验、公式保真、A4/Word/LaTeX 预期和 figure typing。
 - **学术图类型分流**：出版请求先归类成 `architecture`、`roadmap` 或 `workflow`，再决定布局与导出。
 - **云图标与模板支持**：AWS、GCP、Azure、Kubernetes 以及网络 / provider icon 工作流由 Base references 提供。

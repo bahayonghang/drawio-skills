@@ -17,10 +17,18 @@ Before rendering, decide:
 
 1. Venue or audience.
 2. `meta.figureType`: `architecture`, `roadmap`, or `workflow`.
-3. Color policy: monochrome, grayscale-safe accent, or color PDF.
+3. Palette selection and safety policy: venue recommendation, colorblind safety, and grayscale/print safety.
 4. Caption and legend requirements.
 5. Formula/text placement fidelity.
 6. Requested exports and whether draw.io Desktop is required.
+
+## Palette and Print Policy
+
+Use the single venue mapping in `academic-figure-playbook.md § Venue Palette Mapping`; do not maintain a second recommendation table here. Theme and palette remain independent: theme owns academic typography/layout treatment, while `meta.palette` supplies category colors.
+
+When `meta.print.target` is `cn-thesis`, `ieee-single`, or `ieee-double`, a selected palette with `grayscaleSafe: false` emits `PALETTE_PRINT_GATE`. Normal validation reports a warning; strict validation escalates it to an error and recommends `ieee-bw` or `tol-high-contrast`. A non-colorblind-safe academic palette emits `PALETTE_CVD_NOTICE` as info so an intentional aesthetic choice remains possible.
+
+Completion reports name the selected palette, its colorblind/grayscale safety flags, and any print-gate downgrade.
 
 ## Source Understanding
 

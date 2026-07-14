@@ -1,0 +1,20 @@
+{
+  "name": "journal-jama",
+  "displayName": "JAMA Journal Style",
+  "category": "academic",
+  "colorblindSafe": false,
+  "grayscaleSafe": false,
+  "maxCategories": 7,
+  "source": "https://rdrr.io/cran/ggsci/src/R/palettes.R",
+  "venues": ["jama-style", "china-academic", "muted-journal"],
+  "notes": "Low-saturation ggsci JAMA palette with comparatively strong grayscale behavior among journal-style options.",
+  "entries": [
+    { "name": "charcoal", "base": "#374E55" },
+    { "name": "orange", "base": "#DF8F44" },
+    { "name": "cyan", "base": "#00A1D5" },
+    { "name": "red", "base": "#B24745" },
+    { "name": "green", "base": "#79AF97" },
+    { "name": "purple", "base": "#6A6599" },
+    { "name": "gray", "base": "#80796B" }
+  ]
+}

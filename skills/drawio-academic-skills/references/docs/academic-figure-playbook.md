@@ -115,6 +115,22 @@ Use this pattern when a paper screenshot or existing figure must become editable
 - use consistent line weights, arrowheads, and corner radii
 - keep text, callouts, captions, and legends transparent (`fillColor=none`, `labelBackgroundColor=none`) and sized just wider than their content, not stretched to a container — see `../drawio/references/docs/design-system/tokens.md` § Text & Label Styling
 
+## Venue Palette Mapping
+
+After determining the venue, choose `meta.palette` independently from the theme. If the user did not specify a palette, ask once with `AskUserQuestion`: put the venue recommendation first with `(Recommended)`, offer 3-4 options, use each palette's display name as the label, and state colorblind/grayscale safety in the description. If the user named an unambiguous palette or style, apply it directly and do not ask.
+
+| Venue or scenario | Recommended | Alternatives |
+| --- | --- | --- |
+| IEEE print / camera-ready | `ieee-bw` | `tol-high-contrast`, `ieee-color` |
+| IEEE online / conference | `ieee-color` | `matlab-lines`, `okabe-ito` |
+| Elsevier / general journal | `okabe-ito` | `tol-bright`, `tol-muted`, `seaborn-colorblind` |
+| Nature / Science family | `okabe-ito` | `tol-muted`, `journal-npg` (aesthetic only; not CVD-safe) |
+| Chinese thesis (`cn-thesis`) | `ieee-bw` | `tol-high-contrast`, `journal-jama` |
+| Engineering architecture / C4 | `c4-blue` | `cloud-aws`, `drawio-classic` |
+| Cloud architecture | `cloud-aws` | `c4-blue` |
+
+For replication, preserve the source palette and skip this question unless the user explicitly asks to normalize or recolor the figure.
+
 ## Academic Delivery Matrix
 
 Default output for paper-mode requests:
@@ -311,6 +327,8 @@ Do not consider the figure complete until all of these are true:
 - `meta.figureType` is set correctly
 - the diagram reads clearly at normal A4 page zoom
 - colors are not the only carrier of meaning
+- the selected palette matches the venue mapping and its colorblind/grayscale flags are reported
+- grayscale-unsafe print selections are replaced with `ieee-bw` or `tol-high-contrast`, or the strict validation failure remains explicit
 - labels are concise and readable
 - connector routing is clean enough that the reading order is obvious
 - the offline bundle and SVG are aligned

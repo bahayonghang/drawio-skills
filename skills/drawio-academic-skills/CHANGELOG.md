@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2.7.0 (2026-07-14)
+
+### Venue-aware palettes
+
+- Added venue-first palette recommendations backed by the sibling base catalog,
+  including a single palette question after venue selection and direct mapping
+  when the user already named a palette.
+- Added colorblind/grayscale safety reporting and strict print-gate guidance for
+  IEEE, thesis, and other publication targets; replication preserves source
+  colors unless normalization or recoloring is requested.
+
 ## 2.6.0 (2026-07-14)
 
 - Sync with base: flow connectors default to open heads (`endArrow=open;endSize=12`,

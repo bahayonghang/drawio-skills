@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2.7.0 (2026-07-14)
+
+### Palette system
+
+- Added 15 metadata-backed academic, engineering, and general palettes that
+  compose independently with themes through `meta.palette` and `$paletteN`
+  color tokens.
+- Added user palette loading, deterministic swatch previews, structured
+  colorblind/grayscale/print diagnostics, and intent-gated palette selection
+  with source-color preservation for replication.
+
 ## 2.6.0 (2026-07-14)
 
 ### Open arrowheads by default
