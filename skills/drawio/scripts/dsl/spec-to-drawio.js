@@ -6,6 +6,8 @@
 import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
 import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
+import { resolveIconShape } from './icon-mappings.js'
+import { searchShapeCatalog } from './catalog-search.js'
 import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -889,30 +891,6 @@ export function calculateLayout(spec, theme) {
 // Icon Support
 // ============================================================================
 
-const ICON_PREFIXES = {
-  'aws.': 'mxgraph.aws4.',
-  'gcp.': 'mxgraph.gcp2.',
-  'azure.': 'mxgraph.azure.',
-  'k8s.': 'mxgraph.kubernetes.',
-  'cisco.': 'mxgraph.cisco.',
-  'cisco19.': 'mxgraph.cisco19.',
-  'mxgraph.': 'mxgraph.' // pass-through for direct mxgraph references
-}
-
-const ICON_ALIASES = {
-  'aws.alb': 'aws.application_load_balancer',
-  'aws.app_lb': 'aws.application_load_balancer',
-  'aws.internet-gateway': 'aws.internet_gateway',
-  'aws.api-gateway': 'aws.api_gateway',
-  'aws.igw': 'aws.internet_gateway',
-  // aws4 has no plain ec2_instance stencil; mxgraph.aws4.ec2 is a resource icon
-  'aws.ec2_instance': 'aws.ec2',
-  'aws.rds': 'aws.rds_instance',
-  'cisco.firewall': 'mxgraph.cisco.security.firewall',
-  'cisco.ap': 'mxgraph.cisco.misc.access_point',
-  'cisco.access-point': 'mxgraph.cisco.misc.access_point'
-}
-
 const NETWORK_VENDOR_DEVICE_ICONS = {
   aws: {
     internet: 'aws.internet_gateway',
@@ -1018,25 +996,7 @@ function applyThemeRounding(shapeStyle, themeRounded) {
   return [...rounding, ...tokens].join(';')
 }
 
-/**
- * Resolve icon name to draw.io shape identifier
- */
-export function resolveIconShape(icon) {
-  if (!icon) return null
-  if (resolveImageIconStyle(icon)) return null
-  const normalizedIcon = ICON_ALIASES[icon] || icon
-  for (const [prefix, mxPrefix] of Object.entries(ICON_PREFIXES)) {
-    if (normalizedIcon.startsWith(prefix)) {
-      return mxPrefix + normalizedIcon.slice(prefix.length)
-    }
-  }
-  // Security: validate unprefixed icons to prevent style injection
-  if (!/^[a-zA-Z][a-zA-Z0-9._-]*$/.test(normalizedIcon)) {
-    console.warn(`[resolveIconShape] Invalid icon name '${normalizedIcon}'. Ignoring.`)
-    return null
-  }
-  return normalizedIcon
-}
+export { resolveIconShape }
 
 export function deriveNodeIcon(node) {
   if (node.icon) return node.icon
@@ -1135,10 +1095,13 @@ function generateNodeStyleWithSpec(node, theme, spec) {
     parts.push(`align=${align}`)
   } else if (iconShape) {
     // aws4 service icons that only exist as resource icons need the compound style
+    const iconKind = resolveShapeNameKind(iconShape)
     effectiveShapeStyle =
-      resolveShapeNameKind(iconShape) === 'aws4ResourceIcon'
-        ? `shape=mxgraph.aws4.resourceIcon;resIcon=${iconShape}`
-        : `shape=${iconShape}`
+      iconKind === 'aws4ResourceIcon'
+        ? `shape=mxgraph.aws4.resourceIcon;resIcon=${iconShape};aspect=fixed`
+        : iconKind === 'k8sParamIcon'
+          ? `shape=${iconShape.replace(/:prIcon=/, ';prIcon=')};aspect=fixed`
+          : `shape=${iconShape}`
     parts.push(effectiveShapeStyle)
     parts.push('html=1')
     parts.push('whiteSpace=wrap')
@@ -2168,9 +2131,10 @@ export function validateConnectionPointPolicy(spec) {
  * Warn when a node resolves to a shape name absent from the draw.io shape
  * catalog: such names render as empty boxes in draw.io Desktop.
  * @param {Object} spec
- * @returns {string[]} warnings
+ * @returns {{ errors: string[], warnings: string[] }}
  */
 export function validateShapeReferences(spec) {
+  const errors = []
   const warnings = []
   for (const node of spec.nodes || []) {
     const iconName = node.icon || deriveNodeIcon(node)
@@ -2178,13 +2142,21 @@ export function validateShapeReferences(spec) {
     const iconShape = resolveIconShape(iconName)
     if (!iconShape) continue
     if (resolveShapeNameKind(iconShape) === 'unknown') {
-      warnings.push(
+      const library = /^mxgraph\.([^.]+)\./.exec(iconShape)?.[1] || null
+      const paramValue = /:(?:prIcon|resIcon|grIcon)=([^;]+)$/.exec(iconShape)?.[1]
+      const stem = paramValue || (library ? iconShape.replace(/^mxgraph\.[^.]+\./, '') : iconName)
+      const query = stem.split(/[._-]/).filter(Boolean).join(' ')
+      const suggestions = searchShapeCatalog(query, { limit: 3, prefix: library })
+        .map((result) => result.spec || result.name)
+        .join(', ')
+      const message =
         `Node "${node.id}" resolves to unknown shape "${iconShape}" (not in the draw.io shape catalog); ` +
-          'it would render as an empty box in draw.io Desktop.'
-      )
+          `it would render as an empty box in draw.io Desktop.${suggestions ? ` Did you mean: ${suggestions}?` : ''}`
+      if (iconShape.startsWith('mxgraph.')) errors.push(message)
+      else warnings.push(message)
     }
   }
-  return warnings
+  return { errors, warnings }
 }
 
 // Print-width targets for the paper-readability gate: `effective pt` =
@@ -2929,7 +2901,7 @@ export function specToDrawioXml(spec, options = {}) {
   const labelFitWarnings = validateLabelFit(spec)
   const labelCollisionWarnings = validateLabelCollisions(spec, layout)
   const academicWarnings = validateAcademicProfile(spec)
-  const shapeWarnings = validateShapeReferences(spec)
+  const shapeValidation = validateShapeReferences(spec)
   const schemaDriftWarnings = validateSchemaDrift(spec)
   const allValidationWarnings = [
     ...colorWarnings,
@@ -2940,9 +2912,21 @@ export function specToDrawioXml(spec, options = {}) {
     ...labelFitWarnings,
     ...labelCollisionWarnings,
     ...academicWarnings,
-    ...shapeWarnings,
+    ...shapeValidation.warnings,
     ...schemaDriftWarnings
   ]
+
+  if (shapeValidation.errors.length > 0 && !options.allowUnknownShapes) {
+    const error = new Error(
+      `Spec validation failed: ${shapeValidation.errors.length} unknown stencil reference(s):\n` +
+        shapeValidation.errors.map((message) => `  • ${message}`).join('\n') +
+        '\nRun `node scripts/cli.js search <keyword>` to find real stencil names, or pass --allow-unknown-shapes to downgrade.'
+    )
+    error.validationErrors = shapeValidation.errors
+    throw error
+  }
+
+  if (shapeValidation.errors.length > 0) allValidationWarnings.push(...shapeValidation.errors)
 
   if (allValidationWarnings.length > 0) {
     if (!options.silent) {
