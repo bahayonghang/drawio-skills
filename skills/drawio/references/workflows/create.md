@@ -1,5 +1,14 @@
 # Workflow: /drawio create
 
+## Provider Icon Preflight
+
+Before writing a cloud, Kubernetes, Cisco, or raw `mxgraph.*` icon, query the offline catalog from the base skill directory. Record the returned YAML syntax in the spec, then run normal validation; unknown covered names are errors, not guesses to leave for Desktop rendering.
+
+```bash
+node scripts/cli.js search pod --prefix kubernetes
+node scripts/cli.js search "s3, lambda"
+```
+
 Create diagrams from text, Mermaid, CSV, or explicit YAML spec using the Draw.io design system.
 
 ## Trigger

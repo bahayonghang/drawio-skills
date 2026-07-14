@@ -1,5 +1,9 @@
 # Workflow: /drawio replicate
 
+## Provider Icon Evidence
+
+Do not infer a raw stencil name from a screenshot. For each cloud, Kubernetes, or network icon that must remain vendor-specific, run `node scripts/cli.js search <keyword>` and use the returned YAML syntax. If the catalog cannot confirm it, retain the semantic role rather than inventing an icon.
+
 Replicate existing images or diagrams using structured extraction with design-system styling, native editable draw.io geometry, and explicit live-backend boundaries.
 
 ## Trigger

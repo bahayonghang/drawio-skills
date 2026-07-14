@@ -283,6 +283,12 @@ Key properties:
 
 ## Best Practices
 
+### Cloud and Network Audit
+
+- Treat vendor icon color as identity: do not recolor a provider icon to make it fit a theme. Use a neutral semantic shape when the color would conflict with the diagram's color policy.
+- Nest provider boundaries in their real order: cloud/account/region, then VPC, availability zone, and subnet. Do not use an icon as a substitute for a missing ownership or network boundary.
+- Search first for every provider or device icon. A familiar-looking raw name is not evidence that draw.io ships it.
+
 ### Consistency
 
 - Use same cloud provider icons throughout diagram

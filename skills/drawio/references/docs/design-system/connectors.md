@@ -1,5 +1,11 @@
 # Connectors
 
+## Infrastructure Routing Rules
+
+- Use solid bound edges for the main flow; use dashed edges only for auxiliary, asynchronous, or non-primary relationships, and explain the distinction in a legend when both appear.
+- Connect a cluster or container at its boundary when representing collective traffic. Do not draw one long external edge to every replica inside it.
+- Keep routes short and local. When no collinear route exists, use an explicit waypoint around the obstacle rather than a long decorative detour.
+
 The Design System defines a semantic connector system with clear visual hierarchy for different relationship types.
 
 ---

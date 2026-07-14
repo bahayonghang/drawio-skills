@@ -75,6 +75,10 @@ The same concept never carries two competing colors in one theme.
 
 ## Color Override Rules
 
+### Restraint for Infrastructure Diagrams
+
+Keep background fills to a small, intentional set. Use semantic colors for roles and neutral containers for hierarchy; provider icon colors remain their own identity and should not become a second competing role palette. A legend is required whenever color or line style carries meaning that cannot be read from labels alone.
+
 ### Prefer Theme Tokens (Strongly Recommended)
 
 Tokens are automatically compatible with theme switching; hardcoded hex values break when themes change:
