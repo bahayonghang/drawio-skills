@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 11
+- **Total Sessions**: 12
 - **Last Active**: 2026-07-14
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~507 | Active |
+| `journal-1.md` | ~540 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 12 | 2026-07-14 | 重构双语文档并发布 2.6.0 | `3de2852` | `dev` |
 | 11 | 2026-07-14 | ai-kit 集成 review 与 catalog-search 修复任务 | `374d270`, `8b8435b`, `60e039c`, `32f6583`, `e344320`, `130782a` | `dev` |
 | 10 | 2026-07-11 | 合并并加固 PR #7 图标解析 | `9d9e794`, `8caab09`, `47df195` | `dev` |
 | 9 | 2026-07-11 | 完成 skill description 精简 | `74987fa`, `e28506a` | `dev` |
