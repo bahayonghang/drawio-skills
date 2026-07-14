@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.6.0 (2026-07-14)
+
 ### Open arrowheads by default
 
 - Flow connectors (`primary`, `data`, `control`, `memory_read`, `memory_write`,

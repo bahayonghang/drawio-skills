@@ -1,6 +1,6 @@
 # Specification Format
 
-The YAML specification is the canonical representation for Draw.io Skill 2.2.0.
+The YAML specification is the canonical representation for Draw.io Skill 2.6.0.
 
 Mermaid, CSV, and imported `.drawio` files are convenience inputs. They should all normalize into this structure before rendering.
 

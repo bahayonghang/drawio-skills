@@ -4,7 +4,7 @@ Academic overlay for publication-ready draw.io figures: papers, theses, IEEE dia
 
 This folder is intentionally thin. It depends on the sibling Draw.io Base Skill at `../drawio` instead of copying base runtime files.
 
-> Versioning note: this overlay is intentionally re-versioned to `0.1.0` as a reborn thin overlay. It is **not** a regression of the previously bundled academic skill — all shared diagram-production capability now lives in the sibling Draw.io Base Skill (repo version `2.2.0`), and this overlay carries only publication policy.
+> Versioning note: this thin overlay follows the repository release version `2.6.0`. Shared diagram-production capability remains in the sibling Draw.io Base Skill, while this overlay carries publication policy and academic examples.
 
 ## Required sibling base
 

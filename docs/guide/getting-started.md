@@ -1,66 +1,35 @@
 # Getting Started
 
-Draw.io Skill is a YAML-first, offline-first workflow for producing professional draw.io diagrams from natural language, YAML, Mermaid, CSV, or imported `.drawio` files.
+Draw.io Skill converts natural language, YAML, Mermaid, CSV, or imported `.drawio` files into a canonical YAML model and native editable Draw.io output.
 
-## Pick a Skill Variant
+## 1. Pick A Skill
 
-- Use `skills/drawio` for general diagrams, network topology, UML/ER/sequence/state diagrams, Mermaid/CSV conversion, import/export, style presets, and optional live refinement.
-- Use `skills/drawio-academic-skills` for paper, thesis, IEEE, journal, manuscript, A4/Word/LaTeX, and publication-ready figure requests.
+- Use `drawio` for general, engineering, architecture, network, Agent, UML/ER, flowchart, import, and conversion tasks.
+- Use `drawio-academic-skills` for any paper, thesis, journal, IEEE/ACM, manuscript, camera-ready, Word, or LaTeX figure.
 
-The academic overlay requires sibling `../drawio`. It does not copy base CLI, schemas, themes, examples, or workflow references.
+The Academic Overlay requires sibling `../drawio` and uses its CLI. It does not copy the runtime or use MCP.
 
-## What You Need
-
-- One supported client: Claude, Gemini, or Codex
-- [Node.js](https://nodejs.org/) for `npx` and the local CLI
-- Optional: draw.io Desktop for PNG, PDF, JPG, or embedded SVG export
-- Optional: next-ai MCP only when you want base-skill real-time browser refinement
-
-## Install the Skills
-
-Recommended:
+## 2. Install
 
 ```bash
 npx skills add bahayonghang/drawio-skills
 ```
 
-Then restart your client so it reloads the skills.
+Restart the client after installation. Manual installs must keep `drawio` and `drawio-academic-skills` in the same skills directory.
 
-Manual academic installs must copy both `drawio` and `drawio-academic-skills` side by side.
+Requirements:
 
-## Choose the Runtime Path
+- Node.js 20 or newer for the YAML/CLI workflow
+- optional draw.io Desktop for the default 300 DPI PNG and requested PDF/JPG/embedded SVG
+- optional live MCP provider only for explicitly requested base-skill browser refinement
 
-### Offline Authoring Path
-
-Use this for normal create, edit, validate, replicate, import, and export work.
-
-- Generate `.drawio`
-- Keep `.spec.yaml` and `.arch.json` in a project-local work directory such as `.drawio-tmp/<name>/`
-- Re-run the CLI after edits
-
-### Desktop-Enhanced Export
-
-Use this when draw.io Desktop is installed and you need:
-
-- PNG, PDF, or JPG export
-- embedded `.drawio.svg`
-- a quick local preview in the desktop app
-
-### Live Refinement Backend
-
-Use this only for base-skill browser refinement when explicitly requested.
-
-Academic overlay does not use MCP/live backend.
-
-## Your First Base Diagram
-
-### Route from natural language
+## 3. Create A First Diagram
 
 ```text
-/drawio create a horizontal tech-blue login flow with 6 nodes
+/drawio create a horizontal login flow with a user, gateway, auth service, and database
 ```
 
-### Route from YAML
+Or save a YAML spec:
 
 ```yaml
 meta:
@@ -68,9 +37,9 @@ meta:
   layout: horizontal
 
 nodes:
-  - id: start
-    label: Start
-    type: terminal
+  - id: user
+    label: User
+    type: user
   - id: auth
     label: Auth Service
     type: service
@@ -79,7 +48,7 @@ nodes:
     type: database
 
 edges:
-  - from: start
+  - from: user
     to: auth
     type: primary
   - from: auth
@@ -87,62 +56,52 @@ edges:
     type: data
 ```
 
-Render it:
+```bash
+node skills/drawio/scripts/cli.js input.yaml final/login.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/login
+```
+
+## 4. Search Exact Stencils
+
+Search before writing cloud, Kubernetes, Cisco, or raw `mxgraph.*` names:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
+node skills/drawio/scripts/cli.js search lambda --prefix aws4
+node skills/drawio/scripts/cli.js search pod --prefix kubernetes
 ```
 
-## Your First Academic Figure
+Unknown names in covered libraries fail with suggestions. Fix the YAML rather than guessing a replacement.
+
+## 5. Deliver Final Artifacts
+
+The default final set is editable `.drawio` plus a 300 DPI PNG from draw.io Desktop. Keep sidecars in the work directory.
+
+```bash
+node skills/drawio/scripts/cli.js input.yaml final/login.png --validate --use-desktop
+```
+
+When Desktop is unavailable, image export falls back to standalone SVG and reports the fallback. Generate SVG, PDF, JPG, or embedded `.drawio.svg` explicitly when the user or venue requests them.
+
+## 6. Create A Publication Figure
 
 ```text
-/drawio-academic-skills create a publication-ready system architecture figure for an IEEE paper. Use grayscale-safe styling and deliver final .drawio + .svg with sidecars in a work directory.
+/drawio-academic-skills create a grayscale-safe IEEE architecture figure, confirm the diagram plan, and export a submission PDF
 ```
 
-The overlay should preflight venue, figure type (`architecture`, `roadmap`, or `workflow`), color policy, caption/legend, formula fidelity, and export expectations, then execute through sibling `../drawio/scripts/cli.js`.
+The overlay preflights venue, figure type, color, print target, caption/legend, formula fidelity, node budget, and export expectations before using the sibling base CLI.
 
-## First Edit
+## 7. Edit Or Import
 
-If the skill created the diagram, edit the sidecar in the work directory:
-
-1. Update `.drawio-tmp/output/output.spec.yaml`
-2. Re-render `output.drawio`
-3. Keep `.drawio-tmp/output/output.arch.json` in sync with `--write-sidecars --sidecar-dir .drawio-tmp/output`
-
-If you only have a `.drawio` file, import it first:
+Edit the canonical `.spec.yaml` when it exists, then rerender. If only a `.drawio` file exists, import it first:
 
 ```bash
 node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
-## First Export
+## Next Steps
 
-Generate a standalone SVG:
-
-```bash
-node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
-```
-
-Use draw.io Desktop when you need raster or PDF export:
-
-```bash
-node skills/drawio/scripts/cli.js input.yaml output.pdf --validate --use-desktop
-```
-
-If Desktop is unavailable, use the editable `.drawio` plus SVG and optionally generate a diagrams.net URL:
-
-```bash
-node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
-```
-
-## Where to Go Next
-
-- [Installation](./installation.md)
 - [Workflows](./workflows.md)
-- [Creating Diagrams](./creating-diagrams.md)
-- [Replicating Diagrams](./scientific-workflows.md)
-- [Editing Diagrams](./editing-diagrams.md)
+- [Icons and Stencil Search](./icons-stencils.md)
 - [Design System](./design-system.md)
-- [Specification Format](./specification.md)
-- [CLI Tool](./cli.md)
-- [Export & Save](./export.md)
+- [Academic Overlay](./academic-overlay.md)
+- [CLI Reference](./cli.md)
+- [Export and Artifacts](./export.md)

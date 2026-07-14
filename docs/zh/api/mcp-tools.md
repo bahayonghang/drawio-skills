@@ -1,6 +1,6 @@
 # 可选 MCP 工具
 
-这些 MCP 工具用于 Base Skill 浏览器内实时精修。它们**不是** Draw.io Skill 2.2.0 的默认运行时。
+这些 MCP 工具用于 Base Skill 浏览器内实时精修。它们**不是** Draw.io Skill 2.6.0 的默认运行时。
 
 只有在以下条件成立时才使用：
 

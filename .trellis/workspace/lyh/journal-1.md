@@ -505,3 +505,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 12: 重构双语文档并发布 2.6.0
+
+**Date**: 2026-07-14
+**Task**: 重构双语文档并发布 2.6.0
+**Branch**: `dev`
+
+### Summary
+
+按当前 Base Skill 与 Academic Overlay 契约重构 VitePress 双语导航和专题文档，同步 2.6.0 版本面，并通过 just ci。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3de2852` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

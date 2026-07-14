@@ -1,6 +1,6 @@
 # 规格格式
 
-YAML 规格是 Draw.io Skill 2.2.0 的规范表示方式。
+YAML 规格是 Draw.io Skill 2.6.0 的规范表示方式。
 
 Mermaid、CSV 和导入的 `.drawio` 都只是输入适配层，进入渲染前都应该先归一化成这个结构。
 

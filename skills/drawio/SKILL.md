@@ -1,6 +1,6 @@
 ---
 name: drawio
-version: "2.5.0"
+version: "2.6.0"
 description: "Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow: architecture, network topologies, flowcharts, UML/ER, org charts, Mermaid/CSV conversion, existing .drawio bundles, style presets, themes, and non-publication formula diagrams. For publication figures (paper, thesis, IEEE, camera-ready) use drawio-academic-skills instead."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
