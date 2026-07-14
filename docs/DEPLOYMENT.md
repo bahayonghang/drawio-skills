@@ -11,10 +11,7 @@ This guide explains how to set up and deploy the documentation to GitHub Pages.
 3. Under **Source**, select **GitHub Actions**
 4. Save the settings
 
-That's it! The documentation will automatically deploy when:
-
-- A new release is published
-- Changes are pushed to the `main` branch (affecting docs)
+That's it! The documentation will automatically build and deploy when a new release is published.
 
 ## Configuration
 
@@ -54,39 +51,12 @@ If you want to use a custom domain:
 
 **File:** `.github/workflows/deploy-docs.yml`
 
-Automatically deploys when you create a new release:
+Automatically builds and deploys when you publish a new release:
 
 ```bash
 # Create a new release on GitHub
 # The workflow will automatically trigger
 ```
-
-### 2. Deploy on Push to Main
-
-**File:** `.github/workflows/deploy-docs-push.yml`
-
-Automatically deploys when documentation changes are pushed to `main`:
-
-```bash
-git add docs/
-git commit -m "Update documentation"
-git push origin main
-```
-
-### 3. PR Preview Build
-
-**File:** `.github/workflows/build-docs-pr.yml`
-
-Validates documentation builds on pull requests and adds a comment with build statistics.
-
-## Manual Deployment
-
-You can manually trigger deployment:
-
-1. Go to **Actions** tab
-2. Select **Deploy Documentation to GitHub Pages**
-3. Click **Run workflow**
-4. Select branch and click **Run workflow**
 
 ## Troubleshooting
 
@@ -110,7 +80,6 @@ You can manually trigger deployment:
 
 1. Go to **Settings** → **Actions** → **General**
 2. Under **Workflow permissions**, select **Read and write permissions**
-3. Check **Allow GitHub Actions to create and approve pull requests**
 
 ### Documentation Not Updating
 
@@ -179,11 +148,7 @@ npm run docs:build
 npm run docs:preview
 ```
 
-### 2. Use PR Preview
-
-Create a pull request to see build status before merging to main.
-
-### 3. Version Documentation
+### 2. Version Documentation
 
 Consider versioning your documentation for different releases:
 
@@ -204,7 +169,7 @@ export default defineConfig({
 })
 ```
 
-### 4. Monitor Build Times
+### 3. Monitor Build Times
 
 Keep an eye on build times. If they get too long:
 

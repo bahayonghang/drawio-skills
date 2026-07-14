@@ -10,25 +10,12 @@ This directory contains GitHub Actions workflows for the Draw.io Skills project.
 
 **Trigger:** When a GitHub Release is published
 
-**Purpose:** Automatically builds and deploys documentation to GitHub Pages when a new release is created.
+**Purpose:** Automatically builds and deploys documentation to GitHub Pages when a new release is published.
 
 **Usage:**
-1. Create a new release on GitHub
+1. Publish a new release on GitHub
 2. The workflow will automatically trigger
 3. Documentation will be built and deployed to GitHub Pages
-
-### 2. Build Documentation (PR Preview)
-
-**File:** `build-docs-pr.yml`
-
-**Trigger:** When a pull request is created or updated with documentation changes
-
-**Purpose:** Validates that documentation builds successfully and provides build statistics in PR comments.
-
-**Features:**
-- Builds documentation to verify no errors
-- Reports build size and file count
-- Adds a comment to the PR with build statistics
 
 ## GitHub Pages Setup
 
@@ -57,7 +44,6 @@ Ensure the workflow has the necessary permissions:
 
 - Go to **Settings** → **Actions** → **General**
 - Under **Workflow permissions**, select **Read and write permissions**
-- Check **Allow GitHub Actions to create and approve pull requests**
 
 ## Deployment Trigger
 
