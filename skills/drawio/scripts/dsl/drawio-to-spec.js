@@ -179,6 +179,8 @@ function inferTypeFromStyle(style, label) {
 function inferIconFromStyle(style) {
   const resIcon = style.get('resIcon')
   const shape = style.get('shape')
+  const prIcon = style.get('prIcon')
+  if (shape === 'mxgraph.kubernetes.icon2' && prIcon) return `k8s.${prIcon}`
   const raw = resIcon || shape
   if (!raw || typeof raw !== 'string') return null
 
