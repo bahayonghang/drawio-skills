@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/07-14-palette-system/design.md", "reason": "共享技术设计 v2：entries 契约、派生、诊断、gate、loader、交互契约"}
+{"file": ".trellis/tasks/07-14-palette-system/research/palette-standards-research.md", "reason": "HEX 与安全标志事实来源"}
+{"file": ".trellis/spec/drawio-skill/semantic-types.md", "reason": "语义类型触点与 theme-fallback 陷阱"}
+{"file": ".trellis/spec/drawio-skill/index.md", "reason": "skills/drawio 工程契约索引"}
