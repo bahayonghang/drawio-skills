@@ -1,0 +1,30 @@
+{
+  "name": "cloud-aws",
+  "displayName": "AWS Architecture Categories",
+  "category": "engineering",
+  "colorblindSafe": false,
+  "grayscaleSafe": false,
+  "maxCategories": 8,
+  "source": "https://github.com/awslabs/aws-icons-for-plantuml/blob/main/source/AWSCommon.puml",
+  "venues": ["aws", "cloud-architecture", "engineering-review"],
+  "notes": "AWS category colors matching the aws4 icon family. Azure uses #0078D4; GCP variants use #4285F4, #EA4335, #FBBC04, and #34A853.",
+  "entries": [
+    { "name": "compute", "base": "#ED7100" },
+    { "name": "storage", "base": "#7AA116" },
+    { "name": "database", "base": "#C925D1" },
+    { "name": "networking", "base": "#8C4FFF" },
+    { "name": "security", "base": "#DD344C" },
+    { "name": "management", "base": "#E7157B" },
+    { "name": "ai-ml", "base": "#01A88D" },
+    { "name": "general", "base": "#232F3E" }
+  ],
+  "roles": {
+    "service": 0,
+    "database": 2,
+    "queue": 5,
+    "gateway": 3,
+    "tool": 5,
+    "llm": 6
+  },
+  "connector": { "default": "#232F3E" }
+}

@@ -1,6 +1,6 @@
 ---
 name: drawio-academic-skills
-version: "2.6.0"
+version: "2.7.0"
 description: "Publication-figure overlay for draw.io. Use instead of drawio whenever the diagram is for a paper, thesis, dissertation, journal, conference, IEEE/ACM submission, manuscript, camera-ready, Word/LaTeX figure, or other publication. Applies venue, figure-type, color, caption/legend, formula, and paper-readability gates for architecture, workflow, roadmap, network-topology, and replicated paper figures."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
@@ -45,6 +45,7 @@ Resolve shared resources relative to this overlay directory:
 | diagrams.net URL fallback | `../drawio/scripts/runtime/diagrams-net-url.js`                   |
 | YAML schema               | `../drawio/assets/schemas/spec.schema.json`                       |
 | Themes                    | `../drawio/assets/themes/`                                        |
+| Palettes                  | `../drawio/assets/palettes/`                                      |
 | Shared examples           | `../drawio/references/examples/`                                  |
 | Shared references         | `../drawio/references/docs/` and `../drawio/references/official/` |
 | Workflow guides           | `../drawio/references/workflows/`                                 |
@@ -74,6 +75,14 @@ Before generating or editing, determine and state: venue/audience; figure type (
 Also estimate the **node budget**. The single authoritative budget guidance (targets, warning thresholds, node-efficient patterns, split strategies) lives in `references/docs/academic-figure-playbook.md § Node Budget Management`. If the estimate exceeds the playbook's recommended target, confirm a split/simplify strategy with the user before generating, and use compact patterns from `references/templates/`.
 
 Full decision detail: `references/docs/publication-overlay.md § Required Academic Decisions`.
+
+### Palette Preflight
+
+After the venue is known, if the user did not specify a palette, use `AskUserQuestion` as a single-select. Order the venue recommendation first with `(Recommended)`, offer 3-4 choices, use the palette `displayName` as the label, and state colorblind/grayscale safety plus the venue rationale in each description. The venue map is authoritative in `references/docs/academic-figure-playbook.md § Venue Palette Mapping`.
+
+If the user already specified a palette or an unambiguous style such as "Nature accessible colors", map it directly and do not ask. For academic replication, preserve the source palette and skip selection unless the user explicitly requests normalization or recoloring.
+
+Record the chosen name in `meta.palette`. The completion report must name the palette and report its colorblind/grayscale safety flags, including any print-gate downgrade.
 
 ## Source Understanding
 
@@ -110,6 +119,7 @@ meta:
   profile: academic-paper
   figureType: architecture # architecture | roadmap | workflow
   theme: academic # or academic-color when color is acceptable
+  palette: okabe-ito # chosen after venue preflight; use ieee-bw for IEEE print
   title: Caption-ready title
   description: One sentence explaining the figure intent
   legend: Required when symbols, colors, line styles, or icons need explanation
@@ -193,6 +203,7 @@ Do not claim completion until:
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
 - legends use compact form (single multi-line text node, not many separate nodes)
 - colors are not the only carrier of meaning
+- `meta.palette` matches the venue decision; `PALETTE_PRINT_GATE` is clear, with `ieee-bw` or `tol-high-contrast` offered when strict print safety fails
 - visual self-check used the exported PNG (or fallback SVG) or Desktop-exported artifact before any live/browser preview, checking overlap, clipped text, connector-label clearance, arrows crossing text/nodes, missing modules, and mismatch from the confirmed plan/source
 - if a visible defect was found, the YAML spec was corrected and rerendered once before final reporting
 - requested Desktop exports were attempted or clearly reported as unavailable
@@ -205,5 +216,6 @@ End with a concise report:
 - deliverables written, with paths
 - intermediate work directory, when sidecars or diagnostics were generated
 - sibling base CLI commands run for validation/export
+- selected palette, its colorblind/grayscale safety flags, and any print-gate downgrade
 - unavailable Desktop exports and fallback provided
 - remaining visual or venue-specific manual checks, if any

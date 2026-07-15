@@ -1,0 +1,21 @@
+{
+  "name": "drawio-classic",
+  "displayName": "draw.io Classic",
+  "category": "general",
+  "colorblindSafe": false,
+  "grayscaleSafe": false,
+  "maxCategories": 8,
+  "source": "https://www.drawio.com/docs/reference/diagram-generation/style-reference/",
+  "venues": ["general", "whiteboard", "flowchart"],
+  "notes": "The standard draw.io light-fill and dark-stroke pairs; category separation depends on labels and boundaries.",
+  "entries": [
+    { "name": "blue", "base": "#6C8EBF", "fill": "#DAE8FC", "stroke": "#6C8EBF", "text": "#000000" },
+    { "name": "green", "base": "#82B366", "fill": "#D5E8D4", "stroke": "#82B366", "text": "#000000" },
+    { "name": "yellow", "base": "#D6B656", "fill": "#FFF2CC", "stroke": "#D6B656", "text": "#000000" },
+    { "name": "orange", "base": "#D79B00", "fill": "#FFE6CC", "stroke": "#D79B00", "text": "#000000" },
+    { "name": "red", "base": "#B85450", "fill": "#F8CECC", "stroke": "#B85450", "text": "#000000" },
+    { "name": "purple", "base": "#9673A6", "fill": "#E1D5E7", "stroke": "#9673A6", "text": "#000000" },
+    { "name": "pink", "base": "#996185", "fill": "#E6D0DE", "stroke": "#996185", "text": "#000000" },
+    { "name": "gray", "base": "#666666", "fill": "#F5F5F5", "stroke": "#666666", "text": "#000000" }
+  ]
+}

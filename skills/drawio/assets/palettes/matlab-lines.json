@@ -1,0 +1,20 @@
+{
+  "name": "matlab-lines",
+  "displayName": "MATLAB Lines",
+  "category": "academic",
+  "colorblindSafe": false,
+  "grayscaleSafe": false,
+  "maxCategories": 7,
+  "source": "https://www.mathworks.com/matlabcentral/answers/140453-cycling-through-both-linestyle-and-linecolor",
+  "venues": ["ieee-online", "engineering-paper", "matlab"],
+  "notes": "MATLAB R2014b+ default color order; familiar in engineering papers but not strictly CVD-safe.",
+  "entries": [
+    { "name": "blue", "base": "#0072BD" },
+    { "name": "orange", "base": "#D95319" },
+    { "name": "yellow", "base": "#EDB120" },
+    { "name": "purple", "base": "#7E2F8E" },
+    { "name": "green", "base": "#77AC30" },
+    { "name": "cyan", "base": "#4DBEEE" },
+    { "name": "dark-red", "base": "#A2142F" }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "morandi",
+  "displayName": "Academic Morandi",
+  "category": "academic",
+  "colorblindSafe": false,
+  "grayscaleSafe": false,
+  "maxCategories": 8,
+  "source": "https://skewcy.com/2024/08/17/morandi.html",
+  "venues": ["china-academic", "presentation", "muted-journal"],
+  "notes": "Low-saturation aesthetic palette with a forced #555555 boundary; do not use where CVD or grayscale separation is required.",
+  "entries": [
+    { "name": "sage", "base": "#8C9E88", "fill": "#8C9E88", "stroke": "#555555", "text": "#000000" },
+    { "name": "taupe", "base": "#C7B299", "fill": "#C7B299", "stroke": "#555555", "text": "#000000" },
+    { "name": "rose", "base": "#A27E7E", "fill": "#A27E7E", "stroke": "#555555", "text": "#000000" },
+    { "name": "blue-gray", "base": "#7A8B99", "fill": "#7A8B99", "stroke": "#555555", "text": "#000000" },
+    { "name": "dusty-pink", "base": "#C9A9A6", "fill": "#C9A9A6", "stroke": "#555555", "text": "#000000" },
+    { "name": "slate", "base": "#8696A7", "fill": "#8696A7", "stroke": "#555555", "text": "#000000" },
+    { "name": "sand", "base": "#D8CAAF", "fill": "#D8CAAF", "stroke": "#555555", "text": "#000000" },
+    { "name": "mist", "base": "#9CA8B8", "fill": "#9CA8B8", "stroke": "#555555", "text": "#000000" }
+  ]
+}

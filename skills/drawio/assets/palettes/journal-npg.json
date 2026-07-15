@@ -1,0 +1,23 @@
+{
+  "name": "journal-npg",
+  "displayName": "NPG Journal Style",
+  "category": "academic",
+  "colorblindSafe": false,
+  "grayscaleSafe": false,
+  "maxCategories": 10,
+  "source": "https://rdrr.io/cran/ggsci/src/R/palettes.R",
+  "venues": ["nature-style", "china-academic", "presentation"],
+  "notes": "ggsci NPG aesthetic palette; this is a style emulation and is not the Nature accessibility palette.",
+  "entries": [
+    { "name": "red", "base": "#E64B35" },
+    { "name": "cyan", "base": "#4DBBD5" },
+    { "name": "teal", "base": "#00A087" },
+    { "name": "navy", "base": "#3C5488" },
+    { "name": "salmon", "base": "#F39B7F" },
+    { "name": "slate", "base": "#8491B4" },
+    { "name": "mint", "base": "#91D1C2" },
+    { "name": "bright-red", "base": "#DC0000" },
+    { "name": "brown", "base": "#7E6148" },
+    { "name": "sand", "base": "#B09C85" }
+  ]
+}

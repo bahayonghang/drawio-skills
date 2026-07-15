@@ -8,6 +8,8 @@ import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 import { resolveIconShape } from './icon-mappings.js'
 import { searchShapeCatalog } from './catalog-search.js'
+import { applyPalette, loadPalette, paletteTokenIndex, resolvePaletteToken } from './palette.js'
+import { validatePaletteUsage } from './palette-validate.js'
 import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
@@ -918,6 +920,11 @@ const NETWORK_VENDOR_DEVICE_ICONS = {
 function resolveThemeColor(value, theme, fallback) {
   if (!value) return fallback
   if (typeof value === 'string' && value.startsWith('$')) {
+    // $paletteN tokens beyond the selected palette warn in color validation
+    // and render with the theme primary fallback.
+    const paletteFallback = theme.palette ? theme.colors?.primary || fallback : fallback
+    const paletteColor = resolvePaletteToken(value, theme.palette, paletteFallback)
+    if (paletteColor != null) return paletteColor
     const tokenName = value.slice(1)
     return theme.colors?.[tokenName] || fallback
   }
@@ -1568,11 +1575,17 @@ function collectAcademicColorOverrideWarnings(spec, theme) {
  * Warns on invalid values; does not throw by default.
  * @param {Object} spec - Parsed YAML spec
  * @param {Object} theme - Loaded theme object
+ * @param {Object|null} palette - Materialized palette or null
  * @returns {Array<string>} Array of validation warning messages
  */
-export function validateColorScheme(spec, theme) {
+export function validateColorScheme(spec, theme, palette = null) {
   const warnings = []
   const validTokens = new Set(Object.keys(theme.colors || {}).map((k) => `$${k}`))
+  palette?.entries?.forEach((entry, index) => {
+    const prefix = `$palette${index + 1}`
+    validTokens.add(prefix)
+    for (const variant of ['fill', 'stroke', 'text']) validTokens.add(`${prefix}-${variant}`)
+  })
 
   const checkColor = (value, context) => {
     if (!value) return
@@ -1619,6 +1632,32 @@ export function validateColorScheme(spec, theme) {
   })
 
   return warnings
+}
+
+function collectPaletteTokenIndexes(spec) {
+  const indexes = new Set()
+  const add = (value) => {
+    const index = paletteTokenIndex(value)
+    if (index != null) indexes.add(index)
+  }
+
+  spec.nodes?.forEach((node) => {
+    add(node.style?.fillColor)
+    add(node.style?.strokeColor)
+    add(node.style?.fontColor)
+  })
+  spec.edges?.forEach((edge) => {
+    add(edge.style?.strokeColor)
+    add(edge.style?.fontColor)
+  })
+  spec.modules?.forEach((module) => {
+    add(module.color)
+    add(module.style?.fillColor)
+    add(module.style?.strokeColor)
+    add(module.style?.fontColor)
+  })
+  add(spec.meta?.replication?.background)
+  return [...indexes]
 }
 
 /**
@@ -2226,6 +2265,7 @@ const KNOWN_META_KEYS = new Set([
   'title',
   'description',
   'theme',
+  'palette',
   'layout',
   'routing',
   'profile',
@@ -2882,18 +2922,33 @@ export function specToDrawioXml(spec, options = {}) {
 
   // Load theme
   const themeName = spec.meta?.theme || 'tech-blue'
-  const theme = options.theme || loadTheme(themeName)
+  const baseTheme = options.theme || loadTheme(themeName)
+  const loadedPalette = loadPalette(spec.meta?.palette, {
+    theme: baseTheme,
+    userDir: options.paletteDir
+  })
 
   // Materialize font sizes on an internal clone (author YAML stays untouched)
   // and shrink classes whose explicit-bounds boxes cannot hold the ladder, so
   // layout sizes boxes with the final per-class font.
-  const { planned, autoNodes } = planFontSizes(spec, theme)
+  const { planned, autoNodes } = planFontSizes(spec, baseTheme)
   spec = planned
   shrinkFontsToBounds(spec, autoNodes)
+  // Content-neutral semantic types never join palette mapping: plain text
+  // boxes and formulas always inherit theme styling and must not consume or
+  // recolor palette entries.
+  const paletteNeutralTypes = new Set(['text', 'formula'])
+  const paletteApplication = applyPalette(baseTheme, loadedPalette.palette, {
+    semanticTypes: spec.nodes
+      .map((node) => detectSemanticType(node.label, node.type, node.network))
+      .filter((type) => !paletteNeutralTypes.has(type)),
+    tokenIndexes: collectPaletteTokenIndexes(spec)
+  })
+  const theme = paletteApplication.theme
   const layout = calculateLayout(spec, theme)
 
   // Run validation passes
-  const colorWarnings = validateColorScheme(spec, theme)
+  const colorWarnings = validateColorScheme(spec, theme, loadedPalette.palette)
   const layoutWarnings = validateLayoutConsistency(spec)
   const connectionPointWarnings = validateConnectionPointPolicy(spec)
   const edgeWarnings = validateEdgeQuality(spec, layout)
@@ -2903,7 +2958,7 @@ export function specToDrawioXml(spec, options = {}) {
   const academicWarnings = validateAcademicProfile(spec)
   const shapeValidation = validateShapeReferences(spec)
   const schemaDriftWarnings = validateSchemaDrift(spec)
-  const allValidationWarnings = [
+  const legacyDiagnostics = [
     ...colorWarnings,
     ...layoutWarnings,
     ...connectionPointWarnings,
@@ -2914,7 +2969,7 @@ export function specToDrawioXml(spec, options = {}) {
     ...academicWarnings,
     ...shapeValidation.warnings,
     ...schemaDriftWarnings
-  ]
+  ].map((message) => ({ level: 'warning', code: 'LEGACY', message }))
 
   if (shapeValidation.errors.length > 0 && !options.allowUnknownShapes) {
     const error = new Error(
@@ -2926,23 +2981,42 @@ export function specToDrawioXml(spec, options = {}) {
     throw error
   }
 
-  if (shapeValidation.errors.length > 0) allValidationWarnings.push(...shapeValidation.errors)
+  if (shapeValidation.errors.length > 0) {
+    legacyDiagnostics.push(
+      ...shapeValidation.errors.map((message) => ({ level: 'warning', code: 'LEGACY', message }))
+    )
+  }
 
-  if (allValidationWarnings.length > 0) {
+  const paletteDiagnostics = [
+    ...loadedPalette.diagnostics,
+    ...paletteApplication.diagnostics,
+    ...validatePaletteUsage(loadedPalette.palette, paletteApplication.usage, {
+      canvasBackground: theme.canvas?.background || theme.colors?.background || '#FFFFFF',
+      profile: spec.meta?.profile,
+      printTarget: spec.meta?.print?.target,
+      strict: Boolean(options.strict)
+    })
+  ]
+  const allDiagnostics = [...legacyDiagnostics, ...paletteDiagnostics]
+  const formatDiagnostic = (item) => `[${item.code}] ${item.message}`
+
+  if (allDiagnostics.length > 0) {
     if (!options.silent) {
-      console.warn('\n⚠️  drawio spec validation warnings:')
-      allValidationWarnings.forEach((w) => console.warn(`  • ${w}`))
+      console.warn('\n⚠️  drawio spec validation diagnostics:')
+      allDiagnostics.forEach((item) => console.warn(`  • [${item.level}] ${formatDiagnostic(item)}`))
     }
-    if (options.strict) {
+    const errors = allDiagnostics.filter((item) => item.level === 'error')
+    const strictFailures = options.strict ? allDiagnostics.filter((item) => item.level !== 'info') : errors
+    if (strictFailures.length > 0) {
       throw new Error(
-        `Spec validation failed with ${allValidationWarnings.length} warning(s):\n` +
-          allValidationWarnings.map((w) => `  • ${w}`).join('\n')
+        `Spec validation failed with ${strictFailures.length} diagnostic(s):\n` +
+          strictFailures.map((item) => `  • ${formatDiagnostic(item)}`).join('\n')
       )
     }
   }
 
   // Merge all warnings for callers that requested them
-  warnings.push(...allValidationWarnings.map((msg) => ({ level: 'warning', message: msg })))
+  warnings.push(...allDiagnostics)
 
   // Build XML
   const xml = buildXml(spec, theme, layout)
@@ -3056,6 +3130,9 @@ export function validateSpec(spec) {
   // meta validation
   if (spec.meta?.theme != null && !VALID_THEME.test(spec.meta.theme)) {
     throw new Error(`Invalid meta.theme "${spec.meta.theme}": must match /^[a-z][a-z0-9-]*$/`)
+  }
+  if (spec.meta?.palette != null && !VALID_THEME.test(spec.meta.palette)) {
+    throw new Error(`Invalid meta.palette "${spec.meta.palette}": must match /^[a-z][a-z0-9-]*$/`)
   }
   if (spec.meta?.layout != null && !VALID_LAYOUTS.includes(spec.meta.layout)) {
     throw new Error(`Invalid meta.layout "${spec.meta.layout}": must be one of ${VALID_LAYOUTS.join(', ')}`)

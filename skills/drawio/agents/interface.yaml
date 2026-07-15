@@ -13,7 +13,8 @@ capabilities:
   - Generate .drawio, .spec.yaml, .arch.json, and standalone SVG as the offline bundle
   - Export PNG, SVG, PDF, and JPG through draw.io Desktop when available
   - Generate diagrams.net browser URLs when Desktop export is unavailable
-  - Apply built-in and user style presets and themes
+  - Apply built-in and user style presets, themes, and 15 metadata-backed palettes
+  - Validate palette category capacity, boundary contrast, colorblind notices, and grayscale print safety
   - Work without MCP through the local CLI; optional live refinement is a refinement provider only
 
 prerequisites:

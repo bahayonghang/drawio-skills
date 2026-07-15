@@ -1,0 +1,20 @@
+{
+  "name": "tol-bright",
+  "displayName": "Paul Tol Bright",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": false,
+  "maxCategories": 7,
+  "source": "https://personal.sron.nl/~pault/",
+  "venues": ["elsevier", "generic-journal", "presentation"],
+  "notes": "Use colors in order without interpolation, following Paul Tol's qualitative-palette guidance.",
+  "entries": [
+    { "name": "blue", "base": "#4477AA" },
+    { "name": "red", "base": "#EE6677" },
+    { "name": "green", "base": "#228833" },
+    { "name": "yellow", "base": "#CCBB44" },
+    { "name": "cyan", "base": "#66CCEE" },
+    { "name": "purple", "base": "#AA3377" },
+    { "name": "gray", "base": "#BBBBBB" }
+  ]
+}

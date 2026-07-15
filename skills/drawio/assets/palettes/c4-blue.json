@@ -1,0 +1,29 @@
+{
+  "name": "c4-blue",
+  "displayName": "C4 Blue",
+  "category": "engineering",
+  "colorblindSafe": true,
+  "grayscaleSafe": true,
+  "maxCategories": 7,
+  "source": "https://github.com/plantuml-stdlib/C4-PlantUML/blob/a11242b3/themes/puml-theme-C4_blue.puml",
+  "venues": ["c4", "software-architecture", "engineering-review"],
+  "notes": "Structurizr/C4 blue hierarchy; boundary #444444 and connector #666666 follow the C4 defaults.",
+  "entries": [
+    { "name": "person", "base": "#08427B", "fill": "#08427B", "stroke": "#08427B", "text": "#FFFFFF" },
+    { "name": "software-system", "base": "#1168BD", "fill": "#1168BD", "stroke": "#1168BD", "text": "#FFFFFF" },
+    { "name": "container", "base": "#438DD5", "fill": "#438DD5", "stroke": "#438DD5", "text": "#FFFFFF" },
+    { "name": "component", "base": "#85BBF0", "fill": "#85BBF0", "stroke": "#438DD5", "text": "#000000" },
+    { "name": "external-person", "base": "#686868", "fill": "#686868", "stroke": "#444444", "text": "#FFFFFF" },
+    { "name": "external-system", "base": "#999999", "fill": "#999999", "stroke": "#555555", "text": "#000000" },
+    { "name": "external-container", "base": "#B3B3B3", "fill": "#B3B3B3", "stroke": "#666666", "text": "#000000" }
+  ],
+  "roles": {
+    "user": 0,
+    "service": 1,
+    "gateway": 1,
+    "database": 2,
+    "queue": 2,
+    "feature": 3
+  },
+  "connector": { "default": "#666666" }
+}

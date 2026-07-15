@@ -1,0 +1,22 @@
+{
+  "name": "tol-muted",
+  "displayName": "Paul Tol Muted",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": false,
+  "maxCategories": 9,
+  "source": "https://personal.sron.nl/~pault/",
+  "venues": ["elsevier", "generic-journal", "multi-category"],
+  "notes": "Nine-category muted qualitative palette; preserve the published order and do not interpolate.",
+  "entries": [
+    { "name": "rose", "base": "#CC6677" },
+    { "name": "indigo", "base": "#332288" },
+    { "name": "sand", "base": "#DDCC77" },
+    { "name": "green", "base": "#117733" },
+    { "name": "cyan", "base": "#88CCEE" },
+    { "name": "wine", "base": "#882255" },
+    { "name": "teal", "base": "#44AA99" },
+    { "name": "olive", "base": "#999933" },
+    { "name": "purple", "base": "#AA4499" }
+  ]
+}

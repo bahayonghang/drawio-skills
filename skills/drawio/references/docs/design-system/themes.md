@@ -214,6 +214,20 @@ meta:
   layout: horizontal
 ```
 
+### Theme x Palette Composition
+
+Theme and palette compose orthogonally. Theme keeps typography, spacing, shapes, connector line styles, modules, and canvas; `meta.palette` replaces only semantic/category colors.
+
+```yaml
+meta:
+  theme: academic
+  palette: okabe-ito
+```
+
+No `meta.palette` means the theme renders exactly as before. Built-in palette JSON lives under `assets/palettes/`; metadata, sources, and generated previews are indexed under `references/examples/palettes/`.
+
+To add a palette without changing code, place a schema-valid `<name>.json` in `~/.drawio-skill/palettes/`. A user file overrides a bundled palette of the same name with an info diagnostic. Explicit invalid selections fail instead of falling back.
+
 ### Per-Node Override
 
 Individual nodes can override theme defaults:
@@ -423,3 +437,5 @@ To switch themes on an existing diagram:
 3. All non-overridden styles will update to new theme
 
 > **Note**: Explicitly defined colors in nodes/edges will NOT change when switching themes. Only theme-referenced values (`$primary`, `$text`, etc.) are affected.
+>
+> A selected palette is a second color layer: semantic nodes keep the new theme's typography, shapes, and line styles while continuing to use the palette colors.

@@ -1,0 +1,23 @@
+{
+  "name": "seaborn-colorblind",
+  "displayName": "Seaborn Colorblind",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": false,
+  "maxCategories": 10,
+  "source": "https://github.com/mwaskom/seaborn/blob/master/seaborn/palettes.py",
+  "venues": ["elsevier", "generic-journal", "multi-category"],
+  "notes": "Ten-category CVD-oriented Seaborn palette derived from the Okabe-Ito family.",
+  "entries": [
+    { "name": "blue", "base": "#0173B2" },
+    { "name": "orange", "base": "#DE8F05" },
+    { "name": "green", "base": "#029E73" },
+    { "name": "vermillion", "base": "#D55E00" },
+    { "name": "purple", "base": "#CC78BC" },
+    { "name": "brown", "base": "#CA9161" },
+    { "name": "pink", "base": "#FBAFE4" },
+    { "name": "gray", "base": "#949494" },
+    { "name": "yellow", "base": "#ECE133" },
+    { "name": "sky-blue", "base": "#56B4E9" }
+  ]
+}

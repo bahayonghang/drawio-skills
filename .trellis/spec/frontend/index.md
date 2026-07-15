@@ -32,6 +32,7 @@ surfaces and ESM JavaScript tooling.
 | [Type Safety](./type-safety.md) | Runtime validation patterns for ESM JavaScript and VitePress config | Filled |
 | [Quality Guidelines](./quality-guidelines.md) | Required tests, artifact policy, forbidden patterns, review checks | Filled |
 | [Font Policy](./font-policy.md) | Diagram-level `meta.font` contract, force mode, and script-aware font resolution | Filled |
+| [Palette Policy](./palette-policy.md) | Theme-independent palette loading, tokens, diagnostics, interaction, and release contracts | Filled |
 
 ## Quality Check
 

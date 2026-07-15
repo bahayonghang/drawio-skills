@@ -1,7 +1,7 @@
-# Color Scheme Selection Guide
+# Theme and Palette Selection Guide
 
-A guide to help you choose the most suitable theme for your diagram in 3 steps.
-(配色方案选择指南 — 帮助你在 3 步内为图表选出最合适的主题。)
+A guide to choose diagram structure styling and category colors independently.
+(主题与配色组选择指南 — 分别决定排版风格与类别颜色。)
 
 ---
 
@@ -25,6 +25,55 @@ Step 3: Special requirements? (特殊要求？)
   ├── Dark background projector → dark
   └── Other → Use Step 2 result
 ```
+
+---
+
+## Theme and Palette Are Independent
+
+Theme and palette are independent, orthogonal dimensions:
+
+- `meta.theme` owns typography, spacing, shape treatment, connector line styles, modules, and canvas.
+- `meta.palette` optionally replaces semantic/category fill, stroke, text, and default connector colors.
+- Content-neutral `text` and `formula` nodes always keep theme styling; a palette never recolors them.
+- Omitting `meta.palette` keeps existing theme behavior unchanged.
+
+```yaml
+meta:
+  theme: academic
+  palette: okabe-ito
+```
+
+This combines academic typography and line treatment with Okabe-Ito category colors. Switching only the palette does not change fonts, spacing, shapes, or routing.
+
+### Palette Decision Tree
+
+```text
+Was a palette explicitly named?
+  yes -> apply it directly; do not ask
+  no  -> does the request mention palette/color choice, colorblind safety,
+         grayscale or black-and-white printing, or multi-category distinction?
+           yes -> ask once with 3-4 relevant palette choices
+           no  -> omit meta.palette and keep the theme defaults
+
+Replicate route?
+  yes -> preserve source colors and skip palette selection unless the user
+         explicitly asks to normalize or replace the colors
+```
+
+Use the complete metadata-backed catalog and previews in [`references/examples/palettes/README.md`](../../examples/palettes/README.md). Common starting points:
+
+| Need                                         | Recommended palette |
+| -------------------------------------------- | ------------------- |
+| Accessible academic color                    | `okabe-ito`         |
+| IEEE or thesis black-and-white print         | `ieee-bw`           |
+| Camera-ready color with grayscale separation | `tol-high-contrast` |
+| C4/software architecture                     | `c4-blue`           |
+| AWS/cloud architecture                       | `cloud-aws`         |
+| Familiar draw.io appearance                  | `drawio-classic`    |
+
+### Add a Custom Palette
+
+Copy one bundled JSON definition from `assets/palettes/`, keep the single ordered `entries[]` contract, validate it, and save it as `~/.drawio-skill/palettes/<name>.json`. No code change is required. User definitions override bundled palettes with the same name and emit an info diagnostic. Explicit unknown, malformed, or invalid palettes fail and list available names; they never silently fall back.
 
 ---
 
@@ -100,7 +149,20 @@ nodes:
       fillColor: "#DBEAFE" # Breaks when switching to dark theme
 ```
 
-### Complete Token List
+### Palette Token List
+
+With `meta.palette` selected, category entries are also available as 1-based tokens:
+
+```text
+$paletteN         entry N base color
+$paletteN-fill    entry N materialized fill
+$paletteN-stroke  entry N materialized stroke
+$paletteN-text    entry N materialized text color
+```
+
+An out-of-range palette token warns and falls back to the theme primary color. Palette tokens are invalid when `meta.palette` is absent.
+
+### Theme Token List
 
 ```
 Base Colors:
@@ -167,6 +229,8 @@ Before generating a YAML spec, verify each item:
 
 ```
 [] Theme explicitly selected (meta.theme is set)
+[] Palette selected only when the request needs one (meta.palette is optional)
+[] Selected palette safety flags match colorblind and print requirements
 [] All custom fillColor uses tokens or valid hex (#RGB or #RRGGBB)
 [] strokeColor and fillColor use matching deep/light token pairs
    e.g.: fillColor: $primaryLight + strokeColor: $primary
@@ -181,10 +245,11 @@ Before generating a YAML spec, verify each item:
 
 ## Common Color Mistakes & Fixes
 
-| Mistake                      | Problem                       | Fix                                                   |
-| ---------------------------- | ----------------------------- | ----------------------------------------------------- |
-| All nodes same color         | Cannot distinguish node types | Use semantic type auto-coloring; don't manually unify |
-| Decision node with blue fill | Confused with service nodes   | Use `$accentLight` (amber/yellow) fill instead        |
-| Black text on dark theme     | Insufficient contrast         | Add `fontColor: $textInverse`                         |
-| All hardcoded hex values     | Styles break on theme switch  | Use token references instead                          |
-| Colored connectors           | Visual noise, distracting     | Only override connector color for special semantics   |
+| Mistake                      | Problem                                                     | Fix                                                   |
+| ---------------------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
+| All nodes same color         | Cannot distinguish node types                               | Use semantic type auto-coloring; don't manually unify |
+| Decision node with blue fill | Confused with service nodes                                 | Use `$accentLight` (amber/yellow) fill instead        |
+| Black text on dark theme     | Insufficient contrast                                       | Add `fontColor: $textInverse`                         |
+| All hardcoded hex values     | Styles break on theme switch                                | Use token references instead                          |
+| Colored connectors           | Visual noise, distracting                                   | Only override connector color for special semantics   |
+| Treating theme as a palette  | Changing colors also changes layout/typography expectations | Keep theme and `meta.palette` as separate choices     |

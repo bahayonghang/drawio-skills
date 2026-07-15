@@ -1,0 +1,26 @@
+{
+  "name": "ieee-bw",
+  "displayName": "IEEE Black and White",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": true,
+  "maxCategories": 5,
+  "source": "https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/create-graphics-for-your-article/resolution-and-size/",
+  "venues": ["ieee-print", "ieee-camera-ready", "cn-thesis"],
+  "notes": "Monochrome print palette; combine categories with line, shape, or pattern encoding.",
+  "entries": [
+    { "name": "black", "base": "#000000", "fill": "#000000", "stroke": "#000000", "text": "#FFFFFF" },
+    { "name": "white", "base": "#FFFFFF", "fill": "#FFFFFF", "stroke": "#000000", "text": "#000000" },
+    { "name": "dark-gray", "base": "#555555", "fill": "#555555", "stroke": "#222222", "text": "#FFFFFF" },
+    { "name": "mid-gray", "base": "#999999", "fill": "#999999", "stroke": "#555555", "text": "#000000" },
+    { "name": "light-gray", "base": "#CCCCCC", "fill": "#CCCCCC", "stroke": "#666666", "text": "#000000" }
+  ],
+  "roles": {
+    "service": 1,
+    "database": 2,
+    "decision": 3,
+    "queue": 4,
+    "user": 0
+  },
+  "connector": { "default": "#000000" }
+}

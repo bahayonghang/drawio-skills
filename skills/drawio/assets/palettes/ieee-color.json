@@ -1,0 +1,17 @@
+{
+  "name": "ieee-color",
+  "displayName": "IEEE Color",
+  "category": "academic",
+  "colorblindSafe": true,
+  "grayscaleSafe": true,
+  "maxCategories": 3,
+  "source": "https://github.com/garrettj403/SciencePlots/wiki/Gallery",
+  "venues": ["ieee-online", "ieee-conference", "engineering-paper"],
+  "notes": "Black, blue, and vermillion should be paired with distinct line styles for print redundancy.",
+  "entries": [
+    { "name": "black", "base": "#000000" },
+    { "name": "blue", "base": "#0072B2" },
+    { "name": "vermillion", "base": "#D55E00" }
+  ],
+  "connector": { "default": "#000000" }
+}

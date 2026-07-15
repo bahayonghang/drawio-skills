@@ -1,0 +1,30 @@
+{
+  "id": "palette-system",
+  "name": "palette-system",
+  "title": "Palette system for drawio skills (academic + engineering color groups)",
+  "description": "",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-14",
+  "completedAt": "2026-07-15",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-14-palette-core",
+    "07-14-palette-catalog",
+    "07-14-palette-skill-integration"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

@@ -11,6 +11,10 @@ Touchpoints (all required, in order):
    - the built-in default theme block (node fill/stroke or connector stroke/dash/arrow), and
    - `SHAPE_STYLES` (node types only; reuse existing mxGraph primitives — `rounded`, `hexagon`, `cylinder3`, `dashed=1` — never new drawing code paths).
 3. **Every** theme JSON under `skills/drawio/assets/themes/` — add the matching `node.<type>` / `connector.<type>` entry.
+4. `skills/drawio/scripts/dsl/palette.js` — decide the palette position (recorded from task 07-14-palette-system, 2026-07-14):
+   - color-bearing node type → append to `SEMANTIC_ROLE_ORDER` (stable cross-palette position);
+   - content-neutral type (label-like, must always inherit theme, e.g. `text`, `formula`) → add to `paletteNeutralTypes` in `spec-to-drawio.js` instead.
+     A type in neither list silently falls back to palette entry 0 under any `meta.palette` — same class of silent-fallback pitfall as themes below. See `.trellis/spec/frontend/palette-policy.md` for the palette contract.
 
 ## Pitfall: silent theme fallback
 

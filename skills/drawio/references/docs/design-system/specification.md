@@ -63,6 +63,9 @@ meta:
   # Theme selection (required)
   theme: tech-blue # tech-blue | academic | academic-color | nature | dark | high-contrast | custom-name
 
+  # Optional category-color palette layered over the theme
+  palette: okabe-ito
+
   # Layout direction
   layout: horizontal # horizontal | vertical | hierarchical | star | mesh | tiered
 
@@ -109,6 +112,21 @@ meta:
 | `nature`         | Green/environmental                          |
 | `dark`           | Dark mode presentations                      |
 | `high-contrast`  | Maximum contrast for accessibility and print |
+
+### Palette Options
+
+`meta.palette` is optional and independent from `meta.theme`. It replaces semantic/category colors while preserving theme typography, spacing, shapes, connector line styles, modules, and canvas. Omitting it preserves existing theme output. Content-neutral `text` and `formula` nodes never join palette mapping: they always inherit theme styling and stay out of palette usage.
+
+Bundled names and safety metadata are indexed in `references/examples/palettes/README.md`. User palettes load from `~/.drawio-skill/palettes/` and may override a bundled name. Explicit unknown, malformed, or invalid palettes are hard errors and list available names.
+
+```yaml
+meta:
+  theme: academic
+  palette: ieee-bw
+  print: { target: ieee-single }
+```
+
+`--validate` checks actual rendered palette usage for grayscale separation, boundary contrast, category capacity, academic CVD notices, and print safety. Under `--strict`, a grayscale-unsafe palette with `cn-thesis`, `ieee-single`, or `ieee-double` fails and suggests `ieee-bw` or `tol-high-contrast`.
 
 ### Font Policy
 
@@ -450,6 +468,17 @@ style:
   fontColor: $text # Theme's text color
 ```
 
+When `meta.palette` is present, use 1-based palette tokens for explicit category colors:
+
+```yaml
+style:
+  fillColor: $palette2-fill
+  strokeColor: $palette2-stroke
+  fontColor: $palette2-text
+```
+
+`$paletteN` resolves entry N's base color; `$paletteN-fill`, `$paletteN-stroke`, and `$paletteN-text` resolve the materialized entry fields. The token is invalid without `meta.palette`, and an out-of-range entry produces a warning plus theme-primary fallback.
+
 ### Replication Metadata
 
 Use `meta.replication` to capture source-palette intent without turning the whole file into raw pixel data:
@@ -480,6 +509,7 @@ Recommended usage:
 - Write explicit `style.fillColor`, `style.strokeColor`, and `style.fontColor` on nodes/edges/modules when color extraction is high-confidence.
 - Keep low-confidence or non-essential elements on theme tokens so theme changes and accessibility refinements still work.
 - Use `theme-first` only when the user explicitly wants palette normalization.
+- `meta.replication.palette` records colors extracted from the source image; `meta.palette` selects a reusable rendering palette. Replication preserves the extracted source colors unless normalization was explicitly requested.
 - Rebuild the main diagram with native draw.io cells; do not use a full-page embedded reference image as the final result.
 
 ---
@@ -655,6 +685,7 @@ Validation checks:
 
 - Required fields present
 - Valid theme reference
+- Valid palette reference and palette-token range
 - Valid academic `figureType` when provided
 - Unique node/module IDs
 - Edge references exist
