@@ -36,8 +36,8 @@ help:
     @echo "  just ci             - 运行 CI 检查（version-sync + version-check + lint + test + docs-build）"
     @echo ""
     @echo "📁 实用工具："
-    @echo "  just zip            - 将两个 skill 分别打包到项目根目录"
-    @echo "  just clean-zip      - 清理项目根目录下的 skill 压缩包"
+    @echo "  just zip            - 将两个 skill 分别打包到 archive 目录"
+    @echo "  just clean-zip      - 清理 archive 目录下的 skill 压缩包"
     @echo "  just tree           - 显示项目目录结构"
     @echo "  just help           - 显示此帮助信息"
     @echo ""
@@ -78,7 +78,7 @@ start: install docs
 # 完整重建文档（清理 + 安装 + 构建）
 rebuild: clean install docs-build
 
-# 将两个 skill 分别打包到项目根目录（内容以 git 跟踪文件为准，防止本地临时文件泄漏进发布包）
+# 将两个 skill 分别打包到 archive 目录（内容以 git 跟踪文件为准，防止本地临时文件泄漏进发布包）
 [script('python')]
 zip:
     import subprocess
@@ -88,6 +88,9 @@ zip:
     # 这些路径不应出现在发布包中；若被 git 误跟踪，打包立即失败
     FORBIDDEN_PARTS = ('.drawio-tmp', '.playwright-mcp', 'logs', '.DS_Store', '.last_update')
     FORBIDDEN_PREFIXES = ('docs/superpowers',)
+
+    archive_dir = Path('archive')
+    archive_dir.mkdir(exist_ok=True)
 
     for skill_name in ('drawio', 'drawio-academic-skills'):
         listing = subprocess.run(
@@ -112,7 +115,7 @@ zip:
         if leaked:
             raise SystemExit(f'{skill_name}: 发布包禁止包含: {leaked}')
 
-        archive_path = Path(f'{skill_name}.zip').resolve()
+        archive_path = archive_dir / f'{skill_name}.zip'
         with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED) as zf:
             for src, arc in zip(tracked, arcnames):
                 zf.write(src, arc)
@@ -123,13 +126,14 @@ zip:
 
         print(f'Created {archive_path}')
 
-# 清理项目根目录下的 skill 压缩包
+# 清理 archive 目录下的 skill 压缩包
 [script('python')]
 clean-zip:
     from pathlib import Path
 
+    archive_dir = Path('archive')
     for archive_name in ('drawio.zip', 'drawio-academic-skills.zip'):
-        archive_path = Path(archive_name)
+        archive_path = archive_dir / archive_name
         if archive_path.exists():
             archive_path.unlink()
             print(f'Removed {archive_path}')

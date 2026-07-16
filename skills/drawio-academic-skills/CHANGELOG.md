@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Playbook example index and slimmer entrypoint
+
+- Named every paper example and compact template in the academic figure
+  playbook with when-to-use notes.
+- Slimmed the SKILL.md initial load by 31% (17.4KB -> 12.0KB) with all
+  policy gates preserved; cleaned a stale `.gitignore` comment.
+
 ## 2.7.0 (2026-07-14)
 
 ### Venue-aware palettes

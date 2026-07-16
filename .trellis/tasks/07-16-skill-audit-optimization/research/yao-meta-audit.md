@@ -79,6 +79,7 @@
 ### F8 · INFO · CHANGELOG Unreleased 内容待发布
 
 - 证据:两份 CHANGELOG 各有非空 Unreleased 段,版本停在 2.7.0。
+- **勘误(2026-07-16 执行期)**:复核发现两个 Unreleased 段实际为空占位(初判受 head 截断误导);本任务的变更条目已写入该段,随下一版本 cut。
 - 建议:本任务修复合入后随下一版本号一并 cut(`just version-sync-to` + `version-check`),不单独处理。
 
 ## 健康项(无需修复,审计留证)

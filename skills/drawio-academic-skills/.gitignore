@@ -5,7 +5,7 @@
 .playwright-mcp/
 logs/
 
-# Auto-update timestamp (written by SKILL.md step 0)
+# Legacy local timestamp (no longer written; kept ignored defensively)
 .last_update
 
 # Superpowers skill files (local-only)
