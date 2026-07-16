@@ -39,3 +39,9 @@
 - 政策锚点:e01/e04/e08/e09/e14/e15 相关 15 项检查全部 PASS(含 2 项"缺口仍如实存在"的反向确认)。
 - 机械回归:e01、e09 用相同输入重渲,SVG 与基线逐字节一致(CLI 未动,符合预期)。
 - 结论:97.2 → 97.2,status=keep,W5 瘦身无回归。TSV 已追加 keep 行。
+
+## e08 缺口修复复验(2026-07-16,收尾轮)
+
+- SKILL.md § Style Presets 新增两句契约:user-first 查找优先级(user 目录先于 styles/built-in/)、unknown preset 名报错而非静默回退(措辞对齐 palette 的既有规则)。
+- e08 复验 4/4 PASS;其余案例锚点未动;体积对冲后 13,995B 仍在 14,000B 预算内。
+- 97.2 → 100.0(71/71 可验证断言),TSV 已追加 keep 行;两条 not-verifiable(Desktop 分支、e09 无独立文本)口径不变仍剔除。

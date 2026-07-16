@@ -14,6 +14,8 @@
   (`examples.md`, `drawio-aesthetic-guide.md`).
 - Recorded the first base eval baseline (97.2 dry_run in
   `evals/darwin-results.tsv`) plus a post-slim no-regression spot check.
+- Style presets: documented user-first lookup precedence and unknown-name
+  errors (no silent fallback), closing both eval e08 governance gaps.
 - Slimmed the SKILL.md initial load by 36% (21.8KB -> 14.0KB) with all
   behavior contracts preserved; added `agents/openai.yaml` packaging parity.
 

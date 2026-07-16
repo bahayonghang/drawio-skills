@@ -118,9 +118,9 @@ The diagram content is encoded in the URL fragment after `#R` and is not sent as
 
 ## Style Presets
 
-The base owns shared bundled style presets under `styles/built-in/`. User presets should live outside the repository, for example `~/.drawio-skill/styles/` or an overlay-specific user directory.
+Bundled style presets live under `styles/built-in/`; user presets live outside the repository, e.g. `~/.drawio-skill/styles/` or an overlay-specific user directory. Resolve preset names user-first (user directory before `styles/built-in/`); an unknown preset name is an error, never a silent fallback.
 
-To learn a reusable preset from an existing diagram ("learn my style from `<path>` as `<name>`") and render an approval sample, follow `references/docs/style-extraction.md`. For copy-paste style strings for quick patches or hand-authored XML, see `references/docs/style-presets.md`.
+To learn a reusable preset from an existing diagram and render an approval sample, follow `references/docs/style-extraction.md`. Copy-paste style strings: `references/docs/style-presets.md`.
 
 Never mutate bundled presets. Copy a bundled preset to the user preset directory before making it the default or editing it.
 
