@@ -616,3 +616,5 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 
 - 后续任务候选：补 style-preset 查找优先级与 unknown-name 报错契约（e08 两处 FAIL，按基线纪律本轮未改）
 - 下一版本发布时随版本号 cut 两份 CHANGELOG 的 Unreleased 段
+
+**Follow-up (2026-07-16 收尾轮)**: e08 两处 style-preset 治理缺口已闭环——SKILL.md § Style Presets 补 user-first 查找优先级与 unknown-name 报错契约（对冲后 13,995B 仍在预算内），e08 复验 4/4，base eval 97.2 → 100.0（TSV keep 行）。Next Steps 仅剩：下一版本发布时 cut Unreleased 段。
