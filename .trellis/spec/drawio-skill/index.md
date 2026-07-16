@@ -2,6 +2,7 @@
 
 Engineering contracts for modifying `skills/drawio` (the YAML-first draw.io base skill).
 
-| Doc                                                  | Purpose                                                                                                      | When to Use                                                         |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| [Semantic Type Extension Guide](./semantic-types.md) | Touchpoint checklist for adding node/edge semantic types; silent theme-fallback pitfall; verification recipe | Adding or modifying node/edge types, themes, or connector semantics |
+| Doc                                                                 | Purpose                                                                                                                              | When to Use                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [Semantic Type Extension Guide](./semantic-types.md)                | Touchpoint checklist for adding node/edge semantic types; silent theme-fallback pitfall; verification recipe                         | Adding or modifying node/edge types, themes, or connector semantics |
+| [Skill Doc & Release Contract](./skill-doc-and-release-contract.md) | Test-pinned SKILL.md wording (assertion map, proximity windows, academic whitelist); zip == git ls-files; per-assertion eval records | Editing SKILL.md/references wording, packaging, or eval evidence    |

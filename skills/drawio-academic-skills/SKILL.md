@@ -24,91 +24,63 @@ allowed-tools: Read, Write, Bash, AskUserQuestion
 
 # Draw.io Academic Overlay
 
-Create, edit, replicate, validate, and export publication-ready draw.io figures by applying academic policy on top of the sibling Draw.io Base Skill.
-
-This overlay is intentionally thin. It owns academic policy, academic docs, and paper examples; it does not copy base scripts, themes, schemas, official references, or workflow docs. It calls the sibling base package at `../drawio` for all shared execution.
-
-## Boundary
-
-- **Base (`../drawio`)**: shared execution primitives — CLI, schema, renderer, themes (including `academic` / `academic-color`), general references, general examples, style presets, Desktop export.
-- **This overlay**: academic policy/gates, the publication overlay doc, the academic figure playbook + checklist, and paper/pipeline examples.
-
-Themes are a base rendering primitive and stay in the base; academic policy, docs, and examples stay here.
+Create, edit, replicate, validate, and export publication-ready draw.io figures by applying academic policy on top of the sibling Draw.io Base Skill. This overlay is intentionally thin: it owns academic policy/gates, academic docs, and paper examples; the sibling base at `../drawio` owns all shared execution (CLI, schema, renderer, themes including `academic`/`academic-color`, references, examples, style presets, Desktop export).
 
 ## Required Sibling Base
 
 Resolve shared resources relative to this overlay directory:
 
-| Capability                | Use this sibling base path                                        |
-| ------------------------- | ----------------------------------------------------------------- |
-| CLI                       | `../drawio/scripts/cli.js`                                        |
-| diagrams.net URL fallback | `../drawio/scripts/runtime/diagrams-net-url.js`                   |
-| YAML schema               | `../drawio/assets/schemas/spec.schema.json`                       |
-| Themes                    | `../drawio/assets/themes/`                                        |
-| Palettes                  | `../drawio/assets/palettes/`                                      |
-| Shared examples           | `../drawio/references/examples/`                                  |
-| Shared references         | `../drawio/references/docs/` and `../drawio/references/official/` |
-| Workflow guides           | `../drawio/references/workflows/`                                 |
-| Built-in style presets    | `../drawio/styles/built-in/`                                      |
+- CLI `../drawio/scripts/cli.js`; URL fallback `../drawio/scripts/runtime/diagrams-net-url.js`
+- Schema `../drawio/assets/schemas/spec.schema.json`; themes `../drawio/assets/themes/`; palettes `../drawio/assets/palettes/`
+- References `../drawio/references/docs/`, `../drawio/references/official/`, `../drawio/references/workflows/`, `../drawio/references/examples/`
+- Built-in style presets `../drawio/styles/built-in/`
 
-Overlay-local academic assets: `references/docs/publication-overlay.md`, `references/docs/academic-figure-playbook.md`, `references/docs/academic-export-checklist.md`, and `references/examples/`.
+Overlay-local assets: `references/docs/publication-overlay.md`, `academic-figure-playbook.md`, `academic-export-checklist.md`, `references/examples/`, `references/templates/`.
 
-If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base skill must be installed next to this overlay. Do not silently recreate or vendor-copy base resources into the overlay.
+If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base skill must be installed next to this overlay; never silently recreate or vendor-copy base resources into the overlay.
 
 ## Non-Negotiable Contract
 
-- Keep academic authoring YAML-first and offline-first.
-- Never create, require, or route through `.mcp.json`, MCP, or a live backend.
-- Treat `.drawio` and a 300dpi `.png` (via draw.io Desktop) as the default academic final deliverables; SVG is the offline fallback when Desktop is unavailable.
+- Keep academic authoring YAML-first and offline-first. Never create, require, or route through `.mcp.json`, MCP, or a live backend.
+- Treat `.drawio` and a 300dpi `.png` (via draw.io Desktop) as the default academic final deliverables; SVG is the offline fallback without Desktop — report the fallback and never claim files that were not produced.
 - Keep `.spec.yaml`, `.arch.json`, raw YAML, and diagnostics in a project-local work directory such as `.drawio-tmp/<name>/`, unless the user explicitly asks for a reproducible sidecar bundle beside the final output.
-- draw.io Desktop is required for the default 300dpi PNG; use it also for PDF/JPG or embedded `.drawio.svg` on request.
-- If draw.io Desktop is unavailable, the PNG export falls back to a standalone `.svg` (with a warning); still deliver the editable `.drawio` and report the fallback clearly.
-- Perform paper-readability and visual self-checks on the exported PNG (or the fallback SVG) first, or on another Desktop-exported artifact when that is the requested format. Do not substitute browser or Playwright screenshots when an exported artifact exists.
-- Treat external image-generation previews as optional concept previews only. They never replace YAML, `.drawio`, SVG, sidecars, or exported-artifact verification.
-- Keep academic-specific policy in this overlay; keep shared execution in `../drawio`.
+- Perform paper-readability and visual self-checks on the exported PNG (or the fallback SVG) first. Do not substitute browser or Playwright screenshots when an exported artifact exists.
+- Treat external image-generation previews as optional concept previews only. They never replace YAML, artifacts, sidecars, or exported-artifact verification.
 - Do not create or modify scratch JS scripts under a user's project-local `.agents/skills/drawio`; port durable fixes to the sibling base skill source instead.
 
 ## Academic Preflight
 
-Before generating or editing, determine and state: venue/audience; figure type (`architecture`, `roadmap`, or `workflow`); color policy; caption/legend/title needs; formula and text-fidelity needs; export expectations.
-
-Also estimate the **node budget**. The single authoritative budget guidance (targets, warning thresholds, node-efficient patterns, split strategies) lives in `references/docs/academic-figure-playbook.md § Node Budget Management`. If the estimate exceeds the playbook's recommended target, confirm a split/simplify strategy with the user before generating, and use compact patterns from `references/templates/`.
-
-Full decision detail: `references/docs/publication-overlay.md § Required Academic Decisions`.
+Before generating or editing, determine and state: venue/audience; figure type (`architecture`, `roadmap`, or `workflow`); color policy; caption/legend/title, formula, and text-fidelity needs; export expectations. Estimate the **node budget** (authoritative targets, thresholds, and split strategies: `references/docs/academic-figure-playbook.md § Node Budget Management`); over target, confirm a split/simplify strategy with the user and start from the compact patterns in `references/templates/`. Full decision detail: `references/docs/publication-overlay.md § Required Academic Decisions`.
 
 ### Palette Preflight
 
-After the venue is known, if the user did not specify a palette, use `AskUserQuestion` as a single-select. Order the venue recommendation first with `(Recommended)`, offer 3-4 choices, use the palette `displayName` as the label, and state colorblind/grayscale safety plus the venue rationale in each description. The venue map is authoritative in `references/docs/academic-figure-playbook.md § Venue Palette Mapping`.
+After the venue is known, if the user did not specify a palette, use `AskUserQuestion` as a single-select: venue recommendation first with `(Recommended)`, 3-4 choices, each palette's `displayName` as the label, and colorblind/grayscale safety plus venue rationale in each description. Venue map: `references/docs/academic-figure-playbook.md § Venue Palette Mapping`.
 
-If the user already specified a palette or an unambiguous style such as "Nature accessible colors", map it directly and do not ask. For academic replication, preserve the source palette and skip selection unless the user explicitly requests normalization or recoloring.
-
-Record the chosen name in `meta.palette`. The completion report must name the palette and report its colorblind/grayscale safety flags, including any print-gate downgrade.
+If the user already specified a palette or an unambiguous style, map it directly and do not ask. For academic replication, preserve the source palette and skip selection unless the user explicitly requests normalization. Record the chosen name in `meta.palette`. The completion report must name the palette and its colorblind/grayscale safety flags, including any print-gate downgrade.
 
 ## Source Understanding
 
-Extract only what the figure needs from papers, reference images, or text-only prompts, and keep uncertainties explicit. See `references/docs/publication-overlay.md § Source Understanding` (source-type table) and `references/docs/academic-figure-playbook.md § Scientific Figure Patterns`.
+Extract only what the figure needs from papers, reference images, or text-only prompts; keep uncertainties explicit. See `references/docs/publication-overlay.md § Source Understanding` and `references/docs/academic-figure-playbook.md § Scientific Figure Patterns`.
 
 ## Diagram Plan Gate
 
-For complex paper-derived figures or academic image-replication work, present a concise diagram plan and wait for confirmation before rendering. Simple, clear academic diagrams may skip the gate and proceed to YAML/SVG. Plan template and field list: `references/docs/publication-overlay.md § Diagram Plan Gate`.
+For complex paper-derived figures or academic image-replication work, present a concise diagram plan and wait for confirmation before rendering; simple academic diagrams may skip the gate. Template: `references/docs/publication-overlay.md § Diagram Plan Gate`.
 
 ## Optional Image Preview
 
-Use an external image-generation tool only as an optional concept preview, only after the diagram plan is confirmed, and only with privacy approval before sending unpublished or sensitive content. Treat generated text as approximate and correct final labels/formulas/geometry in YAML. Full rules: `references/docs/publication-overlay.md § Optional Image Preview`.
+Only after the diagram plan is confirmed, and only with privacy approval before sending unpublished or sensitive content; treat generated text as approximate and correct final labels/formulas/geometry in YAML. Full rules: `references/docs/publication-overlay.md § Optional Image Preview`.
 
 ## Task Routing
 
-Choose one route first, then load only the referenced files.
+Choose one route, then load only its files. `overlay` = this directory; `base` = the sibling, resolved from this directory.
 
-| Route                  | Trigger                                                            | Load                                                                                                                                                                                                                                      |
-| ---------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `academic-create`      | paper, thesis, IEEE, manuscript, journal, publication-ready figure | this overlay `references/docs/publication-overlay.md`; this overlay `references/docs/academic-figure-playbook.md`; this overlay `references/docs/academic-export-checklist.md`; base `../drawio/references/workflows/create.md`           |
-| `math-formula`         | formula, equation, LaTeX, AsciiMath, MathJax, 公式                 | base `../drawio/references/docs/math-typesetting.md`; base `../drawio/references/docs/design-system/formulas.md`                                                                                                                          |
-| `edit`                 | modify an existing academic bundle or imported `.drawio`           | base `../drawio/references/workflows/edit.md`; base `../drawio/references/docs/migration-readiness.md`                                                                                                                                    |
-| `replicate`            | redraw screenshot, image, SVG, or reference paper figure           | this overlay `references/docs/publication-overlay.md`; base `../drawio/references/workflows/replicate.md`; base `../drawio/references/docs/design-system/specification.md`; base `../drawio/references/docs/design-system/color-guide.md` |
-| `stencil-heavy`        | academic cloud, network, AWS, Azure, GCP, Cisco, Kubernetes figure | base `../drawio/references/docs/stencil-library-guide.md`; base `../drawio/references/docs/ieee-network-diagrams.md`; base `../drawio/references/official/xml-reference.md`                                                               |
-| `style-preset`         | learn/use/list/delete/rename visual style presets                  | base `../drawio/references/docs/style-extraction.md`; base `../drawio/references/docs/style-presets.md`; base `../drawio/styles/built-in/`                                                                                                |
-| `direct-xml-exception` | tiny handoff-only XML or exact mxGraph control                     | base `../drawio/references/upstream/pure-drawio-skill.md`; base `../drawio/references/official/xml-reference.md`                                                                                                                          |
+- `academic-create` — paper, thesis, IEEE, manuscript, journal, publication-ready figure → overlay `references/docs/publication-overlay.md`, `academic-figure-playbook.md`, `academic-export-checklist.md`; base `../drawio/references/workflows/create.md`
+- `math-formula` — formula, equation, LaTeX, AsciiMath, MathJax, 公式 → base `../drawio/references/docs/math-typesetting.md`, `design-system/formulas.md`
+- `edit` — modify an academic bundle or imported `.drawio` → base `../drawio/references/workflows/edit.md`, `../drawio/references/docs/migration-readiness.md`
+- `replicate` — redraw screenshot, image, SVG, or reference paper figure → overlay `references/docs/publication-overlay.md`; base `../drawio/references/workflows/replicate.md`, `../drawio/references/docs/design-system/specification.md`, `color-guide.md`
+- `stencil-heavy` — academic cloud, network, AWS, Azure, GCP, Cisco, Kubernetes figure → base `../drawio/references/docs/stencil-library-guide.md`, `ieee-network-diagrams.md`, `../drawio/references/official/xml-reference.md`
+- `style-preset` — learn/use/list/delete/rename visual style presets → base `../drawio/references/docs/style-extraction.md`, `style-presets.md`, `../drawio/styles/built-in/`
+- `direct-xml-exception` — tiny handoff-only XML or exact mxGraph control → base `../drawio/references/upstream/pure-drawio-skill.md`, `../drawio/references/official/xml-reference.md`
 
 ## Academic Defaults
 
@@ -119,103 +91,69 @@ meta:
   profile: academic-paper
   figureType: architecture # architecture | roadmap | workflow
   theme: academic # or academic-color when color is acceptable
-  palette: okabe-ito # chosen after venue preflight; use ieee-bw for IEEE print
+  palette: okabe-ito # from venue preflight; ieee-bw for IEEE print
   title: Caption-ready title
   description: One sentence explaining the figure intent
   legend: Required when symbols, colors, line styles, or icons need explanation
   print: { target: cn-thesis } # optional gate: cn-thesis | ieee-single | ieee-double
 ```
 
-This section defines the default academic final deliverables.
-
 Default deliverables:
 
 - `<name>.drawio`
-- `<name>.png` (300dpi, via draw.io Desktop; falls back to `<name>.svg` when Desktop is unavailable)
+- `<name>.png` (300dpi, via draw.io Desktop; falls back to `<name>.svg` without Desktop)
 
 Intermediate work directory:
 
-- `<name>.spec.yaml`
-- `<name>.arch.json`
-- raw or normalized YAML and diagnostics
+- `<name>.spec.yaml`, `<name>.arch.json`, raw or normalized YAML, diagnostics
 
-The default `<name>.png` is 300dpi. **For journal / IEEE vector submission, explicitly export `<name>.pdf` (or `.svg`)** -- those venues require vector (PS/EPS/PDF), not a raster PNG. Add other formats only when requested.
+**For journal / IEEE vector submission, explicitly export `<name>.pdf` (or `.svg`)** — vector required, not raster PNG. Other formats only on request.
 
 ## Create Flow
 
-1. Classify the figure as `architecture`, `roadmap`, or `workflow`.
-2. For complex paper-derived requests, extract the research evidence chain and confirm the diagram plan before rendering.
-3. When the optional image-preview trigger applies, generate a concept preview after confirmation, then revise the plan if needed.
-4. Draft or normalize the YAML spec as the canonical source; use concise labels (shorten labels before shrinking fonts).
-5. Validate through the sibling base CLI, then render the editable `.drawio` and standalone SVG with sidecars in the work directory.
-6. Run an exported-artifact self-check before reporting completion.
+1. Classify the figure as `architecture`, `roadmap`, or `workflow`; complex paper-derived requests confirm the diagram plan first (preview only after confirmation).
+2. Draft or normalize the YAML spec as the canonical source; shorten labels before shrinking fonts.
+3. Validate and render through the sibling base CLI, then self-check the exported artifact before reporting:
 
 ```bash
 node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
-node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
+node ../drawio/scripts/cli.js input.yaml figure.png --validate --use-desktop
 ```
 
-Use paths relative to the overlay directory, or absolute paths when running from another working directory. Detailed figure-type patterns: `references/docs/academic-figure-playbook.md`.
+Figure-type patterns: `references/docs/academic-figure-playbook.md`.
 
 ## Edit and Replicate Flow
 
-- If a `.spec.yaml` sidecar exists, edit the YAML spec first. If only `.drawio` exists, import it through the base CLI (`--input-format drawio --export-spec`).
-- For image/SVG replication, preserve text boxes, captions, legends, formulas, edge labels, baseline/offset, font family/size/italic state, alignment, and spacing when visible. Use explicit `bounds` for standalone text/formula blocks and `labelOffset` for connector labels off the line.
-- Keep all regenerated files on the same basename so final artifacts and work-dir sidecars stay round-trippable.
+- Edit the `.spec.yaml` sidecar first; if only `.drawio` exists, import via the base CLI (`--input-format drawio --export-spec`).
+- For image/SVG replication, preserve text boxes, captions, legends, formulas, edge labels, baseline/offset, font family/size/italic state, alignment, and spacing when visible; use explicit `bounds` for standalone text/formula blocks and `labelOffset` for connector labels off the line.
+- Keep regenerated files on the same basename for round-trippable artifacts and sidecars.
 
 ## Export Policy
 
-Use the sibling base CLI for deterministic exports.
+Vector submission (journal/IEEE) exports PDF (or SVG) explicitly. Without Desktop, generate a diagrams.net URL and report the missing export honestly:
 
 ```bash
-# Default deliverable: editable .drawio + 300dpi PNG (--dpi defaults to 300)
-node ../drawio/scripts/cli.js input.yaml figure.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --strict-warnings
-node ../drawio/scripts/cli.js input.yaml figure.png --validate --use-desktop
-
-# Journal / IEEE vector submission -- export PDF (or SVG) explicitly:
 node ../drawio/scripts/cli.js input.yaml figure.pdf --validate --use-desktop
-node ../drawio/scripts/cli.js input.yaml figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure
-node ../drawio/scripts/cli.js input.yaml figure.drawio.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure --use-desktop
-```
-
-If Desktop is unavailable, generate a diagrams.net URL from the `.drawio` artifact and report the missing export honestly:
-
-```bash
 node ../drawio/scripts/runtime/diagrams-net-url.js figure.drawio
 ```
 
-When Desktop is unavailable the default PNG falls back to `.svg` (reported on stderr); do not claim PNG/PDF/JPG files exist when they were not produced.
-
 ## Style Presets
 
-Use overlay-specific user presets first (`~/.drawio-academic-skills/styles/`), then sibling base bundled presets (`../drawio/styles/built-in/`). Never mutate bundled base presets; copy a bundled preset into the user preset directory before editing or making it a default.
+Use overlay-specific user presets first (`~/.drawio-academic-skills/styles/`), then sibling base bundled presets (`../drawio/styles/built-in/`). Never mutate bundled base presets; copy into the user preset directory before editing or defaulting.
 
 ## Quality Gate
 
 Do not claim completion until:
 
-- final `.drawio` and `.png` (or fallback `.svg`) are aligned with work-dir `.spec.yaml` and `.arch.json`
-- `meta.profile` is `academic-paper` and `meta.figureType` is `architecture`, `roadmap`, or `workflow`
-- node count satisfies the playbook budget (`references/docs/academic-figure-playbook.md § Node Budget Management`); split or simplify when it is exceeded
-- labels are readable at paper/A4 scale; formulas use official delimiters (`$$...$$`, `\(...\)`, or AsciiMath backticks)
-- label font classes stay uniform (module title / node / edge label follow the font ladder) and no label-fit overflow warnings remain
+- final `.drawio` and `.png` (or fallback `.svg`) align with work-dir `.spec.yaml`/`.arch.json`; `meta.profile` is `academic-paper` and `meta.figureType` is `architecture`, `roadmap`, or `workflow`
+- node count satisfies the playbook budget (`references/docs/academic-figure-playbook.md § Node Budget Management`); split or simplify when exceeded
+- labels readable at paper/A4 scale; formulas use official delimiters (`$$...$$`, `\(...\)`, AsciiMath backticks); font classes follow the ladder with no label-fit overflow warnings
 - mixed CJK/Latin labels resolve to the Times New Roman + SimSun stack (theme `cjk` stack or `meta.font`)
-- captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines
-- legends use compact form (single multi-line text node, not many separate nodes)
-- colors are not the only carrier of meaning
-- `meta.palette` matches the venue decision; `PALETTE_PRINT_GATE` is clear, with `ieee-bw` or `tol-high-contrast` offered when strict print safety fails
-- visual self-check used the exported PNG (or fallback SVG) or Desktop-exported artifact before any live/browser preview, checking overlap, clipped text, connector-label clearance, arrows crossing text/nodes, missing modules, and mismatch from the confirmed plan/source
-- if a visible defect was found, the YAML spec was corrected and rerendered once before final reporting
-- requested Desktop exports were attempted or clearly reported as unavailable
-- no MCP config, MCP server, or live backend is required for the result
+- captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines; legends compact (single multi-line text node)
+- colors are not the only carrier of meaning; `meta.palette` matches the venue decision; `PALETTE_PRINT_GATE` is clear — offer `ieee-bw`/`tol-high-contrast` when strict print safety fails
+- the visual self-check used the exported PNG (or fallback SVG) before any live/browser preview — overlap, clipped text, label clearance, arrows crossing text/nodes, missing modules, plan/source mismatch; a found defect was fixed in YAML and rerendered once
+- requested Desktop exports were attempted or reported unavailable; no MCP config, server, or live backend required
 
 ## Completion Report
 
-End with a concise report:
-
-- deliverables written, with paths
-- intermediate work directory, when sidecars or diagnostics were generated
-- sibling base CLI commands run for validation/export
-- selected palette, its colorblind/grayscale safety flags, and any print-gate downgrade
-- unavailable Desktop exports and fallback provided
-- remaining visual or venue-specific manual checks, if any
+End with a concise report: deliverables with paths; intermediate work directory when sidecars were generated; sibling base CLI commands run; the selected palette, its colorblind/grayscale safety flags, and any print-gate downgrade; unavailable Desktop exports and the fallback provided; remaining venue-specific manual checks.

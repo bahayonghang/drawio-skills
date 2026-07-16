@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+### Packaging, provisioning docs, and slimmer entrypoint
+
+- Release zips now contain exactly git-tracked content, with in-recipe
+  self-checks, so local scratch can no longer leak into archives.
+- Documented the tracked `.mcp.json` live-refinement provisioning (pinned
+  version, npx network behavior, offline independence) in SKILL.md and
+  mcp-tools.md.
+- Added an indexed examples catalog (`references/examples/README.md`) and
+  palette swatch template/schema pointers; removed two stale legacy docs
+  (`examples.md`, `drawio-aesthetic-guide.md`).
+- Recorded the first base eval baseline (97.2 dry_run in
+  `evals/darwin-results.tsv`) plus a post-slim no-regression spot check.
+- Style presets: documented user-first lookup precedence and unknown-name
+  errors (no silent fallback), closing both eval e08 governance gaps.
+- Slimmed the SKILL.md initial load by 36% (21.8KB -> 14.0KB) with all
+  behavior contracts preserved; added `agents/openai.yaml` packaging parity.
+
 ## 2.7.0 (2026-07-14)
 
 ### Palette system

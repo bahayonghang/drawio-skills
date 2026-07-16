@@ -6,22 +6,22 @@ The important rule is: **reason in capabilities first, provider names second**. 
 
 ## Capability Vocabulary
 
-| Capability | Meaning | Typical Use |
-|-----------|---------|-------------|
-| `replace_diagram_xml` | Open or replace a diagram using full XML | Browser preview, live session bootstrap, inline preview |
-| `read_diagram_xml` | Read the latest XML back from the live editor | Preserve manual edits before further changes |
-| `patch_diagram_cells` | Apply cell-level add/update/delete operations | Incremental live editing |
-| `export_diagram_file` | Export `.drawio`, `.png`, or `.svg` from the live editor | Live-session file export |
-| `search_shape_catalog` | Search an official shape/style index | Stencil-heavy cloud/network/P&ID diagrams |
-| `render_inline_preview` | Render the diagram inline in chat | Visual review without opening a new tab |
+| Capability              | Meaning                                                  | Typical Use                                             |
+| ----------------------- | -------------------------------------------------------- | ------------------------------------------------------- |
+| `replace_diagram_xml`   | Open or replace a diagram using full XML                 | Browser preview, live session bootstrap, inline preview |
+| `read_diagram_xml`      | Read the latest XML back from the live editor            | Preserve manual edits before further changes            |
+| `patch_diagram_cells`   | Apply cell-level add/update/delete operations            | Incremental live editing                                |
+| `export_diagram_file`   | Export `.drawio`, `.png`, or `.svg` from the live editor | Live-session file export                                |
+| `search_shape_catalog`  | Search an official shape/style index                     | Stencil-heavy cloud/network/P&ID diagrams               |
+| `render_inline_preview` | Render the diagram inline in chat                        | Visual review without opening a new tab                 |
 
 ## Provider Matrix
 
-| Provider | `replace_diagram_xml` | `read_diagram_xml` | `patch_diagram_cells` | `export_diagram_file` | `search_shape_catalog` | `render_inline_preview` |
-|----------|-----------------------|--------------------|-----------------------|-----------------------|------------------------|-------------------------|
-| Current next-ai live MCP | Yes | Yes | Yes | Yes | No | No |
-| Official Tool Server (`@drawio/mcp`) | Yes | No | No | No | No | No |
-| Official App Server (`mcp.draw.io`) | Yes | No | No | No | Yes | Yes |
+| Provider                             | `replace_diagram_xml` | `read_diagram_xml` | `patch_diagram_cells` | `export_diagram_file` | `search_shape_catalog` | `render_inline_preview` |
+| ------------------------------------ | --------------------- | ------------------ | --------------------- | --------------------- | ---------------------- | ----------------------- |
+| Current next-ai live MCP             | Yes                   | Yes                | Yes                   | Yes                   | No                     | No                      |
+| Official Tool Server (`@drawio/mcp`) | Yes                   | No                 | No                    | No                    | No                     | No                      |
+| Official App Server (`mcp.draw.io`)  | Yes                   | No                 | No                    | No                    | Yes                    | Yes                     |
 
 ## Current Routing Rules
 
@@ -35,32 +35,40 @@ The important rule is: **reason in capabilities first, provider names second**. 
    - If absent, fall back to known design-system icons or semantic shapes instead of blocking the task.
 5. `render_inline_preview` improves review loops but does not replace edit-session capabilities.
 
+## Provisioning (`.mcp.json`)
+
+The base skill ships a tracked `.mcp.json` that provisions the "Current next-ai live MCP" provider:
+
+- It pins `@next-ai-drawio/mcp-server@0.4.13` and launches it through `npx --yes`, which fetches the package over the network at startup (version-pinned, but with no additional integrity hash).
+- Only MCP-aware hosts that treat the skill directory as a project root read this file. The offline authoring path (YAML -> CLI -> `.drawio` + sidecars) never reads it, and no workflow requires it.
+- To upgrade the provider, bump the pinned version in `.mcp.json`. To opt out, delete the file — every offline workflow keeps working without it.
+
 ## Provider-Specific Tool Mapping
 
 ### Current next-ai live MCP
 
-| Tool | Capability |
-|------|------------|
-| `start_session` | Session bootstrap only |
-| `create_new_diagram` | `replace_diagram_xml` |
-| `get_diagram` | `read_diagram_xml` |
-| `edit_diagram` | `patch_diagram_cells` |
-| `export_diagram` | `export_diagram_file` |
+| Tool                 | Capability             |
+| -------------------- | ---------------------- |
+| `start_session`      | Session bootstrap only |
+| `create_new_diagram` | `replace_diagram_xml`  |
+| `get_diagram`        | `read_diagram_xml`     |
+| `edit_diagram`       | `patch_diagram_cells`  |
+| `export_diagram`     | `export_diagram_file`  |
 
 ### Official Tool Server
 
-| Tool | Capability |
-|------|------------|
-| `open_drawio_xml` | `replace_diagram_xml` |
-| `open_drawio_csv` | Convenience import path, not a live-edit contract |
+| Tool                  | Capability                                        |
+| --------------------- | ------------------------------------------------- |
+| `open_drawio_xml`     | `replace_diagram_xml`                             |
+| `open_drawio_csv`     | Convenience import path, not a live-edit contract |
 | `open_drawio_mermaid` | Convenience import path, not a live-edit contract |
 
 ### Official App Server
 
-| Tool | Capability |
-|------|------------|
+| Tool             | Capability                                     |
+| ---------------- | ---------------------------------------------- |
 | `create_diagram` | `replace_diagram_xml`, `render_inline_preview` |
-| `search_shapes` | `search_shape_catalog` |
+| `search_shapes`  | `search_shape_catalog`                         |
 
 ## Practical Guidance
 

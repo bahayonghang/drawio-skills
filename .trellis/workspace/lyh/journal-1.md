@@ -571,3 +571,50 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+---
+
+**Date**: 2026-07-16
+**Task**: yao-meta 审计驱动的 drawio 双 skill 优化（07-16-skill-audit-optimization）
+**Branch**: `dev`
+
+### Summary
+
+以 /yao-meta 审计两个 skill（1 block + 5 warn：发布 zip 无排除规则致本地脏文件泄漏、.mcp.json 零文档、base eval 无运行记录、23 个孤儿资源、SKILL.md 初始加载超重）→ Trellis 规划（prd/design/implement + 策略断言映射法）→ 六工作流执行：W1 zip 改 git ls-files 清单打包 + 配方内自校验；W2 .mcp.json 在 SKILL.md 与 mcp-tools.md 双点文档化；W4 孤儿清零（删 2 个遗留 doc、建 21 条示例 when-to-use 索引、playbook 点名 10 个文件）；W3a 内联真实跑 15 条 base eval 基线（97.2 dry_run，暴露 style-preset 治理两处缺口）；W5 SKILL.md 瘦身 base -36% / academic -31%（frontmatter 冻结、断言短语与邻近窗口全保）；W3b 抽查零回归（15 锚点全过，e01/e09 重渲 SVG 与基线逐字节一致）；W6 小项 + CHANGELOG。终检 just ci 全绿。期间子代理三次 API 429，全程改内联执行。spec 新增 skill-doc-and-release-contract.md。
+
+### Main Changes
+
+- justfile zip：git 跟踪清单打包 + 禁止路径/一致性自校验（输出 archive/）
+- base SKILL.md 21,825→13,980B、academic 17,448→11,994B；两条 description 一字未动
+- 新增 references/examples/README.md（21 条索引）、evals/darwin-results.tsv（baseline+keep 两行）、evals/README.md、agents/openai.yaml
+- 删除 examples.md、drawio-aesthetic-guide.md（零引用孤儿：死链食谱/自弃用指南）
+- .trellis/spec/drawio-skill/skill-doc-and-release-contract.md（三条契约）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8a65568` | chore(task): plan 07-16-skill-audit-optimization |
+| `c0f5077` | chore(skills): W1 zip packaging from git ls-files with self-checks |
+| `95db040` | docs(skills): W2 document tracked .mcp.json provisioning |
+| `4c2992b` | docs(skills): W4 orphan-resource governance |
+| `fdb7a74` | test(skills): W3a record base eval baseline (97.2, dry_run) |
+| `ada6dae` | docs(skills): W5 slim SKILL.md initial load within contract phrases |
+| `66c64f3` | test(skills): W3b post-slim eval spot-check, no regression (97.2 keep) |
+| `e578e24` | chore(skills): W6 small items + changelog entries + zip to archive/ |
+
+### Testing
+
+- root npm test 445/445（每个工作流后各跑一次）；just ci 完整通过（version-sync/check + markdownlint + test + docs-build）
+- orphan check 双包归零；zip namelist == git ls-files（178/25 文件）；两 SKILL.md frontmatter 与 HEAD 逐字节一致校验
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 后续任务候选：补 style-preset 查找优先级与 unknown-name 报错契约（e08 两处 FAIL，按基线纪律本轮未改）
+- 下一版本发布时随版本号 cut 两份 CHANGELOG 的 Unreleased 段
+
+**Follow-up (2026-07-16 收尾轮)**: e08 两处 style-preset 治理缺口已闭环——SKILL.md § Style Presets 补 user-first 查找优先级与 unknown-name 报错契约（对冲后 13,995B 仍在预算内），e08 复验 4/4，base eval 97.2 → 100.0（TSV keep 行）。Next Steps 仅剩：下一版本发布时 cut Unreleased 段。

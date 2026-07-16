@@ -67,6 +67,17 @@ Quality cues:
 
 ## Scientific Figure Patterns
 
+Worked examples under `references/examples/` (render via the sibling base CLI):
+
+- `yolo-model-architecture-paper.yaml` — model-architecture pattern (YOLO backbone/neck/head).
+- `max-pooling-operation-paper.yaml` — operation/mechanism pattern (max-pooling grid with explicit bounds).
+- `ablation-study-pipeline.yaml` — experiment-pipeline pattern (ablation variants over shared evaluation).
+- `research-pipeline.yaml` — experiment-pipeline pattern (end-to-end research workflow).
+- `system-architecture-paper.yaml` — architecture figure type (paper system overview).
+- `industrial-architecture-cn-paper.yaml` — architecture figure type (Chinese-thesis industrial system).
+- `ieee-network-paper.yaml` — architecture figure type with network stencils (IEEE style).
+- `technical-roadmap-paper.yaml` — roadmap figure type (milestone phases).
+
 ### Model Architecture
 
 Use this pattern for CNN, YOLO, Transformer, encoder-decoder, and feature-fusion figures.
@@ -119,15 +130,15 @@ Use this pattern when a paper screenshot or existing figure must become editable
 
 After determining the venue, choose `meta.palette` independently from the theme. If the user did not specify a palette, ask once with `AskUserQuestion`: put the venue recommendation first with `(Recommended)`, offer 3-4 options, use each palette's display name as the label, and state colorblind/grayscale safety in the description. If the user named an unambiguous palette or style, apply it directly and do not ask.
 
-| Venue or scenario | Recommended | Alternatives |
-| --- | --- | --- |
-| IEEE print / camera-ready | `ieee-bw` | `tol-high-contrast`, `ieee-color` |
-| IEEE online / conference | `ieee-color` | `matlab-lines`, `okabe-ito` |
-| Elsevier / general journal | `okabe-ito` | `tol-bright`, `tol-muted`, `seaborn-colorblind` |
-| Nature / Science family | `okabe-ito` | `tol-muted`, `journal-npg` (aesthetic only; not CVD-safe) |
-| Chinese thesis (`cn-thesis`) | `ieee-bw` | `tol-high-contrast`, `journal-jama` |
-| Engineering architecture / C4 | `c4-blue` | `cloud-aws`, `drawio-classic` |
-| Cloud architecture | `cloud-aws` | `c4-blue` |
+| Venue or scenario             | Recommended  | Alternatives                                              |
+| ----------------------------- | ------------ | --------------------------------------------------------- |
+| IEEE print / camera-ready     | `ieee-bw`    | `tol-high-contrast`, `ieee-color`                         |
+| IEEE online / conference      | `ieee-color` | `matlab-lines`, `okabe-ito`                               |
+| Elsevier / general journal    | `okabe-ito`  | `tol-bright`, `tol-muted`, `seaborn-colorblind`           |
+| Nature / Science family       | `okabe-ito`  | `tol-muted`, `journal-npg` (aesthetic only; not CVD-safe) |
+| Chinese thesis (`cn-thesis`)  | `ieee-bw`    | `tol-high-contrast`, `journal-jama`                       |
+| Engineering architecture / C4 | `c4-blue`    | `cloud-aws`, `drawio-classic`                             |
+| Cloud architecture            | `cloud-aws`  | `c4-blue`                                                 |
 
 For replication, preserve the source palette and skip this question unless the user explicitly asks to normalize or recolor the figure.
 
@@ -174,6 +185,8 @@ Academic figures should be clear and focused. Keep node count under 40 for optim
 - > 100 nodes: fatal (always blocked, hard limit)
 
 ### Node-Efficient Patterns
+
+Ready-made compact templates live under `references/templates/`: `multi-module-system-compact.yaml` (multi-module system inside the recommended budget) and `neural-network-architecture-compact.yaml` (neural-network architecture inside the recommended budget). Start from these before authoring node-heavy figures from scratch.
 
 #### Example 1: Legend
 
