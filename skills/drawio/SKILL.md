@@ -160,7 +160,7 @@ The diagram content is encoded in the URL fragment after `#R` and is not sent as
 
 The base owns shared bundled style presets under `styles/built-in/`. User presets should live outside the repository, for example `~/.drawio-skill/styles/` or an overlay-specific user directory.
 
-To learn a reusable preset from an existing diagram ("learn my style from `<path>` as `<name>`") and render an approval sample, follow `references/docs/style-extraction.md`.
+To learn a reusable preset from an existing diagram ("learn my style from `<path>` as `<name>`") and render an approval sample, follow `references/docs/style-extraction.md`. For copy-paste style strings for quick patches or hand-authored XML, see `references/docs/style-presets.md`.
 
 Never mutate bundled presets. Copy a bundled preset to the user preset directory before making it the default or editing it.
 
@@ -213,4 +213,4 @@ End with a concise report containing:
 - `references/docs/style-extraction.md`: learn a reusable style preset from an existing diagram
 - `references/docs/design-system/color-guide.md`: theme/palette decision rules and palette-selection interaction
 - `references/examples/palettes/README.md`: bundled palette catalog, safety metadata, sources, and previews
-- `references/examples/`: reusable YAML examples
+- `references/examples/README.md`: indexed catalog of the reusable YAML examples (what each shows, when to load it)
