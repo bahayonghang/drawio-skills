@@ -1,0 +1,2 @@
+{"file": ".trellis/tasks/07-16-skill-audit-optimization/research/yao-meta-audit.md", "reason": "验收对照:每个 W* 对应 F* 的证据与建议"}
+{"file": ".trellis/tasks/07-16-skill-audit-optimization/research/audit-orphan-check.mjs", "reason": "W4 验收工具:重跑须输出两包 0 孤儿"}
