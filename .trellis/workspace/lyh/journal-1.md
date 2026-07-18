@@ -718,3 +718,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 17: 完成多语言代码关系导入器
+
+**Date**: 2026-07-18
+**Task**: 完成多语言代码关系导入器
+**Branch**: `dev`
+
+### Summary
+
+实现 Python imports/classes、JS/TS ESM、Go package 与 Rust module use 导入器；复用 canonical identity/finalizer/projector 和受限 Python worker envelope，新增 directory CLI routes、精确 optional parser pins、Node 20 真实 parser 证据、文档与 executable spec；保留大型 corpus、conditional build、Graphviz、Desktop 和 visual model 为 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e53d46e` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

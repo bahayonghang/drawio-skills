@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 16
+- **Total Sessions**: 17
 - **Last Active**: 2026-07-18
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~720 | Active |
+| `journal-1.md` | ~753 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 17 | 2026-07-18 | 完成多语言代码关系导入器 | `e53d46e` | `dev` |
 | 16 | 2026-07-18 | 完成声明式配置导入器 | `6afac39` | `dev` |
 | 15 | 2026-07-18 | 完成 adapter identity foundation 并审阅 config importer 启动门 | `97d3c81` | `dev` |
 | 14 | 2026-07-18 | 完成 C0 视觉预览与 YAML 返工闭环 | `6a48b82`, `6d83c03` | `dev` |
