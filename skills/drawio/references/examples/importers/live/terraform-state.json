@@ -1,0 +1,70 @@
+{
+  "format_version": "1.0",
+  "values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_instance.api",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "api",
+          "depends_on": ["aws_security_group.web"],
+          "values": {
+            "password": "terraform-secret-must-not-cross"
+          },
+          "sensitive_values": {
+            "password": true
+          }
+        },
+        {
+          "address": "aws_security_group.web",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "web",
+          "depends_on": [],
+          "values": {}
+        },
+        {
+          "address": "data.aws_ami.base",
+          "mode": "data",
+          "type": "aws_ami",
+          "name": "base",
+          "values": {
+            "token": "data-secret-must-not-cross"
+          }
+        }
+      ],
+      "child_modules": [
+        {
+          "address": "module.workers",
+          "resources": [
+            {
+              "address": "module.workers.aws_instance.worker[0]",
+              "mode": "managed",
+              "type": "aws_instance",
+              "name": "worker",
+              "index": 0,
+              "depends_on": [],
+              "values": {}
+            },
+            {
+              "address": "module.workers.aws_instance.worker[1]",
+              "mode": "managed",
+              "type": "aws_instance",
+              "name": "worker",
+              "index": 1,
+              "depends_on": [],
+              "values": {}
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "credential": {
+      "value": "output-secret-must-not-cross",
+      "sensitive": true
+    }
+  }
+}

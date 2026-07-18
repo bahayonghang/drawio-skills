@@ -464,8 +464,15 @@ export * from './identity.js'
 export { finalizeGraphProjection } from './graph-projection.js'
 export { projectGraphToSpec } from './projection-to-spec.js'
 export { parseTerraformConfig, TERRAFORM_ATTRIBUTE_ALLOWLIST, buildTerraformIdentityInput } from './terraform-config.js'
-export { parseKubernetesManifests, KUBERNETES_ATTRIBUTE_ALLOWLIST, buildKubernetesIdentityInput } from './kubernetes.js'
+export { parseTerraformStateSnapshot } from './terraform-state.js'
+export {
+  parseKubernetesManifests,
+  parseKubernetesLiveSnapshot,
+  KUBERNETES_ATTRIBUTE_ALLOWLIST,
+  buildKubernetesIdentityInput
+} from './kubernetes.js'
 export { parseComposeConfig, COMPOSE_ATTRIBUTE_ALLOWLIST, buildComposeIdentityInput } from './compose.js'
+export { parseDockerInspectSnapshot } from './docker-inspect.js'
 export { parseSqlDdl, SQL_ATTRIBUTE_ALLOWLIST } from './sql-ddl.js'
 export { parseOpenApiDocument, OPENAPI_ATTRIBUTE_ALLOWLIST } from './openapi.js'
 export { parseCiWorkflow, CI_ATTRIBUTE_ALLOWLIST } from './ci.js'

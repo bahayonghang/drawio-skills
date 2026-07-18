@@ -137,9 +137,12 @@ export function buildKubernetesIdentityInput(object, { scope, kindScopes = {} } 
   return { scope, namespace: object.metadata?.namespace, kind, name, namespaced }
 }
 
-export function parseKubernetesManifests(source, { scope, locator = 'kubernetes.yaml', kindScopes = {} } = {}) {
-  const documents = parseStructuredDocuments(source, { adapter: ADAPTER })
-  const objects = flattenDocuments(documents).map((object) => requireRecord(object, 'Kubernetes object', ADAPTER))
+function parseKubernetesProjection(
+  source,
+  { scope, locator, kindScopes = {}, mode = 'declared', adapter = ADAPTER }
+) {
+  const documents = parseStructuredDocuments(source, { adapter })
+  const objects = flattenDocuments(documents).map((object) => requireRecord(object, 'Kubernetes object', adapter))
   const records = objects.map((object) => {
     const input = buildKubernetesIdentityInput(object, { scope, kindScopes })
     const identity = createKubernetesIdentity(input)
@@ -232,7 +235,24 @@ export function parseKubernetesManifests(source, { scope, locator = 'kubernetes.
   }
 
   return finalizeConfigProjection(
-    { adapter: ADAPTER, domain: 'kubernetes', locator, nodes, edges, diagnostics },
+    { adapter, domain: 'kubernetes', mode, locator, nodes, edges, diagnostics },
     KUBERNETES_ATTRIBUTE_ALLOWLIST
   )
+}
+
+export function parseKubernetesManifests(source, { scope, locator = 'kubernetes.yaml', kindScopes = {} } = {}) {
+  return parseKubernetesProjection(source, { scope, locator, kindScopes })
+}
+
+export function parseKubernetesLiveSnapshot(
+  source,
+  { scope, locator = 'kubernetes-live.json', kindScopes = {} } = {}
+) {
+  return parseKubernetesProjection(source, {
+    scope,
+    locator,
+    kindScopes,
+    mode: 'live',
+    adapter: 'kubernetes-live'
+  })
 }

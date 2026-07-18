@@ -35,8 +35,8 @@
 - 配置输入覆盖 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI。
 - 运行态覆盖 Terraform state、Docker inspect、Kubernetes JSON。
 - 所有 adapter 输出 canonical spec 或正式定义的 canonical graph projection，再进入现有校验、ELK、渲染和 sidecar 管线。
-- 声明态与运行态定义稳定身份：Terraform resource address、Kubernetes namespace/kind/name、Compose service/container 等。
-- drift 对节点、边和重要属性分别报告 added/removed/changed/same；颜色之外保留文字或线型语义。
+- 声明态与运行态定义稳定身份：Terraform resource address、Kubernetes scope/namespace/kind/name、Compose project/service 等；运行时 instance metadata 不参与稳定身份。
+- drift 对节点、边和重要属性分别报告 added/removed/changed/unchanged；颜色之外保留文字或线型语义。
 
 ### R2 专业作图能力
 

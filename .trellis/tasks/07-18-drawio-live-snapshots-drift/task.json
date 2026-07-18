@@ -3,7 +3,7 @@
   "name": "drawio-live-snapshots-drift",
   "title": "运行态快照与架构漂移",
   "description": "复用声明态 identity factory 解析 Terraform state、Docker inspect、Kubernetes JSON，按节点、边和重要属性生成 drawiodiff 漂移及 C0 视觉证据。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,

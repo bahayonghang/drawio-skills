@@ -22,12 +22,12 @@ export const TERRAFORM_ATTRIBUTE_ALLOWLIST = Object.freeze({
   module: ['path']
 })
 
-function modulePath(address) {
+export function terraformModulePath(address) {
   const parts = address.split('.')
   return parts.length > 2 ? parts.slice(0, -2).join('.') : '_root'
 }
 
-function resourceLabel(address) {
+export function terraformResourceLabel(address) {
   return address.split('.').slice(-2).join('.')
 }
 
@@ -43,6 +43,24 @@ export function buildTerraformIdentityInput(resource) {
     adapterError(ERROR_CODES.ADAPTER_PARSE, 'Terraform resource record requires an address', { adapter: ADAPTER })
   }
   return resource.address
+}
+
+export function buildTerraformNodeAttributes(resource) {
+  if (
+    !isRecord(resource) ||
+    typeof resource.address !== 'string' ||
+    typeof resource.resourceType !== 'string' ||
+    typeof resource.provider !== 'string'
+  ) {
+    adapterError(ERROR_CODES.ADAPTER_PARSE, 'Terraform resource record requires address, resourceType, and provider', {
+      adapter: ADAPTER
+    })
+  }
+  return {
+    module: terraformModulePath(resource.address),
+    provider: resource.provider,
+    resourceType: resource.resourceType
+  }
 }
 
 export function parseTerraformConfig(
@@ -66,16 +84,17 @@ export function parseTerraformConfig(
     }
     const identity = createTerraformIdentity(buildTerraformIdentityInput(resource))
     identities.set(resource.address, identity)
-    const module = modulePath(resource.address)
+    const attributes = buildTerraformNodeAttributes(resource)
+    const module = attributes.module
     if (!moduleIdentities.has(module)) {
       moduleIdentities.set(module, createGroupIdentity({ domain: 'terraform', key: module }))
     }
     return {
       identity,
-      label: resourceLabel(resource.address),
+      label: terraformResourceLabel(resource.address),
       semanticType: resource.resourceType.includes('database') || resource.resourceType.includes('db_') ? 'database' : 'service',
       moduleIdentity: moduleIdentities.get(module),
-      attributes: { module, provider: resource.provider, resourceType: resource.resourceType }
+      attributes
     }
   })
   const modules = [...moduleIdentities].map(([path, identity]) => ({

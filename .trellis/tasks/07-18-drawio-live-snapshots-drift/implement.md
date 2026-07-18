@@ -8,11 +8,11 @@
 
 ## Ordered Work
 
-1. 先补 declared/live identity parity、sensitive omission、diff four-state 和 incompatibility red tests。
-2. 实现 Terraform state/plan 与 Docker inspect normalizers；Kubernetes live bridge 复用 config adapter。
-3. 实现 projection drift engine，分别比较 nodes/edges/allowlisted attributes；禁止 label fallback。
-4. 生成 machine report 与 non-color-only drift projection，交给 shared projector/JS ELK。
-5. 用 file-backed declared/live case 跑 C0 preview、structured review、YAML-first rework 和 stopping rule evidence。
+1. 先补 snapshot version/shape、declared/live exact identity parity、sensitive omission、Docker replica aggregation、diff four-state、ordering 和 incompatibility red tests。
+2. 实现 Terraform state/plan 与 Docker inspect snapshot normalizers；Kubernetes declared/live wrappers 复用同一 structured normalizer、identity builder 和 allowlist。不得调用 code parser、Python worker、provider CLI 或其他 subprocess。
+3. 实现 projection drift engine，分别比较 nodes/edges/allowlisted attributes 与 display label；禁止 label fallback，relation change使用 removed + added。
+4. 生成 versioned machine report 与 non-color-only drift projection，交给 shared projector/validateSpec/JS ELK/renderer/validateXml；presentation 只在 canonical spec 层追加 status text、legend 和 removed dashed。
+5. 用 file-backed declared/live case消费 C0 review record/YAML-first/stopping contract；不执行 Desktop/model，证据保持 `missing evidence`。
 6. 更新 base live/drift reference、compatibility、scorecard；academic 只追加 print/publication review pointer。
 
 ## Focused Tests
@@ -36,21 +36,23 @@ npm run docs:build
 ## Optional Dependencies
 
 - Adapter input：local JSON file/stdin，无新增 runtime dependency。
-- `terraform`、`docker`、`kubectl`：仅 optional capture commands，默认不执行。
+- `terraform`、`docker`、`kubectl` 与任何 capture provider：当前 child 不实现、不执行，后续分别立项审批。
+- Python/config/code parser subprocess：当前 child 不执行；测试使用纯 JavaScript snapshot fixtures和现有 injected seams。
 - Graphviz：无；JS ELK 默认。
-- Desktop/vision provider：只用于 C0 evidence，缺失时按 contract fallback/`missing evidence`。
+- Desktop/vision provider：当前 child 不执行，按 contract 保持 `missing evidence`。
 
 ## Evidence And Rollback
 
 - 记录 fixture、command、provider CLI、Desktop、model execution 为不同 evidence kind。
 - 无真实 provider/model metadata 时继续 `missing evidence`；不得用 deterministic diff 代替。
-- live normalizer、diff CLI/reference 和 scorecard case 可单独 rollback；config/foundation contract 不在本 child 私改。
+- snapshot normalizer 与 comparator/presentation 使用两个原子工作提交，可单独 rollback。只允许为 live mode wrapper、Compose replica allowlist 和 executable contract 做最小 shared config/spec改动；不得私建第二套 identity factory。
 
 ## Final Review
 
 - [ ] declared/live import 同一个 factory/attribute allowlist，有代码级 import evidence。
 - [ ] label/instance/order 不影响 primary identity，ambiguous match 显式失败。
-- [ ] node/edge/attribute statuses 完整且不只靠颜色。
-- [ ] C0 preview/review/rework/stopping contracts 被实际消费。
+- [ ] node/edge/attribute `added/removed/changed/unchanged` 完整、排序稳定且不只靠颜色。
+- [ ] Raw/sensitive/env/Secret/path/payload 不进入任何生成 artifact 或 diagnostic。
+- [ ] C0 review/rework/stopping contracts 被 file-backed case 消费；Desktop/model 保持 `missing evidence`。
 - [ ] JS ELK 默认，无 Graphviz。
 - [ ] focused/root gates 通过，provider/model gaps 明示。

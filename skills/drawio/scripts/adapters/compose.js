@@ -17,13 +17,24 @@ import {
 const ADAPTER = 'compose-config'
 
 export const COMPOSE_ATTRIBUTE_ALLOWLIST = Object.freeze({
-  node: ['image', 'kind', 'project', 'service'],
+  node: ['image', 'kind', 'project', 'replicas', 'service'],
   edge: [],
   module: []
 })
 
 export function buildComposeIdentityInput(service, { project } = {}) {
   return { project, service }
+}
+
+function composeReplicas(service) {
+  const replicas = service?.deploy?.replicas
+  if (replicas == null) return 1
+  if (!Number.isInteger(replicas) || replicas < 1 || replicas > 10000) {
+    adapterError(ERROR_CODES.ADAPTER_PARSE, 'Compose deploy.replicas must be an integer from 1 to 10000', {
+      adapter: ADAPTER
+    })
+  }
+  return replicas
 }
 
 function resourceReferences(service, key) {
@@ -64,6 +75,7 @@ export function parseComposeConfig(source, { project, locator = 'compose.yaml' }
       attributes: {
         kind: 'service',
         project: resolvedProject,
+        replicas: composeReplicas(service),
         service: name,
         ...(typeof service.image === 'string' ? { image: service.image } : {})
       }

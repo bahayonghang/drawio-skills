@@ -75,6 +75,18 @@ export function parseStructuredDocuments(source, { adapter }) {
   return documents
 }
 
+export function parseJsonDocument(source, { adapter }) {
+  assertSourceText(source, adapter)
+  let document
+  try {
+    document = JSON.parse(source)
+  } catch (error) {
+    adapterError(ERROR_CODES.ADAPTER_PARSE, `${adapter} input could not be parsed as JSON`, { adapter }, error)
+  }
+  validateStructuredValue(document, `${adapter} document`, { seen: new WeakSet(), entries: 0 })
+  return document
+}
+
 export function stringArray(value) {
   if (value == null) return []
   if (typeof value === 'string') return [value]
@@ -101,11 +113,14 @@ export function diagnostic(code, message, identity) {
   return result
 }
 
-export function finalizeConfigProjection({ adapter, domain, locator, nodes, edges, modules = [], diagnostics = [] }, attributeAllowlist) {
+export function finalizeConfigProjection(
+  { adapter, domain, mode = 'declared', locator, nodes, edges, modules = [], diagnostics = [] },
+  attributeAllowlist
+) {
   return finalizeGraphProjection(
     {
       version: 1,
-      source: { adapter, domain, mode: 'declared', locator },
+      source: { adapter, domain, mode, locator },
       nodes,
       edges,
       modules,

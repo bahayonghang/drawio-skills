@@ -26,7 +26,8 @@ test('parseComposeConfig emits services, named resources, and stable relations',
   assert.ok(projection.nodes.some((node) => node.identity.scheme === 'compose-network'))
   assert.deepEqual(new Set(projection.edges.map((edge) => edge.relation)), new Set(['depends-on', 'uses-network', 'mounts']))
   assert.equal(projection.nodes.find((node) => node.label === 'api').attributes.image, 'example/api:1')
-  assert.deepEqual(COMPOSE_ATTRIBUTE_ALLOWLIST.node, ['image', 'kind', 'project', 'service'])
+  assert.deepEqual(COMPOSE_ATTRIBUTE_ALLOWLIST.node, ['image', 'kind', 'project', 'replicas', 'service'])
+  assert.equal(projection.nodes.find((node) => node.label === 'api').attributes.replicas, 1)
 })
 
 test('parseComposeConfig requires an explicit or top-level project identity', () => {
@@ -41,7 +42,7 @@ test('parseComposeConfig never projects environment or build args', () => {
     'name: shop\nservices:\n  api:\n    image: app:1\n    environment: { TOKEN: secret }\n    build: { args: { PASSWORD: secret } }',
     { locator: 'compose.yaml' }
   )
-  assert.deepEqual(Object.keys(projection.nodes[0].attributes).sort(), ['image', 'kind', 'project', 'service'])
+  assert.deepEqual(Object.keys(projection.nodes[0].attributes).sort(), ['image', 'kind', 'project', 'replicas', 'service'])
 })
 
 test('parseComposeConfig does not treat bind mounts as named volumes', () => {

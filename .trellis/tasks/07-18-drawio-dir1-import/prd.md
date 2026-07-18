@@ -65,7 +65,7 @@ adapter + stable identity foundation
 - [ ] 15 个 C1 相关 upstream 脚本逐项标记 `bridge`、`adapt`、`replace` 或 `defer`，包含理由、owner、依赖和证据状态。
 - [ ] code/config adapters 只解析；任何 layout 都回到本仓 JS ELK，Graphviz 不在默认路径。
 - [ ] declared/live 的 Terraform、Kubernetes、Compose identity fixture 跨 child 一致；label 变化不改变 identity。
-- [ ] drift 分别报告 node、edge、重要 attribute 的 `added/removed/changed/same`，并以文字/线型保留非颜色语义。
+- [ ] drift 分别报告 node、edge、重要 attribute 的 `added/removed/changed/unchanged`，并以文字/线型保留非颜色语义。
 - [ ] live/drift 的确定性 gates 与 C0 visual evidence 分开；无 provider/model 执行证据时保留 `missing evidence`。
 - [ ] base/academic 所有权没有反转或复制；root `npm test`、`just ci`、docs build 按各 child 风险执行。
 - [ ] bucket 始终保持 `planning` 且不作为 implementation target；只启动当前可执行 child。
