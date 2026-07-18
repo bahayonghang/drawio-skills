@@ -2,7 +2,7 @@
   "id": "drawio-dir1-import",
   "name": "drawio-dir1-import",
   "title": "方向①导入与漂移",
-  "description": "R1:代码/IaC/SQL/OpenAPI/CI 导入器 + live infra + drawiodiff 漂移;Python 外壳只解析,摆放回流本仓 JS ELK,dot 可选。",
+  "description": "R1:代码/配置 importer、live snapshot 与 projection drift；adapter 只解析，稳定身份统一生成，布局回流本仓 JS ELK，Graphviz 默认 defer。",
   "status": "planning",
   "dev_type": null,
   "scope": null,
@@ -18,7 +18,12 @@
   "commit": null,
   "pr_url": null,
   "subtasks": [],
-  "children": [],
+  "children": [
+    "07-18-drawio-adapter-identity-foundation",
+    "07-18-drawio-code-importers",
+    "07-18-drawio-config-importers",
+    "07-18-drawio-live-snapshots-drift"
+  ],
   "parent": "07-18-drawio-upstream-port",
   "relatedFiles": [],
   "notes": "",

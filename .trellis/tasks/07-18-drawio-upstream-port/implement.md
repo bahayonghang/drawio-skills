@@ -10,15 +10,18 @@
 - [x] 收敛父 `prd.md` / `design.md`，纠正 IEND、Python 和 YAML-first 边界。
 - [x] 用户选择完整离线 AI icon 目录；固定 309 个真实 base brand、canonical variant 规则和零 runtime network，并排除上游 suffix 解析产生的 2 个伪 family。
 - [x] 创建 C2.1 `07-18-drawio-ai-icon-catalog` 并完成独立规划草案。
-- [ ] 将 C1/C2/C3 能力域 bucket 拆成独立可验收 deliverable；依赖写入每个 child 的 `prd.md` / `implement.md`。
+- [x] 将 C1 bucket 拆成 foundation、code、config、live/drift 四个独立可验收 deliverable；依赖写入每个 child 的三件套。
+- [ ] 将 C2/C3 能力域 bucket 的其余能力拆成独立可验收 deliverable。
 - [ ] 创建最终 integration/promotion child。
 
 ## Execution Order
 
 ```text
-C0 vision-preview + structured rework
-  -> canonical adapter/page foundations
-      -> code/config/live import + drift
+C0 vision-preview + structured rework (completed)
+  -> canonical adapter/identity foundation
+      -> code importers + config importers
+          -> live snapshots + drift
+  -> canonical page foundation
       -> raster/types/icons/C4
       -> offline transforms/runtime exports
           -> governed PR bot
@@ -52,12 +55,12 @@ C0 vision-preview + structured rework
 
 ### C1 bucket - `07-18-drawio-dir1-import`
 
-拆分目标：
+已拆分；bucket 不启动：
 
-- canonical adapter/identity foundation
-- code importers
-- config importers
-- live snapshots + drift
+- `07-18-drawio-adapter-identity-foundation`：首个可执行 child；无未完成 feature 前置依赖。
+- `07-18-drawio-code-importers`：依赖 foundation。
+- `07-18-drawio-config-importers`：依赖 foundation。
+- `07-18-drawio-live-snapshots-drift`：依赖 foundation、config 和已完成 C0。
 
 ### C2 bucket - `07-18-drawio-dir2-authoring`
 

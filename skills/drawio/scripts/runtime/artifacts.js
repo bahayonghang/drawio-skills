@@ -39,6 +39,31 @@ function compactObject(value) {
   )
 }
 
+function buildIdentityMetadata(identity) {
+  if (
+    !identity ||
+    typeof identity !== 'object' ||
+    Array.isArray(identity) ||
+    typeof identity.scheme !== 'string' ||
+    typeof identity.key !== 'string'
+  ) {
+    return undefined
+  }
+  return { scheme: identity.scheme, key: identity.key }
+}
+
+function buildAdapterMetadata(adapter) {
+  if (!adapter || typeof adapter !== 'object' || Array.isArray(adapter)) return undefined
+  const metadata = compactObject({
+    projectionVersion: adapter.projectionVersion,
+    name: adapter.name,
+    domain: adapter.domain,
+    mode: adapter.mode,
+    locator: adapter.locator
+  })
+  return Object.keys(metadata).length > 0 ? metadata : undefined
+}
+
 function buildReplicationMetadata(replication) {
   if (!replication || typeof replication !== 'object' || Array.isArray(replication)) {
     return undefined
@@ -104,6 +129,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
   const artifactPaths = outputFile ? deriveArtifactPaths(outputFile) : null
   const fallbackTitle = artifactPaths ? basename(artifactPaths.stem) : 'diagram'
   const replication = buildReplicationMetadata(spec.meta?.replication)
+  const adapter = buildAdapterMetadata(spec.meta?.adapter)
 
   const arch = {
     version: 1,
@@ -121,6 +147,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
     nodes: (spec.nodes || []).map((node) =>
       compactObject({
         id: node.id,
+        identity: buildIdentityMetadata(node.identity),
         label: node.label,
         type: node.type || 'service',
         module: node.module,
@@ -131,6 +158,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
     edges: (spec.edges || []).map((edge, index) =>
       compactObject({
         id: edge.id || `edge-${index + 1}`,
+        identity: buildIdentityMetadata(edge.identity),
         from: edge.from,
         to: edge.to,
         type: edge.type || 'primary',
@@ -141,6 +169,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
     modules: (spec.modules || []).map((module) =>
       compactObject({
         id: module.id,
+        identity: buildIdentityMetadata(module.identity),
         label: module.label,
         color: module.color
       })
@@ -149,6 +178,9 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
 
   if (replication) {
     arch.replication = replication
+  }
+  if (adapter) {
+    arch.adapter = adapter
   }
 
   return arch

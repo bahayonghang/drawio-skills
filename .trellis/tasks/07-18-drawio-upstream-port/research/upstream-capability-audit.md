@@ -36,6 +36,30 @@
 - `drawiodiff.py` 按 cell id 或 label 匹配；只有声明态与运行态共享稳定语义身份时，漂移颜色才可靠。
 - 多数 importer 本身只输出 graph JSON；Graphviz 通常属于后续 autolayout 阶段，不应把所有 importer 都描述成 Graphviz 硬依赖。
 
+#### C1 逐脚本映射（权威表）
+
+Evidence state 仅描述当前已取得的上游证据；它不等于本仓 child 已实施。上游 importer 小 fixture 来自 `ref/drawio-skill/tests/test_scripts.py`；Graphviz/Desktop 跳过或未运行的路径继续标记 `missing evidence`。
+
+| Upstream script | Mapping | C1 owner / replacement entry | Reason | Current evidence |
+| --- | --- | --- | --- | --- |
+| `autolayout.py` | `replace` | `07-18-drawio-adapter-identity-foundation` -> existing JS `applyAutoLayout` + canonical renderer | upstream 直接调用 Graphviz `dot` 并生成 XML；本仓已有 vendored ELK/canonical renderer，Graphviz 不应成为默认硬依赖 | upstream unit helpers command-executed；Graphviz comparison `missing evidence` |
+| `pyimports.py` | `adapt` | `07-18-drawio-code-importers` | 保留 Python AST/intra-project import intent；输出 projection，移除 `tred`/graph JSON CLI/layout coupling | small file-backed fixture command-executed；large repo corpus `missing evidence` |
+| `pyclasses.py` | `adapt` | `07-18-drawio-code-importers` | 保留 inheritance scope；identity 改为 canonical module path + qualified class，移除 `tred` | small fixture command-executed；nested/ambiguous corpus `missing evidence` |
+| `jsimports.py` | `adapt` | `07-18-drawio-code-importers` | 保留 intra-project import graph job；替换 regex/Python shell、mutable path id 与 `tred`，parser dependency 待批准 | small fixture command-executed；maintained parser/TS aliases `missing evidence` |
+| `goimports.py` | `adapt` | `07-18-drawio-code-importers` | 保留 intra-module package graph；canonical module path 由 shared factory 生成，布局回 JS ELK | small fixture command-executed；workspace/replace/offline tool evidence `missing evidence` |
+| `rustimports.py` | `adapt` | `07-18-drawio-code-importers` | 保留 crate module-use job；显式处理 parser/cfg/edition 限制并移除 `tred` | small fixture command-executed；workspace/cfg/inline module evidence `missing evidence` |
+| `tfimports.py` | `adapt` | `07-18-drawio-config-importers` | 保留 resource/module/reference semantics；使用 module-qualified address、成熟 HCL parser 决策、projection hints 和 JS ELK | small fixture command-executed；multi-module HCL parser corpus `missing evidence` |
+| `k8simports.py` | `adapt` | `07-18-drawio-config-importers`; live mode bridges to same adapter in live child | 一套 structured YAML/JSON parser 同时服务 declared/live；identity 固定为 scope/namespace/kind/name | JSON/file/stdin fixtures command-executed；CRD scope/real cluster `missing evidence` |
+| `composeimports.py` | `adapt` | `07-18-drawio-config-importers` | 保留 service/dependency/volume semantics；补 project/service identity，shared live normalization | PyYAML fixture command-executed when dependency available；profiles/includes `missing evidence` |
+| `sqlerd.py` | `adapt` | `07-18-drawio-config-importers` | 保留 table/PK/FK job；schema-qualified identity、parser/subset contract 和 semantic edges 替换 raw style | small DDL fixture command-executed；dialect corpus/parser choice `missing evidence` |
+| `openapiimports.py` | `adapt` | `07-18-drawio-config-importers` | 保留 operation/schema refs；operation identity 改为 method + normalized path，不使用 `opN` ordinal | JSON fixture command-executed；callbacks/webhooks/external refs corpus `missing evidence` |
+| `ciimports.py` | `adapt` | `07-18-drawio-config-importers` | 保留 jobs/needs/stage/trigger semantics；identity 改为 provider/workflow/job，不依赖 display name | GitHub/GitLab fixtures command-executed；includes/expressions/real repos `missing evidence` |
+| `tfstate.py` | `adapt` | `07-18-drawio-live-snapshots-drift` | 保留 managed resource/state recursion；复用 declared Terraform identity/attribute allowlist，过滤 sensitive values | saved JSON fixture command-executed；real provider state/plan `missing evidence` |
+| `dockerimports.py` | `adapt` | `07-18-drawio-live-snapshots-drift` | 保留 container/network/volume relations；Compose-managed container primary identity 改为 project/service，instance 作为 attribute | inspect fixture command-executed；replicas/swarm/real daemon `missing evidence` |
+| `drawiodiff.py` | `replace` | `07-18-drawio-live-snapshots-drift` | 从 XML cell id/label diff 改为 projection identity + node/edge/important-attribute diff；状态必须有文字/线型，不只靠颜色 | upstream id/label fixtures command-executed；new projection drift/model review `missing evidence` |
+
+Graphviz `dot/tred` 作为 C1 默认路径整体 `defer`。只有独立 fixture 证明 JS ELK 无法满足具体布局/约简需求，并取得可复核对比证据后，才可另立 optional tool；当前没有这类证据。
+
 ### 方向二：专业作图
 
 - 两边 shape index 都是 10,446 项；`shapesearch` 是已有能力，不需要重新移植数据集。

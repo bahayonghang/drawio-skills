@@ -89,7 +89,11 @@
 ## Task Map
 
 - **C0 P0** `07-18-drawio-vision-rework`：vision-preview、PNG 检查、结构化视觉评审、YAML-first 返工。无前置依赖，完成规划审查后最先实施。
-- **C1 bucket** `07-18-drawio-dir1-import`：canonical adapter、代码/配置/运行态输入与 drift。实施前按 adapter foundation、代码输入、infra/live/drift 拆成独立 deliverable，并把 stable identity 依赖写入子工件。
+- **C1 bucket** `07-18-drawio-dir1-import`：只拥有方向一范围、child 依赖和跨 child 验收，不直接启动。
+  - **C1.1** `07-18-drawio-adapter-identity-foundation`：versioned canonical graph projection、共享 identity factory、renderer-safe stable ID、projection validation/projector 和错误分类；无未完成 feature 前置依赖，是建议首个启动的 child。
+  - **C1.2** `07-18-drawio-code-importers`：Python imports/classes、JS/TS、Go、Rust；依赖 C1.1。
+  - **C1.3** `07-18-drawio-config-importers`：Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI；依赖 C1.1。
+  - **C1.4** `07-18-drawio-live-snapshots-drift`：Terraform state、Docker inspect、Kubernetes live JSON 与 projection drift；依赖 C1.1、C1.3 和已完成 C0。
 - **C2 bucket** `07-18-drawio-dir2-authoring`：replicate/raster、AI icons、SysML/BPMN、C4 multi-page。实施前把 multi-page foundation 与资产/diagram-type 增量拆开。
   - **C2.1 P1** `07-18-drawio-ai-icon-catalog`：固定 Lobe Icons 来源、生成 309 品牌离线目录、lazy loader、resolver/alias/suggestion 契约和代表性渲染证据；依赖 C0 的 preview/review 契约完成视觉验收。
 - **C3 bucket** `07-18-drawio-dir3-postprocess`：离线后处理、runtime-rich export、PR bot。PR bot 必须独立 Governed 子任务。

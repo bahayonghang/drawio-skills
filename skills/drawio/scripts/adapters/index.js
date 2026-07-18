@@ -459,3 +459,7 @@ export function parseCsvToSpec(text, { profile = 'default' } = {}) {
     modules: []
   }
 }
+
+export * from './identity.js'
+export { finalizeGraphProjection } from './graph-projection.js'
+export { projectGraphToSpec } from './projection-to-spec.js'

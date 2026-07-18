@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Graph Projection",
+  "description": "Versioned adapter output before canonical Draw.io spec projection and JavaScript ELK layout.",
+  "type": "object",
+  "required": ["version", "source", "nodes", "edges", "modules", "diagnostics"],
+  "properties": {
+    "version": { "const": 1 },
+    "source": {
+      "type": "object",
+      "required": ["adapter", "domain", "mode", "locator"],
+      "properties": {
+        "adapter": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "domain": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "mode": { "enum": ["code", "declared", "live", "drift"] },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])[^\\u0000-\\u001F\\u007F]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nodes": {
+      "type": "array",
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "maxItems": 200,
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "modules": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/module" }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/diagnostic" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "required": ["scheme", "key"],
+      "properties": {
+        "scheme": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scalar": {
+      "type": ["string", "number", "boolean", "null"]
+    },
+    "attributeValue": {
+      "oneOf": [
+        { "$ref": "#/$defs/scalar" },
+        { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/scalar" } },
+        {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": {
+            "oneOf": [
+              { "$ref": "#/$defs/scalar" },
+              { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/scalar" } }
+            ]
+          }
+        }
+      ]
+    },
+    "attributes": {
+      "type": "object",
+      "maxProperties": 32,
+      "additionalProperties": { "$ref": "#/$defs/attributeValue" }
+    },
+    "node": {
+      "type": "object",
+      "required": ["identity", "label", "attributes"],
+      "properties": {
+        "identity": { "$ref": "#/$defs/identity" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "semanticType": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+        "moduleIdentity": { "$ref": "#/$defs/identity" },
+        "icon": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]*$" },
+        "attributes": { "$ref": "#/$defs/attributes" }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": ["identity", "from", "to", "relation", "attributes"],
+      "properties": {
+        "identity": { "$ref": "#/$defs/identity" },
+        "from": { "$ref": "#/$defs/identity" },
+        "to": { "$ref": "#/$defs/identity" },
+        "relation": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "discriminator": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "label": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "semanticType": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$" },
+        "attributes": { "$ref": "#/$defs/attributes" }
+      },
+      "additionalProperties": false
+    },
+    "module": {
+      "type": "object",
+      "required": ["identity", "label", "attributes"],
+      "properties": {
+        "identity": { "$ref": "#/$defs/identity" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "attributes": { "$ref": "#/$defs/attributes" }
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": ["level", "code", "message"],
+      "properties": {
+        "level": { "enum": ["info", "warning"] },
+        "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,63}$" },
+        "message": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "identity": { "$ref": "#/$defs/identity" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

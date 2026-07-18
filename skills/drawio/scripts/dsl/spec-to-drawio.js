@@ -4,6 +4,7 @@
  */
 
 import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
+import { normalizeIdentity } from '../adapters/identity.js'
 import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 import { resolveIconShape } from './icon-mappings.js'
@@ -2276,6 +2277,7 @@ const KNOWN_META_KEYS = new Set([
   'print',
   'legend',
   'replication',
+  'adapter',
   'template'
 ])
 
@@ -2298,7 +2300,7 @@ const KNOWN_NODE_STYLE_KEYS = new Set([
   'spacingBottom'
 ])
 
-const KNOWN_MODULE_KEYS = new Set(['id', 'label', 'color', 'style'])
+const KNOWN_MODULE_KEYS = new Set(['id', 'label', 'identity', 'color', 'style'])
 
 /**
  * Warn about spec keys the renderer silently ignores (schema drift):
@@ -3078,6 +3080,15 @@ export function validateSpec(spec) {
   const VALID_VERTICAL_ALIGN = ['top', 'middle', 'bottom']
   const SAFE_STYLE_TEXT = /^[^;<>"\r\n]{1,120}$/
 
+  const validateIdentityMetadata = (identity, context) => {
+    if (identity == null) return null
+    try {
+      return normalizeIdentity(identity)
+    } catch (error) {
+      throw new Error(`${context} identity is invalid: ${error.message}`)
+    }
+  }
+
   const validateBounds = (bounds, context) => {
     if (typeof bounds !== 'object' || bounds == null || Array.isArray(bounds)) {
       throw new Error(`${context} bounds must be an object when provided`)
@@ -3150,6 +3161,47 @@ export function validateSpec(spec) {
   }
   if (spec.meta?.source != null && !VALID_SOURCES.includes(spec.meta.source)) {
     throw new Error(`Invalid meta.source "${spec.meta.source}": must be one of ${VALID_SOURCES.join(', ')}`)
+  }
+  if (spec.meta?.adapter != null) {
+    const adapter = spec.meta.adapter
+    if (typeof adapter !== 'object' || adapter == null || Array.isArray(adapter)) {
+      throw new Error('meta.adapter must be an object when provided')
+    }
+    const allowed = new Set(['projectionVersion', 'name', 'domain', 'mode', 'locator'])
+    const unknown = Object.keys(adapter).filter((key) => !allowed.has(key))
+    if (unknown.length > 0) throw new Error(`meta.adapter has unknown field "${unknown[0]}"`)
+    if (adapter.projectionVersion !== 1) throw new Error('meta.adapter.projectionVersion must be 1')
+    for (const field of ['name', 'domain']) {
+      if (typeof adapter[field] !== 'string' || !/^[a-z][a-z0-9-]{0,63}$/.test(adapter[field])) {
+        throw new Error(`meta.adapter.${field} must match /^[a-z][a-z0-9-]{0,63}$/`)
+      }
+    }
+    if (!['code', 'declared', 'live', 'drift'].includes(adapter.mode)) {
+      throw new Error('meta.adapter.mode must be one of code, declared, live, drift')
+    }
+    const locatorParts = typeof adapter.locator === 'string' ? adapter.locator.replaceAll('\\', '/').split('/') : []
+    let locatorDepth = 0
+    let locatorEscapesRoot = false
+    for (const part of locatorParts) {
+      if (part === '' || part === '.') continue
+      if (part === '..') {
+        if (locatorDepth === 0) locatorEscapesRoot = true
+        else locatorDepth--
+      } else {
+        locatorDepth++
+      }
+    }
+    if (
+      typeof adapter.locator !== 'string' ||
+      adapter.locator.length === 0 ||
+      adapter.locator.length > 512 ||
+      /^[A-Za-z]:/.test(adapter.locator) ||
+      /^[\\/]/.test(adapter.locator) ||
+      /[\u0000-\u001f\u007f]/.test(adapter.locator) ||
+      locatorEscapesRoot
+    ) {
+      throw new Error('meta.adapter.locator must be a safe relative path')
+    }
   }
   if (spec.meta?.canvas != null) {
     parseCanvasSize(spec.meta.canvas)
@@ -3251,12 +3303,22 @@ export function validateSpec(spec) {
   }
 
   // Node validation
+  const nodeIdentityKeys = new Set()
   for (const node of spec.nodes) {
     if (!node.id || !VALID_ID.test(node.id)) {
       throw new Error(`Invalid node id "${node.id}": must match /^[A-Za-z][A-Za-z0-9_-]*$/`)
     }
     if (!node.label || typeof node.label !== 'string') {
       throw new Error(`Node "${node.id}" is missing a required string label`)
+    }
+    const nodeIdentity = validateIdentityMetadata(node.identity, `Node "${node.id}"`)
+    if (nodeIdentity) {
+      const key = `${nodeIdentity.scheme}\0${nodeIdentity.key}`
+      if (nodeIdentityKeys.has(key))
+        throw new Error(`Duplicate node identity "${nodeIdentity.scheme}:${nodeIdentity.key}"`)
+      nodeIdentityKeys.add(key)
+    } else if (spec.meta?.adapter) {
+      throw new Error(`Node "${node.id}" requires identity when meta.adapter is present`)
     }
     if (node.type != null && !SHAPE_STYLES[node.type]) {
       throw new Error(
@@ -3294,7 +3356,26 @@ export function validateSpec(spec) {
   }
 
   // Edge validation
+  const edgeIds = new Set()
+  const edgeIdentityKeys = new Set()
   for (const edge of spec.edges) {
+    if (edge.id != null) {
+      if (typeof edge.id !== 'string' || !VALID_ID.test(edge.id)) {
+        throw new Error(`Invalid edge.id "${edge.id}": must match node ID pattern`)
+      }
+      if (edgeIds.has(edge.id)) throw new Error(`Duplicate edge id "${edge.id}"`)
+      edgeIds.add(edge.id)
+    }
+    const edgeIdentity = validateIdentityMetadata(edge.identity, `Edge "${edge.from}->${edge.to}"`)
+    if (edgeIdentity) {
+      const key = `${edgeIdentity.scheme}\0${edgeIdentity.key}`
+      if (edgeIdentityKeys.has(key)) {
+        throw new Error(`Duplicate edge identity "${edgeIdentity.scheme}:${edgeIdentity.key}"`)
+      }
+      edgeIdentityKeys.add(key)
+    } else if (spec.meta?.adapter) {
+      throw new Error(`Edge "${edge.from}->${edge.to}" requires identity when meta.adapter is present`)
+    }
     if (!edge.from || !VALID_ID.test(edge.from)) {
       throw new Error(`Invalid edge.from "${edge.from}": must match node ID pattern`)
     }
@@ -3348,12 +3429,23 @@ export function validateSpec(spec) {
   }
 
   // Module validation
+  const moduleIdentityKeys = new Set()
   for (const mod of spec.modules) {
     if (!mod.id || !VALID_ID.test(mod.id)) {
       throw new Error(`Invalid module id "${mod.id}": must match /^[A-Za-z][A-Za-z0-9_-]*$/`)
     }
     if (!mod.label || typeof mod.label !== 'string') {
       throw new Error(`Module "${mod.id}" is missing a required string label`)
+    }
+    const moduleIdentity = validateIdentityMetadata(mod.identity, `Module "${mod.id}"`)
+    if (moduleIdentity) {
+      const key = `${moduleIdentity.scheme}\0${moduleIdentity.key}`
+      if (moduleIdentityKeys.has(key)) {
+        throw new Error(`Duplicate module identity "${moduleIdentity.scheme}:${moduleIdentity.key}"`)
+      }
+      moduleIdentityKeys.add(key)
+    } else if (spec.meta?.adapter) {
+      throw new Error(`Module "${mod.id}" requires identity when meta.adapter is present`)
     }
   }
 }
