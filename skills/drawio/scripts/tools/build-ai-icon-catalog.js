@@ -5,19 +5,15 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gzipSync, gunzipSync } from 'node:zlib'
 
-export const AI_ICON_SOURCE = Object.freeze({
-  package: '@lobehub/icons-static-svg',
-  version: '1.91.0',
-  integrity: 'sha512-ZDflEq0uUvAkH4WK4h3qNvvY09ts4OqUb5azD7A0xKfcuYhffGwB1Q/As2RguZYq4Gh4v925CJ8iodiClzc4zw==',
-  license: 'MIT',
-  variantOrder: Object.freeze(['color', 'brand-color', 'base'])
-})
+import {
+  AI_ICON_CATALOG_COUNTS,
+  AI_ICON_CATALOG_SCHEMA_VERSION,
+  AI_ICON_SOURCE
+} from '../shared/ai-icon-contract.js'
 
-const DEFAULT_EXPECTED = Object.freeze({
-  variants: 871,
-  brands: 309,
-  distribution: Object.freeze({ color: 209, brandColor: 1, base: 99 })
-})
+export { AI_ICON_SOURCE } from '../shared/ai-icon-contract.js'
+
+const DEFAULT_EXPECTED = AI_ICON_CATALOG_COUNTS
 const VARIANT_SUFFIX = /(?:-text-color|-text-[a-z]{2}|-text|-brand-color|-brand|-color)$/
 const LOCAL_FRAGMENT = /^#[A-Za-z_][A-Za-z0-9_.:-]*$/
 const MAX_SVG_BYTES = 128 * 1024
@@ -156,7 +152,7 @@ export function buildAiIconCatalog({ sourceDir, output, integrity, expected = DE
   validatePackage(input)
   const selected = selectIcons(input, expected)
   const catalog = {
-    schemaVersion: 1,
+    schemaVersion: AI_ICON_CATALOG_SCHEMA_VERSION,
     source: {
       package: AI_ICON_SOURCE.package,
       version: AI_ICON_SOURCE.version,

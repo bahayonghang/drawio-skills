@@ -58,8 +58,16 @@ test('image icon resolver stays bundled and offline', () => {
     resolve(PROJECT_ROOT, 'skills/drawio/scripts/dsl/icon-resolver.js'),
     'utf8'
   )
+  const loaderText = readFileSync(
+    resolve(PROJECT_ROOT, 'skills/drawio/scripts/dsl/ai-icon-catalog.js'),
+    'utf8'
+  )
 
   assert.equal(packageJson.dependencies['lucide-static'], undefined)
+  assert.equal(packageJson.dependencies['@lobehub/icons-static-svg'], undefined)
+  assert.equal(packageJson.devDependencies?.['@lobehub/icons-static-svg'], undefined)
   assert.doesNotMatch(resolverText, /readFileSync|createRequire|require\.resolve|LOBE_CDN_BASE/)
   assert.doesNotMatch(resolverText, /image=https?:\/\//)
+  assert.match(loaderText, /assets\/catalog\/ai-icons\.json\.gz/)
+  assert.doesNotMatch(loaderText, /https?:\/\/|node_modules|process\.env/)
 })

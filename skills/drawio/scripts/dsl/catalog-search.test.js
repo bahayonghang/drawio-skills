@@ -25,3 +25,10 @@ test('catalog search finds kubernetes entries through natural-word aliases', () 
   const results = searchShapeCatalog('deployment', { prefix: 'kubernetes' })
   assert.ok(results.some((entry) => entry.spec === 'k8s.deploy'))
 })
+
+test('catalog search routes the lobe prefix to canonical offline AI icons', () => {
+  const [result] = searchShapeCatalog('openai', { prefix: 'lobe', limit: 1 })
+  assert.equal(result.name, 'lobe.openai')
+  assert.equal(result.spec, 'icon: lobe.openai')
+  assert.doesNotMatch(JSON.stringify(result), /https?:\/\//)
+})

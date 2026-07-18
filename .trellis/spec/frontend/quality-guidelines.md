@@ -308,6 +308,10 @@ edges:
 
 - `resolveImageIconStyle(icon)` returns a complete Draw.io image style or
   `null`.
+- `loadAiIconCatalog()` reads and validates the fixed bundled catalog once;
+  `getAiIcon(slug)` returns an immutable record or `null`.
+- `searchAiIcons(query, { limit })` returns deterministic catalog-search
+  records with canonical `icon: lobe.<slug>` syntax.
 - `validateShapeReferences(spec)` reports unsupported image-icon names through
   the existing unknown-shape warning path.
 
@@ -315,10 +319,17 @@ edges:
 
 - Every successful image-icon resolution embeds an SVG data URI; normal
   rendering and reopening must not require HTTP(S) access.
-- Runtime support is a finite set owned by `LOBE_PATHS`, `LUCIDE_PATHS`, and
-  `BRAND_SVGS`. Aliases must resolve into that same finite set.
-- The resolver must not discover root packages or read icon files at runtime.
-  A copied `skills/drawio` directory keeps the same image-icon support set.
+- Runtime support is a finite set owned by the checked-in
+  `assets/catalog/ai-icons.json.gz`, `LUCIDE_PATHS`, and `BRAND_SVGS`.
+  Compatibility identifiers and slug aliases must resolve into that same set.
+- `icon-resolver.js` must not discover packages or read files. The independent
+  `ai-icon-catalog.js` loader may read only its fixed sibling asset path, uses
+  one module cache, and must not inspect `node_modules`, environment variables,
+  a user home cache, or arbitrary runtime paths. A copied `skills/drawio`
+  directory keeps the same image-icon support set.
+- Full-name compatibility runs before canonical exact lookup; slug aliases run
+  only after an exact miss. `lobe.anthropic` is exact Anthropic while
+  `ai.anthropic` remains the documented Claude compatibility exception.
 - New embedded third-party icon data must include its license under
   `skills/drawio/assets/licenses/`.
 
@@ -327,8 +338,13 @@ edges:
 - Documented embedded icon -> `shape=image` style containing
   `image=data:image/svg+xml,...`.
 - Supported alias -> same embedded result as its canonical name.
+- Missing/corrupt gzip, wrong schema/provenance/count, duplicate slug, or
+  unsorted records -> throw an `AI icon catalog ...` error; do not degrade to
+  an unknown icon.
 - Unknown `lobe.*`, `ai.*`, `brand.*`, or `lucide.*` -> resolver returns
   `null`; shape-reference validation emits an unknown-shape warning.
+- Non-AI stencil, Redis, Lucide, and ordinary icon resolution -> do not read
+  the AI catalog.
 - Unsafe icon characters -> existing icon validation rejects the spec before
   rendering.
 
@@ -339,11 +355,17 @@ edges:
   Draw.io stencil resolver.
 - Bad: constructing a CDN URL for any syntactically safe slug, or requiring a
   repository-root icon package that a skill-only install does not carry.
+- Bad: catching catalog corruption and returning `null`, which makes a broken
+  release indistinguishable from an unknown brand.
 
 #### 6. Tests Required
 
 - Assert every documented embedded name and alias returns a data URI with no
   remote image URL.
+- Iterate every checked-in slug through both `lobe.*` and `ai.*`, including the
+  documented `ai.anthropic` exception.
+- Inject the loader read boundary to prove one successful read, one cached hard
+  failure, and zero reads for Redis/Lucide/ordinary icons.
 - Assert representative unknown names return `null` and produce warnings.
 - Assert package metadata and resolver source do not reintroduce the removed
   runtime icon dependency, package discovery, or CDN fallback.
@@ -359,8 +381,8 @@ return `shape=image;image=https://cdn.example/icons/${slug}.svg`
 Correct:
 
 ```js
-const pathMarkup = Object.hasOwn(LUCIDE_PATHS, slug) ? LUCIDE_PATHS[slug] : null
-return pathMarkup ? embeddedImageStyle(pathMarkup) : null
+const record = getAiIcon(slug) // fixed bundled gzip, validated and cached
+return record ? embeddedImageStyle(record.svg) : null
 ```
 
 ### Academic Overlay Image Preview Contract

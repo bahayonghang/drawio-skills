@@ -9,6 +9,7 @@ import { resolveImageIconStyle } from './icon-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 import { resolveIconShape } from './icon-mappings.js'
 import { searchShapeCatalog } from './catalog-search.js'
+import { searchAiIcons } from './ai-icon-catalog.js'
 import { applyPalette, loadPalette, paletteTokenIndex, resolvePaletteToken } from './palette.js'
 import { validatePaletteUsage } from './palette-validate.js'
 import yaml from 'js-yaml'
@@ -2179,6 +2180,17 @@ export function validateShapeReferences(spec) {
   for (const node of spec.nodes || []) {
     const iconName = node.icon || deriveNodeIcon(node)
     if (resolveImageIconStyle(iconName)) continue
+    const aiIdentifier = /^(?:lobe|ai)\.([a-z][a-z0-9._-]*)$/i.exec(String(iconName || ''))
+    if (aiIdentifier) {
+      const suggestions = searchAiIcons(aiIdentifier[1].split(/[._-]/).filter(Boolean).join(' '), { limit: 3 })
+        .map((result) => result.spec)
+        .join(', ')
+      warnings.push(
+        `Node "${node.id}" resolves to unknown AI icon "${iconName}"; ` +
+          `it would render as an empty box in draw.io Desktop.${suggestions ? ` Did you mean: ${suggestions}?` : ''}`
+      )
+      continue
+    }
     const iconShape = resolveIconShape(iconName)
     if (!iconShape) continue
     if (resolveShapeNameKind(iconShape) === 'unknown') {

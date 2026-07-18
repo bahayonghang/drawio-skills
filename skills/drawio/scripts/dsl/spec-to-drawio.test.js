@@ -1484,7 +1484,7 @@ describe('Phase 2.4: resolveIconShape', () => {
   })
 
   it('should reject unsupported image icon names', () => {
-    assert.strictEqual(resolveImageIconStyle('lobe.mistral'), null)
+    assert.strictEqual(resolveImageIconStyle('lobe.definitely-not-a-catalog-brand'), null)
     assert.strictEqual(resolveImageIconStyle('lobe.definitely-not-real'), null)
     assert.strictEqual(resolveImageIconStyle('brand.not-real'), null)
     assert.strictEqual(resolveImageIconStyle('lucide.not-a-real-icon'), null)
@@ -2273,7 +2273,7 @@ describe('theme style fidelity', () => {
         { id: 'good', label: 'DB', icon: 'aws.rds' },
         { id: 'brand', label: 'OpenAI', icon: 'brand.openai' },
         { id: 'lucide', label: 'Cache', icon: 'lucide.database-zap' },
-        { id: 'badLobe', label: 'Missing Lobe', icon: 'lobe.definitely-not-real' },
+        { id: 'badLobe', label: 'Missing Lobe', icon: 'lobe.opnai' },
         { id: 'badBrand', label: 'Missing Brand', icon: 'brand.not-real' },
         { id: 'badLucide', label: 'Missing Lucide', icon: 'lucide.not-a-real-icon' }
       ]
@@ -2282,7 +2282,8 @@ describe('theme style fidelity', () => {
     assert.equal(result.warnings.length, 3, 'uncovered image names should remain warnings')
     assert.match(result.errors[0], /unknown shape "mxgraph\.cisco\.wireless\.access_point"/)
     assert.match(result.errors[0], /Did you mean:/)
-    assert.match(result.warnings[0], /unknown shape "lobe\.definitely-not-real"/)
+    assert.match(result.warnings[0], /unknown AI icon "lobe\.opnai"/)
+    assert.match(result.warnings[0], /icon: lobe\.openai/)
     assert.match(result.warnings[1], /unknown shape "brand\.not-real"/)
     assert.match(result.warnings[2], /unknown shape "lucide\.not-a-real-icon"/)
   })
