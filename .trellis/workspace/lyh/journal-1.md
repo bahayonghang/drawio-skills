@@ -685,3 +685,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 16: 完成声明式配置导入器
+
+**Date**: 2026-07-18
+**Task**: 完成声明式配置导入器
+**Branch**: `dev`
+
+### Summary
+
+完成 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI 与 CI 声明式配置导入器，固化 optional Python parser 隔离和 declared/live identity 合同；验证 focused 28/28 与 just ci 511 passed、1 skipped，并保留大型 corpus、provider、Desktop、Graphviz comparison、visual model 为 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6afac39` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

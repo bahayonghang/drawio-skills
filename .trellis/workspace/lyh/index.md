@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 15
+- **Total Sessions**: 16
 - **Last Active**: 2026-07-18
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~687 | Active |
+| `journal-1.md` | ~720 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 16 | 2026-07-18 | 完成声明式配置导入器 | `6afac39` | `dev` |
 | 15 | 2026-07-18 | 完成 adapter identity foundation 并审阅 config importer 启动门 | `97d3c81` | `dev` |
 | 14 | 2026-07-18 | 完成 C0 视觉预览与 YAML 返工闭环 | `6a48b82`, `6d83c03` | `dev` |
 | 13 | 2026-07-15 | Palette 配色系统：调研、Trellis 父子任务规划、Codex 实施审查与 2.7.0 发布 | `bb05245` | `dev` |
