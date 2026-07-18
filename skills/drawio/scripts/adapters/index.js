@@ -469,3 +469,7 @@ export { parseComposeConfig, COMPOSE_ATTRIBUTE_ALLOWLIST, buildComposeIdentityIn
 export { parseSqlDdl, SQL_ATTRIBUTE_ALLOWLIST } from './sql-ddl.js'
 export { parseOpenApiDocument, OPENAPI_ATTRIBUTE_ALLOWLIST } from './openapi.js'
 export { parseCiWorkflow, CI_ATTRIBUTE_ALLOWLIST } from './ci.js'
+export { parsePythonImportsProject, parsePythonClassesProject } from './python-code.js'
+export { parseJavaScriptImportsProject } from './js-code.js'
+export { parseGoImportsProject } from './go-code.js'
+export { parseRustImportsProject } from './rust-code.js'

@@ -42,7 +42,7 @@ live projection -----/                                                       |
 15 个 C1 脚本的权威逐项表写入父任务 `research/upstream-capability-audit.md`。bucket 采用以下 ownership：
 
 - foundation：`autolayout.py`（`replace`）。
-- code：`pyimports.py`、`pyclasses.py`、`jsimports.py`、`goimports.py`、`rustimports.py`（`adapt`）。
+- code：`pyimports.py`、`pyclasses.py`、`jsimports.py`、`goimports.py`、`rustimports.py`（`adapt`）；Go/Rust 只作为被解析源码，parser 在 Node 内运行，不引入对应 toolchain 或 subprocess。
 - config：`tfimports.py`、`k8simports.py`、`composeimports.py`、`sqlerd.py`、`openapiimports.py`、`ciimports.py`（`adapt`）。
 - live/drift：`tfstate.py`、`dockerimports.py`（`adapt`），`drawiodiff.py`（`replace`）；Kubernetes live JSON 复用 config child 的 `k8simports` adapter contract，不复制 parser。
 

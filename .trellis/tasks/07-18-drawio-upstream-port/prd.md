@@ -31,7 +31,7 @@
 
 ### R1 输入适配器与架构漂移
 
-- 代码输入覆盖 Python imports、Python classes、JS/TS、Go、Rust。
+- 代码输入覆盖 Python imports、Python classes、JS/TS、Go、Rust；实现最多使用 Node JS/TS 与 optional Python，Go/Rust 只作为被解析源码，不引入对应 toolchain 或 subprocess。
 - 配置输入覆盖 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI。
 - 运行态覆盖 Terraform state、Docker inspect、Kubernetes JSON。
 - 所有 adapter 输出 canonical spec 或正式定义的 canonical graph projection，再进入现有校验、ELK、渲染和 sidecar 管线。
@@ -91,7 +91,7 @@
 - **C0 P0** `07-18-drawio-vision-rework`：vision-preview、PNG 检查、结构化视觉评审、YAML-first 返工。无前置依赖，完成规划审查后最先实施。
 - **C1 bucket** `07-18-drawio-dir1-import`：只拥有方向一范围、child 依赖和跨 child 验收，不直接启动。
   - **C1.1** `07-18-drawio-adapter-identity-foundation`：versioned canonical graph projection、共享 identity factory、renderer-safe stable ID、projection validation/projector 和错误分类；无未完成 feature 前置依赖，是建议首个启动的 child。
-  - **C1.2** `07-18-drawio-code-importers`：Python imports/classes、JS/TS、Go、Rust；依赖 C1.1。
+  - **C1.2** `07-18-drawio-code-importers`：Python imports/classes、JS/TS、Go、Rust；依赖 C1.1，实现仅使用 Node JS/TS 与 optional Python。
   - **C1.3** `07-18-drawio-config-importers`：Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI；依赖 C1.1。
   - **C1.4** `07-18-drawio-live-snapshots-drift`：Terraform state、Docker inspect、Kubernetes live JSON 与 projection drift；依赖 C1.1、C1.3 和已完成 C0。
 - **C2 bucket** `07-18-drawio-dir2-authoring`：replicate/raster、AI icons、SysML/BPMN、C4 multi-page。实施前把 multi-page foundation 与资产/diagram-type 增量拆开。

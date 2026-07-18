@@ -19,7 +19,7 @@
 ### R1 Child Boundaries
 
 - `07-18-drawio-adapter-identity-foundation`：拥有 projection schema、共享 identity factory、稳定 render ID、projection validation/projector 和错误分类。
-- `07-18-drawio-code-importers`：拥有 Python imports/classes、JS/TS、Go、Rust 解析，只输出 projection；依赖 foundation。
+- `07-18-drawio-code-importers`：拥有 Python imports/classes、JS/TS、Go、Rust 源码关系解析，只输出 projection；依赖 foundation。实现仅使用 Node JS/TS 与 optional Python，不引入 Go/Rust toolchain 或 subprocess。
 - `07-18-drawio-config-importers`：拥有 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI 声明态解析；依赖 foundation。
 - `07-18-drawio-live-snapshots-drift`：拥有 Terraform state、Docker inspect、Kubernetes live JSON、projection drift 和 drift visual review；依赖 foundation、config importers 和已完成 C0。
 

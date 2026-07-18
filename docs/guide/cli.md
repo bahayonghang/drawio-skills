@@ -17,7 +17,15 @@ node skills/drawio/scripts/cli.js search <query> [--prefix <library>] [--limit <
 | Mermaid | `--input-format mermaid` |
 | CSV | `--input-format csv` |
 | `.drawio` | `--input-format drawio` |
+| Python modules/classes | `--input-format python-imports` or `python-classes` |
+| JavaScript/TypeScript ESM | `--input-format js-imports` |
+| Go packages | `--input-format go-imports` |
+| Rust modules | `--input-format rust-imports` |
 | stdin | use `-` as the input path |
+
+Code importer inputs must be local project directories and do not support
+stdin. They parse source structure only; Go and Rust routes never invoke their
+language toolchains.
 
 ## Rendering And Import Options
 
@@ -86,6 +94,12 @@ Convert Mermaid with strict validation:
 
 ```bash
 node skills/drawio/scripts/cli.js flow.mmd final/flow.drawio --input-format mermaid --validate --strict
+```
+
+Render a JavaScript/TypeScript ESM dependency view:
+
+```bash
+node skills/drawio/scripts/cli.js packages/web final/web-imports.drawio --input-format js-imports --validate
 ```
 
 ## Failure Semantics

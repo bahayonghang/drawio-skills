@@ -17,7 +17,14 @@ node skills/drawio/scripts/cli.js search <query> [--prefix <library>] [--limit <
 | Mermaid | `--input-format mermaid` |
 | CSV | `--input-format csv` |
 | `.drawio` | `--input-format drawio` |
+| Python 模块/类 | `--input-format python-imports` 或 `python-classes` |
+| JavaScript/TypeScript ESM | `--input-format js-imports` |
+| Go package | `--input-format go-imports` |
+| Rust 模块 | `--input-format rust-imports` |
 | stdin | 输入路径使用 `-` |
+
+代码导入器必须接收本地项目目录，不支持 stdin。它们只解析源码结构；Go 与
+Rust route 不会调用对应语言工具链。
 
 ## 渲染与导入选项
 
@@ -86,6 +93,12 @@ node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --page 0
 
 ```bash
 node skills/drawio/scripts/cli.js flow.mmd final/flow.drawio --input-format mermaid --validate --strict
+```
+
+渲染 JavaScript/TypeScript ESM 依赖视图：
+
+```bash
+node skills/drawio/scripts/cli.js packages/web final/web-imports.drawio --input-format js-imports --validate
 ```
 
 ## 失败语义

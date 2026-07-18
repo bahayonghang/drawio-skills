@@ -20,8 +20,13 @@ import {
   parseComposeConfig,
   parseCsvToSpec,
   parseKubernetesManifests,
+  parseGoImportsProject,
+  parseJavaScriptImportsProject,
   parseMermaidToSpec,
   parseOpenApiDocument,
+  parsePythonClassesProject,
+  parsePythonImportsProject,
+  parseRustImportsProject,
   parseSqlDdl,
   parseTerraformConfig,
   projectGraphToSpec
@@ -102,7 +107,8 @@ Arguments:
 Options:
   --input-format <f>  Input format: yaml (default), mermaid, csv, drawio,
                       terraform, kubernetes, compose, sql, openapi,
-                      github-actions, or gitlab-ci
+                      github-actions, gitlab-ci, python-imports,
+                      python-classes, js-imports, go-imports, or rust-imports
   --scope <name>      Kubernetes logical cluster/environment identity
   --project <name>    Compose project identity override
   --dialect <name>    SQL dialect (default: postgres)
@@ -187,6 +193,23 @@ const repoRelativeInput =
   inputFile && inputFile !== '-' ? relative(process.cwd(), resolve(inputFile)).replaceAll('\\', '/') : undefined
 const adapterWorkflow = optionValue('--workflow') || repoRelativeInput
 const adapterLocator = repoRelativeInput || `${inputFormat}.stdin`
+const codeInputFormats = new Set([
+  'python-imports',
+  'python-classes',
+  'js-imports',
+  'go-imports',
+  'rust-imports'
+])
+const codeProjectInput = codeInputFormats.has(inputFormat)
+const codeAdapterLocator =
+  repoRelativeInput &&
+  !repoRelativeInput.startsWith('/') &&
+  !/^[A-Za-z]:/.test(repoRelativeInput) &&
+  !repoRelativeInput.split('/').includes('..')
+    ? repoRelativeInput
+    : inputFile && inputFile !== '-'
+      ? basename(resolve(inputFile))
+      : 'project'
 
 if (visualPreview && (!outputFile || extname(outputFile).toLowerCase() !== '.png')) {
   console.error('Error: --visual-preview requires an explicit .png output path.')
@@ -239,7 +262,12 @@ try {
 // ---------------------------------------------------------------------------
 
 let inputText
-if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
+if (codeProjectInput) {
+  if (!inputFile || inputFile === '-') {
+    console.error(`Error: ${inputFormat} requires a local project directory; stdin is not supported.`)
+    process.exit(1)
+  }
+} else if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
   const chunks = []
   for await (const chunk of process.stdin) chunks.push(chunk)
   inputText = Buffer.concat(chunks).toString('utf-8')
@@ -257,7 +285,16 @@ if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
 
 let spec
 try {
-  if (inputFormat === 'yaml') {
+  if (codeProjectInput) {
+    const parser = {
+      'python-imports': parsePythonImportsProject,
+      'python-classes': parsePythonClassesProject,
+      'js-imports': parseJavaScriptImportsProject,
+      'go-imports': parseGoImportsProject,
+      'rust-imports': parseRustImportsProject
+    }[inputFormat]
+    spec = projectGraphToSpec(await parser(resolve(inputFile), { locator: codeAdapterLocator }))
+  } else if (inputFormat === 'yaml') {
     spec = parseSpecYaml(inputText)
   } else if (inputFormat === 'mermaid') {
     spec = parseMermaidToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
@@ -287,7 +324,13 @@ try {
     throw new Error(`Unsupported input format "${inputFormat}"`)
   }
 } catch (err) {
-  const context = [err.code, err.adapter && `adapter=${err.adapter}`, err.path && `path=${err.path}`].filter(Boolean)
+  const context = [
+    err.code,
+    err.adapter && `adapter=${err.adapter}`,
+    err.path && `path=${err.path}`,
+    Number.isInteger(err.context?.line) && `line=${err.context.line}`,
+    Number.isInteger(err.context?.column) && `column=${err.context.column}`
+  ].filter(Boolean)
   const contextText = context.length > 0 ? `[${context.join(' ')}] ` : ''
   console.error(`Error: Failed to parse ${inputFormat}: ${contextText}${err.message}`)
   process.exit(1)

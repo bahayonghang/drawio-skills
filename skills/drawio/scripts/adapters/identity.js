@@ -158,6 +158,21 @@ export function createCodeIdentity({ language, modulePath } = {}) {
   }
 }
 
+export function createCodeClassIdentity({ moduleIdentity, qualifiedClassName } = {}) {
+  const normalizedModule = normalizeIdentity(moduleIdentity)
+  if (normalizedModule.scheme !== 'code-module') {
+    identityError('Code class moduleIdentity must use the code-module scheme')
+  }
+  const normalizedName = requireString(qualifiedClassName, 'Code qualified class name', {
+    pattern: /^[A-Za-z_][A-Za-z0-9_.]{0,255}$/,
+    maxLength: 256
+  })
+  return {
+    scheme: 'code-class',
+    key: JSON.stringify([serializeIdentity(normalizedModule), normalizedName])
+  }
+}
+
 export function createOpenApiIdentity({ method, path } = {}) {
   const normalizedMethod = requireString(method, 'OpenAPI method', {
     pattern: /^[A-Za-z]+$/,

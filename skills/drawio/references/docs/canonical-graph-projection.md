@@ -4,6 +4,8 @@ Use `CanonicalGraphProjection v1` for adapters that need stable external identit
 
 For Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, and CI parser routes,
 see [Declared Config Importers](./config-importers.md).
+For source dependency and inheritance routes, see
+[Code Importers](./code-importers.md).
 
 ## Boundary
 
