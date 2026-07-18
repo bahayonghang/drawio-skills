@@ -287,6 +287,68 @@ CTO,CEO,Chief Technology Officer`
   assert.ok(output.includes('Chief Technology Officer'), 'CSV adapter should emit child node labels')
 })
 
+test('CLI: structured config adapters project through the canonical renderer', () => {
+  const cases = [
+    {
+      args: ['-', '--input-format', 'kubernetes', '--scope', 'test'],
+      input: 'apiVersion: apps/v1\nkind: Deployment\nmetadata: { name: api }',
+      label: 'api'
+    },
+    {
+      args: ['-', '--input-format', 'compose'],
+      input: 'name: shop\nservices: { api: { image: example/api:1 } }',
+      label: 'api'
+    },
+    {
+      args: ['-', '--input-format', 'openapi'],
+      input: 'openapi: 3.1.0\npaths:\n  /health:\n    get: { responses: { "200": { description: ok } } }',
+      label: 'GET /health'
+    },
+    {
+      args: ['-', '--input-format', 'github-actions', '--workflow', '.github/workflows/ci.yml'],
+      input: 'jobs: { build: { runs-on: ubuntu-latest } }',
+      label: 'build'
+    }
+  ]
+
+  for (const fixture of cases) {
+    const output = runCli(fixture.args, { input: fixture.input })
+    assert.ok(output.includes(fixture.label), `${fixture.args[2]} should render ${fixture.label}`)
+  }
+})
+
+test('CLI: optional parser absence is isolated to Terraform and SQL routes', () => {
+  const env = {
+    SYSTEMROOT: process.env.SYSTEMROOT,
+    WINDIR: process.env.WINDIR,
+    TEMP: process.env.TEMP,
+    TMP: process.env.TMP,
+    PATH: ''
+  }
+  const terraform = runCliResult(['-', '--input-format', 'terraform'], {
+    input: 'resource "aws_instance" "api" {}',
+    env
+  })
+  assert.notEqual(terraform.status, 0)
+  assert.match(terraform.stderr, /\[OPTIONAL_DEPENDENCY_MISSING\]/)
+  assert.match(terraform.stderr, /Python 3\.9\+ is unavailable/)
+
+  const yaml = runCliResult(['-', '--input-format', 'compose'], {
+    input: 'name: shop\nservices: { api: { image: app:1 } }',
+    env
+  })
+  assert.equal(yaml.status, 0)
+  assert.match(yaml.stdout, /api/)
+})
+
+test('CLI: config adapter options reject missing values', () => {
+  const result = runCliResult(['-', '--input-format', 'kubernetes', '--scope', '--validate'], {
+    input: 'apiVersion: apps/v1\nkind: Deployment\nmetadata: { name: api }'
+  })
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /--scope requires a value/)
+})
+
 // ============================================================================
 // File Outputs and Sidecars
 // ============================================================================

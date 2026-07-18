@@ -136,6 +136,17 @@ export function createComposeIdentity({ project, service } = {}) {
   }
 }
 
+export function createComposeResourceIdentity({ project, kind, name } = {}) {
+  const normalizedKind = requireString(kind, 'Compose resource kind', {
+    pattern: /^(network|volume)$/,
+    maxLength: 16
+  })
+  return {
+    scheme: `compose-${normalizedKind}`,
+    key: [encodeComponent(project, 'Compose project'), encodeComponent(name, `Compose ${normalizedKind} name`)].join('/')
+  }
+}
+
 export function createCodeIdentity({ language, modulePath } = {}) {
   const normalizedLanguage = requireString(language, 'Code language', {
     pattern: /^[a-z][a-z0-9-]{0,31}$/,
@@ -159,6 +170,13 @@ export function createOpenApiIdentity({ method, path } = {}) {
   normalizedPath = normalizedPath.replace(/\/{2,}/g, '/')
   if (normalizedPath.length > 1) normalizedPath = normalizedPath.replace(/\/$/, '')
   return { scheme: 'openapi-operation', key: `${normalizedMethod} ${normalizedPath}` }
+}
+
+export function createOpenApiSchemaIdentity(name) {
+  return {
+    scheme: 'openapi-schema',
+    key: encodeComponent(name, 'OpenAPI schema name')
+  }
 }
 
 export function createCiIdentity({ provider, workflow, job } = {}) {

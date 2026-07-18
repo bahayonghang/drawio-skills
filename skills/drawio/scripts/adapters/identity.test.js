@@ -6,10 +6,12 @@ import {
   createCiIdentity,
   createCodeIdentity,
   createComposeIdentity,
+  createComposeResourceIdentity,
   createEdgeIdentity,
   createGroupIdentity,
   createKubernetesIdentity,
   createOpenApiIdentity,
+  createOpenApiSchemaIdentity,
   createRendererId,
   createSqlIdentity,
   createTerraformIdentity,
@@ -33,6 +35,10 @@ test('domain identity factories produce canonical label-independent keys', () =>
     scheme: 'compose-service',
     key: 'shop/api'
   })
+  assert.deepEqual(createComposeResourceIdentity({ project: 'shop', kind: 'volume', name: 'data' }), {
+    scheme: 'compose-volume',
+    key: 'shop/data'
+  })
   assert.deepEqual(createCodeIdentity({ language: 'typescript', modulePath: './src\\api\\index.ts' }), {
     scheme: 'code-module',
     key: 'typescript/src/api/index.ts'
@@ -41,6 +47,7 @@ test('domain identity factories produce canonical label-independent keys', () =>
     scheme: 'openapi-operation',
     key: 'GET /v1/Pets/{id}'
   })
+  assert.deepEqual(createOpenApiSchemaIdentity('Pet'), { scheme: 'openapi-schema', key: 'Pet' })
   assert.deepEqual(
     createCiIdentity({ provider: 'github-actions', workflow: '.github/workflows/ci.yml', job: 'test' }),
     { scheme: 'ci-job', key: 'github-actions/.github%2Fworkflows%2Fci.yml/test' }

@@ -2,6 +2,9 @@
 
 Use `CanonicalGraphProjection v1` for adapters that need stable external identity, important comparison attributes, or declared/live matching. Simple Mermaid and CSV adapters may continue returning the canonical YAML spec directly.
 
+For Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, and CI parser routes,
+see [Declared Config Importers](./config-importers.md).
+
 ## Boundary
 
 ```text

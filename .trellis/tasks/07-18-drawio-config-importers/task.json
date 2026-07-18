@@ -3,7 +3,7 @@
   "name": "drawio-config-importers",
   "title": "配置与声明架构导入器",
   "description": "基于 foundation 合同导入 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions 与 GitLab CI 声明架构。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,

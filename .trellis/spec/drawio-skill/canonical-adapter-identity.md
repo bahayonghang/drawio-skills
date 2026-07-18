@@ -30,13 +30,18 @@ Domain factories are exported from `scripts/adapters/identity.js`:
 createTerraformIdentity(address)
 createKubernetesIdentity({ scope, namespace, kind, name, namespaced })
 createComposeIdentity({ project, service })
+createComposeResourceIdentity({ project, kind, name })
 createCodeIdentity({ language, modulePath })
 createOpenApiIdentity({ method, path })
+createOpenApiSchemaIdentity(name)
 createCiIdentity({ provider, workflow, job })
 createSqlIdentity({ dialect, schema, table })
 createGroupIdentity({ domain, key })
 createEdgeIdentity({ from, to, relation, discriminator })
 ```
+
+Declared config adapter signatures, worker protocol, and error cases are
+owned by [Config Importer Contract](./config-importers.md).
 
 ## 3. Contracts
 

@@ -6,7 +6,7 @@
 
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { basename, extname, join, resolve } from 'node:path'
+import { basename, extname, join, relative, resolve } from 'node:path'
 import {
   computeLayoutQualityMetrics,
   parseSpecYaml,
@@ -15,7 +15,17 @@ import {
   validateXml
 } from './dsl/spec-to-drawio.js'
 import { applyAutoLayout } from './dsl/auto-layout.js'
-import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
+import {
+  parseCiWorkflow,
+  parseComposeConfig,
+  parseCsvToSpec,
+  parseKubernetesManifests,
+  parseMermaidToSpec,
+  parseOpenApiDocument,
+  parseSqlDdl,
+  parseTerraformConfig,
+  projectGraphToSpec
+} from './adapters/index.js'
 import { drawioToSpec } from './dsl/drawio-to-spec.js'
 import { searchShapeCatalogBatch } from './dsl/catalog-search.js'
 import {
@@ -90,7 +100,14 @@ Arguments:
                       If omitted, XML is printed to stdout.
 
 Options:
-  --input-format <f>  Input format: yaml (default), mermaid, csv, drawio
+  --input-format <f>  Input format: yaml (default), mermaid, csv, drawio,
+                      terraform, kubernetes, compose, sql, openapi,
+                      github-actions, or gitlab-ci
+  --scope <name>      Kubernetes logical cluster/environment identity
+  --project <name>    Compose project identity override
+  --dialect <name>    SQL dialect (default: postgres)
+  --module-address <a> Terraform module address for the selected source
+  --workflow <path>   CI workflow repo-relative path (required for stdin)
   --theme <name>      Override theme (e.g. tech-blue, academic, nature, dark)
   --page <selector>   drawio only: page index (0-based) or diagram name
   --export-spec       Export the canonical YAML spec instead of generating XML/SVG
@@ -110,7 +127,18 @@ Options:
 }
 
 // Extract positional arguments (non-flag args, excluding values of --flags)
-const flagsWithValues = new Set(['--theme', '--input-format', '--page', '--sidecar-dir', '--dpi'])
+const flagsWithValues = new Set([
+  '--theme',
+  '--input-format',
+  '--page',
+  '--sidecar-dir',
+  '--dpi',
+  '--scope',
+  '--project',
+  '--dialect',
+  '--module-address',
+  '--workflow'
+])
 const positional = []
 for (let i = 0; i < args.length; i++) {
   if (flagsWithValues.has(args[i])) {
@@ -141,6 +169,24 @@ const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
 const sidecarDirIndex = args.indexOf('--sidecar-dir')
 const sidecarDir = sidecarDirIndex !== -1 ? args[sidecarDirIndex + 1] : null
 const resolvedSidecarDir = sidecarDir ? resolve(sidecarDir) : null
+const optionValue = (name) => {
+  const index = args.indexOf(name)
+  if (index === -1) return undefined
+  const value = args[index + 1]
+  if (!value || value.startsWith('--')) {
+    console.error(`Error: ${name} requires a value.`)
+    process.exit(1)
+  }
+  return value
+}
+const adapterScope = optionValue('--scope')
+const adapterProject = optionValue('--project')
+const adapterDialect = optionValue('--dialect') || 'postgres'
+const adapterModuleAddress = optionValue('--module-address') || ''
+const repoRelativeInput =
+  inputFile && inputFile !== '-' ? relative(process.cwd(), resolve(inputFile)).replaceAll('\\', '/') : undefined
+const adapterWorkflow = optionValue('--workflow') || repoRelativeInput
+const adapterLocator = repoRelativeInput || `${inputFormat}.stdin`
 
 if (visualPreview && (!outputFile || extname(outputFile).toLowerCase() !== '.png')) {
   console.error('Error: --visual-preview requires an explicit .png output path.')
@@ -219,11 +265,31 @@ try {
     spec = parseCsvToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'drawio') {
     spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
+  } else if (inputFormat === 'terraform') {
+    spec = projectGraphToSpec(
+      parseTerraformConfig(inputText, { locator: adapterLocator, moduleAddress: adapterModuleAddress })
+    )
+  } else if (inputFormat === 'kubernetes') {
+    spec = projectGraphToSpec(
+      parseKubernetesManifests(inputText, { scope: adapterScope, locator: adapterLocator })
+    )
+  } else if (inputFormat === 'compose') {
+    spec = projectGraphToSpec(parseComposeConfig(inputText, { project: adapterProject, locator: adapterLocator }))
+  } else if (inputFormat === 'sql') {
+    spec = projectGraphToSpec(parseSqlDdl(inputText, { dialect: adapterDialect, locator: adapterLocator }))
+  } else if (inputFormat === 'openapi') {
+    spec = projectGraphToSpec(parseOpenApiDocument(inputText, { locator: adapterLocator }))
+  } else if (inputFormat === 'github-actions' || inputFormat === 'gitlab-ci') {
+    spec = projectGraphToSpec(
+      parseCiWorkflow(inputText, { provider: inputFormat, workflow: adapterWorkflow })
+    )
   } else {
     throw new Error(`Unsupported input format "${inputFormat}"`)
   }
 } catch (err) {
-  console.error(`Error: Failed to parse ${inputFormat}: ${err.message}`)
+  const context = [err.code, err.adapter && `adapter=${err.adapter}`, err.path && `path=${err.path}`].filter(Boolean)
+  const contextText = context.length > 0 ? `[${context.join(' ')}] ` : ''
+  console.error(`Error: Failed to parse ${inputFormat}: ${contextText}${err.message}`)
   process.exit(1)
 }
 

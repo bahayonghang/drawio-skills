@@ -49,6 +49,7 @@ The optional MCP/live backend is a refinement provider only. Never required for 
 Choose the route first, then load only that route's references. All paths below live under `references/`; the reusable YAML example catalog is `references/examples/README.md`.
 
 - `create` — new diagram from text, YAML, Mermaid, CSV, or a concise spec → `workflows/create.md`, `docs/design-system/README.md`, `docs/design-system/specification.md`
+- `config-import` — declared Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, or GitLab CI architecture → `docs/config-importers.md`, `docs/canonical-graph-projection.md`
 - `architecture` — system/software architecture, microservice or cloud-service maps with role-based color coding, plus AI agent / RAG / memory diagrams（架构、微服务、云架构、agent、RAG、记忆、multi-agent、工具调用；非拓扑、非论文）→ `workflows/create.md`, `docs/architecture-diagrams.md`, `docs/agent-diagrams.md`, `docs/design-system/README.md`
 - `edit` — modify an existing sidecar bundle or imported `.drawio` → `workflows/edit.md`, `docs/migration-readiness.md`
 - `replicate` — redraw an uploaded image, screenshot, SVG, or reference diagram → `workflows/replicate.md`, `docs/design-system/README.md`, `docs/design-system/specification.md`, `docs/design-system/color-guide.md`
@@ -65,7 +66,7 @@ Use `network-topology` when the diagram **is** a network/infrastructure map; use
 
 ## Default Operating Rules
 
-1. The YAML spec is canonical. Mermaid, CSV, natural language, and imported `.drawio` files normalize into YAML before rendering.
+1. The YAML spec is canonical. Mermaid, CSV, declared config projections, natural language, and imported `.drawio` files normalize into YAML before rendering.
 2. Keep final delivery directories clean: deliver `<name>.drawio` and a 300dpi `<name>.png` (standalone SVG fallback when Desktop is unavailable); keep sidecars such as `<name>.spec.yaml` and `<name>.arch.json` in a project-local work directory such as `.drawio-tmp/<name>/`.
 3. Generate SVG, PDF, or JPG only on explicit request; never claim raster files that were not produced (Desktop-unavailable PNG runs fall back to a standalone SVG with a stderr warning).
 4. Perform visual self-checks on exported artifacts first: use the exported PNG (or the fallback SVG when Desktop is unavailable). Do not create browser or Playwright screenshots when a CLI/Desktop export exists. For structured issues and rework, follow `references/workflows/visual-review.md`; complete each round only after validation, preview inspection, and previous-blocker review.
