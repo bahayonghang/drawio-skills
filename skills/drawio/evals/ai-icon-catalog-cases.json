@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "suite": "drawio-ai-icon-catalog",
+  "canonical_source": "YAML",
+  "artifact_root": ".drawio-tmp/ai-icons",
+  "evidence_file": "skills/drawio/evals/evidence/ai-icon-catalog-desktop.json",
+  "runtime_network": false,
+  "cases": [
+    {
+      "id": "core-aliases",
+      "source_file": "skills/drawio/evals/fixtures/ai-icons-core-aliases.yaml",
+      "preview_file": ".drawio-tmp/ai-icons/core-aliases.preview.png",
+      "review_file": ".drawio-tmp/ai-icons/reviews/core-aliases.visual-review.json",
+      "features": [],
+      "catalog_feature_icons": {},
+      "evidence": {
+        "recorded_fixture": true,
+        "command_executed": true,
+        "desktop_executed": true,
+        "model_executed": "missing evidence"
+      }
+    },
+    {
+      "id": "gradients",
+      "source_file": "skills/drawio/evals/fixtures/ai-icons-gradients.yaml",
+      "preview_file": ".drawio-tmp/ai-icons/gradients.preview.png",
+      "review_file": ".drawio-tmp/ai-icons/reviews/gradients.visual-review.json",
+      "features": ["linearGradient", "radialGradient"],
+      "catalog_feature_icons": {
+        "gemini": ["linearGradient"],
+        "bing": ["radialGradient"]
+      },
+      "evidence": {
+        "recorded_fixture": true,
+        "command_executed": true,
+        "desktop_executed": true,
+        "model_executed": "missing evidence"
+      }
+    },
+    {
+      "id": "current-color",
+      "source_file": "skills/drawio/evals/fixtures/ai-icons-current-color.yaml",
+      "preview_file": ".drawio-tmp/ai-icons/current-color.preview.png",
+      "review_file": ".drawio-tmp/ai-icons/reviews/current-color.visual-review.json",
+      "features": ["currentColor"],
+      "catalog_feature_icons": {
+        "ace": ["currentColor"],
+        "anthropic": ["currentColor"]
+      },
+      "evidence": {
+        "recorded_fixture": true,
+        "command_executed": true,
+        "desktop_executed": true,
+        "model_executed": "missing evidence"
+      }
+    },
+    {
+      "id": "advanced-svg",
+      "source_file": "skills/drawio/evals/fixtures/ai-icons-advanced-svg.yaml",
+      "preview_file": ".drawio-tmp/ai-icons/advanced-svg.preview.png",
+      "review_file": ".drawio-tmp/ai-icons/reviews/advanced-svg.visual-review.json",
+      "features": ["clipPath", "mask", "filter"],
+      "catalog_feature_icons": {
+        "cybercut": ["clipPath"],
+        "antigravity": ["mask", "filter"]
+      },
+      "evidence": {
+        "recorded_fixture": true,
+        "command_executed": true,
+        "desktop_executed": true,
+        "model_executed": "missing evidence"
+      }
+    },
+    {
+      "id": "cjk-agent-rag",
+      "source_file": "skills/drawio/evals/fixtures/ai-icons-cjk-agent-rag.yaml",
+      "preview_file": ".drawio-tmp/ai-icons/cjk-agent-rag.preview.png",
+      "review_file": ".drawio-tmp/ai-icons/reviews/cjk-agent-rag.visual-review.json",
+      "features": [],
+      "catalog_feature_icons": {},
+      "evidence": {
+        "recorded_fixture": true,
+        "command_executed": true,
+        "desktop_executed": true,
+        "model_executed": "missing evidence"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+meta:
+  title: AI Icon Gradient Rendering
+  theme: tech-blue
+  layout: horizontal
+  source: generated
+  canvas: 880x320
+
+nodes:
+  - id: gemini
+    label: Linear gradient - Gemini
+    type: service
+    icon: lobe.gemini
+    bounds: { x: 64, y: 96, width: 208, height: 112 }
+  - id: bing
+    label: Radial gradient - Bing
+    type: service
+    icon: lobe.bing
+    bounds: { x: 336, y: 96, width: 208, height: 112 }
+  - id: copilot
+    label: Mixed gradients - Copilot
+    type: service
+    icon: lobe.copilot
+    bounds: { x: 608, y: 96, width: 208, height: 112 }
+
+edges: []

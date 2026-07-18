@@ -1,0 +1,55 @@
+meta:
+  title: 密集 RAG 与 Agent 工作流
+  theme: tech-blue
+  layout: horizontal
+  source: generated
+  canvas: 1280x352
+
+nodes:
+  - id: knowledge
+    label: 知识文档与嵌入
+    type: document
+    icon: lobe.huggingface
+    bounds: { x: 48, y: 112, width: 160, height: 112 }
+  - id: retrieval
+    label: 向量检索
+    type: database
+    icon: lobe.jina
+    bounds: { x: 248, y: 112, width: 160, height: 112 }
+  - id: rerank
+    label: 语义重排
+    type: process
+    icon: lobe.cohere
+    bounds: { x: 448, y: 112, width: 160, height: 112 }
+  - id: agent
+    label: Agent 规划与工具调用
+    type: service
+    icon: lobe.openai
+    bounds: { x: 648, y: 112, width: 160, height: 112 }
+  - id: inference
+    label: 多模型协同推理
+    type: process
+    icon: lobe.deepseek
+    bounds: { x: 848, y: 112, width: 160, height: 112 }
+  - id: answer
+    label: 生成可追溯回答
+    type: terminal
+    icon: lobe.qwen
+    bounds: { x: 1048, y: 112, width: 160, height: 112 }
+
+edges:
+  - from: knowledge
+    to: retrieval
+    type: data
+  - from: retrieval
+    to: rerank
+    type: data
+  - from: rerank
+    to: agent
+    type: primary
+  - from: agent
+    to: inference
+    type: primary
+  - from: inference
+    to: answer
+    type: primary

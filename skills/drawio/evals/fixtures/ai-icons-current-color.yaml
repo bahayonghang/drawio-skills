@@ -1,0 +1,25 @@
+meta:
+  title: AI Icon currentColor Rendering
+  theme: high-contrast
+  layout: horizontal
+  source: generated
+  canvas: 880x320
+
+nodes:
+  - id: ace
+    label: currentColor - ACE
+    type: service
+    icon: lobe.ace
+    bounds: { x: 64, y: 96, width: 208, height: 112 }
+  - id: anthropic
+    label: currentColor - Anthropic
+    type: service
+    icon: lobe.anthropic
+    bounds: { x: 336, y: 96, width: 208, height: 112 }
+  - id: cursor
+    label: currentColor - Cursor
+    type: service
+    icon: lobe.cursor
+    bounds: { x: 608, y: 96, width: 208, height: 112 }
+
+edges: []
