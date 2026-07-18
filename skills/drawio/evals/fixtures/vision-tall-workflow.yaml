@@ -1,0 +1,47 @@
+meta:
+  title: Tall Incident Response Workflow
+  theme: tech-blue
+  layout: vertical
+
+nodes:
+  - id: detect
+    label: Detect alert
+    type: terminal
+    bounds: { x: 80, y: 48, width: 176, height: 56 }
+  - id: triage
+    label: Triage signal
+    type: process
+    bounds: { x: 80, y: 272, width: 176, height: 56 }
+  - id: contain
+    label: Contain impact
+    type: process
+    bounds: { x: 80, y: 496, width: 176, height: 56 }
+  - id: recover
+    label: Recover service
+    type: process
+    bounds: { x: 80, y: 720, width: 176, height: 56 }
+  - id: verify
+    label: Verify health
+    type: decision
+    bounds: { x: 80, y: 944, width: 176, height: 72 }
+  - id: close
+    label: Close incident
+    type: terminal
+    bounds: { x: 80, y: 1184, width: 176, height: 56 }
+
+edges:
+  - from: detect
+    to: triage
+    type: primary
+  - from: triage
+    to: contain
+    type: primary
+  - from: contain
+    to: recover
+    type: primary
+  - from: recover
+    to: verify
+    type: primary
+  - from: verify
+    to: close
+    type: primary

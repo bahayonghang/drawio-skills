@@ -15,7 +15,9 @@ function readProjectFile(path) {
 test('drawio visual verification policy prefers exported artifacts over screenshots', () => {
   const baseSkill = readProjectFile('skills/drawio/SKILL.md')
   const createWorkflow = readProjectFile('skills/drawio/references/workflows/create.md')
+  const editWorkflow = readProjectFile('skills/drawio/references/workflows/edit.md')
   const replicateWorkflow = readProjectFile('skills/drawio/references/workflows/replicate.md')
+  const visualReview = readProjectFile('skills/drawio/references/workflows/visual-review.md')
   const academicSkill = readProjectFile('skills/drawio-academic-skills/SKILL.md')
   const publicationOverlay = readProjectFile(
     'skills/drawio-academic-skills/references/docs/publication-overlay.md'
@@ -25,16 +27,33 @@ test('drawio visual verification policy prefers exported artifacts over screensh
   assert.match(baseSkill, /Perform visual self-checks on exported artifacts first/)
   assert.match(baseSkill, /Do not create browser or Playwright screenshots when a CLI\/Desktop export exists/)
   assert.match(baseSkill, /inspect the exported PNG \(or the fallback SVG when Desktop is unavailable\) first/i)
+  assert.match(baseSkill, /workflows\/visual-review\.md/)
 
   assert.match(createWorkflow, /Exported-Artifact Verification/)
   assert.match(createWorkflow, /Do not create browser or Playwright screenshots when an exported SVG\/PNG\/PDF\/JPG exists/)
+  assert.match(createWorkflow, /visual-review\.md/)
+
+  assert.match(editWorkflow, /visual-review\.md/)
 
   assert.match(replicateWorkflow, /Export standalone SVG first/)
   assert.match(replicateWorkflow, /Use browser\/live screenshots only as a last-resort review aid/)
+  assert.match(replicateWorkflow, /visual-review\.md/)
 
   assert.match(academicSkill, /Do not substitute browser or Playwright screenshots when an exported artifact exists/)
+  assert.match(academicSkill, /\.\.\/drawio\/references\/workflows\/visual-review\.md/)
   assert.match(publicationOverlay, /Use exported artifacts for paper-readability checks before any browser path/)
+  assert.match(publicationOverlay, /\.\.\/\.\.\/\.\.\/drawio\/references\/workflows\/visual-review\.md/)
   assert.match(exportGuide, /Use exported artifacts for visual checks before any browser screenshot/)
+
+  for (const field of ['pageId', 'objectId', 'problem', 'severity', 'evidence', 'suggestedAction', 'source']) {
+    assert.match(visualReview, new RegExp(`\\b${field}\\b`))
+  }
+  assert.match(visualReview, /edge-label-overlap/)
+  assert.match(visualReview, /source-mismatch/)
+  assert.match(visualReview, /pageId.*objectId.*problem/is)
+  assert.match(visualReview, /canonical YAML/i)
+  assert.match(visualReview, /2 autonomous repair rounds/i)
+  assert.match(visualReview, /5 user feedback rounds/i)
 })
 
 test('drawio skills keep final deliverables separate from intermediate sidecars', () => {

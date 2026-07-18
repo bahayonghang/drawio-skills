@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "suite": "drawio-vision-preview",
+  "owner": "drawio-skill maintainers",
+  "review_cadence": "per-release",
+  "input_files": [
+    "skills/drawio/references/examples/cloud-reference-architecture.yaml",
+    "skills/drawio/references/examples/arch-dark-microservices.yaml",
+    "skills/drawio/evals/fixtures/vision-tall-workflow.yaml",
+    "skills/drawio-academic-skills/references/examples/industrial-architecture-cn-paper.yaml",
+    "skills/drawio-academic-skills/references/examples/yolo-model-architecture-paper.yaml"
+  ],
+  "output_contract": {
+    "format": "png",
+    "profile": "vision-preview",
+    "embed_diagram": false,
+    "max_longest_edge": 2000,
+    "artifact_root": ".drawio-tmp/vision-preview",
+    "canonical_source": "YAML",
+    "final_artifact_unchanged": true
+  },
+  "rollback_boundary": "The preview profile, evidence manifest, and work-directory review records can be removed without changing the existing final 300dpi embedded export contract.",
+  "cases": [
+    {
+      "id": "vision-small",
+      "category": "small",
+      "evidence_kind": "file-backed fixture",
+      "source_file": "skills/drawio/references/examples/cloud-reference-architecture.yaml",
+      "output_path": ".drawio-tmp/vision-preview/small.preview.png",
+      "review_record_path": ".drawio-tmp/vision-preview/reviews/small.visual-review.json",
+      "expected_dimension_strategy": "width",
+      "observed_issues": [],
+      "rework_result": {
+        "rounds": 0,
+        "status": "not-needed",
+        "remaining_issues": []
+      }
+    },
+    {
+      "id": "vision-wide",
+      "category": "wide",
+      "evidence_kind": "file-backed fixture",
+      "source_file": "skills/drawio/references/examples/arch-dark-microservices.yaml",
+      "output_path": ".drawio-tmp/vision-preview/wide.preview.png",
+      "review_record_path": ".drawio-tmp/vision-preview/reviews/wide.visual-review.json",
+      "expected_dimension_strategy": "width",
+      "observed_issues": [],
+      "rework_result": {
+        "rounds": 0,
+        "status": "not-needed",
+        "remaining_issues": []
+      }
+    },
+    {
+      "id": "vision-tall",
+      "category": "tall",
+      "evidence_kind": "file-backed fixture",
+      "source_file": "skills/drawio/evals/fixtures/vision-tall-workflow.yaml",
+      "output_path": ".drawio-tmp/vision-preview/tall.preview.png",
+      "review_record_path": ".drawio-tmp/vision-preview/reviews/tall.visual-review.json",
+      "expected_dimension_strategy": "height-reexport",
+      "observed_issues": [],
+      "rework_result": {
+        "rounds": 0,
+        "status": "not-needed",
+        "remaining_issues": []
+      }
+    },
+    {
+      "id": "vision-cjk",
+      "category": "cjk",
+      "evidence_kind": "file-backed fixture",
+      "source_file": "skills/drawio-academic-skills/references/examples/industrial-architecture-cn-paper.yaml",
+      "output_path": ".drawio-tmp/vision-preview/cjk.preview.png",
+      "review_record_path": ".drawio-tmp/vision-preview/reviews/cjk.visual-review.json",
+      "expected_dimension_strategy": "width",
+      "observed_issues": [
+        {
+          "pageId": "Page-1",
+          "objectId": "edge:train_api->apscheduler",
+          "region": "upper-left of the scheduler module",
+          "problem": "edge-label-overlap",
+          "severity": "blocker",
+          "evidence": "The vertical connector and its operation-request label overlap the scheduler module title.",
+          "suggestedAction": "Move the edge label with labelOffset and route the same edge away from the module title, then validate and rerender the preview.",
+          "source": "visual",
+          "canonicalPatchTarget": {
+            "kind": "edge",
+            "from": "train_api",
+            "to": "apscheduler"
+          }
+        }
+      ],
+      "rework_result": {
+        "rounds": 2,
+        "status": "resolved",
+        "remaining_issues": []
+      }
+    },
+    {
+      "id": "vision-dense-academic",
+      "category": "dense-academic",
+      "evidence_kind": "file-backed fixture",
+      "source_file": "skills/drawio-academic-skills/references/examples/yolo-model-architecture-paper.yaml",
+      "output_path": ".drawio-tmp/vision-preview/dense-academic.preview.png",
+      "review_record_path": ".drawio-tmp/vision-preview/reviews/dense-academic.visual-review.json",
+      "expected_dimension_strategy": "width",
+      "observed_issues": [
+        {
+          "pageId": "Page-1",
+          "objectId": "edge:p3->fuse",
+          "region": "between P3 feature and PAN fusion",
+          "problem": "source-mismatch",
+          "severity": "blocker",
+          "evidence": "An empty outlined rectangle appears on the P3-to-fusion route even though the canonical edge has no label or separate object.",
+          "suggestedAction": "Inspect the P3-to-fusion edge for an unintended label, background, waypoint, or renderer artifact; patch the smallest canonical target and rerender.",
+          "source": "visual",
+          "canonicalPatchTarget": {
+            "kind": "edge",
+            "from": "p3",
+            "to": "fuse"
+          }
+        },
+        {
+          "pageId": "Page-1",
+          "objectId": "edge:spp->p3",
+          "region": "right side of the backbone module",
+          "problem": "edge-through-object",
+          "severity": "blocker",
+          "evidence": "The multi-scale dashed connector crosses the Stem Conv and CSP block interiors before reaching P3.",
+          "suggestedAction": "Route the SPP-to-P3 edge through the clear module gap with stable waypoints, then validate and rerender.",
+          "source": "visual",
+          "canonicalPatchTarget": {
+            "kind": "edge",
+            "from": "spp",
+            "to": "p3"
+          }
+        }
+      ],
+      "rework_result": {
+        "rounds": 2,
+        "status": "resolved",
+        "remaining_issues": []
+      }
+    }
+  ]
+}

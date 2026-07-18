@@ -32,7 +32,7 @@ Resolve shared resources relative to this overlay directory:
 
 - CLI `../drawio/scripts/cli.js`; URL fallback `../drawio/scripts/runtime/diagrams-net-url.js`
 - Schema `../drawio/assets/schemas/spec.schema.json`; themes `../drawio/assets/themes/`; palettes `../drawio/assets/palettes/`
-- References `../drawio/references/docs/`, `../drawio/references/official/`, `../drawio/references/workflows/`, `../drawio/references/examples/`
+- References `../drawio/references/docs/`, `../drawio/references/official/`, `../drawio/references/workflows/`, `../drawio/references/examples/`; shared rework contract `../drawio/references/workflows/visual-review.md`
 - Built-in style presets `../drawio/styles/built-in/`
 
 Overlay-local assets: `references/docs/publication-overlay.md`, `academic-figure-playbook.md`, `academic-export-checklist.md`, `references/examples/`, `references/templates/`.
@@ -45,6 +45,7 @@ If `../drawio/scripts/cli.js` is missing, stop and report that the sibling base 
 - Treat `.drawio` and a 300dpi `.png` (via draw.io Desktop) as the default academic final deliverables; SVG is the offline fallback without Desktop — report the fallback and never claim files that were not produced.
 - Keep `.spec.yaml`, `.arch.json`, raw YAML, and diagnostics in a project-local work directory such as `.drawio-tmp/<name>/`, unless the user explicitly asks for a reproducible sidecar bundle beside the final output.
 - Perform paper-readability and visual self-checks on the exported PNG (or the fallback SVG) first. Do not substitute browser or Playwright screenshots when an exported artifact exists.
+- Use the sibling base `../drawio/references/workflows/visual-review.md` for preview structure, issue records, YAML-first rework, and stopping rules; this overlay adds only publication checks.
 - Treat external image-generation previews as optional concept previews only. They never replace YAML, artifacts, sidecars, or exported-artifact verification.
 - Do not create or modify scratch JS scripts under a user's project-local `.agents/skills/drawio`; port durable fixes to the sibling base skill source instead.
 
@@ -151,7 +152,7 @@ Do not claim completion until:
 - mixed CJK/Latin labels resolve to the Times New Roman + SimSun stack (theme `cjk` stack or `meta.font`)
 - captions, legends, callouts, formulas, and edge labels are not clipped or placed on connector lines; legends compact (single multi-line text node)
 - colors are not the only carrier of meaning; `meta.palette` matches the venue decision; `PALETTE_PRINT_GATE` is clear — offer `ieee-bw`/`tol-high-contrast` when strict print safety fails
-- the visual self-check used the exported PNG (or fallback SVG) before any live/browser preview — overlap, clipped text, label clearance, arrows crossing text/nodes, missing modules, plan/source mismatch; a found defect was fixed in YAML and rerendered once
+- the visual self-check followed sibling base `../drawio/references/workflows/visual-review.md` on the exported PNG (or fallback SVG) before any live/browser preview; academic checks additionally cover A4 readability, caption/legend, formulas, print meaning, and venue constraints
 - requested Desktop exports were attempted or reported unavailable; no MCP config, server, or live backend required
 
 ## Completion Report

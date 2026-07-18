@@ -57,6 +57,7 @@ Choose the route first, then load only that route's references. All paths below 
 - `stencil-heavy` — cloud, provider icon, network gear, or exact draw.io shape work → `docs/stencil-library-guide.md`, `official/xml-reference.md`, `official/style-reference.md`
 - `network-topology` — network topology, VLAN / subnet / gateway, campus / data-center / cloud network maps（拓扑、子网、网关、VLAN）→ `docs/ieee-network-diagrams.md`, `docs/stencil-library-guide.md`, `official/xml-reference.md`
 - `edge-audit` — dense or routing-sensitive diagrams → `docs/edge-quality-rules.md`, `official/xml-reference.md`
+- `visual-review` — inspect an exported artifact, record issues, or apply targeted rework → `workflows/visual-review.md`
 - `live-refinement` — explicit browser/inline visual refinement → `docs/mcp-tools.md`, `docs/migration-readiness.md`
 - `direct-xml` — tiny XML-only handoff or raw mxGraph edits → `official/xml-reference.md`, `official/style-reference.md`, `docs/xml-format.md`, `upstream/pure-drawio-skill.md`
 
@@ -67,7 +68,7 @@ Use `network-topology` when the diagram **is** a network/infrastructure map; use
 1. The YAML spec is canonical. Mermaid, CSV, natural language, and imported `.drawio` files normalize into YAML before rendering.
 2. Keep final delivery directories clean: deliver `<name>.drawio` and a 300dpi `<name>.png` (standalone SVG fallback when Desktop is unavailable); keep sidecars such as `<name>.spec.yaml` and `<name>.arch.json` in a project-local work directory such as `.drawio-tmp/<name>/`.
 3. Generate SVG, PDF, or JPG only on explicit request; never claim raster files that were not produced (Desktop-unavailable PNG runs fall back to a standalone SVG with a stderr warning).
-4. Perform visual self-checks on exported artifacts first: use the exported PNG (or the fallback SVG when Desktop is unavailable). Do not create browser or Playwright screenshots when a CLI/Desktop export exists.
+4. Perform visual self-checks on exported artifacts first: use the exported PNG (or the fallback SVG when Desktop is unavailable). Do not create browser or Playwright screenshots when a CLI/Desktop export exists. For structured issues and rework, follow `references/workflows/visual-review.md`; complete each round only after validation, preview inspection, and previous-blocker review.
 5. Treat live backends as optional refinement providers. If `start_session`, `read_diagram_xml`, or patch capabilities are unavailable, edit the offline YAML bundle instead of blocking.
 6. Do not apply academic publication defaults; leave venue/caption/A4/publication gates to the academic overlay.
 7. Formulas use only official delimiters: `$$...$$` for standalone formulas, `\(...\)` for inline formulas, and AsciiMath backticks. Never `$...$`, `\[...\]`, or bare LaTeX commands.
@@ -141,10 +142,10 @@ Validate before claiming completion:
 - Structure: schema, IDs, theme/layout/profile.
 - Layout: complexity, position consistency, overlap risk.
 - Quality: edge-quality rules, label clearance, replication text placement.
-- Visual verification: inspect the exported PNG (or the fallback SVG when Desktop is unavailable) first, or another Desktop-exported format when that is the requested final artifact. Browser/live screenshots only when the user explicitly requested live review and no exported artifact can be inspected.
+- Visual verification: inspect the exported PNG (or the fallback SVG when Desktop is unavailable) first, or another Desktop-exported format when that is the requested final artifact. Use `references/workflows/visual-review.md` for the dimension-bounded preview, structured evidence, YAML-first patch, and stopping rules. Browser/live screenshots only when the user explicitly requested live review and no exported artifact can be inspected.
 
 If validation fails, fix the YAML or imported XML and rerun; if an optional export cannot run, report the missing provider and fall back to the offline bundle.
 
 ## Completion Report
 
-End with a concise report: deliverables written with paths; the intermediate work directory when sidecars or diagnostics were generated; validation and export commands run; the exported artifact used for visual verification (or why none); the selected palette and its colorblind/grayscale safety flags when `meta.palette` is present; unavailable optional exports or live-refinement providers; any remaining manual visual checks.
+End with a concise report: deliverables written with paths; the intermediate work directory when sidecars or diagnostics were generated; validation and export commands run; the exported artifact used for visual verification (or why none); the visual review record and unresolved blockers when rework was requested; the selected palette and its colorblind/grayscale safety flags when `meta.palette` is present; unavailable optional exports or live-refinement providers; any remaining manual visual checks.

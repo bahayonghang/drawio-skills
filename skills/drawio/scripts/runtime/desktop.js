@@ -1,10 +1,12 @@
 import { execFile, execFileSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { resolve, win32 } from 'node:path'
+import { waitForStableFile } from './export-stability.js'
 
 const EMBEDDABLE_FORMATS = new Set(['png', 'svg', 'pdf'])
 const EXPORTABLE_FORMATS = new Set(['png', 'svg', 'pdf', 'jpg', 'jpeg'])
 const RASTER_FORMATS = new Set(['png', 'jpg', 'jpeg'])
+const EXPORT_PROFILES = new Set(['final', 'vision-preview'])
 
 function isShellUnsafe(value) {
   return /["'`;&|><\n\r]/.test(value) || value.includes('..')
@@ -88,34 +90,69 @@ export function isDesktopExportFormat(format) {
   return EXPORTABLE_FORMATS.has(String(format || '').toLowerCase())
 }
 
-export function buildDrawioExportArgs({ inputFile, outputFile, format, embedDiagram = true, border = 10, scale }) {
+export function buildDrawioExportArgs({
+  inputFile,
+  outputFile,
+  format,
+  profile = 'final',
+  embedDiagram = true,
+  border = 10,
+  scale,
+  width,
+  height
+}) {
   const normalizedFormat = String(format).toLowerCase()
+  if (!EXPORT_PROFILES.has(profile)) {
+    throw new Error(`Unsupported draw.io export profile "${profile}"`)
+  }
   const args = ['-x', '-f', normalizedFormat]
 
-  if (embedDiagram && formatSupportsEmbed(normalizedFormat)) {
-    args.push('-e')
-  }
-  if (typeof border === 'number') {
-    args.push('-b', String(border))
-  }
-  if (typeof scale === 'number' && scale > 0 && RASTER_FORMATS.has(normalizedFormat)) {
-    args.push('-s', String(scale))
+  if (profile === 'vision-preview') {
+    if (normalizedFormat !== 'png') {
+      throw new Error('The vision-preview export profile supports PNG only')
+    }
+    const dimensions = [width, height].filter((value) => value !== undefined)
+    if (dimensions.length !== 1) {
+      throw new Error('The vision-preview export profile requires exactly one of width or height')
+    }
+    const dimension = width !== undefined ? ['--width', width] : ['--height', height]
+    if (!Number.isInteger(dimension[1]) || dimension[1] <= 0) {
+      throw new Error(`The vision-preview ${dimension[0].slice(2)} must be a positive integer`)
+    }
+    if (typeof border === 'number') args.push('-b', String(border))
+    args.push(dimension[0], String(dimension[1]))
+  } else {
+    if (embedDiagram && formatSupportsEmbed(normalizedFormat)) {
+      args.push('-e')
+    }
+    if (typeof border === 'number') {
+      args.push('-b', String(border))
+    }
+    if (typeof scale === 'number' && scale > 0 && RASTER_FORMATS.has(normalizedFormat)) {
+      args.push('-s', String(scale))
+    }
   }
 
   args.push('-o', outputFile, inputFile)
   return args
 }
 
-export function exportWithDrawioDesktop({
+export async function exportWithDrawioDesktop({
   inputFile,
   outputFile,
   format,
+  profile = 'final',
   scale,
+  width,
+  height,
   env = process.env,
   platform = process.platform,
-  exists = existsSync
+  exists = existsSync,
+  execute = execFileSync,
+  waitForStable = waitForStableFile,
+  stabilityOptions
 }) {
-  const args = buildDrawioExportArgs({ inputFile, outputFile, format, scale })
+  const args = buildDrawioExportArgs({ inputFile, outputFile, format, profile, scale, width, height })
   const failures = []
 
   for (const executable of listDrawioDesktopCandidates({ platform, env })) {
@@ -124,11 +161,12 @@ export function exportWithDrawioDesktop({
     }
 
     try {
-      execFileSync(executable, args, {
+      execute(executable, args, {
         stdio: 'pipe',
         windowsHide: true
       })
-      return { executable, args }
+      const file = await waitForStable(outputFile, stabilityOptions)
+      return { executable, args, file }
     } catch (error) {
       if (error.code === 'ENOENT') {
         failures.push(executable)

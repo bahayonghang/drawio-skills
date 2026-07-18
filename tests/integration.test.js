@@ -6,8 +6,8 @@
 
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync } from 'node:fs'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
@@ -25,7 +25,16 @@ const EXAMPLES_DIR = resolve(PROJECT_ROOT, 'skills/drawio/references/examples')
  * @returns {string} stdout output
  */
 function runCli(args, opts = {}) {
-  return execFileSync('node', [CLI, ...args], {
+  return execFileSync(process.execPath, [CLI, ...args], {
+    timeout: 10_000,
+    encoding: 'utf-8',
+    cwd: PROJECT_ROOT,
+    ...opts
+  })
+}
+
+function runCliResult(args, opts = {}) {
+  return spawnSync(process.execPath, [CLI, ...args], {
     timeout: 10_000,
     encoding: 'utf-8',
     cwd: PROJECT_ROOT,
@@ -153,6 +162,57 @@ test('CLI: YAML with invalid node ID exits with error', () => {
     assert.ok(err.status !== 0, 'Should exit with non-zero status')
     assert.ok(err.stderr.includes('Invalid node id'), 'Error should mention invalid node id')
   }
+})
+
+test('CLI: --visual-preview is documented and requires a PNG output path', () => {
+  const help = runCli(['--help'])
+  assert.match(help, /--visual-preview/)
+
+  const noOutput = runCliResult(['-', '--visual-preview'], { input: 'nodes:\n  - id: A\n    label: Preview\n' })
+  assert.notEqual(noOutput.status, 0)
+  assert.match(noOutput.stderr, /--visual-preview requires.*\.png/i)
+
+  const svgOutput = runCliResult(['-', 'preview.svg', '--visual-preview'], {
+    input: 'nodes:\n  - id: A\n    label: Preview\n'
+  })
+  assert.notEqual(svgOutput.status, 0)
+  assert.match(svgOutput.stderr, /--visual-preview requires.*\.png/i)
+})
+
+test('CLI: --visual-preview rejects DPI scaling', () => {
+  const result = runCliResult(['-', 'preview.png', '--visual-preview', '--dpi', '150'], {
+    input: 'nodes:\n  - id: A\n    label: Preview\n'
+  })
+
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /--visual-preview.*--dpi/i)
+})
+
+test('CLI: --visual-preview reports SVG fallback without claiming a PNG', (t) => {
+  const tempDir = createTempDir()
+  t.after(() => rmSync(tempDir, { recursive: true, force: true }))
+  const outputFile = resolve(tempDir, 'preview.png')
+  const fallbackFile = resolve(tempDir, 'preview.svg')
+  writeFileSync(outputFile, 'stale preview')
+  const env = {
+    SystemRoot: process.env.SystemRoot,
+    TEMP: process.env.TEMP,
+    TMP: process.env.TMP,
+    ProgramFiles: tempDir,
+    LOCALAPPDATA: tempDir,
+    PATH: ''
+  }
+
+  const result = runCliResult(['-', outputFile, '--visual-preview'], {
+    input: 'nodes:\n  - id: A\n    label: Preview fallback\n',
+    env
+  })
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(existsSync(outputFile), false)
+  assert.equal(existsSync(fallbackFile), true)
+  assert.match(result.stderr, /no PNG vision-preview was produced/i)
+  assert.match(result.stderr, /fell back to SVG/i)
 })
 
 // ============================================================================

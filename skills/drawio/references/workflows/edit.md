@@ -65,9 +65,10 @@ Step 6: Apply Changes
 └── Keep .drawio, .spec.yaml, and .arch.json aligned after each accepted edit
 
 Step 7: Verify and Iterate
-├── Export preview if needed (desktop PNG/SVG or standalone SVG)
+├── Export a work-dir preview if needed (Desktop PNG/SVG or standalone SVG)
+├── Follow `visual-review.md` for structured issues, stable-ID YAML patches, and stopping rules
 ├── User reviews changes
-└── Additional modifications as needed
+└── Rerun validation and overwrite the same preview after each accepted modification
 ```
 
 ## Design-System Preservation

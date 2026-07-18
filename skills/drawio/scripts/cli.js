@@ -25,6 +25,7 @@ import {
   serializeSpecYaml
 } from './runtime/artifacts.js'
 import { exportWithDrawioDesktop, isDesktopExportFormat } from './runtime/desktop.js'
+import { exportVisionPreview } from './runtime/vision-preview.js'
 
 /** draw.io format compatibility version */
 const DRAWIO_COMPAT_VERSION = '21.0.0'
@@ -100,6 +101,7 @@ Options:
   --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
   --sidecar-dir <dir> Emit sidecars in this directory when --write-sidecars is set
   --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
+  --visual-preview    Export a non-embedded PNG with longest edge <= 2000px for visual review
   search              Search the bundled shape catalog without network access
   --help, -h          Show this help message
 `.trim()
@@ -130,6 +132,7 @@ const allowUnknownShapes = args.includes('--allow-unknown-shapes')
 const doValidate = args.includes('--validate')
 const writeSidecars = args.includes('--write-sidecars')
 const useDesktop = args.includes('--use-desktop')
+const visualPreview = args.includes('--visual-preview')
 const dpiIndex = args.indexOf('--dpi')
 const dpi = dpiIndex !== -1 ? Number(args[dpiIndex + 1]) : 300
 const exportSpec = args.includes('--export-spec')
@@ -138,6 +141,21 @@ const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
 const sidecarDirIndex = args.indexOf('--sidecar-dir')
 const sidecarDir = sidecarDirIndex !== -1 ? args[sidecarDirIndex + 1] : null
 const resolvedSidecarDir = sidecarDir ? resolve(sidecarDir) : null
+
+if (visualPreview && (!outputFile || extname(outputFile).toLowerCase() !== '.png')) {
+  console.error('Error: --visual-preview requires an explicit .png output path.')
+  process.exit(1)
+}
+
+if (visualPreview && dpiIndex !== -1) {
+  console.error('Error: --visual-preview cannot be combined with --dpi; preview dimensions are bounded directly.')
+  process.exit(1)
+}
+
+if (visualPreview && exportSpec) {
+  console.error('Error: --visual-preview cannot be combined with --export-spec.')
+  process.exit(1)
+}
 
 if (sidecarDirIndex !== -1 && (!sidecarDir || sidecarDir.startsWith('--'))) {
   console.error('Error: --sidecar-dir requires a directory path.')
@@ -402,14 +420,26 @@ try {
     console.error(`Saved: ${outputFile}`)
   } else if (needsDesktopExport) {
     try {
-      exportWithDrawioDesktop({
-        inputFile: ensureDesktopInput(),
-        outputFile: resolve(outputFile),
-        format: ext.slice(1),
-        scale: dpi / 96
-      })
+      const exportResult = visualPreview
+        ? await exportVisionPreview({
+            inputFile: ensureDesktopInput(),
+            outputFile: resolve(outputFile)
+          })
+        : await exportWithDrawioDesktop({
+            inputFile: ensureDesktopInput(),
+            outputFile: resolve(outputFile),
+            format: ext.slice(1),
+            scale: dpi / 96
+          })
       writeCanonicalSidecars()
-      console.error(`Saved: ${outputFile}`)
+      if (visualPreview) {
+        console.error(
+          `Saved vision preview: ${outputFile} (${exportResult.width}x${exportResult.height}; ` +
+            `${exportResult.reexported ? 'height re-exported' : 'width-bounded'}; ${exportResult.repairStatus})`
+        )
+      } else {
+        console.error(`Saved: ${outputFile}`)
+      }
     } catch (err) {
       const desktopMissing = /draw\.io Desktop CLI was not found/.test(err.message)
       if (desktopMissing && drawioToSvg) {
@@ -420,7 +450,8 @@ try {
           if (writeSidecars) writeFileSync(resolve(artifactPaths.drawioPath), drawioContent, 'utf-8')
           writeCanonicalSidecars()
           console.error(
-            `draw.io Desktop not found — fell back to SVG: ${svgOutput}. ` +
+            `${visualPreview ? 'draw.io Desktop not found — no PNG vision-preview was produced; ' : 'draw.io Desktop not found — '}` +
+              `fell back to SVG: ${svgOutput}. ` +
               `Install draw.io Desktop or set DRAWIO_CMD to export ${ext.slice(1).toUpperCase()}.`
           )
         } catch (svgErr) {
