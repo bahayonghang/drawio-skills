@@ -618,3 +618,37 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 - 下一版本发布时随版本号 cut 两份 CHANGELOG 的 Unreleased 段
 
 **Follow-up (2026-07-16 收尾轮)**: e08 两处 style-preset 治理缺口已闭环——SKILL.md § Style Presets 补 user-first 查找优先级与 unknown-name 报错契约（对冲后 13,995B 仍在预算内），e08 复验 4/4，base eval 97.2 → 100.0（TSV keep 行）。Next Steps 仅剩：下一版本发布时 cut Unreleased 段。
+
+
+## Session 14: 完成 C0 视觉预览与 YAML 返工闭环
+
+**Date**: 2026-07-18
+**Task**: 完成 C0 视觉预览与 YAML 返工闭环
+**Branch**: `dev`
+
+### Summary
+
+新增最长边 2000px 的非嵌入 vision-preview、Desktop 落盘稳定等待、PNG 结构检查与保守修复、结构化视觉评审和 file-backed 证据；完成五类 Desktop 实测与 academic YAML 返工，469 项测试和 just ci 通过。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6a48b82` | (see git log) |
+| `6d83c03` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
