@@ -751,3 +751,37 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 18: 完成运行态快照与架构漂移
+
+**Date**: 2026-07-18
+**Task**: 完成运行态快照与架构漂移
+**Branch**: `dev`
+
+### Summary
+
+实现 snapshot-only Terraform state、Docker inspect、Kubernetes live JSON 适配器与稳定身份复用；新增确定性 node/edge/attribute 四状态漂移、非颜色 canonical presentation、file-backed C0 证据和公共契约。provider CLI、真实环境、Desktop 与 model 均保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `21d01b7` | (see git log) |
+| `484b7a4` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
