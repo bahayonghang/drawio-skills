@@ -182,6 +182,13 @@ For the first exported artifact, check:
 
 If a visible defect is found, adjust the YAML spec and rerender once. Any further correction follows the shared loop limits. Academic review additionally requires A4 readability, caption/legend integrity, formula fidelity, and print-safe meaning before reporting the result.
 
+For a projection drift figure, keep the base runtime and report unchanged.
+Publication review must preserve the explicit `[ADDED]`, `[REMOVED]`,
+`[CHANGED]`, and `[UNCHANGED]` text, the legend, changed-key evidence, and the
+dashed removed relation in grayscale/print output. The academic overlay may
+adjust typography and placement only; it must not copy or reinterpret the
+snapshot adapter or comparator.
+
 ## References
 
 Load these overlay-local academic references for detailed rules:

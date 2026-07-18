@@ -22,6 +22,9 @@ parseSqlDdl(source, { dialect, defaultSchema, locator, runParser })
 parseOpenApiDocument(source, { locator })
 parseCiWorkflow(source, { provider, workflow })
 runOptionalPythonParser(request, { pythonCommand, timeoutMs, maxOutputBytes, spawn })
+parseTerraformStateSnapshot(source, { locator })
+parseDockerInspectSnapshot(source, { locator })
+parseKubernetesLiveSnapshot(source, { scope, locator, kindScopes })
 ```
 
 CLI signatures:
@@ -54,6 +57,10 @@ CLI signatures:
 - Terraform, Kubernetes, and Compose export their identity input builders and
   attribute allowlists for the live/drift child. Consumers import these
   exports instead of rebuilding keys.
+- Terraform state and Docker inspect wrappers consume bounded JSON only.
+  Kubernetes declared/live wrappers call the same structured normalizer.
+  Docker aggregates Compose replicas by project/service; Terraform keeps exact
+  instance addresses. None of these wrappers invokes a provider CLI.
 - Adapter output always flows through `projectGraphToSpec`, `validateSpec`,
   JavaScript ELK, the canonical renderer, and `validateXml`.
 

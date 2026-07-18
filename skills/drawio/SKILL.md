@@ -50,6 +50,7 @@ Choose the route first, then load only that route's references. All paths below 
 
 - `create` — new diagram from text, YAML, Mermaid, CSV, or a concise spec → `workflows/create.md`, `docs/design-system/README.md`, `docs/design-system/specification.md`
 - `config-import` — declared Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, or GitLab CI architecture → `docs/config-importers.md`, `docs/canonical-graph-projection.md`
+- `live-drift` — compare explicit Terraform state/plan JSON, Docker inspect JSON, or Kubernetes live JSON against a declared projection without capture → `docs/live-snapshots-drift.md`, `docs/canonical-graph-projection.md`, `workflows/visual-review.md`
 - `code-import` — Python module/class, JavaScript/TypeScript ESM, Go package, or Rust module relationships from a local project directory → `docs/code-importers.md`, `docs/canonical-graph-projection.md`
 - `architecture` — system/software architecture, microservice or cloud-service maps with role-based color coding, plus AI agent / RAG / memory diagrams（架构、微服务、云架构、agent、RAG、记忆、multi-agent、工具调用；非拓扑、非论文）→ `workflows/create.md`, `docs/architecture-diagrams.md`, `docs/agent-diagrams.md`, `docs/design-system/README.md`
 - `edit` — modify an existing sidecar bundle or imported `.drawio` → `workflows/edit.md`, `docs/migration-readiness.md`

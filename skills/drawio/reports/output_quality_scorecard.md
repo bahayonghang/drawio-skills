@@ -69,3 +69,22 @@ Focused evidence check:
 ```powershell
 node --test tests/vision-preview-evidence.test.js
 ```
+
+## C1 Saved-Snapshot Drift Addendum
+
+The file-backed Compose case records a sanitized drift report, editable
+canonical YAML, stable renderer IDs, status text, legend, changed keys, and a
+dashed removed edge. Focused tests execute the snapshot parsers, comparator,
+shared projector, vendored JavaScript ELK, renderer, and XML validation.
+
+| Evidence kind | Count | Status | Interpretation |
+| --- | ---: | --- | --- |
+| recorded fixture | 1 case | pass | Saved declared/live inputs plus sanitized report/spec/evidence manifest are committed. |
+| command-executed | 1 case | pass | Deterministic snapshot, diff, JS ELK, renderer, XML, and sentinel checks ran. |
+| provider CLI / live environment | 0 cases | missing evidence | No `terraform`, `docker`, or `kubectl` capture and no daemon/cluster/cloud access occurred. |
+| Desktop-executed | 0 cases | missing evidence | No PNG preview was requested or generated for this child. |
+| model-executed | 0 cases | missing evidence | No provider/model metadata or visual-model run exists. |
+
+This addendum proves deterministic projection drift only. It does not upgrade
+provider, Desktop, or visual-model evidence and does not alter the C0 five-case
+preview result above.

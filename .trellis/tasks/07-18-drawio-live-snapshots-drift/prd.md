@@ -22,16 +22,16 @@
 
 ## Acceptance Criteria
 
-- [ ] Terraform state、Docker inspect、Kubernetes JSON 有 valid/invalid/sensitive-field fixtures，并输出 valid live projection。
-- [ ] declared/live 精确同一实体的 identity/render ID 相同；label、capture time、container instance name 和输入顺序变化不破坏匹配；Terraform instance 粒度限制有显式测试和 diagnostic。
-- [ ] node、edge、important attribute 的 `added/removed/changed/unchanged` 有 deterministic tests；相同 identity 的 label/allowlisted attribute change 标记 `changed`，relation change 标记 removed + added。
-- [ ] duplicate/ambiguous identity、projection/report version mismatch、显式 comparison context 不同或 incompatible domains 抛 `DRIFT_INCOMPATIBLE`/identity error，不回退 label。Kubernetes scope 与 Compose project 必须由调用者提供；Terraform comparison context 是显式逻辑 scope，不从 cwd/backend 猜测。
-- [ ] drift canonical spec 经过 JS ELK/renderer/validation；没有 Graphviz。
-- [ ] drift 语义有文字、线型、legend，不只靠颜色。
-- [ ] 至少一组 declared-vs-live file-backed case 消费 C0 preview/review/YAML-first/stopping contract。
-- [ ] focused tests、`npm test`、`just ci` 通过；公共 docs/scorecard 变化时 docs build 通过。
-- [ ] provider CLI、真实 live environment、Desktop 和 model runs 未执行时分别保持 `missing evidence`。
-- [ ] raw snapshot、Terraform sensitive values、Kubernetes Secret payload、Docker env/labels/credentials/paths 不出现在 projection、report、canonical YAML、diagnostics 或 committed fixtures。
+- [x] Terraform state、Docker inspect、Kubernetes JSON 有 valid/invalid/sensitive-field fixtures，并输出 valid live projection。
+- [x] declared/live 精确同一实体的 identity/render ID 相同；label、capture time、container instance name 和输入顺序变化不破坏匹配；Terraform instance 粒度限制有显式测试和 diagnostic。
+- [x] node、edge、important attribute 的 `added/removed/changed/unchanged` 有 deterministic tests；相同 identity 的 label/allowlisted attribute change 标记 `changed`，relation change 标记 removed + added。
+- [x] duplicate/ambiguous identity、projection/report version mismatch、显式 comparison context 不同或 incompatible domains 抛 `DRIFT_INCOMPATIBLE`/identity error，不回退 label。Kubernetes scope 与 Compose project 必须由调用者提供；Terraform comparison context 是显式逻辑 scope，不从 cwd/backend 猜测。
+- [x] drift canonical spec 经过 JS ELK/renderer/validation；没有 Graphviz。
+- [x] drift 语义有文字、线型、legend，不只靠颜色。
+- [x] 至少一组 declared-vs-live file-backed case 消费 C0 preview/review/YAML-first/stopping contract。
+- [x] focused tests、`npm test`、`just ci` 通过；公共 docs/scorecard 变化时 docs build 通过。
+- [x] provider CLI、真实 live environment、Desktop 和 model runs 未执行时分别保持 `missing evidence`。
+- [x] raw snapshot、Terraform sensitive values、Kubernetes Secret payload、Docker env/labels/credentials/paths 不出现在 projection、report、canonical YAML、diagnostics 或 committed fixtures。
 
 ## Out Of Scope
 

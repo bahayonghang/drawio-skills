@@ -142,3 +142,98 @@ const projection = finalizeGraphProjection(candidate, { attributeAllowlist })
 const spec = projectGraphToSpec(projection)
 // The existing canonical pipeline applies JavaScript ELK after validateSpec.
 ```
+
+## Scenario: Snapshot-Only Declared/Live Drift
+
+### 1. Scope / Trigger
+
+- Trigger: comparing a user-selected Terraform state/plan JSON, Docker inspect
+  JSON, or Kubernetes live JSON projection against a declared projection.
+- This scenario parses existing JSON only. Capture providers, provider CLI
+  subprocesses, daemon/socket access, cluster/cloud access, and inherited
+  credentials require separately approved children.
+
+### 2. Signatures
+
+```js
+parseTerraformStateSnapshot(source, { locator })
+parseDockerInspectSnapshot(source, { locator })
+parseKubernetesLiveSnapshot(source, { scope, locator, kindScopes })
+compareGraphProjections(baseline, observed, { baselineContext, observedContext })
+createDriftProjection(report, baseline, observed, { locator })
+projectDriftReportToSpec(report, baseline, observed, { locator, hash })
+renderDriftGraph(report, baseline, observed, { locator, hash, elk })
+```
+
+### 3. Contracts
+
+- Snapshot adapters return finalized `CanonicalGraphProjection v1` with
+  `mode: live`; raw JSON is not copied into work artifacts.
+- Declared/live adapters import the same identity input builder and attribute
+  allowlist. Capture time, traversal order, display label, container ID/name,
+  and Kubernetes pod UID never enter identity.
+- Both comparison contexts are explicit safe logical strings and must match.
+  They are checked but never persisted in reports or error messages.
+- Report `version: 1` has `nodes`, `edges`, and per-owner/key `attributes`,
+  each with deterministic `added/removed/changed/unchanged` buckets. Relation
+  is part of edge identity, so a relation change is removed plus added.
+- Drift projection labels carry `[ADDED]`, `[REMOVED]`, `[CHANGED: keys]`, or
+  `[UNCHANGED]`. The canonical spec includes a text legend; removed edges are
+  dashed. Color is secondary evidence only.
+- Only allowlisted projected values reach the machine report. Canonical drift
+  YAML contains status and changed key names, not raw snapshot payloads.
+- The required path is finalized projection -> `projectGraphToSpec` ->
+  `validateSpec` -> vendored JavaScript ELK -> renderer -> `validateXml`.
+
+### 4. Validation & Error Matrix
+
+| Condition | Result |
+| --- | --- |
+| Malformed/unsupported snapshot JSON | `ADAPTER_PARSE` / `ADAPTER_UNSUPPORTED` |
+| Missing, unsafe, or unequal comparison context | `DRIFT_INCOMPATIBLE` without echoing values |
+| Projection/report version or domain mismatch | `DRIFT_INCOMPATIBLE` |
+| Duplicate node/edge identity | `IDENTITY_COLLISION` |
+| JavaScript ELK does not apply or rendered XML is invalid | `PROJECTION_INVALID` |
+| Provider CLI, Desktop, preview, or visual model not run | `missing evidence` |
+
+### 5. Good / Base / Bad Cases
+
+- Good: Compose declared services and saved Docker inspect JSON share
+  project/service identities; replicas aggregate into one important attribute.
+- Base: equal identity, label, edge relation, and attributes are all reported
+  as unchanged in stable identity order.
+- Bad: match by container name/label, persist raw env/Secret/state values, infer
+  Terraform instance aggregation, or claim deterministic XML checks as a
+  Desktop/model review.
+
+### 6. Tests Required
+
+- Valid/invalid/sensitive Terraform, Docker, and Kubernetes snapshot fixtures.
+- Exact declared/live identity parity and ordering invariance.
+- Node, edge, and attribute four-state tests; label and generic edge attribute
+  changes; relation change as removed plus added.
+- Context/version/domain/duplicate failures with sanitized diagnostics.
+- File-backed report/spec/evidence equality plus sentinel scans across report,
+  canonical spec, XML, and evidence manifest.
+- Shared projector, `validateSpec`, actual vendored JS ELK, renderer, and
+  `validateXml` execution; provider/Desktop/model remain separate evidence.
+
+### 7. Wrong vs Correct
+
+Wrong:
+
+```js
+const live = execSync(`docker inspect ${container}`)
+const match = declared.nodes.find((node) => node.label === live.Name)
+```
+
+Correct:
+
+```js
+const observed = parseDockerInspectSnapshot(savedJson, { locator })
+const report = compareGraphProjections(baseline, observed, {
+  baselineContext: logicalContext,
+  observedContext: logicalContext
+})
+const artifacts = await renderDriftGraph(report, baseline, observed)
+```

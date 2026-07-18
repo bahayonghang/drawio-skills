@@ -2,9 +2,9 @@
 
 ## Preconditions
 
-- [ ] foundation 与 config children 已完成；shared identity/attribute fixtures 已冻结。
-- [ ] 本 child 三件套获批准；只启动本 child，父任务/C1 bucket 保持 `planning`。
-- [ ] inline 运行 `trellis-before-dev`，读取 C0 archived artifacts 和现行 visual-review contract。
+- [x] foundation 与 config children 已完成；shared identity/attribute fixtures 已冻结。
+- [x] 本 child 三件套获批准；只启动本 child，父任务/C1 bucket 保持 `planning`。
+- [x] inline 运行 `trellis-before-dev`，读取 C0 archived artifacts 和现行 visual-review contract。
 
 ## Ordered Work
 
@@ -49,10 +49,17 @@ npm run docs:build
 
 ## Final Review
 
-- [ ] declared/live import 同一个 factory/attribute allowlist，有代码级 import evidence。
-- [ ] label/instance/order 不影响 primary identity，ambiguous match 显式失败。
-- [ ] node/edge/attribute `added/removed/changed/unchanged` 完整、排序稳定且不只靠颜色。
-- [ ] Raw/sensitive/env/Secret/path/payload 不进入任何生成 artifact 或 diagnostic。
-- [ ] C0 review/rework/stopping contracts 被 file-backed case 消费；Desktop/model 保持 `missing evidence`。
-- [ ] JS ELK 默认，无 Graphviz。
-- [ ] focused/root gates 通过，provider/model gaps 明示。
+- [x] declared/live import 同一个 factory/attribute allowlist，有代码级 import evidence。
+- [x] label/instance/order 不影响 primary identity，ambiguous match 显式失败。
+- [x] node/edge/attribute `added/removed/changed/unchanged` 完整、排序稳定且不只靠颜色。
+- [x] Raw/sensitive/env/Secret/path/payload 不进入任何生成 artifact 或 diagnostic。
+- [x] C0 review/rework/stopping contracts 被 file-backed case 消费；Desktop/model 保持 `missing evidence`。
+- [x] JS ELK 默认，无 Graphviz。
+- [x] focused/root gates 通过，provider/model gaps 明示。
+
+## Verification Evidence
+
+- Focused snapshot/drift/C0/security gate: 59 passed, 0 failed.
+- `npm test`: 550 total, 548 passed, 2 optional parser cases skipped, 0 failed.
+- `just ci`: version sync, Markdown lint, the same root tests, and VitePress docs build passed.
+- Provider CLI/live environment/Desktop/model execution: `missing evidence` by approved scope; no preview PNG was created.
