@@ -26,6 +26,7 @@
 - 通过开发期生成器从明确提供的、已解包的固定 package source 生成 catalog；生成器本身不隐式下载或自动升级。
 - 校验 package name、version、registry integrity 输入、MIT license、871 variant 和 309 个修正后的 base brand；任一不匹配显式失败，并显式防止 `*-text-color` 再次被误分。
 - 输出按 slug 排序，gzip 字节可复现，不含时间戳、绝对路径或临时目录。
+- JSON 使用固定字段顺序、UTF-8 和单个尾随换行；slug 使用 ASCII code-unit 排序。gzip 固定 level 9、mtime 0、无文件名/注释，并把 OS header byte 规范化为 255，避免 Windows/Linux 产物不同。
 - canonical variant 选择顺序固定为 `-color`、`-brand-color`、base；不得依赖文件系统枚举顺序。
 
 ### R2 Catalog 与 Loader 契约
@@ -38,14 +39,15 @@
 ### R3 名称、兼容与发现
 
 - `lobe.<slug>` 是 309 个 canonical identifier；`ai.<slug>` 是同一离线目录的便捷 namespace。
-- canonical slug 使用 exact lookup；只有 exact miss 时才走 slug alias。已公开的 full-name compatibility identifier 单独保留，包括 `brand.openai`、bare `openai`、`lobe.chatgpt`、`lobe.open-ai` 和 `ai.anthropic` 的既有输出。
+- 解析优先级固定为 full-name compatibility、namespace exact slug、exact miss 后 slug alias。已公开的兼容 identifier 由穷举表持有，包括 `brand.openai`、bare `openai`、`lobe.chatgpt` / `ai.chatgpt`、`lobe.open-ai` / `ai.open-ai`、`lobe.open_ai` / `ai.open_ai` 和 `ai.anthropic` 的既有输出。
 - 新增 `lobe.anthropic` 可精确访问来源中的 Anthropic 品牌，不被 `ai.anthropic -> claude` 兼容例外遮蔽。
 - `search <query> --prefix lobe` 和未知 `lobe.*` / `ai.*` validation 使用同一离线候选与确定性排名，返回最多三个可复制的 canonical suggestions。
 
 ### R4 离线、安全与法律边界
 
 - catalog、resolver 结果和生成的 `.drawio` 不含 HTTP(S) image URL；运行时不读取 npm package 或用户 home cache。
-- 生成器拒绝 script、事件属性、foreignObject、embedded image、外部 href/src/CSS URL、缺失 viewBox 和超出边界的 SVG；`1em` intrinsic size 规范化为 draw.io 可缩放尺寸。
+- 生成器拒绝 script、事件属性、foreignObject、embedded image、DOCTYPE/entity/processing instruction、外部 href/src/CSS URL、缺失 viewBox 和超出边界的 SVG；只允许 `href="#id"` / `xlink:href="#id"` 与 `url(#id)` 本地 fragment，以保留 gradient、clipPath、mask 和 filter。`1em` intrinsic size 规范化为 draw.io 可缩放尺寸。
+- registry integrity 必须先对下载的 tarball bytes 计算并匹配固定 SHA-512 SRI，再检查 tar entry 全部位于 `package/`、不含绝对路径/路径穿越/链接，最后解包到隔离临时目录；单独传入 `--integrity` 不视为来源证明。
 - 保留 `skills/drawio/assets/licenses/lobe-icons-MIT.txt` 并增加 provenance 指针；文档说明商标仅用于识别，不暗示品牌方背书。
 - 来源升级必须显式改 version/integrity 并重新执行 count、安全、视觉和 package diff 审查。
 

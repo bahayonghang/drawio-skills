@@ -16,7 +16,7 @@ pinned extracted package + reviewed integrity
 
 ## 2. Generated Catalog
 
-建议 schema：
+固定 schema：
 
 ```json
 {
@@ -24,7 +24,7 @@ pinned extracted package + reviewed integrity
   "source": {
     "package": "@lobehub/icons-static-svg",
     "version": "1.91.0",
-    "integrity": "sha512-...",
+    "integrity": "sha512-ZDflEq0uUvAkH4WK4h3qNvvY09ts4OqUb5azD7A0xKfcuYhffGwB1Q/As2RguZYq4Gh4v925CJ8iodiClzc4zw==",
     "license": "MIT",
     "variantOrder": ["color", "brand-color", "base"]
   },
@@ -34,20 +34,20 @@ pinned extracted package + reviewed integrity
 
 约束：
 
-- `icons` 按 slug ASCII 排序，禁止重复。
+- `icons` 按 slug ASCII code-unit 排序，禁止 `localeCompare` 和重复。
 - 不写 `generatedAt`、本机绝对路径、registry tarball URL 或临时文件名。
-- gzip 使用固定 compression level 和 deterministic header；同一输入的 SHA-256 必须一致。
+- JSON 使用固定字段插入顺序、UTF-8 和一个尾随换行。gzip 固定 level 9、mtime 0、FLG 0、无 filename/comment，并把 OS byte 固定为 255；测试断言十字节 header、完整 bytes 和 SHA-256。
 - `variant` 保存来源文件 stem，便于升级 diff；runtime 只暴露 slug 和 SVG。
 - catalog 是生成资产，不是手工编辑入口；更新必须经 build tool。
 
 ## 3. Generator
 
-`skills/drawio/scripts/tools/build-ai-icon-catalog.js` 接收显式 `--source-dir`、`--integrity` 和 `--output`。网络获取、解包和 integrity 核对是开发期供应链步骤，生成器不自己联网，也不从 `node_modules` 猜版本。
+`skills/drawio/scripts/tools/build-ai-icon-catalog.js` 接收显式 `--source-dir`、`--integrity` 和 `--output`。网络获取、tarball SRI 核对、安全 tar listing 和解包是开发期供应链步骤，生成器不自己联网，也不从 `node_modules` 猜版本。trust report 同时记录已验证 tarball SRI 与生成器输入；`--integrity` 本身不是 source-dir 的密码学证明。
 
 生成流程：
 
 1. 读取 source `package.json`，要求 package/version/license 精确匹配规划值。
-2. 枚举 `.svg` stems，按 family suffix 归组并排序。
+2. 枚举 `.svg` stems，用 longest-first `-text-color`、`-text-xx`、`-text`、`-brand-color`、`-brand`、`-color` suffix 归组，并用 ASCII code-unit 排序。
 3. 用修正后的 suffix 规则归并 `-text-color`，再按 `-color`、`-brand-color`、base 选取；要求 871 variants、309 base brands 和 209/1/99 分布，并拒绝重新产生 `civitai-text` / `kwaikat-text` 伪品牌。
 4. 校验 SVG root、viewBox、大小边界和拒绝清单；把 root `width="1em" height="1em"` 规范化为数值尺寸，不改写 path/style 语义。
 5. 生成稳定 JSON、gzip，重新读取并验证 catalog，再原子替换输出。
@@ -71,7 +71,7 @@ pinned extracted package + reviewed integrity
 
 为避免新 309 slugs 与既有别名互相遮蔽，采用两层规则：
 
-1. full identifier compatibility map 只保存已经公开且需要保持输出的名字，例如 `ai.anthropic -> lobe.claude`、`brand.openai -> lobe.openai`、bare `openai -> lobe.openai`。
+1. full identifier compatibility map 穷举已经公开且需要保持输出的名字：`brand.openai`、bare `openai`、两 namespace 的 `chatgpt`、`open-ai`、`open_ai` 都投影到 `lobe.openai`；只有 `ai.anthropic` 投影到 `lobe.claude`。
 2. canonical `lobe.<slug>` exact lookup；`ai.<slug>` 除 full-name 兼容例外外投影到相同 exact slug。
 3. exact miss 后才查 slug alias，如 `chatgpt`、`open-ai`、`open_ai`；alias target 也必须存在于 catalog。
 4. 仍未命中返回 `null`，validation 调用 `searchAiIcons` 给出最多三个 `lobe.*` 建议。
@@ -89,7 +89,7 @@ pinned extracted package + reviewed integrity
 
 ## 7. Security, License, and Trust
 
-生成器将 SVG 视为固定供应链输入而非可信模板，拒绝：active script、事件属性、foreignObject、embedded image、外部 href/src、CSS `url(...)`、missing viewBox、非 SVG root 和超过合理字节上限的单项。来源 tarball integrity 在生成前复核，发布资产 hash 在生成后记录。
+生成器将 SVG 视为固定供应链输入而非可信模板，拒绝：active script、事件属性、foreignObject、embedded image、DOCTYPE/entity/processing instruction、非本地 href/src、非本地 CSS `url(...)`、missing viewBox、非 SVG root 和超过合理字节上限的单项。仅允许 `#id` fragment 引用以保留 gradient、clipPath、mask、filter 和 currentColor。来源 tarball integrity 在生成前对 bytes 复核，发布资产 hash 在生成后记录。
 
 许可证使用现有 `assets/licenses/lobe-icons-MIT.txt`。后继文档增加商标识别说明。任何 package/version/integrity 变化都是人工审查事件，不由 dependabot 或运行时自动替换 generated asset。
 
