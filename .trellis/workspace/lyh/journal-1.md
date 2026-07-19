@@ -991,3 +991,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 25: 完成方向二专业作图 bucket 验收
+
+**Date**: 2026-07-19
+**Task**: 完成方向二专业作图 bucket 验收
+**Branch**: `dev`
+
+### Summary
+
+核实 AI icon、multi-page、raster replicate 与 SysML/BPMN 四个 child 全部归档，建立唯一 bridge/adapt/replace/defer 映射；聚合 focused 30/30 通过，保留 model/provider 与 nested semantics missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `09f5c25` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
