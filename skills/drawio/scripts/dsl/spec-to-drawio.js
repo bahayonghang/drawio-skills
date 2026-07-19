@@ -16,6 +16,7 @@ import yaml from 'js-yaml'
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { escapeXml } from '../shared/xml-utils.js'
 
 // ============================================================================
 // Theme Loading
@@ -1345,7 +1346,7 @@ function toHtmlLineBreaks(escapedLabel, rawLabel) {
 /**
  * Build draw.io XML from specification
  */
-export function buildXml(spec, theme, layout) {
+export function buildXml(spec, theme, layout, options = {}) {
   const { positions, modulePositions } = layout
   const routing = spec.meta?.routing || 'orthogonal'
   const routedEdges = buildRoutedEdges(spec, layout)
@@ -1354,6 +1355,21 @@ export function buildXml(spec, theme, layout) {
   let nextId = 2
   const allocId = () => String(nextId++)
   const nodeIdMap = new Map() // logical id -> cell id
+  const canonical = options.canonicalMetadata
+  const canonicalCell = (cellXml, kind, objectId, link) => {
+    if (!canonical) return cellXml
+    const attrs = [
+      `label=""`,
+      `dataPageId="${escapeXml(String(canonical.pageId))}"`,
+      `dataObjectId="${escapeXml(String(objectId))}"`,
+      `dataObjectKind="${kind}"`
+    ]
+    if (link?.targetPageId) {
+      attrs.push(`link="${escapeXml(String(link.href))}"`)
+      if (link.targetObjectId) attrs.push(`dataTargetObjectId="${escapeXml(String(link.targetObjectId))}"`)
+    }
+    return `<UserObject ${attrs.join(' ')}>${cellXml}</UserObject>`
+  }
 
   // Calculate canvas size
   let maxX = 0
@@ -1386,9 +1402,14 @@ export function buildXml(spec, theme, layout) {
     const label = toHtmlLineBreaks(prepareMathLabel(module.label || moduleId), module.label || moduleId)
 
     cells.push(
-      `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="1">` +
-        `<mxGeometry x="${pos.x}" y="${pos.y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
-        `</mxCell>`
+      canonicalCell(
+        `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="1">` +
+          `<mxGeometry x="${pos.x}" y="${pos.y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
+          `</mxCell>`,
+        'module',
+        module.id,
+        canonical?.links?.[module.id]
+      )
     )
   }
 
@@ -1416,9 +1437,14 @@ export function buildXml(spec, theme, layout) {
     }
 
     cells.push(
-      `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="${parentId}">` +
-        `<mxGeometry x="${x}" y="${y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
-        `</mxCell>`
+      canonicalCell(
+        `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="${parentId}">` +
+          `<mxGeometry x="${x}" y="${y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
+          `</mxCell>`,
+        'node',
+        node.id,
+        canonical?.links?.[node.id]
+      )
     )
   }
 
@@ -1466,7 +1492,7 @@ export function buildXml(spec, theme, layout) {
       edgeXml += `</mxCell>`
     }
 
-    cells.push(edgeXml)
+    cells.push(canonicalCell(edgeXml, 'edge', edge.id, null))
   }
 
   // Build final XML
@@ -3033,7 +3059,7 @@ export function specToDrawioXml(spec, options = {}) {
   warnings.push(...allDiagnostics)
 
   // Build XML
-  const xml = buildXml(spec, theme, layout)
+  const xml = buildXml(spec, theme, layout, options)
 
   // Return with warnings if requested
   if (options.returnWarnings) {

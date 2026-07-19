@@ -1,5 +1,6 @@
 import yaml from 'js-yaml'
 import { basename, extname, resolve } from 'node:path'
+import { escapeXml } from '../shared/xml-utils.js'
 
 const EXPORT_EXTENSIONS = ['.png', '.svg', '.pdf', '.jpg', '.jpeg']
 
@@ -194,5 +195,29 @@ export function createDrawioFileContent(xml, { version = '21.0.0' } = {}) {
     `    ${xml}\n` +
     '  </diagram>\n' +
     '</mxfile>\n'
+  )
+}
+
+export function createMultiPageDrawioFileContent(renderedPages, { version = '21.0.0', documentMeta = {} } = {}) {
+  if (!Array.isArray(renderedPages) || renderedPages.length === 0) {
+    throw new Error('renderedPages must contain at least one page')
+  }
+  const diagrams = renderedPages
+    .map((page) => {
+      if (!page || typeof page.id !== 'string' || typeof page.name !== 'string' || typeof page.xml !== 'string') {
+        throw new TypeError('each rendered page requires id, name, and xml strings')
+      }
+      return (
+        `  <diagram id="${escapeXml(page.id)}" name="${escapeXml(page.name)}" dataPageMeta="${escapeXml(encodeURIComponent(JSON.stringify(page.meta || {})))}">\n` +
+        `    ${page.xml}\n` +
+        '  </diagram>'
+      )
+    })
+    .join('\n')
+  return (
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    `<mxfile host="cli" modified="" agent="drawio-skill-cli" version="${escapeXml(version)}" dataDocumentMeta="${escapeXml(encodeURIComponent(JSON.stringify(documentMeta || {})))}">\n` +
+    diagrams +
+    '\n</mxfile>\n'
   )
 }
