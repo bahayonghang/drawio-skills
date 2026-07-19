@@ -1,0 +1,9 @@
+{"file": ".trellis/spec/drawio-skill/config-importers.md", "reason": "配置/IaC 导入器执行契约：input-format、身份规则、可选 parser 边界，config-importers 专题页真源"}
+{"file": ".trellis/spec/drawio-skill/code-importers.md", "reason": "代码关系导入器契约：扫描边界、parser 依赖、未解析限制，code-importers 专题页真源"}
+{"file": ".trellis/spec/drawio-skill/canonical-adapter-identity.md", "reason": "规范投影与稳定身份基础，导入器/漂移页共享边界"}
+{"file": ".trellis/spec/drawio-skill/multi-page-foundation.md", "reason": "多页 bundle v1、page/object 身份、往返，multi-page 专题页真源"}
+{"file": ".trellis/spec/drawio-skill/postprocess.md", "reason": "postprocess 六操作与 HTML 查看器契约，postprocess 专题页真源"}
+{"file": ".trellis/spec/drawio-skill/raster-replicate-adapter.md", "reason": "raster-extraction 输入契约，scientific-workflows 页补充真源"}
+{"file": ".trellis/spec/drawio-skill/sysml-bpmn.md", "reason": "SysML/BPMN 离线 stencil 扩展，icons-stencils 页补充真源"}
+{"file": ".trellis/spec/drawio-skill/skill-doc-and-release-contract.md", "reason": "skill 文档与发布契约：证据边界、不越权、版本对齐要求"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "文档变更质量门：中英对称、markdownlint、VitePress build、just ci"}
