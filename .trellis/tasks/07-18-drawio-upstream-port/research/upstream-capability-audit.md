@@ -36,9 +36,9 @@
 - `drawiodiff.py` 按 cell id 或 label 匹配；只有声明态与运行态共享稳定语义身份时，漂移颜色才可靠。
 - 多数 importer 本身只输出 graph JSON；Graphviz 通常属于后续 autolayout 阶段，不应把所有 importer 都描述成 Graphviz 硬依赖。
 
-#### C1 逐脚本映射（权威表）
+#### C1 逐脚本映射（历史规划表）
 
-Evidence state 仅描述当前已取得的上游证据；它不等于本仓 child 已实施。上游 importer 小 fixture 来自 `ref/drawio-skill/tests/test_scripts.py`；Graphviz/Desktop 跳过或未运行的路径继续标记 `missing evidence`。
+最终 37 项权威映射已由 integration/promotion 收口到 `skills/drawio/references/docs/upstream-capability-compatibility.md`。下表保留 C1 规划时的历史证据，不再作为竞争性的最终映射。Evidence state 仅描述当时已取得的上游证据；它不等于本仓 child 已实施。上游 importer 小 fixture 来自 `ref/drawio-skill/tests/test_scripts.py`；Graphviz/Desktop 跳过或未运行的路径继续标记 `missing evidence`。
 
 | Upstream script | Mapping | C1 owner / replacement entry | Reason | Current evidence |
 | --- | --- | --- | --- | --- |

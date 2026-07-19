@@ -22,7 +22,8 @@
     "07-18-drawio-vision-rework",
     "07-18-drawio-dir1-import",
     "07-18-drawio-dir2-authoring",
-    "07-18-drawio-dir3-postprocess"
+    "07-18-drawio-dir3-postprocess",
+    "07-19-drawio-upstream-integration-promotion"
   ],
   "parent": null,
   "relatedFiles": [],
