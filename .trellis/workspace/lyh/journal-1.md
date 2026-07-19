@@ -1058,3 +1058,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 27: 归档 drawio 上游能力整合父任务
+
+**Date**: 2026-07-19
+**Task**: 归档 drawio 上游能力整合父任务
+**Branch**: `dev`
+
+### Summary
+
+完成 parent 5/5 跨 child 总验收，最终 just ci 通过；37 项唯一映射、canonical/offline/base-overlay 所有权、package contents 与 missing-evidence 口径均核实后归档。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `52eb520` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
