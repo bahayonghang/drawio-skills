@@ -1024,3 +1024,37 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 26: 完成上游能力整合与发布收口
+
+**Date**: 2026-07-19
+**Task**: 完成上游能力整合与发布收口
+**Branch**: `dev`
+
+### Summary
+
+发布37项权威能力映射，统一两个 skill 路由、interfaces、evals、双语文档与全局 scorecard；focused、npm test、just ci、docs build 和 staged package gate 通过，外部 provider/model/remote evidence 保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `978bab1` | (see git log) |
+| `1620774` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
