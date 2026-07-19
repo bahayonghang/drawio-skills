@@ -1091,3 +1091,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 28: 补录上游整合批到 skill 侧 base CHANGELOG
+
+**Date**: 2026-07-19
+**Task**: 补录上游整合批到 skill 侧 base CHANGELOG
+**Branch**: `dev`
+
+### Summary
+
+在 skills/drawio/CHANGELOG.md 的 ## Unreleased 段新增 ### Upstream capability integration 子段，覆盖配置/IaC 导入器、代码关系导入器、live 快照+架构漂移、离线 AI 图标目录(309 授权)、多页 canonical bundle v1、postprocess 六操作、raster 提取适配器、SysML/BPMN stencil 八类能力，措辞对齐根 CHANGELOG 并保留证据边界。未扰动被 palette-skill-policy.test.js pin 的 ## 2.7.0 段；学术 overlay CHANGELOG 未动(base-only)。验证：markdownlint、just lint、npm test 631 pass、palette-skill-policy 3/3。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `718231e` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
