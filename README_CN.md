@@ -28,9 +28,13 @@ Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、
 - **Academic Overlay 策略**：venue/audience preflight、caption/legend 校验、公式保真、A4/Word/LaTeX 预期和 figure typing。
 - **学术图类型分流**：出版请求先归类成 `architecture`、`roadmap` 或 `workflow`，再决定布局与导出。
 - **云图标与模板支持**：AWS、GCP、Azure、Kubernetes 以及网络 / provider icon 工作流由 Base references 提供。
-- **内嵌 Lobe、品牌与 Lucide 图标**：AI/LLM logo 使用内置 `lobe.*` / `ai.*`，非 AI 品牌可使用 `brand.redis`，常用语义节点使用精选 `lucide.*`；运行时不需要网络。
+- **内嵌 AI、品牌与 Lucide 图标**：309 个授权离线 `lobe.*` / `ai.*` AI/LLM logo，非 AI 品牌可用 `brand.redis`，常用语义节点用精选 `lucide.*`；运行时不需要网络。SysML（`mxgraph.sysml.*`）与 BPMN（`mxgraph.bpmn.*`）基名也可搜索。
 - **网络拓扑支持**：支持 `router`、`switch`、`firewall`、`server`、`load_balancer`、`subnet`、`internet`、`ap` 等语义节点，以及基于接口/IP/VLAN/带宽元数据自动生成链路标签。
-- **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle。
+- **离线配置与 IaC 导入**：把声明态 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions 或 GitLab CI 转成 canonical 图——无需 provider CLI、Graphviz 或网络。
+- **代码关系导入**：从本地项目目录渲染 Python、JavaScript/TypeScript、Go 或 Rust 的 module/class 关系。
+- **运行态快照与漂移**：投影已保存的 Terraform state、Docker inspect 或 Kubernetes live JSON，并对比声明态与 live 投影以渲染架构漂移。
+- **多页 bundle 与 postprocess**：以稳定 page/object 身份编写 canonical bundle v1，并用 `mermaid`、`explain`、`relabel`、`restyle`、`heatmap` 或无脚本 `html` 离线投影/变换图。
+- **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle（多页加 `--all-pages`）。
 - **导出前校验**：结构、布局、质量、公式和复刻文字位置校验齐全。
 
 ## 运行模型
@@ -242,10 +246,31 @@ PNG/PDF/JPG 是 Desktop-enhanced 可选产物；如果 draw.io Desktop 不可用
 node skills/drawio/scripts/cli.js skills/drawio/references/examples/vendor-device-mapping.yaml output.drawio --validate --write-sidecars
 ```
 
+## 离线导入器与适配器
+
+在 `create` / `edit` / `replicate` 之外，离线 base 在同一 canonical 边界之后推广了一批上游能力。每个 route 都先把输入归一化为 canonical YAML 或多页 bundle v1，再进入校验、JavaScript ELK 布局与 renderer——不需要 provider CLI、Graphviz、网络、Desktop、browser、MCP 或 model。optional parser 与 export 会准确报告缺失依赖或 fallback。
+
+| Route | 输入 | `--input-format` / 命令 |
+| --- | --- | --- |
+| `config-import` | Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions、GitLab CI | `terraform` / `kubernetes` / `compose` / `sql` / `openapi` / `github-actions` / `gitlab-ci` |
+| `code-import` | 本地 Python、JS/TS、Go、Rust 项目目录 | `python-imports` / `python-classes` / `js-imports` / `go-imports` / `rust-imports` |
+| `live-drift` | 已保存的 Terraform state、Docker inspect、Kubernetes live JSON | 快照适配器 + `compareGraphProjections` |
+| `multi-page` | canonical bundle v1 | `--input-format drawio --all-pages --export-spec` |
+| `raster-replicate` | 可信结构化视觉抽取 | `raster-extraction` |
+| `postprocess` | canonical YAML / `.drawio` | `postprocess mermaid\|explain\|relabel\|restyle\|heatmap\|html` |
+
+交付的 postprocess 操作恰好为 `mermaid`、`explain`、`relabel`、`restyle`、`heatmap` 与无脚本 `html`；runbook、动画 SVG、tube/sequence layout、compression、buildup、PPTX、timelapse 与 PR diff 均为 defer，并非隐藏命令。确定性路径是命令证据；Desktop、provider、browser/MCP 与视觉模型运行在未执行时仍报告为 missing evidence。完整的上游任务到能力映射见 `skills/drawio/references/docs/upstream-capability-compatibility.md`。
+
 ## 文档入口
 
 - [快速开始](https://bahayonghang.github.io/drawio-skills/zh/guide/getting-started)
 - [工作流概览](https://bahayonghang.github.io/drawio-skills/zh/guide/workflows)
+- [配置与 IaC 导入器](https://bahayonghang.github.io/drawio-skills/zh/guide/config-importers)
+- [代码关系导入器](https://bahayonghang.github.io/drawio-skills/zh/guide/code-importers)
+- [运行态快照与漂移](https://bahayonghang.github.io/drawio-skills/zh/guide/live-drift)
+- [多页 Bundle](https://bahayonghang.github.io/drawio-skills/zh/guide/multi-page)
+- [Postprocess 套件](https://bahayonghang.github.io/drawio-skills/zh/guide/postprocess)
+- [上游能力映射](https://bahayonghang.github.io/drawio-skills/zh/api/upstream-capability-map)
 - [CLI 工具](https://bahayonghang.github.io/drawio-skills/zh/guide/cli)
 - [可选 MCP 工具](https://bahayonghang.github.io/drawio-skills/zh/api/mcp-tools)
 - [示例](https://bahayonghang.github.io/drawio-skills/zh/examples/)

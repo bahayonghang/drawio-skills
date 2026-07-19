@@ -22,6 +22,16 @@
 6. 渲染离线 bundle
 7. 通过 `/drawio edit` 做后续微调
 
+## 结构化 Raster 抽取输入
+
+当一张图已被 model 或人工抽取为结构化 JSON 时，`raster-extraction` 适配器会离线地把这份可信 JSON 转换为 canonical spec。它不读取图像、不做 OCR、不调用 model，也不宣称抽取精度。
+
+```bash
+node skills/drawio/scripts/cli.js extraction.json final/redraw.drawio --input-format raster-extraction --validate
+```
+
+输入需要 `schemaVersion: 1`、非空 `nodes` 数组、`edges` 数组，以及调用方提供的安全、唯一 ID。几何为全有或全无：若每个 node 都提供 `x/y/w/h`，保留全部左上角坐标；若任一 node 缺几何，丢弃所有源坐标并由 JavaScript ELK 布局整图。纯文本 node 始终以透明填充与描边渲染。异常 JSON、未知字段、不安全值、重复、悬空边、非法颜色或部分几何以 `ADAPTER_PARSE` 失败；不支持的 schema 版本以 `ADAPTER_UNSUPPORTED` 失败。适配器之后仍走常规的 `validateSpec` → JavaScript ELK → renderer → `validateXml` 路径与 sidecar。
+
 ## Academic Replication Overlay
 
 当源图是出版场景时，overlay 增加：

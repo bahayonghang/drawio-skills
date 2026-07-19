@@ -15,25 +15,38 @@ node skills/drawio/scripts/cli.js search firewall --json
 
 Results include the real Draw.io name and, when available, the correct YAML alias such as `k8s.pod`.
 
-| Option | Purpose |
-|---|---|
+| Option               | Purpose                         |
+| -------------------- | ------------------------------- |
 | `--prefix <library>` | restrict results to one library |
-| `--limit <n>` | cap the number of results |
-| `--json` | emit machine-readable results |
+| `--limit <n>`        | cap the number of results       |
+| `--json`             | emit machine-readable results   |
 
 ## Bundled Coverage
 
-| Library | Coverage |
-|---|---|
-| `aws4` | 599 flat stencils and 132 product-icon parameters |
-| `gcp2` | 110 upstream stencils |
-| `azure` | 87 upstream stencils |
-| `mscae` | 148 Azure supplemental stencils |
-| `kubernetes` | 39 `icon2` parameters, including `k8s.pod` |
-| `cisco` / `cisco19` | 291 flat stencils and 149 parameterized entries |
-| `networks` | 58 network stencils |
+| Library             | Coverage                                                       |
+| ------------------- | -------------------------------------------------------------- |
+| `aws4`              | 599 flat stencils and 132 product-icon parameters              |
+| `gcp2`              | 110 upstream stencils                                          |
+| `azure`             | 87 upstream stencils                                           |
+| `mscae`             | 148 Azure supplemental stencils                                |
+| `kubernetes`        | 39 `icon2` parameters, including `k8s.pod`                     |
+| `cisco` / `cisco19` | 291 flat stencils and 149 parameterized entries                |
+| `networks`          | 58 network stencils                                            |
+| `lobe.*` / `ai.*`   | 309 fixed, licensed, offline AI/LLM brand SVGs (no CDN lookup) |
+| `mxgraph.sysml`     | 19 unique SysML shapes (from 27 source rows)                   |
+| `mxgraph.bpmn`      | 6 unique BPMN shapes (from 196 source rows)                    |
 
 Other raw `mxgraph.*` libraries remain pass-through and are not claimed as catalog-covered.
+
+## AI Brand Icons
+
+The AI/LLM brand set is fully offline: 309 licensed canonical SVG brands with deterministic aliases, resolved through the shared icon resolver without any CDN lookup. Reference them as `lobe.*` or `ai.*` in YAML, or search the catalog the same way as other libraries.
+
+## SysML and BPMN Stencils
+
+Offline search returns vendored SysML and BPMN base names, including raw canonical icon syntax such as `icon: mxgraph.sysml.port` or `icon: mxgraph.bpmn.task2`. Known names validate as `stencil`; misspellings under either covered namespace fail strict conversion.
+
+Source-row counts are not capability counts: many rows are style variants of one `shape=` base name. End-to-end support is **not** claimed for structures the flat canonical spec cannot preserve — relative SysML IBD or parametric ports, BPMN pool/lane containment, or BPMN message/sequence/conditional flow semantics. Those need a separately reviewed containment/connector contract.
 
 ## Choose The Right Shape Source
 

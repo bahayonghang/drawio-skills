@@ -26,6 +26,8 @@ features:
     details: "Architecture, Agent and memory, network, UML/ER, flowchart, math, and replicated diagrams share one typed design system."
   - title: Exported-Artifact Verification
     details: "Validate the model, then inspect the exported PNG, SVG, PDF, or Desktop artifact before reporting completion."
+  - title: Offline Importers and Adapters
+    details: "Turn declared Terraform, Kubernetes, Compose, SQL, OpenAPI, CI, or source code into canonical diagrams — plus saved-snapshot drift, multi-page bundles, and offline postprocess. No provider CLI, Graphviz, or network required."
 ---
 
 ## Pick The Right Skill
@@ -77,6 +79,7 @@ For publication work:
 - [Workflows](./guide/workflows.md): create, edit/import, replicate, and academic routing
 - [Design System](./guide/design-system.md): specifications, types, themes, icons, and connectors
 - [Architecture Diagrams](./guide/architecture-diagrams.md) and [Agent Diagrams](./guide/agent-diagrams.md)
+- [Config](./guide/config-importers.md) / [Code](./guide/code-importers.md) importers, [Live Drift](./guide/live-drift.md), [Multi-page](./guide/multi-page.md), and [Postprocess](./guide/postprocess.md)
 - [CLI Reference](./guide/cli.md) and [Export and Artifacts](./guide/export.md)
 - [Examples](./examples/index.md): prompts and reusable YAML
 

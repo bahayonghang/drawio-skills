@@ -11,55 +11,63 @@ node skills/drawio/scripts/cli.js search <query> [--prefix <library>] [--limit <
 
 ## Inputs
 
-| Input | Option |
-|---|---|
-| YAML | default |
-| Mermaid | `--input-format mermaid` |
-| CSV | `--input-format csv` |
-| `.drawio` | `--input-format drawio` |
-| Python modules/classes | `--input-format python-imports` or `python-classes` |
-| JavaScript/TypeScript ESM | `--input-format js-imports` |
-| Go packages | `--input-format go-imports` |
-| Rust modules | `--input-format rust-imports` |
-| stdin | use `-` as the input path |
+| Input                            | Option                                                |
+| -------------------------------- | ----------------------------------------------------- |
+| YAML                             | default                                               |
+| Mermaid                          | `--input-format mermaid`                              |
+| CSV                              | `--input-format csv`                                  |
+| `.drawio`                        | `--input-format drawio`                               |
+| Python modules/classes           | `--input-format python-imports` or `python-classes`   |
+| JavaScript/TypeScript ESM        | `--input-format js-imports`                           |
+| Go packages                      | `--input-format go-imports`                           |
+| Rust modules                     | `--input-format rust-imports`                         |
+| Terraform / Kubernetes / Compose | `--input-format terraform` / `kubernetes` / `compose` |
+| SQL DDL / OpenAPI                | `--input-format sql` / `openapi`                      |
+| GitHub Actions / GitLab CI       | `--input-format github-actions` / `gitlab-ci`         |
+| Structured raster extraction     | `--input-format raster-extraction`                    |
+| stdin                            | use `-` as the input path                             |
 
 Code importer inputs must be local project directories and do not support
 stdin. They parse source structure only; Go and Rust routes never invoke their
-language toolchains.
+language toolchains. Declared config importers, snapshot/drift adapters, and
+raster extraction all normalize to canonical YAML or bundle v1 before layout
+and rendering — see [Config and IaC Importers](./config-importers.md),
+[Code Relationship Importers](./code-importers.md), and
+[Live Snapshots and Drift](./live-drift.md).
 
 ## Rendering And Import Options
 
-| Option | Purpose |
-|---|---|
-| `--theme <name>` | override the YAML theme |
-| `--page <selector>` | select an imported Draw.io page by index or name |
-| `--export-spec` | write canonical YAML instead of rendering |
-| `--validate` | report spec and XML validation results |
-| `--strict` | fail on warnings and strict quality findings |
-| `--strict-warnings` | alias of `--strict` |
+| Option                   | Purpose                                                    |
+| ------------------------ | ---------------------------------------------------------- |
+| `--theme <name>`         | override the YAML theme                                    |
+| `--page <selector>`      | select an imported Draw.io page by index or name           |
+| `--export-spec`          | write canonical YAML instead of rendering                  |
+| `--validate`             | report spec and XML validation results                     |
+| `--strict`               | fail on warnings and strict quality findings               |
+| `--strict-warnings`      | alias of `--strict`                                        |
 | `--allow-unknown-shapes` | temporarily downgrade unknown covered stencils to warnings |
 
 ## Artifact And Desktop Options
 
-| Option | Purpose |
-|---|---|
-| `--write-sidecars` | emit `.spec.yaml` and `.arch.json` |
-| `--sidecar-dir <dir>` | place sidecars in an explicit work directory |
-| `--use-desktop` | use draw.io Desktop for PNG/PDF/JPG or embedded SVG |
-| `--dpi <n>` | raster export DPI; defaults to 300 |
+| Option                | Purpose                                             |
+| --------------------- | --------------------------------------------------- |
+| `--write-sidecars`    | emit `.spec.yaml` and `.arch.json`                  |
+| `--sidecar-dir <dir>` | place sidecars in an explicit work directory        |
+| `--use-desktop`       | use draw.io Desktop for PNG/PDF/JPG or embedded SVG |
+| `--dpi <n>`           | raster export DPI; defaults to 300                  |
 
 `--sidecar-dir` requires `--write-sidecars`. Keep sidecars outside the final delivery directory unless a beside-output reproducible bundle is explicitly requested.
 
 ## Output Formats
 
-| Output | Result |
-|---|---|
-| no output path | Draw.io XML on stdout |
-| `.drawio` | editable Draw.io XML |
-| `.svg` | standalone SVG, or Desktop SVG with `--use-desktop` |
-| `.png` | Desktop raster export at 300 DPI by default |
-| `.pdf` | Desktop PDF export |
-| `.jpg` | Desktop raster export |
+| Output         | Result                                              |
+| -------------- | --------------------------------------------------- |
+| no output path | Draw.io XML on stdout                               |
+| `.drawio`      | editable Draw.io XML                                |
+| `.svg`         | standalone SVG, or Desktop SVG with `--use-desktop` |
+| `.png`         | Desktop raster export at 300 DPI by default         |
+| `.pdf`         | Desktop PDF export                                  |
+| `.jpg`         | Desktop raster export                               |
 
 ## Search The Bundled Catalog
 
@@ -120,12 +128,18 @@ node skills/drawio/scripts/cli.js postprocess html bundle.yaml viewer.html --all
 
 The shipped postprocess operations are `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, and script-free `html`. Runbook, animated SVG, tube/sequence layout, compression, buildup, PPTX, timelapse, and PR diff are deferred, not hidden commands. Offline authoring does not require Python, Graphviz, network, Desktop, browser, MCP, or a model; selected optional parsers and exports report precise missing dependencies or fallbacks.
 
+Dedicated guides: [Multi-page Bundles](./multi-page.md), [Postprocess Suite](./postprocess.md), and the [Upstream Capability Map](/api/upstream-capability-map.md).
+
 ## Failure Semantics
 
 Invalid YAML, malformed XML, unknown covered stencils, missing flag values, unsafe icon names, and failed requested exports produce explicit errors. When draw.io Desktop is unavailable, image export falls back to standalone SVG where supported and reports the fallback; do not claim a missing PNG/PDF/JPG was produced.
 
 ## Related
 
+- [Config and IaC Importers](./config-importers.md)
+- [Code Relationship Importers](./code-importers.md)
+- [Live Snapshots and Drift](./live-drift.md)
+- [Multi-page Bundles](./multi-page.md) and [Postprocess Suite](./postprocess.md)
 - [Icons and Stencil Search](./icons-stencils.md)
 - [Specification](./specification.md)
 - [Export and Artifacts](./export.md)

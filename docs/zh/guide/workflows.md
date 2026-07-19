@@ -133,6 +133,21 @@ Overlay 会执行 academic preflight：
 
 详见 [复刻图表](./scientific-workflows.md)。
 
+## 导入与集成 Route
+
+离线 base 还在同一 canonical 边界之后推广了上游能力。每个 route 都先把输入归一化为 canonical YAML 或多页 bundle v1，再进入校验、JavaScript ELK 布局与 renderer——不需要 provider CLI、Graphviz、网络、Desktop、browser、MCP 或 model。
+
+| Route | 输入 | 指南 |
+| --- | --- | --- |
+| `config-import` | 声明态 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions、GitLab CI | [配置与 IaC 导入器](./config-importers.md) |
+| `code-import` | 本地 Python、JavaScript/TypeScript、Go 或 Rust 项目目录 | [代码关系导入器](./code-importers.md) |
+| `live-drift` | 已保存的 Terraform state/plan、Docker inspect 或 Kubernetes live JSON，以及声明态与 live 的漂移 | [运行态快照与漂移](./live-drift.md) |
+| `multi-page` | 带稳定 page/object 身份与结构化 link 的 canonical bundle v1 | [多页 Bundle](./multi-page.md) |
+| `raster-replicate` | 通过 `--input-format raster-extraction` 的可信结构化视觉抽取 | [复刻图表](./scientific-workflows.md) |
+| `postprocess` | 离线 `mermaid`、`explain`、`relabel`、`restyle`、`heatmap` 或无脚本 `html` | [Postprocess 套件](./postprocess.md) |
+
+完整的上游任务到能力映射见[上游能力映射](/zh/api/upstream-capability-map.md)。
+
 ## 共享护栏
 
 ### 设计系统

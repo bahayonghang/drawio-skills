@@ -32,8 +32,21 @@ node skills/drawio/scripts/cli.js search firewall --json
 | `kubernetes` | 39 个 `icon2` 参数，包括 `k8s.pod` |
 | `cisco` / `cisco19` | 291 个平铺 stencil 和 149 个参数化条目 |
 | `networks` | 58 个网络 stencil |
+| `lobe.*` / `ai.*` | 309 个固定、授权、离线的 AI/LLM 品牌 SVG（无 CDN 查询） |
+| `mxgraph.sysml` | 19 个唯一 SysML 形状（源自 27 个源行） |
+| `mxgraph.bpmn` | 6 个唯一 BPMN 形状（源自 196 个源行） |
 
 其他 raw `mxgraph.*` 图形库保持 pass-through，不能宣称它们受 catalog 完整覆盖。
+
+## AI 品牌图标
+
+AI/LLM 品牌集完全离线：309 个授权 canonical SVG 品牌，带确定性 alias，通过共享 icon resolver 解析，无任何 CDN 查询。在 YAML 中用 `lobe.*` 或 `ai.*` 引用，或像其他图形库一样搜索 catalog。
+
+## SysML 与 BPMN Stencil
+
+离线搜索会返回内置的 SysML 与 BPMN 基名，包括 `icon: mxgraph.sysml.port` 或 `icon: mxgraph.bpmn.task2` 之类的 raw canonical icon 语法。已知名称校验为 `stencil`；两个覆盖命名空间下的拼写错误会导致严格转换失败。
+
+源行数量不是能力数量：许多行只是同一个 `shape=` 基名的样式变体。对扁平 canonical spec 无法保留的结构**不宣称**端到端支持——相对 SysML IBD 或参数化 port、BPMN pool/lane 包含关系、BPMN message/sequence/条件流语义。这些需要单独评审的 containment/connector 契约。
 
 ## 选择正确的形状来源
 
