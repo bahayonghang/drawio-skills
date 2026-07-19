@@ -9,8 +9,8 @@
 - 本仓已有 replicate、shape catalog search、network topology 和 swimlane；这些能力优先 `bridge`，不复制实现或 10,446 项 shape index。
 - raster2drawio 的真实缺口是“视觉抽取到 canonical spec”，不是另一套 JSON-to-XML renderer。
 - 用户已选择完整离线 AI 图标目录；固定 `@lobehub/icons-static-svg@1.91.0` 的 309 个真实 base brand，运行时零网络访问；上游 311 口径中的 2 个 suffix 误分项不进入 canonical catalog。
-- SysML/BPMN 需要先做 schema、semantic type 和官方 shape catalog 的差距审计。
-- C4 下钻需要 canonical multi-page foundation，不能只新增样式预设。
+- SysML/BPMN 差距审计确认真实缺口是 vendored shape catalog 覆盖，而不是新增 semantic type；nested ports/pools/lanes 与专用 flow 仍需未来 canonical contract。
+- C4 下钻所需的 canonical multi-page foundation 已交付；本 bucket 不扩张为 C4 自动语义生成器。
 
 ## Requirements
 
@@ -23,17 +23,36 @@
 ## Child Map
 
 - **C2.1 P1 completed** `07-18-drawio-ai-icon-catalog`：`replace` 上游 CDN aiicons，生成并加载 309 品牌离线目录；已归档，后继 child 只做兼容回归。
-- **C2.2 P1 planned** `07-19-drawio-multi-page-foundation`：显式 bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；无未完成 feature 前置依赖，C4 与 compress 仅作为后继消费者。
-- **待创建** raster/replicate child：`adapt` 视觉抽取为 canonical spec。
-- **C2.4 P1 planned** `07-19-drawio-sysml-bpmn-delta`：`adapt` vendored SysML/BPMN stencil 到现有 catalog/search/validation/renderer；flat schema 无法忠实表达的 nested ports/pools/lanes 与专用 flow 语义保持 `defer`。
+- **C2.2 P1 completed** `07-19-drawio-multi-page-foundation`：`replace` 上游 C4/Python XML 基础为 bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；已归档，C4/compress 仅作后继消费者。
+- **C2.3 P1 completed** `07-19-drawio-raster-replicate-adapter`：`adapt` 严格 raster-extraction JSON 为 canonical spec，复用 validate、JS ELK、renderer 与 sidecars；已归档，真实 raster/OCR/model fidelity 保持 `missing evidence`。
+- **C2.4 P1 completed** `07-19-drawio-sysml-bpmn-delta`：`adapt` vendored SysML/BPMN stencil 到现有 catalog/search/validation/renderer；已归档，flat schema 无法忠实表达的 nested ports/pools/lanes 与专用 flow 语义保持 `defer`。
+
+## Authoritative Capability Mapping
+
+- `raster2drawio` / replicate structured extraction：`adapt` -> C2.3。
+- `aiicons`：`replace` -> C2.1 的 309-entry offline catalog；runtime zero network。
+- `shapesearch`：`bridge` -> 既有 catalog/search；SysML/BPMN namespace delta 由 C2.4 `adapt`，不复制 index 或 ranker。
+- C4 multi-page/down-link foundation：`replace` -> C2.2；自动 C4 语义生成不在本 bucket 声称。
+- network topology 与 swimlane：`bridge` -> 既有 canonical semantic types/docs/tests。
+- SysML/BPMN base stencils：`adapt` -> C2.4；nested ports/pools/lanes、style variants 与专用 flow semantics：`defer`。
 
 ## Acceptance Criteria
 
-- [ ] 每项方向②能力都有唯一的 `bridge`、`adapt`、`replace` 或 `defer` 归属。
-- [ ] 所有真正新增能力已拆成独立 child，依赖关系写入 child 工件而不是只靠树位置。
-- [ ] 没有重复的 shape index、XML renderer、视觉返工表或 academic runtime。
-- [ ] feature child 的证据可由 integration/promotion child 汇总为至少五个 file-backed output cases。
-- [ ] 本 bucket 始终保持 planning，不作为生产代码实施目标。
+- [x] 每项方向②能力都有唯一的 `bridge`、`adapt`、`replace` 或 `defer` 归属。
+- [x] 所有真正新增能力已拆成独立 child，依赖关系写入 child 工件而不是只靠树位置。
+- [x] 没有重复的 shape index、XML renderer、视觉返工表或 academic runtime。
+- [x] feature child 的证据可由 integration/promotion child 汇总为至少五个 file-backed output cases。
+- [x] 本 bucket 始终保持 planning，不作为生产代码实施目标。
+
+## Cross-Child Acceptance Evidence
+
+- 四个 required child 的 archived `task.json` 均为 `completed`，且各自保留 `prd.md`、`design.md`、`implement.md`、dependency/evidence/rollback 边界。
+- AI icon suite 有五个独立 file-backed cases；command 与 Desktop 30.3.14 structural/pixel checks 已执行，`model-executed` 保持 `missing evidence`。
+- Multi-page handoff 记录 legacy regression、structured links、per-page validation 及 uncompressed/compressed/mixed semantic round-trip 通过；外部 Desktop/provider 证据仍明确缺失或不需要。
+- Raster child 记录 focused parser 6/6、CLI 2/2、related 220/220，并以 checked-in JSON 证明 canonical/ELK/renderer path；视觉抽取正确性保持 `missing evidence`。
+- SysML/BPMN child 记录 focused 215/215、source/unique counts、deterministic gzip 与 canonical icon render smoke；nested semantics 保持 `defer`。
+- 本轮聚合 focused suite 30/30 通过；最新 child 的 `just ci` 为 630 total、628 passed、2 optional skips、0 failed，docs build 通过。
+- repository scan：1 个 vendored `shape-index.json.gz`、1 个 `ai-icons.json.gz`、1 个 `specToDrawioXml` owner、0 个 academic JS/TS/Python runtime。
 
 ## Out of Scope
 
