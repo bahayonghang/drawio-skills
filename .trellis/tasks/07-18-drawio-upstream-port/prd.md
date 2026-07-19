@@ -95,7 +95,8 @@
   - **C1.3** `07-18-drawio-config-importers`：Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI；依赖 C1.1。
   - **C1.4** `07-18-drawio-live-snapshots-drift`：Terraform state、Docker inspect、Kubernetes live JSON 与 projection drift；依赖 C1.1、C1.3 和已完成 C0。
 - **C2 bucket** `07-18-drawio-dir2-authoring`：replicate/raster、AI icons、SysML/BPMN、C4 multi-page。实施前把 multi-page foundation 与资产/diagram-type 增量拆开。
-  - **C2.1 P1** `07-18-drawio-ai-icon-catalog`：固定 Lobe Icons 来源、生成 309 品牌离线目录、lazy loader、resolver/alias/suggestion 契约和代表性渲染证据；依赖 C0 的 preview/review 契约完成视觉验收。
+  - **C2.1 P1 completed** `07-18-drawio-ai-icon-catalog`：固定 Lobe Icons 来源、生成 309 品牌离线目录、lazy loader、resolver/alias/suggestion 契约和代表性渲染证据；已归档。
+  - **C2.2 P1 planned** `07-19-drawio-multi-page-foundation`：canonical multi-page bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；无未完成 feature 前置依赖，C4 与 compress 仅作为消费者。
 - **C3 bucket** `07-18-drawio-dir3-postprocess`：离线后处理、runtime-rich export、PR bot。PR bot 必须独立 Governed 子任务。
 - **Integration child（待创建）**：skill 路由、interfaces、evals、compatibility、output scorecard、package/release gates；依赖所有实际 feature children。
 

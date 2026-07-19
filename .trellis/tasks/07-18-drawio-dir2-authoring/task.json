@@ -18,7 +18,10 @@
   "commit": null,
   "pr_url": null,
   "subtasks": [],
-  "children": ["07-18-drawio-ai-icon-catalog"],
+  "children": [
+    "07-18-drawio-ai-icon-catalog",
+    "07-19-drawio-multi-page-foundation"
+  ],
   "parent": "07-18-drawio-upstream-port",
   "relatedFiles": [],
   "notes": "",

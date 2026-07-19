@@ -22,10 +22,10 @@
 
 ## Child Map
 
-- **C2.1 P1** `07-18-drawio-ai-icon-catalog`：`replace` 上游 CDN aiicons，生成并加载 309 品牌离线目录；依赖 C0 视觉预览完成代表性渲染验收。
+- **C2.1 P1 completed** `07-18-drawio-ai-icon-catalog`：`replace` 上游 CDN aiicons，生成并加载 309 品牌离线目录；已归档，后继 child 只做兼容回归。
+- **C2.2 P1 planned** `07-19-drawio-multi-page-foundation`：显式 bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；无未完成 feature 前置依赖，C4 与 compress 仅作为后继消费者。
 - **待创建** raster/replicate child：`adapt` 视觉抽取为 canonical spec。
 - **待创建** SysML/BPMN delta child：先审计，再只补真实表达缺口。
-- **待创建** C4 multi-page foundation child：先定义 page bundle、页面链接和 round-trip。
 
 ## Acceptance Criteria
 
