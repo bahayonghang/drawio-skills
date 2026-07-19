@@ -855,3 +855,40 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 21: 收口方向三后处理导出
+
+**Date**: 2026-07-19
+**Task**: 收口方向三后处理导出
+**Branch**: `dev`
+
+### Summary
+
+实现并验证 Mermaid、explain、relabel、restyle、heatmap 与无脚本 HTML 后处理，固化 executable spec；focused 133/133 与 just ci 通过，外部 provider 证据保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c0edb70` | (see git log) |
+| `05ff82c` | (see git log) |
+| `1def151` | (see git log) |
+| `7378daa` | (see git log) |
+| `8880675` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
