@@ -9,11 +9,11 @@ import { tmpdir } from 'node:os'
 import { basename, extname, join, relative, resolve } from 'node:path'
 import {
   computeLayoutQualityMetrics,
-  parseSpecYaml,
   specToDrawioXml,
   validateSpec,
   validateXml
 } from './dsl/spec-to-drawio.js'
+import { parseDocumentYaml, selectDocumentPage, validateDocumentSpec } from './dsl/document-spec.js'
 import { applyAutoLayout } from './dsl/auto-layout.js'
 import {
   parseCiWorkflow,
@@ -32,11 +32,15 @@ import {
   projectGraphToSpec
 } from './adapters/index.js'
 import { drawioToSpec } from './dsl/drawio-to-spec.js'
+import { drawioToDocumentSpec, renderDocumentPages, validateDrawioDocument } from './dsl/multi-page.js'
 import { searchShapeCatalogBatch } from './dsl/catalog-search.js'
 import {
   buildArchMetadata,
+  buildMultiPageArchMetadata,
   createDrawioFileContent,
+  createMultiPageDrawioFileContent,
   deriveArtifactPaths,
+  serializeDocumentSpecYaml,
   serializeSpecYaml
 } from './runtime/artifacts.js'
 import { exportWithDrawioDesktop, isDesktopExportFormat } from './runtime/desktop.js'
@@ -115,7 +119,8 @@ Options:
   --module-address <a> Terraform module address for the selected source
   --workflow <path>   CI workflow repo-relative path (required for stdin)
   --theme <name>      Override theme (e.g. tech-blue, academic, nature, dark)
-  --page <selector>   drawio only: page index (0-based) or diagram name
+  --page <selector>   page index (0-based), page id, or unique page name
+  --all-pages         drawio import: import every page as canonical bundle v1
   --export-spec       Export the canonical YAML spec instead of generating XML/SVG
   --strict            Fail on complexity and spec validation warnings
   --strict-warnings   Alias of --strict (recommended for paper-grade validation)
@@ -170,11 +175,21 @@ const visualPreview = args.includes('--visual-preview')
 const dpiIndex = args.indexOf('--dpi')
 const dpi = dpiIndex !== -1 ? Number(args[dpiIndex + 1]) : 300
 const exportSpec = args.includes('--export-spec')
+const allPages = args.includes('--all-pages')
 const pageIndex = args.indexOf('--page')
 const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
 const sidecarDirIndex = args.indexOf('--sidecar-dir')
 const sidecarDir = sidecarDirIndex !== -1 ? args[sidecarDirIndex + 1] : null
 const resolvedSidecarDir = sidecarDir ? resolve(sidecarDir) : null
+
+if (allPages && pageIndex !== -1) {
+  console.error('Error: --all-pages cannot be combined with --page.')
+  process.exit(1)
+}
+if (allPages && inputFormat !== 'drawio') {
+  console.error('Error: --all-pages is only valid with --input-format drawio.')
+  process.exit(1)
+}
 const optionValue = (name) => {
   const index = args.indexOf(name)
   if (index === -1) return undefined
@@ -284,6 +299,7 @@ if (codeProjectInput) {
 }
 
 let spec
+let document = null
 try {
   if (codeProjectInput) {
     const parser = {
@@ -295,13 +311,16 @@ try {
     }[inputFormat]
     spec = projectGraphToSpec(await parser(resolve(inputFile), { locator: codeAdapterLocator }))
   } else if (inputFormat === 'yaml') {
-    spec = parseSpecYaml(inputText)
+    const parsedDocument = parseDocumentYaml(inputText)
+    if (parsedDocument.kind === 'multi-page-v1') document = parsedDocument
+    else spec = parsedDocument.spec
   } else if (inputFormat === 'mermaid') {
     spec = parseMermaidToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'csv') {
     spec = parseCsvToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'drawio') {
-    spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
+    if (allPages) document = drawioToDocumentSpec(inputText)
+    else spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
   } else if (inputFormat === 'terraform') {
     spec = projectGraphToSpec(
       parseTerraformConfig(inputText, { locator: adapterLocator, moduleAddress: adapterModuleAddress })
@@ -337,7 +356,8 @@ try {
 }
 
 try {
-  validateSpec(spec)
+  if (document) validateDocumentSpec(document)
+  else validateSpec(spec)
 } catch (err) {
   console.error(`Error: Spec validation failed: ${err.message}`)
   process.exit(1)
@@ -345,21 +365,52 @@ try {
 
 // Apply CLI theme override
 if (themeName) {
-  spec.meta = spec.meta || {}
-  spec.meta.theme = themeName
+  if (document) {
+    for (const page of document.pages) {
+      page.meta = page.meta || {}
+      page.meta.theme = themeName
+    }
+  } else {
+    spec.meta = spec.meta || {}
+    spec.meta.theme = themeName
+  }
 }
 
 // Edge-aware auto-layout pre-pass (hierarchical specs without explicit geometry)
-const autoLayoutResult = await applyAutoLayout(spec)
-if (autoLayoutResult.warning) {
-  console.error(`Warning: ${autoLayoutResult.warning}`)
+if (!document) {
+  const autoLayoutResult = await applyAutoLayout(spec)
+  if (autoLayoutResult.warning) {
+    console.error(`Warning: ${autoLayoutResult.warning}`)
+  }
+  spec = autoLayoutResult.spec
 }
-spec = autoLayoutResult.spec
 
 let xml
+let documentContent = null
+let renderedDocumentPages = null
 try {
   if (exportSpec) {
     xml = null
+  } else if (document) {
+    if (!outputFile) {
+      throw new Error('multi-page documents require an explicit .drawio output path')
+    }
+    const outputExtension = extname(outputFile).toLowerCase()
+    if (outputExtension !== '.drawio' && pageSelector == null) {
+      throw new Error('multi-page SVG/PNG/PDF/JPG export requires --page <index|id|name>')
+    }
+    renderedDocumentPages = await renderDocumentPages(document, { strict, allowUnknownShapes })
+    if (outputExtension === '.drawio') {
+      documentContent = createMultiPageDrawioFileContent(renderedDocumentPages, {
+        version: DRAWIO_COMPAT_VERSION,
+        documentMeta: document.meta
+      })
+    } else {
+      const selectedPage = selectDocumentPage(document, pageSelector)
+      const rendered = renderedDocumentPages.find((page) => page.id === selectedPage.id)
+      xml = rendered.xml
+      documentContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
+    }
   } else if (doValidate) {
     const result = specToDrawioXml(spec, { strict, allowUnknownShapes, returnWarnings: true, silent: true })
     xml = result.xml
@@ -387,7 +438,7 @@ try {
 // ---------------------------------------------------------------------------
 
 if (doValidate && !exportSpec) {
-  const result = validateXml(xml)
+  const result = document ? validateDrawioDocument(documentContent) : validateXml(xml)
   if (result.warnings?.length) {
     console.error(`XML validation warnings (${result.warnings.length}):`)
     for (const w of result.warnings) {
@@ -411,7 +462,7 @@ if (doValidate && !exportSpec) {
 
 if (
   !exportSpec &&
-  spec.meta?.profile === 'academic-paper' &&
+  spec?.meta?.profile === 'academic-paper' &&
   outputFile &&
   extname(outputFile).toLowerCase() !== '.svg'
 ) {
@@ -423,7 +474,7 @@ if (
 // ---------------------------------------------------------------------------
 
 if (exportSpec) {
-  const yamlOut = serializeSpecYaml(spec)
+  const yamlOut = document ? serializeDocumentSpecYaml(document) : serializeSpecYaml(spec)
   let specPath = outputFile
   if (!specPath && inputFormat === 'drawio' && inputFile && inputFile !== '-') {
     specPath = deriveArtifactPaths(inputFile).specPath
@@ -464,7 +515,13 @@ if (exportSpec) {
       try {
         writeFileSync(
           resolve(archPath),
-          JSON.stringify(buildArchMetadata(spec, { outputFile: drawioPath || specPath }), null, 2) + '\n',
+          JSON.stringify(
+            document
+              ? buildMultiPageArchMetadata(document, { outputFile: drawioPath || specPath })
+              : buildArchMetadata(spec, { outputFile: drawioPath || specPath }),
+            null,
+            2
+          ) + '\n',
           'utf-8'
         )
         console.error(`Saved arch: ${archPath}`)
@@ -485,7 +542,7 @@ if (!outputFile) {
 }
 
 const ext = extname(outputFile).toLowerCase()
-const drawioContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
+const drawioContent = documentContent || createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
 const artifactPaths = deriveArtifactPaths(outputFile)
 const sidecarArtifactPaths = resolvedSidecarDir
   ? deriveArtifactPaths(resolve(resolvedSidecarDir, basename(artifactPaths.drawioPath)))
@@ -497,10 +554,18 @@ let desktopInputPath = null
 function writeCanonicalSidecars() {
   if (!writeSidecars) return
 
-  writeFileSync(resolve(sidecarArtifactPaths.specPath), serializeSpecYaml(spec), 'utf-8')
+  writeFileSync(
+    resolve(sidecarArtifactPaths.specPath),
+    document ? serializeDocumentSpecYaml(document) : serializeSpecYaml(spec),
+    'utf-8'
+  )
   writeFileSync(
     resolve(sidecarArtifactPaths.archPath),
-    JSON.stringify(buildArchMetadata(spec, { outputFile }), null, 2) + '\n',
+    JSON.stringify(
+      document ? buildMultiPageArchMetadata(document, { outputFile }) : buildArchMetadata(spec, { outputFile }),
+      null,
+      2
+    ) + '\n',
     'utf-8'
   )
 }

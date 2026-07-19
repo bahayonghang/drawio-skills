@@ -479,6 +479,208 @@ test('CLI: --export-spec writes spec and arch to sidecar dir when requested', ()
   assert.ok(existsSync(resolve(sidecarDir, 'imported.arch.json')), 'arch should be written to sidecar dir')
 })
 
+test('CLI: multi-page YAML writes one drawio bundle and arch v2 sidecars', () => {
+  const tempDir = createTempDir()
+  const inputFile = resolve(tempDir, 'bundle.yaml')
+  const outputFile = resolve(tempDir, 'bundle.drawio')
+  const sidecarDir = resolve(tempDir, '.drawio-tmp', 'bundle')
+  writeFileSync(
+    inputFile,
+    `schemaVersion: 1
+meta:
+  title: CLI Bundle
+  source: generated
+pages:
+  - id: first
+    name: First
+    nodes:
+      - id: api
+        label: API
+        type: service
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes:
+      - id: api
+        label: API 2
+        type: service
+    edges: []
+    modules: []
+links:
+  - from: { pageId: first, objectId: api }
+    to: { pageId: second, objectId: api }
+`
+  )
+
+  runCli([inputFile, outputFile, '--validate', '--write-sidecars', '--sidecar-dir', sidecarDir])
+  const drawio = readFileSync(outputFile, 'utf8')
+  assert.equal((drawio.match(/<diagram\b/g) || []).length, 2)
+  assert.ok(drawio.includes('dataObjectId="api"'))
+  const spec = readFileSync(resolve(sidecarDir, 'bundle.spec.yaml'), 'utf8')
+  assert.match(spec, /^schemaVersion: 1/m)
+  const arch = JSON.parse(readFileSync(resolve(sidecarDir, 'bundle.arch.json'), 'utf8'))
+  assert.equal(arch.version, 2)
+  assert.deepEqual(arch.pages.map((page) => page.id), ['first', 'second'])
+})
+
+test('CLI: drawio import remains first-page flat by default and all-pages is explicit', () => {
+  const tempDir = createTempDir()
+  const bundleFile = resolve(tempDir, 'bundle.drawio')
+  const defaultSpec = resolve(tempDir, 'default.spec.yaml')
+  const allPagesSpec = resolve(tempDir, 'all-pages.spec.yaml')
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: first
+    name: First
+    nodes: [{ id: api, label: API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes: [{ id: api, label: API 2 }]
+    edges: []
+    modules: []
+`
+  )
+  runCli([yamlFile, bundleFile])
+  runCli([bundleFile, defaultSpec, '--input-format', 'drawio', '--export-spec'])
+  assert.equal(readFileSync(defaultSpec, 'utf8').includes('schemaVersion:'), false)
+  runCli([bundleFile, allPagesSpec, '--input-format', 'drawio', '--all-pages', '--export-spec'])
+  assert.match(readFileSync(allPagesSpec, 'utf8'), /^schemaVersion: 1/m)
+})
+
+test('CLI: multi-page page boundaries and all-pages conflicts fail explicitly', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: first
+    name: First
+    nodes: [{ id: api, label: API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes: [{ id: api, label: API 2 }]
+    edges: []
+    modules: []
+`
+  )
+  const svgResult = runCliResult([yamlFile, resolve(tempDir, 'bundle.svg')])
+  assert.notEqual(svgResult.status, 0)
+  assert.match(svgResult.stderr, /requires --page/i)
+  const conflict = runCliResult([yamlFile, resolve(tempDir, 'bundle.drawio'), '--all-pages', '--page', '0'])
+  assert.notEqual(conflict.status, 0)
+  assert.match(conflict.stderr, /cannot be combined/i)
+})
+
+test('CLI: multi-page binary selection accepts index, id, and unique name', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  const bundleYaml = `schemaVersion: 1
+meta: { title: Selector bundle, source: generated }
+pages:
+  - id: first
+    name: First page
+    nodes: [{ id: api, label: First API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second page
+    nodes: [{ id: api, label: Second API }]
+    edges: []
+    modules: []
+`
+  writeFileSync(yamlFile, bundleYaml)
+
+  for (const [selector, label] of [
+    ['0', 'First API'],
+    ['second', 'Second API'],
+    ['Second page', 'Second API']
+  ]) {
+    const outputFile = resolve(tempDir, `selected-${selector.replaceAll(' ', '-')}.svg`)
+    runCli([yamlFile, outputFile, '--page', selector])
+    assert.match(readFileSync(outputFile, 'utf8'), new RegExp(label))
+  }
+})
+
+test('CLI: multi-page selection rejects out-of-range and ambiguous names with safe diagnostics', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: first
+    name: Context
+    nodes: [{ id: api, label: First API }]
+    edges: []
+    modules: []
+  - id: detail
+    name: Context
+    nodes: [{ id: api, label: Detail API }]
+    edges: []
+    modules: []
+`
+  )
+  const outOfRange = runCliResult([yamlFile, resolve(tempDir, 'out.svg'), '--page', '9'])
+  assert.notEqual(outOfRange.status, 0)
+  assert.match(outOfRange.stderr, /index out of range/i)
+
+  const ambiguous = runCliResult([yamlFile, resolve(tempDir, 'ambiguous.svg'), '--page', 'context'])
+  assert.notEqual(ambiguous.status, 0)
+  assert.match(ambiguous.stderr, /ambiguous.*first.*detail/i)
+})
+
+test('CLI: multi-page stdin requires an explicit drawio output and keeps stdout clean', () => {
+  const input = `schemaVersion: 1
+pages:
+  - id: first
+    name: First
+    nodes: [{ id: api, label: API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes: [{ id: api, label: API 2 }]
+    edges: []
+    modules: []
+`
+  const noOutput = runCliResult(['-'], { input })
+  assert.notEqual(noOutput.status, 0)
+  assert.match(noOutput.stderr, /explicit \.drawio output/i)
+  assert.equal(noOutput.stdout, '')
+})
+
+test('CLI: multi-page page metadata is escaped and never emits raw injection payloads', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'unsafe-labels.yaml')
+  const outputFile = resolve(tempDir, 'unsafe-labels.drawio')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: safe
+    name: 'Page "><script>alert(1)</script>'
+    nodes: [{ id: api, label: 'API & details' }]
+    edges: []
+    modules: []
+`
+  )
+  runCli([yamlFile, outputFile, '--validate'])
+  const xml = readFileSync(outputFile, 'utf8')
+  assert.match(xml, /name="Page &quot;&gt;&lt;script&gt;alert\(1\)&lt;\/script&gt;"/)
+  assert.equal(xml.includes('<script>'), false)
+  assert.equal(xml.includes('javascript:'), false)
+  assert.equal(xml.includes('onerror='), false)
+})
+
 test('CLI: replicated specs preserve source background and replication metadata in sidecars', () => {
   const tempDir = createTempDir()
   const inputFile = resolve(EXAMPLES_DIR, 'replicated-brand-flow.yaml')

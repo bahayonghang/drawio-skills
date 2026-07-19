@@ -126,6 +126,25 @@ export function serializeSpecYaml(spec) {
   })
 }
 
+export function serializeDocumentSpecYaml(document) {
+  if (!document || document.kind !== 'multi-page-v1') {
+    throw new TypeError('serializeDocumentSpecYaml requires a multi-page v1 document')
+  }
+  return serializeSpecYaml({
+    schemaVersion: 1,
+    meta: document.meta || {},
+    pages: document.pages.map((page) => ({
+      id: page.id,
+      name: page.name,
+      meta: page.meta || {},
+      nodes: page.nodes || [],
+      edges: page.edges || [],
+      modules: page.modules || []
+    })),
+    links: document.links || []
+  })
+}
+
 export function buildArchMetadata(spec, { outputFile } = {}) {
   const artifactPaths = outputFile ? deriveArtifactPaths(outputFile) : null
   const fallbackTitle = artifactPaths ? basename(artifactPaths.stem) : 'diagram'
@@ -185,6 +204,47 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
   }
 
   return arch
+}
+
+export function buildMultiPageArchMetadata(document, { outputFile } = {}) {
+  if (!document || document.kind !== 'multi-page-v1') {
+    throw new TypeError('buildMultiPageArchMetadata requires a multi-page v1 document')
+  }
+  const artifactPaths = outputFile ? deriveArtifactPaths(outputFile) : null
+  const fallbackTitle = artifactPaths ? basename(artifactPaths.stem) : 'diagram'
+  const pageMetadata = document.pages.map((page, index) => {
+    const pageSpec = { meta: page.meta || {}, nodes: page.nodes || [], edges: page.edges || [], modules: page.modules || [] }
+    const legacy = buildArchMetadata(pageSpec, { outputFile })
+    return {
+      index,
+      id: page.id,
+      name: page.name,
+      meta: page.meta || {},
+      counts: legacy.counts,
+      nodes: legacy.nodes,
+      edges: legacy.edges,
+      modules: legacy.modules
+    }
+  })
+  const counts = pageMetadata.reduce(
+    (total, page) => ({
+      nodes: total.nodes + page.counts.nodes,
+      edges: total.edges + page.counts.edges,
+      modules: total.modules + page.counts.modules
+    }),
+    { nodes: 0, edges: 0, modules: 0 }
+  )
+  return {
+    version: 2,
+    title: document.meta?.title || fallbackTitle,
+    source: document.meta?.source || 'generated',
+    counts,
+    pages: pageMetadata,
+    links: (document.links || []).map((link) => ({
+      from: { pageId: link.from.pageId, objectId: link.from.objectId },
+      to: { pageId: link.to.pageId, objectId: link.to.objectId }
+    }))
+  }
 }
 
 export function createDrawioFileContent(xml, { version = '21.0.0' } = {}) {

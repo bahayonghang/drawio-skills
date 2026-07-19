@@ -1,4 +1,5 @@
 import { validateSpec } from './spec-to-drawio.js'
+import yaml from 'js-yaml'
 
 const PAGE_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
 const OBJECT_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
@@ -153,6 +154,18 @@ export function classifyDocumentSpec(value) {
   return 'multi-page-v1'
 }
 
+export function parseDocumentYaml(yamlText) {
+  if (yamlText == null) throw new TypeError('yamlText must be a string')
+  if (String(yamlText).trim() === '') return normalizeDocumentSpec({ meta: {}, nodes: [], edges: [], modules: [] })
+  let value
+  try {
+    value = yaml.load(yamlText, { schema: yaml.DEFAULT_SCHEMA }) || {}
+  } catch (error) {
+    throw new Error(`Failed to parse YAML document: ${error.message}`)
+  }
+  return normalizeDocumentSpec(value)
+}
+
 export function validateDocumentSpec(document) {
   const kind = document?.kind || classifyDocumentSpec(document)
   if (kind === 'legacy-single-page') {
@@ -185,7 +198,7 @@ export function normalizeDocumentSpec(value) {
     return {
       kind,
       legacy: true,
-      spec: value,
+      spec,
       meta: spec.meta,
       pages: [{ id: 'page-1', name: 'Page-1', ...spec }],
       links: []
