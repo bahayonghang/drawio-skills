@@ -45,6 +45,7 @@ import {
 } from './runtime/artifacts.js'
 import { exportWithDrawioDesktop, isDesktopExportFormat } from './runtime/desktop.js'
 import { exportVisionPreview } from './runtime/vision-preview.js'
+import { runPostprocessCommand } from './postprocess/cli.js'
 
 /** draw.io format compatibility version */
 const DRAWIO_COMPAT_VERSION = '21.0.0'
@@ -54,6 +55,16 @@ const DRAWIO_COMPAT_VERSION = '21.0.0'
 // ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2)
+
+if (args[0] === 'postprocess') {
+  try {
+    await runPostprocessCommand(args.slice(1))
+    process.exit(0)
+  } catch (error) {
+    console.error(`Error: Postprocess failed: ${error.message}`)
+    process.exit(1)
+  }
+}
 
 if (args[0] === 'search') {
   const prefixIndex = args.indexOf('--prefix')
@@ -97,6 +108,7 @@ draw.io YAML → XML/SVG Converter
 Usage:
   node cli.js <input> [output.drawio|output.svg] [options]
   node cli.js search <query> [--prefix <library>] [--limit <n>] [--json]
+  node cli.js postprocess <operation> <input> <output> [options]
 
 Arguments:
   input               Path to input file, or - for stdin
@@ -109,6 +121,11 @@ Arguments:
                       If omitted, XML is printed to stdout.
 
 Options:
+  postprocess operation: mermaid, explain, relabel, restyle, heatmap, or html
+  postprocess options: --page <selector>, --all-pages, --map <json>,
+                      --preset <name|json>, --metrics <json|csv>, --fenced,
+                      --direction <LR|RL|TB|BT>, --palette <name>,
+                      --label-fallback, --title <text>, --search <text>
   --input-format <f>  Input format: yaml (default), mermaid, csv, drawio,
                       terraform, kubernetes, compose, sql, openapi,
                       github-actions, gitlab-ci, python-imports,
