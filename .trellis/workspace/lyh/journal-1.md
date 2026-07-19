@@ -957,3 +957,37 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 24: 完成 SysML/BPMN canonical stencil delta
+
+**Date**: 2026-07-19
+**Task**: 完成 SysML/BPMN canonical stencil delta
+**Branch**: `dev`
+
+### Summary
+
+扩展现有离线 catalog/search/validation/renderer 到 SysML/BPMN vendored stencil，合并 variant tags，保留 nested ports、pools/lanes 与专用 flow 为 defer；focused 215/215、npm test 和 just ci 通过。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `669c415` | (see git log) |
+| `3710620` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

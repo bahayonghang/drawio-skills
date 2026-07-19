@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 23
+- **Total Sessions**: 24
 - **Last Active**: 2026-07-19
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~959 | Active |
+| `journal-1.md` | ~993 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 24 | 2026-07-19 | 完成 SysML/BPMN canonical stencil delta | `669c415`, `3710620` | `dev` |
 | 23 | 2026-07-19 | 完成 raster canonical extraction adapter | `0b6a379`, `b03e683` | `dev` |
 | 22 | 2026-07-19 | 收口方向一导入与漂移 bucket | - | `dev` |
 | 21 | 2026-07-19 | 收口方向三后处理导出 | `c0edb70`, `05ff82c`, `1def151`, `7378daa`, `8880675` | `dev` |
