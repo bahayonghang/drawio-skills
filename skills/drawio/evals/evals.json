@@ -202,6 +202,22 @@
         "Keeps the final diagram native and editable rather than embedding the uploaded image as a full page",
         "Verifies the exported SVG or Desktop-exported artifact against the source colors"
       ]
+    },
+    {
+      "id": "base-upstream-integration-routing",
+      "prompt": "Import a saved Compose architecture and Docker inspect snapshot, show drift, add a linked detail page, and export a script-free HTML review plus Mermaid summary. Stay offline.",
+      "expected_output": "A canonical stable-identity drift bundle with multi-page links and offline postprocess projections.",
+      "files": [
+        "skills/drawio/references/examples/importers/live/drift-declared-compose.yaml",
+        "skills/drawio/references/examples/importers/live/compose-drift-report.json"
+      ],
+      "assertions": [
+        "Uses the shared declared/live identity and canonical graph projection path",
+        "Keeps linked pages in canonical bundle v1 with stable page and object identity",
+        "Uses only the shipped mermaid and script-free html postprocess operations",
+        "Does not require Graphviz, network, Desktop, browser, MCP, or a model",
+        "Preserves unavailable provider and model execution as missing evidence"
+      ]
     }
   ]
 }

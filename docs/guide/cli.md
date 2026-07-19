@@ -102,6 +102,24 @@ Render a JavaScript/TypeScript ESM dependency view:
 node skills/drawio/scripts/cli.js packages/web final/web-imports.drawio --input-format js-imports --validate
 ```
 
+## Upstream Capability Promotion
+
+The offline base also supports declared config and saved live-snapshot adapters, structured raster extraction, canonical multi-page bundles, and six postprocess operations. Every adapter returns canonical YAML or bundle v1 before validation, JavaScript ELK layout, and the existing renderer.
+
+```bash
+# Import every page as canonical bundle v1
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --all-pages --export-spec
+
+# Normalize a trusted structured visual extraction
+node skills/drawio/scripts/cli.js extraction.json final/redraw.drawio --input-format raster-extraction --validate
+
+# Project or transform canonical input
+node skills/drawio/scripts/cli.js postprocess mermaid bundle.yaml architecture.mmd --page context
+node skills/drawio/scripts/cli.js postprocess html bundle.yaml viewer.html --all-pages
+```
+
+The shipped postprocess operations are `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, and script-free `html`. Runbook, animated SVG, tube/sequence layout, compression, buildup, PPTX, timelapse, and PR diff are deferred, not hidden commands. Offline authoring does not require Python, Graphviz, network, Desktop, browser, MCP, or a model; selected optional parsers and exports report precise missing dependencies or fallbacks.
+
 ## Failure Semantics
 
 Invalid YAML, malformed XML, unknown covered stencils, missing flag values, unsafe icon names, and failed requested exports produce explicit errors. When draw.io Desktop is unavailable, image export falls back to standalone SVG where supported and reports the fallback; do not claim a missing PNG/PDF/JPG was produced.

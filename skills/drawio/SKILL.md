@@ -52,12 +52,15 @@ Choose the route first, then load only that route's references. All paths below 
 - `config-import` — declared Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, or GitLab CI architecture → `docs/config-importers.md`, `docs/canonical-graph-projection.md`
 - `live-drift` — compare explicit Terraform state/plan JSON, Docker inspect JSON, or Kubernetes live JSON against a declared projection without capture → `docs/live-snapshots-drift.md`, `docs/canonical-graph-projection.md`, `workflows/visual-review.md`
 - `code-import` — Python module/class, JavaScript/TypeScript ESM, Go package, or Rust module relationships from a local project directory → `docs/code-importers.md`, `docs/canonical-graph-projection.md`
+- `multi-page` — create, import, validate, or transform bundle v1 pages with stable page/object identity and structured links → `docs/upstream-capability-compatibility.md`, `docs/xml-format.md`
+- `raster-replicate` — normalize a trusted structured visual extraction through `--input-format raster-extraction` before canonical rendering → `workflows/replicate.md`, `docs/upstream-capability-compatibility.md`
+- `postprocess` — project or transform canonical YAML/Draw.io with offline `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, or script-free `html` → `docs/upstream-capability-compatibility.md`
 - `architecture` — system/software architecture, microservice or cloud-service maps with role-based color coding, plus AI agent / RAG / memory diagrams（架构、微服务、云架构、agent、RAG、记忆、multi-agent、工具调用；非拓扑、非论文）→ `workflows/create.md`, `docs/architecture-diagrams.md`, `docs/agent-diagrams.md`, `docs/design-system/README.md`
 - `edit` — modify an existing sidecar bundle or imported `.drawio` → `workflows/edit.md`, `docs/migration-readiness.md`
 - `replicate` — redraw an uploaded image, screenshot, SVG, or reference diagram → `workflows/replicate.md`, `docs/design-system/README.md`, `docs/design-system/specification.md`, `docs/design-system/color-guide.md`
 - `palette` — palette, colorblind safety, grayscale/black-and-white printing, or multi-category distinction → `docs/design-system/color-guide.md`, `docs/design-system/themes.md`, `docs/design-system/specification.md`, `examples/palettes/README.md`
 - `math-formula` — formulas, equations, LaTeX, AsciiMath, MathJax, or Chinese formula keywords → `docs/math-typesetting.md`, `docs/design-system/formulas.md`
-- `stencil-heavy` — cloud, provider icon, network gear, or exact draw.io shape work → `docs/stencil-library-guide.md`, `official/xml-reference.md`, `official/style-reference.md`
+- `stencil-heavy` — cloud, AI brand, SysML, BPMN, network gear, or exact draw.io shape work → `docs/stencil-library-guide.md`, `docs/upstream-capability-compatibility.md`, `official/xml-reference.md`, `official/style-reference.md`
 - `network-topology` — network topology, VLAN / subnet / gateway, campus / data-center / cloud network maps（拓扑、子网、网关、VLAN）→ `docs/ieee-network-diagrams.md`, `docs/stencil-library-guide.md`, `official/xml-reference.md`
 - `edge-audit` — dense or routing-sensitive diagrams → `docs/edge-quality-rules.md`, `official/xml-reference.md`
 - `visual-review` — inspect an exported artifact, record issues, or apply targeted rework → `workflows/visual-review.md`

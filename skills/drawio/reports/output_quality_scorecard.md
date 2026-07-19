@@ -1,7 +1,23 @@
-# Output Quality Scorecard: Vision Preview C0
+# Output Quality Scorecard: Upstream Integration
 
 Date: 2026-07-18
 Decision: **warn**
+
+This release-level scorecard aggregates the promoted offline capability families without changing the evidence classification of any archived child. Deterministic command results prove local contracts only; unavailable external executors remain `missing evidence`.
+
+## Release-Wide Capability Summary
+
+| Capability case | File-backed input | Deterministic status | External evidence gap |
+| --- | --- | --- | --- |
+| Vision preview | `cloud-reference-architecture.yaml` and four additional C0 fixtures | command-executed pass; five Desktop previews recorded | provider-backed model metadata missing evidence |
+| Offline AI icon catalog | `ai-icons-core-aliases.yaml` and four additional catalog fixtures | command-executed pass; Desktop catalog evidence recorded | model-executed review missing evidence |
+| Declared/live drift | `drift-declared-compose.yaml` plus sanitized report/spec evidence | command-executed pass | provider, daemon, cluster, Desktop, and model missing evidence |
+| Raster canonical adapter | `raster-extraction.json` | command-executed pass | OCR and model extraction fidelity missing evidence |
+| Multi-page and postprocess | `postprocess/fixtures/bundle.yaml` | command-executed pass | Desktop and browser execution missing evidence |
+| Draw.io import round-trip | `import-simple-compressed.drawio` | command-executed pass | Desktop multi-page editing missing evidence |
+| SysML/BPMN catalog | `shape-index.json.gz` | command-executed pass | nested semantic constructs remain deferred |
+
+The machine-readable registry is [`../evals/upstream-integration-cases.json`](../evals/upstream-integration-cases.json). The 37-item disposition and per-capability evidence state live in [`../references/docs/upstream-capability-compatibility.md`](../references/docs/upstream-capability-compatibility.md).
 
 The C0 preview pipeline passed every deterministic export contract on the current machine. All five PNGs are structurally valid and readable, and no visual issue remains after YAML-first fixture hardening. Provider/model metadata was not captured, so visual inspection is not counted as `model-executed` evidence.
 

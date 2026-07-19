@@ -211,6 +211,18 @@
         "Recommends downgrading to ieee-bw or tol-high-contrast, or keeps the strict validation failure explicit",
         "Reports morandi's colorblind and grayscale safety flags in the completion report"
       ]
+    },
+    {
+      "id": "academic-base-capability-promotion",
+      "prompt": "Turn the supplied multi-page architecture bundle into a paper-ready figure set, using the sibling base offline postprocess summary before applying publication checks.",
+      "expected_output": "A publication-checked bundle that consumes base multi-page and postprocess contracts without duplicating runtime.",
+      "files": ["skills/drawio/scripts/postprocess/fixtures/bundle.yaml"],
+      "assertions": [
+        "Uses sibling base canonical bundle and postprocess behavior",
+        "Applies academic caption, print, and readability checks after the base transform",
+        "Does not copy adapters, identity, renderer, catalogs, or postprocess runtime into the overlay",
+        "Keeps Desktop and model evidence classifications honest"
+      ]
     }
   ]
 }

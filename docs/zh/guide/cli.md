@@ -101,6 +101,24 @@ node skills/drawio/scripts/cli.js flow.mmd final/flow.drawio --input-format merm
 node skills/drawio/scripts/cli.js packages/web final/web-imports.drawio --input-format js-imports --validate
 ```
 
+## 上游能力整合
+
+离线 base 还支持声明态配置与已保存的 live snapshot adapter、结构化 raster extraction、canonical multi-page bundle，以及六种 postprocess 操作。所有 adapter 都先输出 canonical YAML 或 bundle v1，再进入校验、JavaScript ELK 布局和现有 renderer。
+
+```bash
+# 将所有页面导入为 canonical bundle v1
+node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --all-pages --export-spec
+
+# 归一化可信的结构化视觉抽取
+node skills/drawio/scripts/cli.js extraction.json final/redraw.drawio --input-format raster-extraction --validate
+
+# 投影或变换 canonical 输入
+node skills/drawio/scripts/cli.js postprocess mermaid bundle.yaml architecture.mmd --page context
+node skills/drawio/scripts/cli.js postprocess html bundle.yaml viewer.html --all-pages
+```
+
+当前交付的 postprocess 仅包括 `mermaid`、`explain`、`relabel`、`restyle`、`heatmap` 和无脚本 `html`。Runbook、动画 SVG、tube/sequence layout、compression、buildup、PPTX、timelapse 与 PR diff 均为 defer，并非隐藏命令。离线 authoring 不依赖 Python、Graphviz、网络、Desktop、browser、MCP 或 model；显式选择的 optional parser 与 export 会准确报告缺失依赖或 fallback。
+
 ## 失败语义
 
 无效 YAML、异常 XML、covered library 中的未知 stencil、缺少 flag 值、不安全 icon 名称和请求导出失败都会产生明确错误。draw.io Desktop 不可用时，支持的图像导出会回退为独立 SVG 并报告；不能声称不存在的 PNG/PDF/JPG 已生成。
