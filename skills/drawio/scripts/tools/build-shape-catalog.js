@@ -39,7 +39,13 @@ export function buildCatalog(rows) {
       if (!name || !COVERED_PREFIXES.some((prefix) => name.startsWith(prefix))) continue
       const kind = name === shape ? 'stencil' : 'aws4ResourceIcon'
       const key = `${kind}:${name}`
-      if (!entries.has(key)) entries.set(key, { n: name, k: kind, ...meta })
+      const existing = entries.get(key)
+      if (existing) {
+        existing.g = [...new Set([...existing.g, ...meta.g])].sort()
+        if (!existing.t && meta.t) existing.t = meta.t
+      } else {
+        entries.set(key, { n: name, k: kind, ...meta, g: [...new Set(meta.g)].sort() })
+      }
     }
 
     if (!shape || !FAMILY_KINDS.has(shape)) continue

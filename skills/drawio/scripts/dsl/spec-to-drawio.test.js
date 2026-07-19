@@ -2303,6 +2303,23 @@ describe('theme style fidelity', () => {
     assert.equal(typeof result.xml, 'string')
     assert.equal(result.warnings.filter((warning) => warning.level === 'warning').length, 2)
   })
+
+  it('validates and renders canonical SysML and BPMN stencil icons through the existing pipeline', () => {
+    const spec = {
+      nodes: [
+        { id: 'port', label: 'Flow Port', icon: 'mxgraph.sysml.port' },
+        { id: 'task', label: 'Review', icon: 'mxgraph.bpmn.task2' }
+      ],
+      edges: [{ from: 'port', to: 'task' }],
+      modules: []
+    }
+
+    assert.doesNotThrow(() => validateSpec(spec))
+    assert.deepEqual(validateShapeReferences(spec), { errors: [], warnings: [] })
+    const xml = specToDrawioXml(spec, { silent: true })
+    assert.match(xml, /shape=mxgraph\.sysml\.port/)
+    assert.match(xml, /shape=mxgraph\.bpmn\.task2/)
+  })
 })
 
 describe('academic consistency', () => {

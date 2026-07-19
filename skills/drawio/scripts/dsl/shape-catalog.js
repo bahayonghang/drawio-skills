@@ -28,7 +28,9 @@ export const COVERED_PREFIXES = [
   'mxgraph.kubernetes.',
   'mxgraph.cisco.',
   'mxgraph.cisco19.',
-  'mxgraph.networks.'
+  'mxgraph.networks.',
+  'mxgraph.sysml.',
+  'mxgraph.bpmn.'
 ]
 
 let _catalog = null
