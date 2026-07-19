@@ -25,7 +25,7 @@
 - **C2.1 P1 completed** `07-18-drawio-ai-icon-catalog`：`replace` 上游 CDN aiicons，生成并加载 309 品牌离线目录；已归档，后继 child 只做兼容回归。
 - **C2.2 P1 planned** `07-19-drawio-multi-page-foundation`：显式 bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；无未完成 feature 前置依赖，C4 与 compress 仅作为后继消费者。
 - **待创建** raster/replicate child：`adapt` 视觉抽取为 canonical spec。
-- **待创建** SysML/BPMN delta child：先审计，再只补真实表达缺口。
+- **C2.4 P1 planned** `07-19-drawio-sysml-bpmn-delta`：`adapt` vendored SysML/BPMN stencil 到现有 catalog/search/validation/renderer；flat schema 无法忠实表达的 nested ports/pools/lanes 与专用 flow 语义保持 `defer`。
 
 ## Acceptance Criteria
 

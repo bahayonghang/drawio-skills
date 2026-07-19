@@ -21,7 +21,8 @@
   "children": [
     "07-18-drawio-ai-icon-catalog",
     "07-19-drawio-multi-page-foundation",
-    "07-19-drawio-raster-replicate-adapter"
+    "07-19-drawio-raster-replicate-adapter",
+    "07-19-drawio-sysml-bpmn-delta"
   ],
   "parent": "07-18-drawio-upstream-port",
   "relatedFiles": [],
