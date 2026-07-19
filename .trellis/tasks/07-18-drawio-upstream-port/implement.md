@@ -11,8 +11,8 @@
 - [x] 用户选择完整离线 AI icon 目录；固定 309 个真实 base brand、canonical variant 规则和零 runtime network，并排除上游 suffix 解析产生的 2 个伪 family。
 - [x] 创建 C2.1 `07-18-drawio-ai-icon-catalog` 并完成独立规划草案。
 - [x] 将 C1 bucket 拆成 foundation、code、config、live/drift 四个独立可验收 deliverable；依赖写入每个 child 的三件套。
-- [ ] 将 C2/C3 能力域 bucket 的其余能力拆成独立可验收 deliverable。
-- [ ] 创建最终 integration/promotion child。
+- [x] 为 C2 建立最少必要 raster、multi-page、SysML/BPMN child；C3 只交付批准的六项能力，九项禁止能力保持 `defer` 且不创建 child。
+- [x] 创建、实施、验证并归档最终 integration/promotion child。
 
 ## Execution Order
 
@@ -109,23 +109,30 @@ Additional gates:
 - Desktop behavior: current-machine integration run or explicit `missing evidence`.
 - Python/Graphviz path: dependency matrix plus available integration runs; skipped paths remain `missing evidence`.
 - HTML outputs: injection/XSS fixtures.
-- PR bot: trust, permissions, pinned supply-chain and disabled-by-default checks.
+- PR bot/prdiff: authoritative `defer`; trust, permissions, supply-chain and real PR execution remain `missing evidence`.
 - Library output eval: at least five file-backed cases, with execution kind labeled honestly.
 
 ## Parent Integration Review
 
-- [ ] Every upstream item has one authoritative mapping and evidence status.
-- [ ] No duplicate shape index, layout engine, base runtime or overlay copy exists.
-- [ ] All adapters converge on canonical spec/page bundle and stable IDs.
-- [ ] C0 contract is reused by drift, raster/C4, postprocess and PR diff paths.
-- [ ] Offline base works without Python, Graphviz, network, Desktop, MCP or browser.
-- [ ] Optional paths fail with precise dependency messages and documented fallback.
-- [ ] Interfaces, evals, docs, compatibility and package contents match shipped behavior.
-- [ ] Root gates pass; unavailable external evidence remains visible.
+- [x] Every upstream item has one authoritative mapping and evidence status.
+- [x] No duplicate shape index, layout engine, base runtime or overlay copy exists.
+- [x] All adapters converge on canonical spec/page bundle and stable IDs.
+- [x] C0 contract is reused by shipped drift, raster/C4 and postprocess paths; deferred PR diff makes no reuse claim.
+- [x] Offline base works without Python, Graphviz, network, Desktop, MCP or browser.
+- [x] Optional paths fail with precise dependency messages and documented fallback.
+- [x] Interfaces, evals, docs, compatibility and package contents match shipped behavior.
+- [x] Root gates pass; unavailable external evidence remains visible.
 
 ## Rollback Points
 
 - Feature children remain independently revertible.
 - Existing final export semantics stay backward compatible; vision-preview is additive.
 - Canonical single-page flow remains available while multi-page support rolls out.
-- Network and PR automation remain opt-in and can be removed without affecting offline authoring.
+- Live network refinement remains optional; PR automation is deferred and absent from offline authoring.
+
+## Final Closeout
+
+- Work commits: `978bab1` promotion and `1620774` integration evidence.
+- Integration lifecycle: `aa1d5ac` archive and `39b688d` journal.
+- Final `just ci`: 633 total, 631 passed, 2 optional skips, 0 failed; lint and docs build passed.
+- Parent closes with external/provider evidence preserved as `missing evidence`, not promoted to pass.

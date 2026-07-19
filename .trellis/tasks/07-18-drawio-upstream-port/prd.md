@@ -75,30 +75,40 @@
 
 ## Acceptance Criteria
 
-- [ ] 37 个上游脚本逐项映射为 `bridge`、`adapt`、`replace` 或 `defer`，每项有理由、入口和验证证据；`bridge` 项不要求产生重复代码。
-- [ ] R0 在 base + academic policy 路径落地，preview 最长边不超过 2000px，PNG 结构有效，返工通过稳定 ID 回写 canonical spec。
-- [ ] IEND 完整文件保持字节不变；精确已知截断可修复；任意非 PNG/其他截断被拒绝。
-- [ ] R1 adapter 进入同一 canonical pipeline；声明态/运行态 stable identity 和 drift 语义有 fixture 测试。
-- [ ] R2 明确已有与新增能力；C4 多页可逐页 round-trip；AI 图标目录离线解析 309/309 个 canonical slug，并通过来源、完整性、安全和代表性渲染检查。
-- [ ] R3 自包含 HTML 通过不可信标签/脚本注入测试；PR bot 通过独立 trust/permission/supply-chain 门禁。
-- [ ] 每个新增能力都有最小用例、focused tests、路由 reference 和诚实的可选依赖错误。
-- [ ] Library output scorecard 至少 5 个 file-backed case；不可执行的 Desktop/Graphviz/model/PR 路径标为 `missing evidence`。
-- [ ] 受影响的 interface/evals/docs/compatibility 同步；root `npm test`、`just ci` 与 docs build 按风险执行。
-- [ ] 每个实施子任务独立可验收、可归档；父任务只做跨子任务需求、顺序和最终集成审查。
+- [x] 37 个上游脚本逐项映射为 `bridge`、`adapt`、`replace` 或 `defer`，每项有理由、入口和验证证据；`bridge` 项不要求产生重复代码。
+- [x] R0 在 base + academic policy 路径落地，preview 最长边不超过 2000px，PNG 结构有效，返工通过稳定 ID 回写 canonical spec。
+- [x] IEND 完整文件保持字节不变；精确已知截断可修复；任意非 PNG/其他截断被拒绝。
+- [x] R1 adapter 进入同一 canonical pipeline；声明态/运行态 stable identity 和 drift 语义有 fixture 测试。
+- [x] R2 明确已有与新增能力；C4 多页可逐页 round-trip；AI 图标目录离线解析 309/309 个 canonical slug，并通过来源、完整性、安全和代表性渲染检查。
+- [x] R3 自包含 HTML 通过不可信标签/脚本注入测试；PR bot/prdiff 保持 `defer`，trust/permission/supply-chain 与真实 PR 执行保持 `missing evidence`。
+- [x] 每个新增能力都有最小用例、focused tests、路由 reference 和诚实的可选依赖错误。
+- [x] Library output scorecard 至少 5 个 file-backed case；不可执行的 Desktop/Graphviz/model/PR 路径标为 `missing evidence`。
+- [x] 受影响的 interface/evals/docs/compatibility 同步；root `npm test`、`just ci` 与 docs build 按风险执行。
+- [x] 每个实施子任务独立可验收、可归档；父任务只做跨子任务需求、顺序和最终集成审查。
 
 ## Task Map
 
-- **C0 P0** `07-18-drawio-vision-rework`：vision-preview、PNG 检查、结构化视觉评审、YAML-first 返工。无前置依赖，完成规划审查后最先实施。
-- **C1 bucket** `07-18-drawio-dir1-import`：只拥有方向一范围、child 依赖和跨 child 验收，不直接启动。
-  - **C1.1** `07-18-drawio-adapter-identity-foundation`：versioned canonical graph projection、共享 identity factory、renderer-safe stable ID、projection validation/projector 和错误分类；无未完成 feature 前置依赖，是建议首个启动的 child。
-  - **C1.2** `07-18-drawio-code-importers`：Python imports/classes、JS/TS、Go、Rust；依赖 C1.1，实现仅使用 Node JS/TS 与 optional Python。
-  - **C1.3** `07-18-drawio-config-importers`：Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI；依赖 C1.1。
-  - **C1.4** `07-18-drawio-live-snapshots-drift`：Terraform state、Docker inspect、Kubernetes live JSON 与 projection drift；依赖 C1.1、C1.3 和已完成 C0。
-- **C2 bucket** `07-18-drawio-dir2-authoring`：replicate/raster、AI icons、SysML/BPMN、C4 multi-page。实施前把 multi-page foundation 与资产/diagram-type 增量拆开。
+- **C0 P0 completed** `07-18-drawio-vision-rework`：vision-preview、PNG 检查、结构化视觉评审、YAML-first 返工；已归档。
+- **C1 bucket completed** `07-18-drawio-dir1-import`：方向一范围与跨 child 验收；已归档。
+  - **C1.1 completed** `07-18-drawio-adapter-identity-foundation`：versioned canonical graph projection、共享 identity factory、renderer-safe stable ID、projection validation/projector 和错误分类；已归档。
+  - **C1.2 completed** `07-18-drawio-code-importers`：Python imports/classes、JS/TS、Go、Rust；已归档。
+  - **C1.3 completed** `07-18-drawio-config-importers`：Terraform、Kubernetes、Compose、SQL DDL、OpenAPI、GitHub Actions/GitLab CI；已归档。
+  - **C1.4 completed** `07-18-drawio-live-snapshots-drift`：Terraform state、Docker inspect、Kubernetes live JSON 与 projection drift；已归档。
+- **C2 bucket completed** `07-18-drawio-dir2-authoring`：replicate/raster、AI icons、SysML/BPMN、C4 multi-page；已归档。
   - **C2.1 P1 completed** `07-18-drawio-ai-icon-catalog`：固定 Lobe Icons 来源、生成 309 品牌离线目录、lazy loader、resolver/alias/suggestion 契约和代表性渲染证据；已归档。
-  - **C2.2 P1 planned** `07-19-drawio-multi-page-foundation`：canonical multi-page bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；无未完成 feature 前置依赖，C4 与 compress 仅作为消费者。
-- **C3 bucket** `07-18-drawio-dir3-postprocess`：离线后处理、runtime-rich export、PR bot。PR bot 必须独立 Governed 子任务。
-- **Integration child（待创建）**：skill 路由、interfaces、evals、compatibility、output scorecard、package/release gates；依赖所有实际 feature children。
+  - **C2.2 P1 completed** `07-19-drawio-multi-page-foundation`：canonical multi-page bundle v1、稳定 page/object identity、structured page links、逐页 validation、YAML/arch sidecar 和多页 `.drawio` round-trip；已归档。
+  - **C2.3 P1 completed** `07-19-drawio-raster-replicate-adapter`：strict raster extraction 到 canonical spec adapter；已归档，OCR/model fidelity 保持 `missing evidence`。
+  - **C2.4 P1 completed** `07-19-drawio-sysml-bpmn-delta`：vendored SysML/BPMN catalog delta；已归档，nested semantics 保持 `defer`。
+- **C3 completed** `07-18-drawio-dir3-postprocess`：交付 `mermaid`、`explain`、`relabel`、`restyle`、`heatmap`、`html` 并归档；`runbook`、`svgflow`、`tubemap`、`seqlayout`、`compress`、`buildup`、`pptx`、`timelapse`、`prdiff` 保持 `defer`，未创建 child。
+- **Integration completed** `07-19-drawio-upstream-integration-promotion`：skill 路由、interfaces、evals、37 项 compatibility、output scorecard、package/release gates；已归档。
+
+## Final Acceptance Evidence
+
+- `skills/drawio/references/docs/upstream-capability-compatibility.md` 是 37 个唯一 upstream script 的最终权威映射；focused contract 3/3 通过。
+- 最终 feature-focused suite 47/47；`npm test` 与最终 `just ci` 均为 633 total、631 passed、2 optional skips、0 failed；Markdown lint 与 docs build 通过。
+- staged package gate：base 299 entries、academic 25 entries、required missing 0、forbidden 0；生成 zip 已删除，`archive/.gitignore` 未改变。
+- repository scan：1 个 `shape-index.json.gz`、1 个 `ai-icons.json.gz`、1 个 `specToDrawioXml` owner、0 个 academic JS/TS/Python runtime。
+- provider/daemon/cluster、Graphviz parity、raster OCR/model、Desktop multi-page/postprocess、browser/MCP、model metadata、PR automation、remote install/release 均保持 `missing evidence`。
 
 ## Out of Scope
 
