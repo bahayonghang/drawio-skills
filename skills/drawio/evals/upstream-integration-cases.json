@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "vision-preview-small",
+      "capability": "vision-preview",
+      "input_files": ["skills/drawio/references/examples/cloud-reference-architecture.yaml"],
+      "focused_command": "node --test tests/vision-preview-evidence.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "provider-backed visual model metadata is missing evidence"
+    },
+    {
+      "id": "ai-icon-offline-catalog",
+      "capability": "ai-icons",
+      "input_files": ["skills/drawio/evals/fixtures/ai-icons-core-aliases.yaml"],
+      "focused_command": "node --test tests/ai-icon-catalog-evidence.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "model-executed visual review is missing evidence"
+    },
+    {
+      "id": "declared-live-compose-drift",
+      "capability": "live-drift",
+      "input_files": [
+        "skills/drawio/references/examples/importers/live/drift-declared-compose.yaml",
+        "skills/drawio/references/examples/importers/live/compose-drift-report.json"
+      ],
+      "focused_command": "node --test skills/drawio/scripts/adapters/graph-drift.file.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "provider daemon, cluster, Desktop, and model execution are missing evidence"
+    },
+    {
+      "id": "raster-canonical-adapter",
+      "capability": "raster-replicate",
+      "input_files": ["skills/drawio/scripts/adapters/fixtures/raster-extraction.json"],
+      "focused_command": "node --test skills/drawio/scripts/adapters/raster-extraction.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "real raster OCR and model extraction fidelity are missing evidence"
+    },
+    {
+      "id": "multi-page-postprocess",
+      "capability": "multi-page-postprocess",
+      "input_files": ["skills/drawio/scripts/postprocess/fixtures/bundle.yaml"],
+      "focused_command": "node --test skills/drawio/scripts/postprocess/cli.test.js skills/drawio/scripts/postprocess/html.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "Desktop and browser execution are missing evidence"
+    },
+    {
+      "id": "drawio-import-roundtrip",
+      "capability": "multi-page-foundation",
+      "input_files": ["skills/drawio/evals/fixtures/import-simple-compressed.drawio"],
+      "focused_command": "node --test skills/drawio/scripts/dsl/document-spec.test.js tests/drawio-import.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "Desktop multi-page editing is missing evidence"
+    },
+    {
+      "id": "sysml-bpmn-catalog",
+      "capability": "sysml-bpmn-stencils",
+      "input_files": ["skills/drawio/assets/catalog/shape-index.json.gz"],
+      "focused_command": "node --test skills/drawio/scripts/dsl/shape-catalog.test.js",
+      "evidence_kind": "file-backed fixture",
+      "execution_kind": "command-executed",
+      "status": "pass",
+      "external_gap": "nested ports, pools, lanes, and specialized flows are deferred"
+    }
+  ]
+}

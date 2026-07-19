@@ -26,6 +26,8 @@ features:
     details: "架构、Agent 与记忆、网络、UML/ER、流程图、公式和复刻图共享一套 typed design system。"
   - title: 以导出产物为准验证
     details: "先校验模型，再检查导出的 PNG、SVG、PDF 或 Desktop 产物，然后才能报告完成。"
+  - title: 离线导入器与适配器
+    details: "把声明态 Terraform、Kubernetes、Compose、SQL、OpenAPI、CI 或源码转换为 canonical 图，另有已保存快照的漂移、多页 bundle 与离线 postprocess。无需 provider CLI、Graphviz 或网络。"
 ---
 
 ## 选择正确的 Skill
@@ -77,6 +79,7 @@ node skills/drawio/scripts/cli.js input.yaml final/diagram.png --validate --use-
 - [工作流](./guide/workflows.md)：创建、编辑/导入、复刻和学术路由
 - [设计系统](./guide/design-system.md)：规格、类型、主题、图标与连接线
 - [架构图](./guide/architecture-diagrams.md)和 [Agent 图](./guide/agent-diagrams.md)
+- [配置](./guide/config-importers.md) / [代码](./guide/code-importers.md)导入器、[运行态漂移](./guide/live-drift.md)、[多页](./guide/multi-page.md)与 [Postprocess](./guide/postprocess.md)
 - [CLI 参考](./guide/cli.md)和 [导出与产物](./guide/export.md)
 - [示例](./examples/index.md)：prompt 与可复用 YAML
 

@@ -63,7 +63,7 @@ function tryDecodeURIComponent(text) {
   }
 }
 
-function decodeDiagramContent(content) {
+export function decodeDiagramContent(content) {
   const trimmed = String(content || '').trim()
   if (trimmed.includes('<mxGraphModel')) return trimmed
 
@@ -96,15 +96,18 @@ function decodeDiagramContent(content) {
   throw new Error(`Could not decode <diagram> content into mxGraphModel XML. ${message}`)
 }
 
-function extractDiagrams(drawioFileText) {
+export function extractDiagrams(drawioFileText) {
   const diagrams = []
   const diagramRe = /<diagram\b([^>]*)>([\s\S]*?)<\/diagram>/gi
   let match
   while ((match = diagramRe.exec(drawioFileText)) !== null) {
     const attrs = match[1] || ''
+    const id = attr(attrs, 'id')
     const name = attr(attrs, 'name')
     diagrams.push({
-      name,
+      id: decodeEntities(id),
+      name: decodeEntities(name),
+      pageMeta: attr(attrs, 'dataPageMeta'),
       content: match[2] || ''
     })
   }

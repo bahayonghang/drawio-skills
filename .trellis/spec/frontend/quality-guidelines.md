@@ -123,6 +123,101 @@ Correct for default final delivery:
 node skills/drawio/scripts/cli.js input.yaml final/figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure
 ```
 
+### Draw.io Vision Preview and Rework Contract
+
+#### 1. Scope / Trigger
+
+- Trigger: changes to Desktop export profiles, PNG inspection, visual-review
+  instructions, or YAML-first rework evidence.
+- Applies to `skills/drawio/scripts/cli.js`, `scripts/runtime/desktop.js`,
+  `scripts/runtime/vision-preview.js`, `scripts/runtime/png-inspection.js`, and
+  the shared visual-review workflow.
+
+#### 2. Signatures
+
+- CLI preview:
+  `node skills/drawio/scripts/cli.js input.yaml .drawio-tmp/figure/figure.preview.png --validate --visual-preview`
+- Desktop profile:
+  `buildDrawioExportArgs({ inputFile, outputFile, format: 'png', profile: 'vision-preview', width | height })`
+- Orchestrator:
+  `exportVisionPreview({ inputFile, outputFile, maxDimension = 2000, ...injectedDependencies })`
+- Stabilization:
+  `waitForStableFile(path, { stat, now, wait, timeoutMs, pollIntervalMs, stableSamples, maxPolls })`
+
+#### 3. Contracts
+
+- `vision-preview` is PNG-only, omits embedded XML and raster scale flags, and
+  writes to a work/diagnostic path. It never replaces the existing final
+  300dpi embedded export.
+- Export by width first. Inspect IHDR after the output becomes stable; if
+  height exceeds 2000px, overwrite the same path with a height-bounded export.
+- Remove the prior preview before the first export so a failed or unavailable
+  Desktop run cannot leave a stale PNG that looks current.
+- The accepted preview has a valid PNG signature/IHDR/chunk traversal,
+  terminal IEND, and `max(width, height) <= 2000`.
+- Repair only the exact recognized terminal IEND truncation. Unknown chunk
+  truncation, trailing bytes, malformed IHDR, and non-PNG input are rejected.
+- Deterministic layout and label-collision checks are heuristics. A zero-warning
+  result does not replace inspection of the actual Desktop-exported PNG.
+  Desktop may place edge-label offsets differently from the heuristic model.
+- Visual issues bind to stable page/object IDs when available and patch the
+  canonical YAML before validation and rerender. Never patch a preview image.
+- `recorded fixture`, `command-executed`, `Desktop-executed`, and
+  `model-executed` are distinct evidence states. Without provider/model
+  metadata, visual inspection remains `missing evidence` for model execution.
+
+#### 4. Validation & Error Matrix
+
+- `--visual-preview` without an explicit `.png` output -> non-zero exit.
+- `--visual-preview` with `--dpi` or `--export-spec` -> non-zero exit.
+- Desktop unavailable -> write the standalone SVG fallback and state that no
+  PNG vision-preview was produced; a stale target PNG must not remain.
+- Output missing, growing, or never stable -> bounded timeout naming the path
+  and duration.
+- Width-bounded PNG has height over 2000px -> overwrite by height and inspect
+  again.
+- Final PNG still exceeds 2000px or lacks terminal IEND -> explicit failure.
+- Exact known IEND-tail truncation -> atomic repair and reinspection.
+- Any other PNG corruption -> rejection without modifying the original.
+- Deterministic checks pass but exported PNG shows overlap/source mismatch ->
+  record visual evidence, patch YAML, validate, and rerender before completion.
+
+#### 5. Good/Base/Bad Cases
+
+- Good: write a bounded work-dir PNG, inspect the real export, record stable
+  IDs, patch YAML, and overwrite the same preview path for the next review.
+- Base: Desktop is unavailable, so deliver the normal editable bundle and SVG
+  fallback while marking PNG/model evidence as missing.
+- Bad: infer visual quality from XML warnings alone, append IEND to arbitrary
+  bytes, call an SVG fallback a PNG preview, or edit the generated raster.
+
+#### 6. Tests Required
+
+- Unit tests for final-vs-preview Desktop arguments, width/height profiles,
+  late/stable/timeout output, PNG complete/repair/reject states, and dimension
+  re-export.
+- CLI integration tests for flag conflicts and honest Desktop-unavailable
+  fallback reporting, including removal of a pre-existing stale PNG.
+- File-backed evidence covering small, wide, tall, CJK, and dense-academic
+  YAML, with deterministic source/render/path and canonical-patch assertions.
+- Current-machine Desktop smoke evidence when available, followed by actual
+  exported-artifact inspection; do not promote it to model-executed evidence
+  without provider/model metadata.
+
+#### 7. Wrong vs Correct
+
+Wrong:
+
+```text
+The validator reported zero label collisions, so the diagram is visually complete.
+```
+
+Correct:
+
+```text
+The validator passed; now inspect the bounded Desktop PNG, record any visual issue against the canonical YAML ID, patch YAML, and rerender the same preview path.
+```
+
 ### Draw.io Native Reference Rebuild Contract
 
 #### 1. Scope / Trigger
@@ -213,6 +308,10 @@ edges:
 
 - `resolveImageIconStyle(icon)` returns a complete Draw.io image style or
   `null`.
+- `loadAiIconCatalog()` reads and validates the fixed bundled catalog once;
+  `getAiIcon(slug)` returns an immutable record or `null`.
+- `searchAiIcons(query, { limit })` returns deterministic catalog-search
+  records with canonical `icon: lobe.<slug>` syntax.
 - `validateShapeReferences(spec)` reports unsupported image-icon names through
   the existing unknown-shape warning path.
 
@@ -220,10 +319,17 @@ edges:
 
 - Every successful image-icon resolution embeds an SVG data URI; normal
   rendering and reopening must not require HTTP(S) access.
-- Runtime support is a finite set owned by `LOBE_PATHS`, `LUCIDE_PATHS`, and
-  `BRAND_SVGS`. Aliases must resolve into that same finite set.
-- The resolver must not discover root packages or read icon files at runtime.
-  A copied `skills/drawio` directory keeps the same image-icon support set.
+- Runtime support is a finite set owned by the checked-in
+  `assets/catalog/ai-icons.json.gz`, `LUCIDE_PATHS`, and `BRAND_SVGS`.
+  Compatibility identifiers and slug aliases must resolve into that same set.
+- `icon-resolver.js` must not discover packages or read files. The independent
+  `ai-icon-catalog.js` loader may read only its fixed sibling asset path, uses
+  one module cache, and must not inspect `node_modules`, environment variables,
+  a user home cache, or arbitrary runtime paths. A copied `skills/drawio`
+  directory keeps the same image-icon support set.
+- Full-name compatibility runs before canonical exact lookup; slug aliases run
+  only after an exact miss. `lobe.anthropic` is exact Anthropic while
+  `ai.anthropic` remains the documented Claude compatibility exception.
 - New embedded third-party icon data must include its license under
   `skills/drawio/assets/licenses/`.
 
@@ -232,8 +338,13 @@ edges:
 - Documented embedded icon -> `shape=image` style containing
   `image=data:image/svg+xml,...`.
 - Supported alias -> same embedded result as its canonical name.
+- Missing/corrupt gzip, wrong schema/provenance/count, duplicate slug, or
+  unsorted records -> throw an `AI icon catalog ...` error; do not degrade to
+  an unknown icon.
 - Unknown `lobe.*`, `ai.*`, `brand.*`, or `lucide.*` -> resolver returns
   `null`; shape-reference validation emits an unknown-shape warning.
+- Non-AI stencil, Redis, Lucide, and ordinary icon resolution -> do not read
+  the AI catalog.
 - Unsafe icon characters -> existing icon validation rejects the spec before
   rendering.
 
@@ -244,11 +355,17 @@ edges:
   Draw.io stencil resolver.
 - Bad: constructing a CDN URL for any syntactically safe slug, or requiring a
   repository-root icon package that a skill-only install does not carry.
+- Bad: catching catalog corruption and returning `null`, which makes a broken
+  release indistinguishable from an unknown brand.
 
 #### 6. Tests Required
 
 - Assert every documented embedded name and alias returns a data URI with no
   remote image URL.
+- Iterate every checked-in slug through both `lobe.*` and `ai.*`, including the
+  documented `ai.anthropic` exception.
+- Inject the loader read boundary to prove one successful read, one cached hard
+  failure, and zero reads for Redis/Lucide/ordinary icons.
 - Assert representative unknown names return `null` and produce warnings.
 - Assert package metadata and resolver source do not reintroduce the removed
   runtime icon dependency, package discovery, or CDN fallback.
@@ -264,8 +381,8 @@ return `shape=image;image=https://cdn.example/icons/${slug}.svg`
 Correct:
 
 ```js
-const pathMarkup = Object.hasOwn(LUCIDE_PATHS, slug) ? LUCIDE_PATHS[slug] : null
-return pathMarkup ? embeddedImageStyle(pathMarkup) : null
+const record = getAiIcon(slug) // fixed bundled gzip, validated and cached
+return record ? embeddedImageStyle(record.svg) : null
 ```
 
 ### Academic Overlay Image Preview Contract

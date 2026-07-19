@@ -1,0 +1,75 @@
+schemaVersion: 1
+meta:
+  title: Postprocess bundle fixture
+  source: generated
+  description: Stable multi-page consumer baseline
+pages:
+  - id: context
+    name: Context
+    meta:
+      title: Context
+      source: generated
+      theme: tech-blue
+      layout: horizontal
+      adapter:
+        projectionVersion: 1
+        name: postprocess-fixture
+        domain: architecture
+        mode: code
+        locator: fixtures/context.yaml
+    nodes:
+      - id: gateway
+        label: Gateway
+        type: service
+        icon: lucide.server-cog
+        identity: { scheme: fixture, key: context/gateway }
+        bounds: { x: 40, y: 80, width: 120, height: 60 }
+      - id: cache
+        label: Redis
+        type: database
+        icon: redis.server
+        identity: { scheme: fixture, key: context/cache }
+        bounds: { x: 280, y: 80, width: 120, height: 60 }
+      - id: model
+        label: Model
+        type: service
+        icon: lobe.openai
+        identity: { scheme: fixture, key: context/model }
+        bounds: { x: 520, y: 80, width: 120, height: 60 }
+      - id: worker
+        label: Worker
+        type: service
+        icon: aws.lambda
+        identity: { scheme: fixture, key: context/worker }
+        bounds: { x: 760, y: 80, width: 120, height: 60 }
+    edges:
+      - id: flow
+        from: gateway
+        to: cache
+        label: query
+        identity: { scheme: fixture, key: context/flow }
+    modules: []
+  - id: detail
+    name: Detail
+    meta:
+      title: Detail
+      source: generated
+      theme: academic
+      layout: vertical
+      profile: academic-paper
+      figureType: architecture
+      print: { target: cn-thesis }
+    nodes:
+      - id: gateway
+        label: Detail gateway
+        type: service
+        icon: lucide.network
+        bounds: { x: 80, y: 80, width: 160, height: 64 }
+    edges: []
+    modules:
+      - id: paper
+        label: Academic layer
+        color: '#E8F0FE'
+links:
+  - from: { pageId: context, objectId: gateway }
+    to: { pageId: detail, objectId: gateway }

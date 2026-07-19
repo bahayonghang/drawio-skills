@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "Desktop structural export",
+  "suite": "drawio-ai-icon-catalog",
+  "desktop": {
+    "product": "draw.io Desktop",
+    "version": "30.3.14",
+    "execution": "local read-only export"
+  },
+  "command_executed": {
+    "status": "passed",
+    "template": "node skills/drawio/scripts/cli.js <fixture> <preview.png> --use-desktop --visual-preview --validate"
+  },
+  "model_executed": {
+    "status": "missing evidence",
+    "reason": "External visual model, browser, and MCP access were not approved."
+  },
+  "cases": [
+    {
+      "id": "core-aliases",
+      "artifact": ".drawio-tmp/ai-icons/core-aliases.preview.png",
+      "round": 1,
+      "png": {
+        "width": 2000,
+        "height": 695,
+        "bytes": 250878,
+        "idat_bytes": 250077,
+        "has_iend": true,
+        "sha256": "5682d9b602ee2ab4d9a6c2b487ddc3e54a451367e12c333bf7251518f821d599"
+      },
+      "pixel_sample": {
+        "step": 8,
+        "sampled": 21750,
+        "non_white": 4496,
+        "unique_colors": 706
+      },
+      "validation": "passed with one long-label info and no errors",
+      "visual_adjudication": "missing evidence",
+      "issues": []
+    },
+    {
+      "id": "gradients",
+      "artifact": ".drawio-tmp/ai-icons/gradients.preview.png",
+      "round": 1,
+      "png": {
+        "width": 2000,
+        "height": 378,
+        "bytes": 251482,
+        "idat_bytes": 250681,
+        "has_iend": true,
+        "sha256": "97b4913f763115ba9d84978bd70b3f192d5206720d22ba23cb53f51d570502d6"
+      },
+      "pixel_sample": {
+        "step": 8,
+        "sampled": 12000,
+        "non_white": 3783,
+        "unique_colors": 2376
+      },
+      "validation": "passed with long-label infos and no errors",
+      "visual_adjudication": "missing evidence",
+      "issues": []
+    },
+    {
+      "id": "current-color",
+      "artifact": ".drawio-tmp/ai-icons/current-color.preview.png",
+      "round": 1,
+      "png": {
+        "width": 2000,
+        "height": 379,
+        "bytes": 90193,
+        "idat_bytes": 89872,
+        "has_iend": true,
+        "sha256": "372fcc1858fa4f3793e97ae68e03179b4d68eb02e43f20d202e0fff9fe0eeb0c"
+      },
+      "pixel_sample": {
+        "step": 8,
+        "sampled": 12000,
+        "non_white": 3659,
+        "unique_colors": 170
+      },
+      "validation": "passed with long-label infos and no errors",
+      "visual_adjudication": "missing evidence",
+      "issues": []
+    },
+    {
+      "id": "advanced-svg",
+      "artifact": ".drawio-tmp/ai-icons/advanced-svg.preview.png",
+      "round": 1,
+      "png": {
+        "width": 2000,
+        "height": 378,
+        "bytes": 208370,
+        "idat_bytes": 207701,
+        "has_iend": true,
+        "sha256": "920e6e476d06f4746ca9f8354bcf3b9aeee2cce45535eee6e9e4793e2fa0aa03"
+      },
+      "pixel_sample": {
+        "step": 8,
+        "sampled": 12000,
+        "non_white": 3537,
+        "unique_colors": 1740
+      },
+      "validation": "passed with long-label infos and no errors",
+      "visual_adjudication": "missing evidence",
+      "issues": []
+    },
+    {
+      "id": "cjk-agent-rag",
+      "artifact": ".drawio-tmp/ai-icons/cjk-agent-rag.preview.png",
+      "round": 1,
+      "png": {
+        "width": 2000,
+        "height": 252,
+        "bytes": 165912,
+        "idat_bytes": 165363,
+        "has_iend": true,
+        "sha256": "d15f26b3416fe5b4153d50e4f5423bf78dcab62ba936a70eef7a4ffb03a29f31"
+      },
+      "pixel_sample": {
+        "step": 8,
+        "sampled": 8000,
+        "non_white": 2875,
+        "unique_colors": 655
+      },
+      "validation": "passed with no warnings or errors",
+      "visual_adjudication": "missing evidence",
+      "issues": []
+    }
+  ],
+  "limitations": [
+    "PNG structure and sampled pixels prove non-empty bounded exports, not per-icon visual correctness.",
+    "No visual blocker was adjudicated because model-executed evidence is unavailable."
+  ]
+}

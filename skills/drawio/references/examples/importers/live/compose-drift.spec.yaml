@@ -1,0 +1,75 @@
+meta:
+  source: generated
+  layout: hierarchical
+  adapter:
+    projectionVersion: 1
+    name: graph-drift
+    domain: compose
+    mode: drift
+    locator: fixtures/compose-drift-report.json
+  legend: >-
+    [ADDED] live only; [REMOVED] declared only and dashed; [CHANGED] matched identity differs; [UNCHANGED] no compared
+    difference
+nodes:
+  - id: n-b0c7dcea76e028eb133e
+    label: '[REMOVED] cache'
+    type: service
+    identity:
+      scheme: compose-service
+      key: shop/cache
+    style:
+      fillColor: '#FEE2E2'
+      strokeColor: '#B91C1C'
+      dashed: true
+  - id: n-e910463ac586ec2c6650
+    label: '[UNCHANGED] db'
+    type: service
+    identity:
+      scheme: compose-service
+      key: shop/db
+    style:
+      fillColor: '#F1F5F9'
+      strokeColor: '#64748B'
+  - id: n-4903a493e4a81d27f85d
+    label: '[CHANGED: attributes.replicas] web'
+    type: service
+    identity:
+      scheme: compose-service
+      key: shop/web
+    style:
+      fillColor: '#FEF3C7'
+      strokeColor: '#B45309'
+  - id: n-10a3456c98d3da96de33
+    label: >-
+      Legend: [ADDED] live only | [REMOVED] declared only, dashed | [CHANGED] matched identity differs | [UNCHANGED] no
+      compared difference
+    type: text
+    identity:
+      scheme: drift-group
+      key: legend
+edges:
+  - id: e-3ffbc4168e6938cf5862
+    from: n-4903a493e4a81d27f85d
+    to: n-b0c7dcea76e028eb133e
+    type: dependency
+    identity:
+      scheme: graph-edge
+      key: '["depends-on","compose-service\u0000shop/web","compose-service\u0000shop/cache","depends_on:cache"]'
+    label: '[REMOVED] depends-on'
+    style:
+      strokeColor: '#B91C1C'
+      strokeWidth: 2
+      dashed: true
+      dashPattern: 6 4
+  - id: e-3e5d1f33c960330fac43
+    from: n-4903a493e4a81d27f85d
+    to: n-e910463ac586ec2c6650
+    type: dependency
+    identity:
+      scheme: graph-edge
+      key: '["depends-on","compose-service\u0000shop/web","compose-service\u0000shop/db","depends_on:db"]'
+    label: '[UNCHANGED] depends-on'
+    style:
+      strokeColor: '#64748B'
+      strokeWidth: 1
+modules: []

@@ -90,11 +90,15 @@ edges:
   - from: spp
     to: p3
     type: data
-    label: multi-scale
-    labelOffset: { x: 0, y: -16 }
+    waypoints:
+      - { x: 416, y: 328 }
+      - { x: 416, y: 108 }
   - from: p3
     to: fuse
     type: primary
+    waypoints:
+      - { x: 480, y: 160 }
+      - { x: 480, y: 168 }
   - from: fuse
     to: p5
     type: primary

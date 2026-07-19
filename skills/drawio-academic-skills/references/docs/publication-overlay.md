@@ -164,6 +164,8 @@ IEEE vector submissions accept PS/EPS/PDF only (SVG is not on the accepted list)
 
 Use exported artifacts for paper-readability checks before any browser path:
 
+Apply the shared preview, structured issue, YAML-first rework, and stopping contract from `../../../drawio/references/workflows/visual-review.md`. This overlay adds the publication checks below; it does not redefine the shared issue taxonomy or runtime.
+
 1. Inspect the generated SVG when the current environment can view it.
 2. If a raster or final-fidelity check is needed and draw.io Desktop is available, inspect the Desktop-exported PNG/PDF/JPG or embedded `.drawio.svg`.
 3. Do not substitute browser or Playwright screenshots when an exported artifact exists.
@@ -178,7 +180,14 @@ For the first exported artifact, check:
 - missing modules, wrong grouping, or visual mismatch from the confirmed plan/source;
 - colors being the only carrier of meaning.
 
-If a visible defect is found, adjust the YAML spec and rerender once. After that correction pass, report the result instead of starting an open-ended polish loop.
+If a visible defect is found, adjust the YAML spec and rerender once. Any further correction follows the shared loop limits. Academic review additionally requires A4 readability, caption/legend integrity, formula fidelity, and print-safe meaning before reporting the result.
+
+For a projection drift figure, keep the base runtime and report unchanged.
+Publication review must preserve the explicit `[ADDED]`, `[REMOVED]`,
+`[CHANGED]`, and `[UNCHANGED]` text, the legend, changed-key evidence, and the
+dashed removed relation in grayscale/print output. The academic overlay may
+adjust typography and placement only; it must not copy or reinterpret the
+snapshot adapter or comparator.
 
 ## References
 

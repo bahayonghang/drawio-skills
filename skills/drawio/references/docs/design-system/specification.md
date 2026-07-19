@@ -341,9 +341,10 @@ edges:
 
 ### Input Adapter Notes
 
-- Mermaid and CSV are supported as CLI input formats.
+- Mermaid, CSV, Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, and GitLab CI are supported as CLI input formats.
 - They are normalized into this YAML structure before rendering.
 - YAML remains the canonical intermediate representation.
+- Importers that need stable external identity or declared/live comparison first use the versioned [Canonical Graph Projection](../canonical-graph-projection.md), then project into this YAML structure.
 
 ### Edge Label Placement
 

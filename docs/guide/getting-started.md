@@ -97,9 +97,12 @@ Edit the canonical `.spec.yaml` when it exists, then rerender. If only a `.drawi
 node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
+You can also import declared config (Terraform, Kubernetes, Compose, SQL, OpenAPI, CI) or source code (Python, JS/TS, Go, Rust) directly into a canonical diagram, compare a saved live snapshot for drift, or project/transform a diagram offline with postprocess. See [Config](./config-importers.md) / [Code](./code-importers.md) importers, [Live Drift](./live-drift.md), and [Postprocess](./postprocess.md).
+
 ## Next Steps
 
 - [Workflows](./workflows.md)
+- [Config and IaC Importers](./config-importers.md) and [Code Relationship Importers](./code-importers.md)
 - [Icons and Stencil Search](./icons-stencils.md)
 - [Design System](./design-system.md)
 - [Academic Overlay](./academic-overlay.md)

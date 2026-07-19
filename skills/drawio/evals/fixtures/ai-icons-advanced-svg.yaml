@@ -1,0 +1,25 @@
+meta:
+  title: AI Icon Advanced SVG Rendering
+  theme: tech-blue
+  layout: horizontal
+  source: generated
+  canvas: 880x320
+
+nodes:
+  - id: cybercut
+    label: clipPath - CyberCut
+    type: service
+    icon: lobe.cybercut
+    bounds: { x: 64, y: 96, width: 208, height: 112 }
+  - id: antigravity
+    label: mask and filter - Antigravity
+    type: service
+    icon: lobe.antigravity
+    bounds: { x: 336, y: 96, width: 208, height: 112 }
+  - id: jimeng
+    label: clipPath - Jimeng
+    type: service
+    icon: lobe.jimeng
+    bounds: { x: 608, y: 96, width: 208, height: 112 }
+
+edges: []

@@ -6,11 +6,11 @@
 
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync } from 'node:fs'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -25,7 +25,16 @@ const EXAMPLES_DIR = resolve(PROJECT_ROOT, 'skills/drawio/references/examples')
  * @returns {string} stdout output
  */
 function runCli(args, opts = {}) {
-  return execFileSync('node', [CLI, ...args], {
+  return execFileSync(process.execPath, [CLI, ...args], {
+    timeout: 10_000,
+    encoding: 'utf-8',
+    cwd: PROJECT_ROOT,
+    ...opts
+  })
+}
+
+function runCliResult(args, opts = {}) {
+  return spawnSync(process.execPath, [CLI, ...args], {
     timeout: 10_000,
     encoding: 'utf-8',
     cwd: PROJECT_ROOT,
@@ -155,6 +164,57 @@ test('CLI: YAML with invalid node ID exits with error', () => {
   }
 })
 
+test('CLI: --visual-preview is documented and requires a PNG output path', () => {
+  const help = runCli(['--help'])
+  assert.match(help, /--visual-preview/)
+
+  const noOutput = runCliResult(['-', '--visual-preview'], { input: 'nodes:\n  - id: A\n    label: Preview\n' })
+  assert.notEqual(noOutput.status, 0)
+  assert.match(noOutput.stderr, /--visual-preview requires.*\.png/i)
+
+  const svgOutput = runCliResult(['-', 'preview.svg', '--visual-preview'], {
+    input: 'nodes:\n  - id: A\n    label: Preview\n'
+  })
+  assert.notEqual(svgOutput.status, 0)
+  assert.match(svgOutput.stderr, /--visual-preview requires.*\.png/i)
+})
+
+test('CLI: --visual-preview rejects DPI scaling', () => {
+  const result = runCliResult(['-', 'preview.png', '--visual-preview', '--dpi', '150'], {
+    input: 'nodes:\n  - id: A\n    label: Preview\n'
+  })
+
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /--visual-preview.*--dpi/i)
+})
+
+test('CLI: --visual-preview reports SVG fallback without claiming a PNG', (t) => {
+  const tempDir = createTempDir()
+  t.after(() => rmSync(tempDir, { recursive: true, force: true }))
+  const outputFile = resolve(tempDir, 'preview.png')
+  const fallbackFile = resolve(tempDir, 'preview.svg')
+  writeFileSync(outputFile, 'stale preview')
+  const env = {
+    SystemRoot: process.env.SystemRoot,
+    TEMP: process.env.TEMP,
+    TMP: process.env.TMP,
+    ProgramFiles: tempDir,
+    LOCALAPPDATA: tempDir,
+    PATH: ''
+  }
+
+  const result = runCliResult(['-', outputFile, '--visual-preview'], {
+    input: 'nodes:\n  - id: A\n    label: Preview fallback\n',
+    env
+  })
+
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(existsSync(outputFile), false)
+  assert.equal(existsSync(fallbackFile), true)
+  assert.match(result.stderr, /no PNG vision-preview was produced/i)
+  assert.match(result.stderr, /fell back to SVG/i)
+})
+
 // ============================================================================
 // Validate Flag
 // ============================================================================
@@ -225,6 +285,132 @@ CTO,CEO,Chief Technology Officer`
   const output = runCli(['-', '--input-format', 'csv'], { input: csv })
   assert.ok(output.includes('Chief Executive Officer'), 'CSV adapter should emit node labels')
   assert.ok(output.includes('Chief Technology Officer'), 'CSV adapter should emit child node labels')
+})
+
+test('CLI: structured config adapters project through the canonical renderer', () => {
+  const cases = [
+    {
+      args: ['-', '--input-format', 'kubernetes', '--scope', 'test'],
+      input: 'apiVersion: apps/v1\nkind: Deployment\nmetadata: { name: api }',
+      label: 'api'
+    },
+    {
+      args: ['-', '--input-format', 'compose'],
+      input: 'name: shop\nservices: { api: { image: example/api:1 } }',
+      label: 'api'
+    },
+    {
+      args: ['-', '--input-format', 'openapi'],
+      input: 'openapi: 3.1.0\npaths:\n  /health:\n    get: { responses: { "200": { description: ok } } }',
+      label: 'GET /health'
+    },
+    {
+      args: ['-', '--input-format', 'github-actions', '--workflow', '.github/workflows/ci.yml'],
+      input: 'jobs: { build: { runs-on: ubuntu-latest } }',
+      label: 'build'
+    }
+  ]
+
+  for (const fixture of cases) {
+    const output = runCli(fixture.args, { input: fixture.input })
+    assert.ok(output.includes(fixture.label), `${fixture.args[2]} should render ${fixture.label}`)
+  }
+})
+
+test('CLI: raster extraction stdin reuses the canonical renderer', () => {
+  const extraction = JSON.stringify({
+    schemaVersion: 1,
+    nodes: [
+      { id: 'source', label: 'Source', shape: 'rounded' },
+      { id: 'sink', label: 'Sink', shape: 'cylinder' }
+    ],
+    edges: [{ id: 'source-sink', source: 'source', target: 'sink', arrow: true }]
+  })
+
+  const output = runCli(['-', '--input-format', 'raster-extraction'], { input: extraction })
+  assert.match(output, /<mxGraphModel/)
+  assert.match(output, /Source/)
+  assert.match(output, /shape=cylinder3/)
+})
+
+test('CLI: raster extraction file writes canonical spec, drawio, and sidecars', () => {
+  const tempDir = createTempDir()
+  const inputFile = resolve(
+    PROJECT_ROOT,
+    'skills/drawio/scripts/adapters/fixtures/raster-extraction.json'
+  )
+  const specFile = resolve(tempDir, 'extracted.spec.yaml')
+  const drawioFile = resolve(tempDir, 'extracted.drawio')
+
+  try {
+    runCli([inputFile, specFile, '--input-format', 'raster-extraction', '--export-spec', '--write-sidecars'])
+    assert.ok(existsSync(specFile))
+    assert.ok(existsSync(resolve(tempDir, 'extracted.arch.json')))
+    const spec = readFileSync(specFile, 'utf8')
+    assert.match(spec, /source: replicated/)
+    assert.match(spec, /label: Source & ingress/)
+    assert.match(spec, /bounds:/)
+
+    runCli([inputFile, drawioFile, '--input-format', 'raster-extraction', '--write-sidecars', '--validate'])
+    assert.ok(existsSync(drawioFile))
+    assert.ok(existsSync(resolve(tempDir, 'extracted.spec.yaml')))
+    assert.ok(existsSync(resolve(tempDir, 'extracted.arch.json')))
+    assert.match(readFileSync(drawioFile, 'utf8'), /Source &amp; ingress/)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
+test('CLI: optional parser absence is isolated to Terraform and SQL routes', () => {
+  const env = {
+    SYSTEMROOT: process.env.SYSTEMROOT,
+    WINDIR: process.env.WINDIR,
+    TEMP: process.env.TEMP,
+    TMP: process.env.TMP,
+    PATH: ''
+  }
+  const terraform = runCliResult(['-', '--input-format', 'terraform'], {
+    input: 'resource "aws_instance" "api" {}',
+    env
+  })
+  assert.notEqual(terraform.status, 0)
+  assert.match(terraform.stderr, /\[OPTIONAL_DEPENDENCY_MISSING\]/)
+  assert.match(terraform.stderr, /Python 3\.9\+ is unavailable/)
+
+  const yaml = runCliResult(['-', '--input-format', 'compose'], {
+    input: 'name: shop\nservices: { api: { image: app:1 } }',
+    env
+  })
+  assert.equal(yaml.status, 0)
+  assert.match(yaml.stdout, /api/)
+})
+
+test('CLI: code importer directory route projects through the canonical renderer', () => {
+  const tempDir = createTempDir()
+  try {
+    writeFileSync(join(tempDir, 'a.js'), "import './b.js'\n")
+    writeFileSync(join(tempDir, 'b.js'), 'export const b = 1\n')
+    const output = runCli([tempDir, '--input-format', 'js-imports'])
+    assert.match(output, /a\.js/)
+    assert.match(output, /b\.js/)
+    assert.match(output, /<mxGraphModel/)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
+test('CLI: code importer routes reject stdin before reading source text', () => {
+  const result = runCliResult(['-', '--input-format', 'go-imports'], { input: 'package main\n' })
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /requires a local project directory/)
+})
+
+test('CLI: config adapter options reject missing values', () => {
+  const result = runCliResult(['-', '--input-format', 'kubernetes', '--scope', '--validate'], {
+    input: 'apiVersion: apps/v1\nkind: Deployment\nmetadata: { name: api }'
+  })
+  assert.notEqual(result.status, 0)
+  assert.match(result.stderr, /--scope requires a value/)
 })
 
 // ============================================================================
@@ -335,6 +521,208 @@ test('CLI: --export-spec writes spec and arch to sidecar dir when requested', ()
   assert.equal(existsSync(specFile), false, 'exported spec should not be written to final dir')
   assert.ok(existsSync(resolve(sidecarDir, 'imported.spec.yaml')), 'spec should be written to sidecar dir')
   assert.ok(existsSync(resolve(sidecarDir, 'imported.arch.json')), 'arch should be written to sidecar dir')
+})
+
+test('CLI: multi-page YAML writes one drawio bundle and arch v2 sidecars', () => {
+  const tempDir = createTempDir()
+  const inputFile = resolve(tempDir, 'bundle.yaml')
+  const outputFile = resolve(tempDir, 'bundle.drawio')
+  const sidecarDir = resolve(tempDir, '.drawio-tmp', 'bundle')
+  writeFileSync(
+    inputFile,
+    `schemaVersion: 1
+meta:
+  title: CLI Bundle
+  source: generated
+pages:
+  - id: first
+    name: First
+    nodes:
+      - id: api
+        label: API
+        type: service
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes:
+      - id: api
+        label: API 2
+        type: service
+    edges: []
+    modules: []
+links:
+  - from: { pageId: first, objectId: api }
+    to: { pageId: second, objectId: api }
+`
+  )
+
+  runCli([inputFile, outputFile, '--validate', '--write-sidecars', '--sidecar-dir', sidecarDir])
+  const drawio = readFileSync(outputFile, 'utf8')
+  assert.equal((drawio.match(/<diagram\b/g) || []).length, 2)
+  assert.ok(drawio.includes('dataObjectId="api"'))
+  const spec = readFileSync(resolve(sidecarDir, 'bundle.spec.yaml'), 'utf8')
+  assert.match(spec, /^schemaVersion: 1/m)
+  const arch = JSON.parse(readFileSync(resolve(sidecarDir, 'bundle.arch.json'), 'utf8'))
+  assert.equal(arch.version, 2)
+  assert.deepEqual(arch.pages.map((page) => page.id), ['first', 'second'])
+})
+
+test('CLI: drawio import remains first-page flat by default and all-pages is explicit', () => {
+  const tempDir = createTempDir()
+  const bundleFile = resolve(tempDir, 'bundle.drawio')
+  const defaultSpec = resolve(tempDir, 'default.spec.yaml')
+  const allPagesSpec = resolve(tempDir, 'all-pages.spec.yaml')
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: first
+    name: First
+    nodes: [{ id: api, label: API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes: [{ id: api, label: API 2 }]
+    edges: []
+    modules: []
+`
+  )
+  runCli([yamlFile, bundleFile])
+  runCli([bundleFile, defaultSpec, '--input-format', 'drawio', '--export-spec'])
+  assert.equal(readFileSync(defaultSpec, 'utf8').includes('schemaVersion:'), false)
+  runCli([bundleFile, allPagesSpec, '--input-format', 'drawio', '--all-pages', '--export-spec'])
+  assert.match(readFileSync(allPagesSpec, 'utf8'), /^schemaVersion: 1/m)
+})
+
+test('CLI: multi-page page boundaries and all-pages conflicts fail explicitly', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: first
+    name: First
+    nodes: [{ id: api, label: API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes: [{ id: api, label: API 2 }]
+    edges: []
+    modules: []
+`
+  )
+  const svgResult = runCliResult([yamlFile, resolve(tempDir, 'bundle.svg')])
+  assert.notEqual(svgResult.status, 0)
+  assert.match(svgResult.stderr, /requires --page/i)
+  const conflict = runCliResult([yamlFile, resolve(tempDir, 'bundle.drawio'), '--all-pages', '--page', '0'])
+  assert.notEqual(conflict.status, 0)
+  assert.match(conflict.stderr, /cannot be combined/i)
+})
+
+test('CLI: multi-page binary selection accepts index, id, and unique name', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  const bundleYaml = `schemaVersion: 1
+meta: { title: Selector bundle, source: generated }
+pages:
+  - id: first
+    name: First page
+    nodes: [{ id: api, label: First API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second page
+    nodes: [{ id: api, label: Second API }]
+    edges: []
+    modules: []
+`
+  writeFileSync(yamlFile, bundleYaml)
+
+  for (const [selector, label] of [
+    ['0', 'First API'],
+    ['second', 'Second API'],
+    ['Second page', 'Second API']
+  ]) {
+    const outputFile = resolve(tempDir, `selected-${selector.replaceAll(' ', '-')}.svg`)
+    runCli([yamlFile, outputFile, '--page', selector])
+    assert.match(readFileSync(outputFile, 'utf8'), new RegExp(label))
+  }
+})
+
+test('CLI: multi-page selection rejects out-of-range and ambiguous names with safe diagnostics', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'bundle.yaml')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: first
+    name: Context
+    nodes: [{ id: api, label: First API }]
+    edges: []
+    modules: []
+  - id: detail
+    name: Context
+    nodes: [{ id: api, label: Detail API }]
+    edges: []
+    modules: []
+`
+  )
+  const outOfRange = runCliResult([yamlFile, resolve(tempDir, 'out.svg'), '--page', '9'])
+  assert.notEqual(outOfRange.status, 0)
+  assert.match(outOfRange.stderr, /index out of range/i)
+
+  const ambiguous = runCliResult([yamlFile, resolve(tempDir, 'ambiguous.svg'), '--page', 'context'])
+  assert.notEqual(ambiguous.status, 0)
+  assert.match(ambiguous.stderr, /ambiguous.*first.*detail/i)
+})
+
+test('CLI: multi-page stdin requires an explicit drawio output and keeps stdout clean', () => {
+  const input = `schemaVersion: 1
+pages:
+  - id: first
+    name: First
+    nodes: [{ id: api, label: API }]
+    edges: []
+    modules: []
+  - id: second
+    name: Second
+    nodes: [{ id: api, label: API 2 }]
+    edges: []
+    modules: []
+`
+  const noOutput = runCliResult(['-'], { input })
+  assert.notEqual(noOutput.status, 0)
+  assert.match(noOutput.stderr, /explicit \.drawio output/i)
+  assert.equal(noOutput.stdout, '')
+})
+
+test('CLI: multi-page page metadata is escaped and never emits raw injection payloads', () => {
+  const tempDir = createTempDir()
+  const yamlFile = resolve(tempDir, 'unsafe-labels.yaml')
+  const outputFile = resolve(tempDir, 'unsafe-labels.drawio')
+  writeFileSync(
+    yamlFile,
+    `schemaVersion: 1
+pages:
+  - id: safe
+    name: 'Page "><script>alert(1)</script>'
+    nodes: [{ id: api, label: 'API & details' }]
+    edges: []
+    modules: []
+`
+  )
+  runCli([yamlFile, outputFile, '--validate'])
+  const xml = readFileSync(outputFile, 'utf8')
+  assert.match(xml, /name="Page &quot;&gt;&lt;script&gt;alert\(1\)&lt;\/script&gt;"/)
+  assert.equal(xml.includes('<script>'), false)
+  assert.equal(xml.includes('javascript:'), false)
+  assert.equal(xml.includes('onerror='), false)
 })
 
 test('CLI: replicated specs preserve source background and replication metadata in sidecars', () => {

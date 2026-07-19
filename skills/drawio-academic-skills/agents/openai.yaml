@@ -8,6 +8,8 @@ policy:
 
 capabilities:
   - Create academic-paper draw.io figures from natural language or YAML specs
+  - Consume sibling base code/config/live imports and multi-page bundles before publication checks
+  - Apply publication policy after sibling base postprocess operations without copying their runtime
   - Generate .drawio, .spec.yaml, .arch.json, and SVG as the default offline bundle
   - Export PNG, SVG, PDF, and JPG through draw.io Desktop when available
   - Generate diagrams.net browser URLs when Desktop export is unavailable

@@ -1,0 +1,300 @@
+{
+  "version": 1,
+  "baseline": {
+    "source": "declared"
+  },
+  "observed": {
+    "source": "live"
+  },
+  "nodes": {
+    "added": [],
+    "removed": [
+      {
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/cache"
+        },
+        "before": {
+          "label": "cache",
+          "attributes": {
+            "image": "redis:7",
+            "kind": "service",
+            "project": "shop",
+            "replicas": 1,
+            "service": "cache"
+          }
+        }
+      }
+    ],
+    "changed": [
+      {
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/web"
+        },
+        "before": {
+          "label": "web",
+          "attributes": {
+            "image": "example/web:1",
+            "kind": "service",
+            "project": "shop",
+            "replicas": 1,
+            "service": "web"
+          }
+        },
+        "after": {
+          "label": "web",
+          "attributes": {
+            "image": "example/web:1",
+            "kind": "service",
+            "project": "shop",
+            "replicas": 2,
+            "service": "web"
+          }
+        },
+        "changedKeys": [
+          "attributes.replicas"
+        ]
+      }
+    ],
+    "unchanged": [
+      {
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/db"
+        },
+        "before": {
+          "label": "db",
+          "attributes": {
+            "image": "postgres:16",
+            "kind": "service",
+            "project": "shop",
+            "replicas": 1,
+            "service": "db"
+          }
+        },
+        "after": {
+          "label": "db",
+          "attributes": {
+            "image": "postgres:16",
+            "kind": "service",
+            "project": "shop",
+            "replicas": 1,
+            "service": "db"
+          }
+        }
+      }
+    ]
+  },
+  "edges": {
+    "added": [],
+    "removed": [
+      {
+        "identity": {
+          "scheme": "graph-edge",
+          "key": "[\"depends-on\",\"compose-service\\u0000shop/web\",\"compose-service\\u0000shop/cache\",\"depends_on:cache\"]"
+        },
+        "before": {
+          "from": {
+            "scheme": "compose-service",
+            "key": "shop/web"
+          },
+          "to": {
+            "scheme": "compose-service",
+            "key": "shop/cache"
+          },
+          "relation": "depends-on",
+          "attributes": {}
+        }
+      }
+    ],
+    "changed": [],
+    "unchanged": [
+      {
+        "identity": {
+          "scheme": "graph-edge",
+          "key": "[\"depends-on\",\"compose-service\\u0000shop/web\",\"compose-service\\u0000shop/db\",\"depends_on:db\"]"
+        },
+        "before": {
+          "from": {
+            "scheme": "compose-service",
+            "key": "shop/web"
+          },
+          "to": {
+            "scheme": "compose-service",
+            "key": "shop/db"
+          },
+          "relation": "depends-on",
+          "attributes": {}
+        },
+        "after": {
+          "from": {
+            "scheme": "compose-service",
+            "key": "shop/web"
+          },
+          "to": {
+            "scheme": "compose-service",
+            "key": "shop/db"
+          },
+          "relation": "depends-on",
+          "attributes": {}
+        }
+      }
+    ]
+  },
+  "attributes": {
+    "added": [],
+    "removed": [
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/cache"
+        },
+        "key": "image",
+        "before": "redis:7"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/cache"
+        },
+        "key": "kind",
+        "before": "service"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/cache"
+        },
+        "key": "project",
+        "before": "shop"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/cache"
+        },
+        "key": "replicas",
+        "before": 1
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/cache"
+        },
+        "key": "service",
+        "before": "cache"
+      }
+    ],
+    "changed": [
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/web"
+        },
+        "key": "replicas",
+        "before": 1,
+        "after": 2
+      }
+    ],
+    "unchanged": [
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/db"
+        },
+        "key": "image",
+        "before": "postgres:16",
+        "after": "postgres:16"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/db"
+        },
+        "key": "kind",
+        "before": "service",
+        "after": "service"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/db"
+        },
+        "key": "project",
+        "before": "shop",
+        "after": "shop"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/db"
+        },
+        "key": "replicas",
+        "before": 1,
+        "after": 1
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/db"
+        },
+        "key": "service",
+        "before": "db",
+        "after": "db"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/web"
+        },
+        "key": "image",
+        "before": "example/web:1",
+        "after": "example/web:1"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/web"
+        },
+        "key": "kind",
+        "before": "service",
+        "after": "service"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/web"
+        },
+        "key": "project",
+        "before": "shop",
+        "after": "shop"
+      },
+      {
+        "owner": "node",
+        "identity": {
+          "scheme": "compose-service",
+          "key": "shop/web"
+        },
+        "key": "service",
+        "before": "web",
+        "after": "web"
+      }
+    ]
+  },
+  "diagnostics": []
+}

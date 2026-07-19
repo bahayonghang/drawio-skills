@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 13
-- **Last Active**: 2026-07-15
+- **Total Sessions**: 28
+- **Last Active**: 2026-07-19
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~573 | Active |
+| `journal-1.md` | ~1126 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,21 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 28 | 2026-07-19 | 补录上游整合批到 skill 侧 base CHANGELOG | `718231e` | `dev` |
+| 27 | 2026-07-19 | 归档 drawio 上游能力整合父任务 | `52eb520` | `dev` |
+| 26 | 2026-07-19 | 完成上游能力整合与发布收口 | `978bab1`, `1620774` | `dev` |
+| 25 | 2026-07-19 | 完成方向二专业作图 bucket 验收 | `09f5c25` | `dev` |
+| 24 | 2026-07-19 | 完成 SysML/BPMN canonical stencil delta | `669c415`, `3710620` | `dev` |
+| 23 | 2026-07-19 | 完成 raster canonical extraction adapter | `0b6a379`, `b03e683` | `dev` |
+| 22 | 2026-07-19 | 收口方向一导入与漂移 bucket | - | `dev` |
+| 21 | 2026-07-19 | 收口方向三后处理导出 | `c0edb70`, `05ff82c`, `1def151`, `7378daa`, `8880675` | `dev` |
+| 20 | 2026-07-19 | 完成 canonical 多页基础实施 | `8fb4889`, `8e82eec`, `14c78f3` | `dev` |
+| 19 | 2026-07-19 | 完成离线 AI 图标目录 | `2e12c900663c4491cbe8db891f6a0ae1d9876671`, `0eab7b712fc067608208bc2fe15fdcd7e1c329bb`, `196566a53f232fd5b7c803494fa924f44209fb61` | `dev` |
+| 18 | 2026-07-18 | 完成运行态快照与架构漂移 | `21d01b7`, `484b7a4` | `dev` |
+| 17 | 2026-07-18 | 完成多语言代码关系导入器 | `e53d46e` | `dev` |
+| 16 | 2026-07-18 | 完成声明式配置导入器 | `6afac39` | `dev` |
+| 15 | 2026-07-18 | 完成 adapter identity foundation 并审阅 config importer 启动门 | `97d3c81` | `dev` |
+| 14 | 2026-07-18 | 完成 C0 视觉预览与 YAML 返工闭环 | `6a48b82`, `6d83c03` | `dev` |
 | 13 | 2026-07-15 | Palette 配色系统：调研、Trellis 父子任务规划、Codex 实施审查与 2.7.0 发布 | `bb05245` | `dev` |
 | 12 | 2026-07-14 | 重构双语文档并发布 2.6.0 | `3de2852` | `dev` |
 | 11 | 2026-07-14 | ai-kit 集成 review 与 catalog-search 修复任务 | `374d270`, `8b8435b`, `60e039c`, `32f6583`, `e344320`, `130782a` | `dev` |

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "canvas": {
+    "width": 960,
+    "height": 540,
+    "background": "#FFFFFF"
+  },
+  "nodes": [
+    {
+      "id": "source",
+      "label": "Source & ingress",
+      "shape": "rounded",
+      "fill": "#DAE8FC",
+      "stroke": "#6C8EBF"
+    },
+    {
+      "id": "sink",
+      "label": "Orders",
+      "shape": "cylinder"
+    }
+  ],
+  "edges": [
+    {
+      "id": "source-sink",
+      "source": "source",
+      "target": "sink",
+      "label": "writes",
+      "arrow": true
+    }
+  ]
+}

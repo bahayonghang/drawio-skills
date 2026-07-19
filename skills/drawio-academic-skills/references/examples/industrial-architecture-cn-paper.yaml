@@ -86,6 +86,11 @@ edges:
     to: apscheduler
     type: primary
     label: "操作请求"
+    labelOffset: { x: 56, y: -20 }
+    waypoints:
+      - { x: 124, y: 208 }
+      - { x: 256, y: 208 }
+      - { x: 256, y: 272 }
   - from: apscheduler
     to: predict_svc
     type: primary

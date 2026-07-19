@@ -24,12 +24,12 @@ Canonical sidecars such as `<name>.spec.yaml` and `<name>.arch.json` should live
 
 ## Route Comparison
 
-| Route | Primary input | Default output | When to use |
-| --- | --- | --- | --- |
-| `create` | Text, YAML, Mermaid, CSV | New `.drawio` plus work-dir sidecars | Build a new general diagram |
-| `edit` | Existing bundle or `.drawio` file | Updated `.drawio` plus work-dir sidecars | Modify or restyle a diagram |
-| `replicate` | Uploaded image or screenshot | Redrawn `.drawio` plus work-dir sidecars | Recreate a reference diagram |
-| `academic overlay` | Paper/thesis/manuscript prompt | final `.drawio + 300dpi .png`, SVG fallback, sidecars in work dir | Publication-ready figures |
+| Route              | Primary input                     | Default output                                                    | When to use                  |
+| ------------------ | --------------------------------- | ----------------------------------------------------------------- | ---------------------------- |
+| `create`           | Text, YAML, Mermaid, CSV          | New `.drawio` plus work-dir sidecars                              | Build a new general diagram  |
+| `edit`             | Existing bundle or `.drawio` file | Updated `.drawio` plus work-dir sidecars                          | Modify or restyle a diagram  |
+| `replicate`        | Uploaded image or screenshot      | Redrawn `.drawio` plus work-dir sidecars                          | Recreate a reference diagram |
+| `academic overlay` | Paper/thesis/manuscript prompt    | final `.drawio + 300dpi .png`, SVG fallback, sidecars in work dir | Publication-ready figures    |
 
 ## `/drawio create`
 
@@ -126,12 +126,27 @@ Replication should preserve more than structure and color:
 
 ### Color modes
 
-| Mode | Default | Effect |
-| --- | --- | --- |
-| `preserve-original` | Yes | Preserve source palette with explicit style overrides |
-| `theme-first` | No | Normalize the redraw to the selected theme |
+| Mode                | Default | Effect                                                |
+| ------------------- | ------- | ----------------------------------------------------- |
+| `preserve-original` | Yes     | Preserve source palette with explicit style overrides |
+| `theme-first`       | No      | Normalize the redraw to the selected theme            |
 
 See [Replicating Diagrams](./scientific-workflows.md).
+
+## Import and Integration Routes
+
+The offline base also promotes upstream capabilities behind the same canonical boundary. Each route normalizes its input to canonical YAML or multi-page bundle v1 before validation, JavaScript ELK layout, and the renderer — no provider CLI, Graphviz, network, Desktop, browser, MCP, or model is required.
+
+| Route              | Input                                                                                            | Guide                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `config-import`    | declared Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, GitLab CI             | [Config and IaC Importers](./config-importers.md)  |
+| `code-import`      | local Python, JavaScript/TypeScript, Go, or Rust project directory                               | [Code Relationship Importers](./code-importers.md) |
+| `live-drift`       | saved Terraform state/plan, Docker inspect, or Kubernetes live JSON, plus declared-vs-live drift | [Live Snapshots and Drift](./live-drift.md)        |
+| `multi-page`       | canonical bundle v1 with stable page/object identity and structured links                        | [Multi-page Bundles](./multi-page.md)              |
+| `raster-replicate` | a trusted structured visual extraction via `--input-format raster-extraction`                    | [Replicating Diagrams](./scientific-workflows.md)  |
+| `postprocess`      | offline `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, or script-free `html`             | [Postprocess Suite](./postprocess.md)              |
+
+The full upstream job-to-capability mapping lives in the [Upstream Capability Map](/api/upstream-capability-map.md).
 
 ## Shared Guardrails
 

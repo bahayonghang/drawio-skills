@@ -1,0 +1,55 @@
+[
+  {
+    "Id": "container-web-1-must-not-cross",
+    "Name": "/shop-web-1-must-not-cross",
+    "Config": {
+      "Image": "example/web:1",
+      "Env": ["PASSWORD=docker-secret-must-not-cross"],
+      "Labels": {
+        "com.docker.compose.project": "shop",
+        "com.docker.compose.service": "web",
+        "com.docker.compose.depends_on": "db:service_healthy:false",
+        "credential": "docker-label-secret-must-not-cross"
+      }
+    },
+    "Mounts": [
+      {
+        "Type": "bind",
+        "Source": "C:\\private\\host-path-must-not-cross",
+        "Destination": "/container-path-must-not-cross"
+      }
+    ]
+  },
+  {
+    "Id": "container-web-2-must-not-cross",
+    "Name": "/shop-web-2-must-not-cross",
+    "Config": {
+      "Image": "example/web:1",
+      "Labels": {
+        "com.docker.compose.project": "shop",
+        "com.docker.compose.service": "web",
+        "com.docker.compose.depends_on": "db:service_healthy:false"
+      }
+    }
+  },
+  {
+    "Id": "container-db-1-must-not-cross",
+    "Name": "/shop-db-1-must-not-cross",
+    "Config": {
+      "Image": "postgres:16",
+      "Labels": {
+        "com.docker.compose.project": "shop",
+        "com.docker.compose.service": "db"
+      }
+    }
+  },
+  {
+    "Id": "standalone-container-must-not-cross",
+    "Name": "/standalone-must-not-cross",
+    "Config": {
+      "Image": "busybox:1",
+      "Env": ["TOKEN=standalone-secret-must-not-cross"],
+      "Labels": {}
+    }
+  }
+]

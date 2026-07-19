@@ -1,0 +1,50 @@
+meta:
+  title: AI Icon Core and Compatibility Identifiers
+  theme: tech-blue
+  layout: horizontal
+  source: generated
+  canvas: 1280x520
+
+nodes:
+  - id: openai
+    label: lobe.openai
+    type: service
+    icon: lobe.openai
+    bounds: { x: 64, y: 72, width: 192, height: 112 }
+  - id: brand-openai
+    label: brand.openai
+    type: service
+    icon: brand.openai
+    bounds: { x: 352, y: 72, width: 192, height: 112 }
+  - id: bare-openai
+    label: bare openai
+    type: service
+    icon: openai
+    bounds: { x: 640, y: 72, width: 192, height: 112 }
+  - id: chatgpt-alias
+    label: ai.chatgpt
+    type: service
+    icon: ai.chatgpt
+    bounds: { x: 928, y: 72, width: 192, height: 112 }
+  - id: claude
+    label: lobe.claude
+    type: service
+    icon: lobe.claude
+    bounds: { x: 64, y: 296, width: 192, height: 112 }
+  - id: anthropic-compat
+    label: ai.anthropic to Claude
+    type: service
+    icon: ai.anthropic
+    bounds: { x: 352, y: 296, width: 192, height: 112 }
+  - id: anthropic-exact
+    label: lobe.anthropic
+    type: service
+    icon: lobe.anthropic
+    bounds: { x: 640, y: 296, width: 192, height: 112 }
+  - id: gemini
+    label: lobe.gemini
+    type: service
+    icon: lobe.gemini
+    bounds: { x: 928, y: 296, width: 192, height: 112 }
+
+edges: []

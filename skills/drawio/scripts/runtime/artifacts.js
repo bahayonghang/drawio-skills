@@ -1,5 +1,6 @@
 import yaml from 'js-yaml'
 import { basename, extname, resolve } from 'node:path'
+import { escapeXml } from '../shared/xml-utils.js'
 
 const EXPORT_EXTENSIONS = ['.png', '.svg', '.pdf', '.jpg', '.jpeg']
 
@@ -37,6 +38,31 @@ function compactObject(value) {
       ([, fieldValue]) => fieldValue !== undefined && fieldValue !== null && fieldValue !== ''
     )
   )
+}
+
+function buildIdentityMetadata(identity) {
+  if (
+    !identity ||
+    typeof identity !== 'object' ||
+    Array.isArray(identity) ||
+    typeof identity.scheme !== 'string' ||
+    typeof identity.key !== 'string'
+  ) {
+    return undefined
+  }
+  return { scheme: identity.scheme, key: identity.key }
+}
+
+function buildAdapterMetadata(adapter) {
+  if (!adapter || typeof adapter !== 'object' || Array.isArray(adapter)) return undefined
+  const metadata = compactObject({
+    projectionVersion: adapter.projectionVersion,
+    name: adapter.name,
+    domain: adapter.domain,
+    mode: adapter.mode,
+    locator: adapter.locator
+  })
+  return Object.keys(metadata).length > 0 ? metadata : undefined
 }
 
 function buildReplicationMetadata(replication) {
@@ -100,10 +126,30 @@ export function serializeSpecYaml(spec) {
   })
 }
 
+export function serializeDocumentSpecYaml(document) {
+  if (!document || document.kind !== 'multi-page-v1') {
+    throw new TypeError('serializeDocumentSpecYaml requires a multi-page v1 document')
+  }
+  return serializeSpecYaml({
+    schemaVersion: 1,
+    meta: document.meta || {},
+    pages: document.pages.map((page) => ({
+      id: page.id,
+      name: page.name,
+      meta: page.meta || {},
+      nodes: page.nodes || [],
+      edges: page.edges || [],
+      modules: page.modules || []
+    })),
+    links: document.links || []
+  })
+}
+
 export function buildArchMetadata(spec, { outputFile } = {}) {
   const artifactPaths = outputFile ? deriveArtifactPaths(outputFile) : null
   const fallbackTitle = artifactPaths ? basename(artifactPaths.stem) : 'diagram'
   const replication = buildReplicationMetadata(spec.meta?.replication)
+  const adapter = buildAdapterMetadata(spec.meta?.adapter)
 
   const arch = {
     version: 1,
@@ -121,6 +167,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
     nodes: (spec.nodes || []).map((node) =>
       compactObject({
         id: node.id,
+        identity: buildIdentityMetadata(node.identity),
         label: node.label,
         type: node.type || 'service',
         module: node.module,
@@ -131,6 +178,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
     edges: (spec.edges || []).map((edge, index) =>
       compactObject({
         id: edge.id || `edge-${index + 1}`,
+        identity: buildIdentityMetadata(edge.identity),
         from: edge.from,
         to: edge.to,
         type: edge.type || 'primary',
@@ -141,6 +189,7 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
     modules: (spec.modules || []).map((module) =>
       compactObject({
         id: module.id,
+        identity: buildIdentityMetadata(module.identity),
         label: module.label,
         color: module.color
       })
@@ -150,8 +199,52 @@ export function buildArchMetadata(spec, { outputFile } = {}) {
   if (replication) {
     arch.replication = replication
   }
+  if (adapter) {
+    arch.adapter = adapter
+  }
 
   return arch
+}
+
+export function buildMultiPageArchMetadata(document, { outputFile } = {}) {
+  if (!document || document.kind !== 'multi-page-v1') {
+    throw new TypeError('buildMultiPageArchMetadata requires a multi-page v1 document')
+  }
+  const artifactPaths = outputFile ? deriveArtifactPaths(outputFile) : null
+  const fallbackTitle = artifactPaths ? basename(artifactPaths.stem) : 'diagram'
+  const pageMetadata = document.pages.map((page, index) => {
+    const pageSpec = { meta: page.meta || {}, nodes: page.nodes || [], edges: page.edges || [], modules: page.modules || [] }
+    const legacy = buildArchMetadata(pageSpec, { outputFile })
+    return {
+      index,
+      id: page.id,
+      name: page.name,
+      meta: page.meta || {},
+      counts: legacy.counts,
+      nodes: legacy.nodes,
+      edges: legacy.edges,
+      modules: legacy.modules
+    }
+  })
+  const counts = pageMetadata.reduce(
+    (total, page) => ({
+      nodes: total.nodes + page.counts.nodes,
+      edges: total.edges + page.counts.edges,
+      modules: total.modules + page.counts.modules
+    }),
+    { nodes: 0, edges: 0, modules: 0 }
+  )
+  return {
+    version: 2,
+    title: document.meta?.title || fallbackTitle,
+    source: document.meta?.source || 'generated',
+    counts,
+    pages: pageMetadata,
+    links: (document.links || []).map((link) => ({
+      from: { pageId: link.from.pageId, objectId: link.from.objectId },
+      to: { pageId: link.to.pageId, objectId: link.to.objectId }
+    }))
+  }
 }
 
 export function createDrawioFileContent(xml, { version = '21.0.0' } = {}) {
@@ -162,5 +255,29 @@ export function createDrawioFileContent(xml, { version = '21.0.0' } = {}) {
     `    ${xml}\n` +
     '  </diagram>\n' +
     '</mxfile>\n'
+  )
+}
+
+export function createMultiPageDrawioFileContent(renderedPages, { version = '21.0.0', documentMeta = {} } = {}) {
+  if (!Array.isArray(renderedPages) || renderedPages.length === 0) {
+    throw new Error('renderedPages must contain at least one page')
+  }
+  const diagrams = renderedPages
+    .map((page) => {
+      if (!page || typeof page.id !== 'string' || typeof page.name !== 'string' || typeof page.xml !== 'string') {
+        throw new TypeError('each rendered page requires id, name, and xml strings')
+      }
+      return (
+        `  <diagram id="${escapeXml(page.id)}" name="${escapeXml(page.name)}" dataPageMeta="${escapeXml(encodeURIComponent(JSON.stringify(page.meta || {})))}">\n` +
+        `    ${page.xml}\n` +
+        '  </diagram>'
+      )
+    })
+    .join('\n')
+  return (
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    `<mxfile host="cli" modified="" agent="drawio-skill-cli" version="${escapeXml(version)}" dataDocumentMeta="${escapeXml(encodeURIComponent(JSON.stringify(documentMeta || {})))}">\n` +
+    diagrams +
+    '\n</mxfile>\n'
   )
 }

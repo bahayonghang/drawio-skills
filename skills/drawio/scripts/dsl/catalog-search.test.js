@@ -25,3 +25,20 @@ test('catalog search finds kubernetes entries through natural-word aliases', () 
   const results = searchShapeCatalog('deployment', { prefix: 'kubernetes' })
   assert.ok(results.some((entry) => entry.spec === 'k8s.deploy'))
 })
+
+test('catalog search routes the lobe prefix to canonical offline AI icons', () => {
+  const [result] = searchShapeCatalog('openai', { prefix: 'lobe', limit: 1 })
+  assert.equal(result.name, 'lobe.openai')
+  assert.equal(result.spec, 'icon: lobe.openai')
+  assert.doesNotMatch(JSON.stringify(result), /https?:\/\//)
+})
+
+test('catalog search discovers SysML and BPMN stencils from merged variant metadata', () => {
+  const [requirement] = searchShapeCatalog('sysml requirement', { prefix: 'sysml', limit: 1 })
+  assert.equal(requirement.name, 'mxgraph.sysml.package')
+  assert.ok(requirement.tags.includes('requirement'))
+
+  const [task] = searchShapeCatalog('bpmn task', { prefix: 'bpmn', limit: 1 })
+  assert.equal(task.name, 'mxgraph.bpmn.task2')
+  assert.ok(task.tags.includes('task'))
+})

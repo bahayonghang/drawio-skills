@@ -1,0 +1,32 @@
+{
+  "id": "drawio-upstream-port",
+  "name": "drawio-upstream-port",
+  "title": "drawio 上游能力等价整合与视觉返工闭环加固",
+  "description": "将 ref/drawio-skill(v1.34,37 脚本)方向一、二、三按功能等价方式整合进 canonical spec/YAML-first/offline-first 管线，不承诺上游 CLI 兼容；父任务拥有能力映射、子任务依赖、跨任务验收与最终集成。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-18",
+  "completedAt": "2026-07-19",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-18-drawio-vision-rework",
+    "07-18-drawio-dir1-import",
+    "07-18-drawio-dir2-authoring",
+    "07-18-drawio-dir3-postprocess",
+    "07-19-drawio-upstream-integration-promotion"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

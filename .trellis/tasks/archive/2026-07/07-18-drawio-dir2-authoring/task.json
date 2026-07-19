@@ -1,0 +1,31 @@
+{
+  "id": "drawio-dir2-authoring",
+  "name": "drawio-dir2-authoring",
+  "title": "方向②专业作图",
+  "description": "方向②规划 bucket：把 raster/replicate、离线 AI 图标、SysML/BPMN 差距和 C4 多页下钻拆成独立可验收 child；本 bucket 不直接启动实施。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-18",
+  "completedAt": "2026-07-19",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-18-drawio-ai-icon-catalog",
+    "07-19-drawio-multi-page-foundation",
+    "07-19-drawio-raster-replicate-adapter",
+    "07-19-drawio-sysml-bpmn-delta"
+  ],
+  "parent": "07-18-drawio-upstream-port",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

@@ -97,9 +97,12 @@ Overlay 会在调用 sibling Base CLI 前预检 venue、图类型、颜色、打
 node skills/drawio/scripts/cli.js existing.drawio --input-format drawio --export-spec --write-sidecars --sidecar-dir .drawio-tmp/existing
 ```
 
+你也可以直接把声明态配置（Terraform、Kubernetes、Compose、SQL、OpenAPI、CI）或源码（Python、JS/TS、Go、Rust）导入为 canonical 图，对比已保存的 live 快照以查看漂移，或用 postprocess 离线投影/变换一张图。参见[配置](./config-importers.md) / [代码](./code-importers.md)导入器、[运行态漂移](./live-drift.md)与 [Postprocess](./postprocess.md)。
+
 ## 下一步
 
 - [工作流](./workflows.md)
+- [配置与 IaC 导入器](./config-importers.md)与[代码关系导入器](./code-importers.md)
 - [图标与 Stencil 搜索](./icons-stencils.md)
 - [设计系统](./design-system.md)
 - [学术出版 Overlay](./academic-overlay.md)

@@ -459,3 +459,31 @@ export function parseCsvToSpec(text, { profile = 'default' } = {}) {
     modules: []
   }
 }
+
+export * from './identity.js'
+export { finalizeGraphProjection } from './graph-projection.js'
+export { projectGraphToSpec } from './projection-to-spec.js'
+export { parseTerraformConfig, TERRAFORM_ATTRIBUTE_ALLOWLIST, buildTerraformIdentityInput } from './terraform-config.js'
+export { parseTerraformStateSnapshot } from './terraform-state.js'
+export {
+  parseKubernetesManifests,
+  parseKubernetesLiveSnapshot,
+  KUBERNETES_ATTRIBUTE_ALLOWLIST,
+  buildKubernetesIdentityInput
+} from './kubernetes.js'
+export { parseComposeConfig, COMPOSE_ATTRIBUTE_ALLOWLIST, buildComposeIdentityInput } from './compose.js'
+export { parseDockerInspectSnapshot } from './docker-inspect.js'
+export {
+  compareGraphProjections,
+  createDriftProjection,
+  projectDriftReportToSpec,
+  renderDriftGraph
+} from './graph-drift.js'
+export { parseSqlDdl, SQL_ATTRIBUTE_ALLOWLIST } from './sql-ddl.js'
+export { parseOpenApiDocument, OPENAPI_ATTRIBUTE_ALLOWLIST } from './openapi.js'
+export { parseCiWorkflow, CI_ATTRIBUTE_ALLOWLIST } from './ci.js'
+export { parsePythonImportsProject, parsePythonClassesProject } from './python-code.js'
+export { parseJavaScriptImportsProject } from './js-code.js'
+export { parseGoImportsProject } from './go-code.js'
+export { parseRustImportsProject } from './rust-code.js'
+export { parseRasterExtraction } from './raster-extraction.js'

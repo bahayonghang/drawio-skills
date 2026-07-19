@@ -1,0 +1,106 @@
+# Output Quality Scorecard: Upstream Integration
+
+Date: 2026-07-18
+Decision: **warn**
+
+This release-level scorecard aggregates the promoted offline capability families without changing the evidence classification of any archived child. Deterministic command results prove local contracts only; unavailable external executors remain `missing evidence`.
+
+## Release-Wide Capability Summary
+
+| Capability case | File-backed input | Deterministic status | External evidence gap |
+| --- | --- | --- | --- |
+| Vision preview | `cloud-reference-architecture.yaml` and four additional C0 fixtures | command-executed pass; five Desktop previews recorded | provider-backed model metadata missing evidence |
+| Offline AI icon catalog | `ai-icons-core-aliases.yaml` and four additional catalog fixtures | command-executed pass; Desktop catalog evidence recorded | model-executed review missing evidence |
+| Declared/live drift | `drift-declared-compose.yaml` plus sanitized report/spec evidence | command-executed pass | provider, daemon, cluster, Desktop, and model missing evidence |
+| Raster canonical adapter | `raster-extraction.json` | command-executed pass | OCR and model extraction fidelity missing evidence |
+| Multi-page and postprocess | `postprocess/fixtures/bundle.yaml` | command-executed pass | Desktop and browser execution missing evidence |
+| Draw.io import round-trip | `import-simple-compressed.drawio` | command-executed pass | Desktop multi-page editing missing evidence |
+| SysML/BPMN catalog | `shape-index.json.gz` | command-executed pass | nested semantic constructs remain deferred |
+
+The machine-readable registry is [`../evals/upstream-integration-cases.json`](../evals/upstream-integration-cases.json). The 37-item disposition and per-capability evidence state live in [`../references/docs/upstream-capability-compatibility.md`](../references/docs/upstream-capability-compatibility.md).
+
+The C0 preview pipeline passed every deterministic export contract on the current machine. All five PNGs are structurally valid and readable, and no visual issue remains after YAML-first fixture hardening. Provider/model metadata was not captured, so visual inspection is not counted as `model-executed` evidence.
+
+## Governance Boundary
+
+- owner: drawio-skill maintainers
+- review cadence: per-release
+- input_files: [`../evals/vision-preview-cases.json`](../evals/vision-preview-cases.json) lists five `file-backed fixture` inputs.
+- output contract: non-embedded PNG, `profile=vision-preview`, `max(width, height) <= 2000`, valid terminal IEND, work-directory output, and no change to final export defaults.
+- rollback boundary: remove the preview profile, evidence manifest, and work-directory review records without changing the existing final 300dpi embedded PNG path.
+
+## Evidence Classification
+
+| Evidence kind | Count | Status | Interpretation |
+| --- | ---: | --- | --- |
+| recorded fixture | 5 inputs | pass | Five committed YAML inputs are recorded; generated PNGs remain ignored work artifacts. |
+| command-executed | 5 cases | pass | The real CLI ran `--validate --visual-preview` for every case. |
+| Desktop-executed | 5 cases | pass | draw.io Desktop `30.3.11` produced every inspected PNG. |
+| model-executed | 0 cases | missing evidence | The visual inspection did not capture provider/model metadata and is not promoted to model evidence. |
+| trust report | 0 | missing evidence | C0 did not regenerate a package-level trust report; governed promotion remains a later release gate. |
+
+## Case Results
+
+| Category | Source | Preview | Dimensions | PNG result | Current visual result |
+| --- | --- | --- | ---: | --- | --- |
+| small | `cloud-reference-architecture.yaml` | `small.preview.png` | 2000 x 298 | IEND complete; unchanged | pass |
+| wide | `arch-dark-microservices.yaml` | `wide.preview.png` | 2000 x 935 | IEND complete; unchanged | pass |
+| tall | `vision-tall-workflow.yaml` | `tall.preview.png` | 316 x 2000 | height re-exported; IEND complete; unchanged | pass |
+| CJK | `industrial-architecture-cn-paper.yaml` | `cjk.preview.png` | 2000 x 1800 | IEND complete; unchanged | pass after 2 rounds |
+| dense academic | `yolo-model-architecture-paper.yaml` | `dense-academic.preview.png` | 2000 x 1153 | IEND complete; unchanged | pass after 2 rounds |
+
+All paths are rooted at `.drawio-tmp/vision-preview/`. The evidence manifest validates source existence, YAML parsing, draw.io XML generation, output paths, review issue fields, and canonical edge targets without requiring Desktop in CI.
+
+## Rework Outcome
+
+- CJK round 1 found `edge:train_api->apscheduler` crossing the scheduler title. Stable waypoints plus `labelOffset` moved the connector and label into clear space. Round 2 has no remaining issue.
+- Dense academic round 1 found an empty route artifact on `edge:p3->fuse`; a stable short route removed it.
+- The same dense case exposed `edge:spp->p3` crossing Backbone nodes. Stable waypoints routed it through the module gap. Offset candidates either collided in Desktop or represented a different connector despite deterministic acceptance, so the redundant edge label was removed while `meta.legend` retained the dashed-link multi-scale meaning.
+- Work-directory records live under `.drawio-tmp/vision-preview/reviews/`. The tracked manifest preserves the initial issues, canonical patch targets, round count, and current status.
+
+## Score Reading
+
+| Measure | Result |
+| --- | --- |
+| Baseline pass rate | missing evidence; no pre-C0 matched execution set was recorded |
+| With-skill deterministic pass rate | 5/5 (100%) |
+| Longest-edge and IEND pass rate | 5/5 (100%) |
+| Readable with no blocker after rework | 5/5 (100%) |
+| Clean with no visual warning | 5/5 (100%) |
+| Absolute baseline delta | missing evidence |
+| Provider-backed visual-model pass rate | missing evidence |
+
+The deterministic score proves the export and rework contracts, not visual-model quality uplift. A future provider-backed run must record `execution_kind=model`, provider, and model before this report can claim model-executed evidence. A blind A/B comparison against a pre-C0 export set is also `missing evidence`.
+
+## Reproduction
+
+For each source/output pair in the manifest:
+
+```powershell
+node skills/drawio/scripts/cli.js <source.yaml> <output.preview.png> --validate --visual-preview
+```
+
+Focused evidence check:
+
+```powershell
+node --test tests/vision-preview-evidence.test.js
+```
+
+## C1 Saved-Snapshot Drift Addendum
+
+The file-backed Compose case records a sanitized drift report, editable
+canonical YAML, stable renderer IDs, status text, legend, changed keys, and a
+dashed removed edge. Focused tests execute the snapshot parsers, comparator,
+shared projector, vendored JavaScript ELK, renderer, and XML validation.
+
+| Evidence kind | Count | Status | Interpretation |
+| --- | ---: | --- | --- |
+| recorded fixture | 1 case | pass | Saved declared/live inputs plus sanitized report/spec/evidence manifest are committed. |
+| command-executed | 1 case | pass | Deterministic snapshot, diff, JS ELK, renderer, XML, and sentinel checks ran. |
+| provider CLI / live environment | 0 cases | missing evidence | No `terraform`, `docker`, or `kubectl` capture and no daemon/cluster/cloud access occurred. |
+| Desktop-executed | 0 cases | missing evidence | No PNG preview was requested or generated for this child. |
+| model-executed | 0 cases | missing evidence | No provider/model metadata or visual-model run exists. |
+
+This addendum proves deterministic projection drift only. It does not upgrade
+provider, Desktop, or visual-model evidence and does not alter the C0 five-case
+preview result above.

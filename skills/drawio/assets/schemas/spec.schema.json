@@ -3,6 +3,42 @@
   "title": "Draw.io YAML Specification",
   "description": "Schema for the draw.io skill YAML specification format. Validates diagram structure including nodes, edges, modules, and meta configuration.",
   "type": "object",
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "required": ["scheme", "key"],
+      "properties": {
+        "scheme": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,63}$"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "adapter": {
+      "type": "object",
+      "required": ["projectionVersion", "name", "domain", "mode", "locator"],
+      "properties": {
+        "projectionVersion": { "const": 1 },
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "domain": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "mode": { "enum": ["code", "declared", "live", "drift"] },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])[^\\u0000-\\u001F\\u007F]+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "properties": {
     "meta": {
       "type": "object",
@@ -162,6 +198,10 @@
               "description": "Freeform notes about low-confidence color extraction or normalization decisions"
             }
           }
+        },
+        "adapter": {
+          "$ref": "#/$defs/adapter",
+          "description": "Sanitized provenance for a canonical graph projection adapter"
         }
       }
     },
@@ -176,6 +216,10 @@
             "type": "string",
             "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
             "description": "Unique node identifier"
+          },
+          "identity": {
+            "$ref": "#/$defs/identity",
+            "description": "Optional stable external identity retained from an adapter projection"
           },
           "label": {
             "type": "string",
@@ -375,6 +419,15 @@
         "type": "object",
         "required": ["from", "to"],
         "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Optional stable edge identifier"
+          },
+          "identity": {
+            "$ref": "#/$defs/identity",
+            "description": "Optional stable external edge identity retained from an adapter projection"
+          },
           "from": {
             "type": "string",
             "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
@@ -543,6 +596,10 @@
             "type": "string",
             "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
             "description": "Unique module identifier"
+          },
+          "identity": {
+            "$ref": "#/$defs/identity",
+            "description": "Optional stable external module identity retained from an adapter projection"
           },
           "label": {
             "type": "string",

@@ -618,3 +618,509 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 - 下一版本发布时随版本号 cut 两份 CHANGELOG 的 Unreleased 段
 
 **Follow-up (2026-07-16 收尾轮)**: e08 两处 style-preset 治理缺口已闭环——SKILL.md § Style Presets 补 user-first 查找优先级与 unknown-name 报错契约（对冲后 13,995B 仍在预算内），e08 复验 4/4，base eval 97.2 → 100.0（TSV keep 行）。Next Steps 仅剩：下一版本发布时 cut Unreleased 段。
+
+
+## Session 14: 完成 C0 视觉预览与 YAML 返工闭环
+
+**Date**: 2026-07-18
+**Task**: 完成 C0 视觉预览与 YAML 返工闭环
+**Branch**: `dev`
+
+### Summary
+
+新增最长边 2000px 的非嵌入 vision-preview、Desktop 落盘稳定等待、PNG 结构检查与保守修复、结构化视觉评审和 file-backed 证据；完成五类 Desktop 实测与 academic YAML 返工，469 项测试和 just ci 通过。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6a48b82` | (see git log) |
+| `6d83c03` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 15: 完成 adapter identity foundation 并审阅 config importer 启动门
+
+**Date**: 2026-07-18
+**Task**: 完成 adapter identity foundation 并审阅 config importer 启动门
+**Branch**: `dev`
+
+### Summary
+
+完成 foundation 最终质量审阅与提交，归档任务并同步 C1/父任务进度；只读审阅 config child 的 HCL/SQL parser 方案与依赖批准边界，未执行 task.py start。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `97d3c81` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 16: 完成声明式配置导入器
+
+**Date**: 2026-07-18
+**Task**: 完成声明式配置导入器
+**Branch**: `dev`
+
+### Summary
+
+完成 Terraform、Kubernetes、Compose、SQL DDL、OpenAPI 与 CI 声明式配置导入器，固化 optional Python parser 隔离和 declared/live identity 合同；验证 focused 28/28 与 just ci 511 passed、1 skipped，并保留大型 corpus、provider、Desktop、Graphviz comparison、visual model 为 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6afac39` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 17: 完成多语言代码关系导入器
+
+**Date**: 2026-07-18
+**Task**: 完成多语言代码关系导入器
+**Branch**: `dev`
+
+### Summary
+
+实现 Python imports/classes、JS/TS ESM、Go package 与 Rust module use 导入器；复用 canonical identity/finalizer/projector 和受限 Python worker envelope，新增 directory CLI routes、精确 optional parser pins、Node 20 真实 parser 证据、文档与 executable spec；保留大型 corpus、conditional build、Graphviz、Desktop 和 visual model 为 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e53d46e` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 18: 完成运行态快照与架构漂移
+
+**Date**: 2026-07-18
+**Task**: 完成运行态快照与架构漂移
+**Branch**: `dev`
+
+### Summary
+
+实现 snapshot-only Terraform state、Docker inspect、Kubernetes live JSON 适配器与稳定身份复用；新增确定性 node/edge/attribute 四状态漂移、非颜色 canonical presentation、file-backed C0 证据和公共契约。provider CLI、真实环境、Desktop 与 model 均保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `21d01b7` | (see git log) |
+| `484b7a4` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 19: 完成离线 AI 图标目录
+
+**Date**: 2026-07-19
+**Task**: 完成离线 AI 图标目录
+**Branch**: `dev`
+
+### Summary
+
+固定 @lobehub/icons-static-svg@1.91.0 生成 309 品牌离线目录，接入 lazy resolver/search/compatibility，并以五个 YAML fixture 和 Desktop 30.3.14 结构证据完成验收；外部视觉模型证据保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2e12c900663c4491cbe8db891f6a0ae1d9876671` | (see git log) |
+| `0eab7b712fc067608208bc2fe15fdcd7e1c329bb` | (see git log) |
+| `196566a53f232fd5b7c803494fa924f44209fb61` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 20: 完成 canonical 多页基础实施
+
+**Date**: 2026-07-19
+**Task**: 完成 canonical 多页基础实施
+**Branch**: `dev`
+
+### Summary
+
+完成多页 bundle v1 的 schema/identity、逐页 renderer/import/round-trip、CLI page selection、arch v2/sidecars、security evidence 与 drawio-skill executable spec；npm test、just ci、focused gates 和 git diff --check 通过。Desktop、browser、MCP、网络、视觉模型与外部 binary 按批准范围未执行，保持 missing evidence。仅归档 07-19 child，未启动 parent/C2/C3 或 integration child。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8fb4889` | (see git log) |
+| `8e82eec` | (see git log) |
+| `14c78f3` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 21: 收口方向三后处理导出
+
+**Date**: 2026-07-19
+**Task**: 收口方向三后处理导出
+**Branch**: `dev`
+
+### Summary
+
+实现并验证 Mermaid、explain、relabel、restyle、heatmap 与无脚本 HTML 后处理，固化 executable spec；focused 133/133 与 just ci 通过，外部 provider 证据保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c0edb70` | (see git log) |
+| `05ff82c` | (see git log) |
+| `1def151` | (see git log) |
+| `7378daa` | (see git log) |
+| `8880675` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 22: 收口方向一导入与漂移 bucket
+
+**Date**: 2026-07-19
+**Task**: 收口方向一导入与漂移 bucket
+**Branch**: `dev`
+
+### Summary
+
+核实 foundation、code/config importers 与 live drift 四个 child 均已归档；C1 权威映射 15/15 唯一，task validation 与当前 just ci 通过，外部证据保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 23: 完成 raster canonical extraction adapter
+
+**Date**: 2026-07-19
+**Task**: 完成 raster canonical extraction adapter
+**Branch**: `dev`
+
+### Summary
+
+新增严格版本化的 raster-extraction adapter 与 CLI 路由，将结构化视觉抽取结果直接接入 canonical spec、JS ELK、统一 renderer 和 sidecars；完成 TDD、file-backed、错误矩阵、npm test、just ci，并保留 Desktop/model/human fidelity 为 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0b6a379` | (see git log) |
+| `b03e683` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 24: 完成 SysML/BPMN canonical stencil delta
+
+**Date**: 2026-07-19
+**Task**: 完成 SysML/BPMN canonical stencil delta
+**Branch**: `dev`
+
+### Summary
+
+扩展现有离线 catalog/search/validation/renderer 到 SysML/BPMN vendored stencil，合并 variant tags，保留 nested ports、pools/lanes 与专用 flow 为 defer；focused 215/215、npm test 和 just ci 通过。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `669c415` | (see git log) |
+| `3710620` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 25: 完成方向二专业作图 bucket 验收
+
+**Date**: 2026-07-19
+**Task**: 完成方向二专业作图 bucket 验收
+**Branch**: `dev`
+
+### Summary
+
+核实 AI icon、multi-page、raster replicate 与 SysML/BPMN 四个 child 全部归档，建立唯一 bridge/adapt/replace/defer 映射；聚合 focused 30/30 通过，保留 model/provider 与 nested semantics missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `09f5c25` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 26: 完成上游能力整合与发布收口
+
+**Date**: 2026-07-19
+**Task**: 完成上游能力整合与发布收口
+**Branch**: `dev`
+
+### Summary
+
+发布37项权威能力映射，统一两个 skill 路由、interfaces、evals、双语文档与全局 scorecard；focused、npm test、just ci、docs build 和 staged package gate 通过，外部 provider/model/remote evidence 保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `978bab1` | (see git log) |
+| `1620774` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 27: 归档 drawio 上游能力整合父任务
+
+**Date**: 2026-07-19
+**Task**: 归档 drawio 上游能力整合父任务
+**Branch**: `dev`
+
+### Summary
+
+完成 parent 5/5 跨 child 总验收，最终 just ci 通过；37 项唯一映射、canonical/offline/base-overlay 所有权、package contents 与 missing-evidence 口径均核实后归档。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `52eb520` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 28: 补录上游整合批到 skill 侧 base CHANGELOG
+
+**Date**: 2026-07-19
+**Task**: 补录上游整合批到 skill 侧 base CHANGELOG
+**Branch**: `dev`
+
+### Summary
+
+在 skills/drawio/CHANGELOG.md 的 ## Unreleased 段新增 ### Upstream capability integration 子段，覆盖配置/IaC 导入器、代码关系导入器、live 快照+架构漂移、离线 AI 图标目录(309 授权)、多页 canonical bundle v1、postprocess 六操作、raster 提取适配器、SysML/BPMN stencil 八类能力，措辞对齐根 CHANGELOG 并保留证据边界。未扰动被 palette-skill-policy.test.js pin 的 ## 2.7.0 段；学术 overlay CHANGELOG 未动(base-only)。验证：markdownlint、just lint、npm test 631 pass、palette-skill-policy 3/3。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `718231e` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

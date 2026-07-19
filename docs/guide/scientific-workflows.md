@@ -24,6 +24,16 @@ Use `drawio-academic-skills` when the reference is a paper/thesis/manuscript fig
 7. Render the offline bundle
 8. Compare and refine with `/drawio edit`
 
+## Structured Raster Extraction Input
+
+When a diagram was already extracted into structured JSON by a model or a human, the `raster-extraction` adapter turns that trusted JSON into a canonical spec offline. It does not read images, run OCR, invoke a model, or claim extraction accuracy.
+
+```bash
+node skills/drawio/scripts/cli.js extraction.json final/redraw.drawio --input-format raster-extraction --validate
+```
+
+The input requires `schemaVersion: 1`, a non-empty `nodes` array, an `edges` array, and caller-provided safe, unique IDs. Geometry is all-or-none: if every node supplies `x/y/w/h`, all top-left bounds are preserved; if any node omits geometry, all source bounds are dropped and JavaScript ELK places the whole graph. Plain text nodes always render with transparent fill and stroke. Malformed JSON, unknown fields, unsafe values, duplicates, dangling edges, invalid colors, or partial geometry fail with `ADAPTER_PARSE`; unsupported schema versions fail with `ADAPTER_UNSUPPORTED`. After the adapter, the normal `validateSpec` → JavaScript ELK → renderer → `validateXml` path and sidecars apply.
+
 ## Academic Replication Overlay
 
 When the source is publication-facing, the overlay adds:
@@ -57,10 +67,10 @@ For self-checking, compare the source and export for:
 
 ## Color Modes
 
-| Mode | Default | Behavior |
-| --- | --- | --- |
-| `preserve-original` | Yes | Preserve source background and dominant palette through explicit style overrides |
-| `theme-first` | No | Normalize the redraw to the selected theme and treat source colors as hints |
+| Mode                | Default | Behavior                                                                         |
+| ------------------- | ------- | -------------------------------------------------------------------------------- |
+| `preserve-original` | Yes     | Preserve source background and dominant palette through explicit style overrides |
+| `theme-first`       | No      | Normalize the redraw to the selected theme and treat source colors as hints      |
 
 Replicated specs should usually record:
 
@@ -72,14 +82,14 @@ Replicated specs should usually record:
 
 ## Theme Defaults by Domain
 
-| Domain | Recommended theme |
-| --- | --- |
-| software architecture | `tech-blue` |
-| business process | `tech-blue` |
-| research workflow | `academic` |
-| environmental / lifecycle | `nature` |
-| accessibility-first review | `high-contrast` |
-| presentation slides | `dark` |
+| Domain                     | Recommended theme |
+| -------------------------- | ----------------- |
+| software architecture      | `tech-blue`       |
+| business process           | `tech-blue`       |
+| research workflow          | `academic`        |
+| environmental / lifecycle  | `nature`          |
+| accessibility-first review | `high-contrast`   |
+| presentation slides        | `dark`            |
 
 ## Logic Confirmation
 

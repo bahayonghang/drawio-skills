@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "case": "compose-declared-vs-live-snapshot",
+  "evidenceKind": "recorded fixture",
+  "inputs": {
+    "baseline": "drift-declared-compose.yaml",
+    "observed": "docker-inspect.json",
+    "comparisonContext": "shop-production"
+  },
+  "outputs": {
+    "report": "compose-drift-report.json",
+    "canonicalSpec": "compose-drift.spec.yaml",
+    "preview": null
+  },
+  "rendererIds": {
+    "nodes": [
+      "n-b0c7dcea76e028eb133e",
+      "n-e910463ac586ec2c6650",
+      "n-4903a493e4a81d27f85d",
+      "n-10a3456c98d3da96de33"
+    ],
+    "edges": [
+      "e-3ffbc4168e6938cf5862",
+      "e-3e5d1f33c960330fac43"
+    ]
+  },
+  "execution": {
+    "snapshotParse": "command-executed",
+    "projectionDiff": "command-executed",
+    "javascriptElk": "command-executed",
+    "xmlValidation": "command-executed",
+    "providerCli": "missing evidence",
+    "desktop": "missing evidence",
+    "model": "missing evidence"
+  },
+  "review": {
+    "pageId": "Page-1",
+    "round": 0,
+    "issues": [],
+    "status": "deterministic-only"
+  },
+  "stopping": {
+    "autonomousRoundLimit": 2,
+    "userRoundLimit": 5,
+    "currentAutonomousRounds": 0,
+    "currentUserRounds": 0
+  },
+  "rollbackBoundary": "Remove the drift report, canonical spec, and evidence manifest without changing snapshot adapters or declared importers."
+}

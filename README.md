@@ -27,9 +27,13 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Academic overlay policy**: venue/audience preflight, caption/legend checks, formula fidelity, A4/Word/LaTeX expectations, and figure typing.
 - **Academic figure taxonomy**: publication requests classify into `architecture`, `roadmap`, or `workflow` before layout and export.
 - **Cloud and stencil support**: AWS, GCP, Azure, Kubernetes, and network/provider icon workflows through the base references.
-- **Embedded Lobe, brand, and Lucide icons**: use bundled `lobe.*` / `ai.*` AI/LLM logos, `brand.redis`, and a curated `lucide.*` set for common semantic roles without runtime network access.
+- **Embedded AI, brand, and Lucide icons**: use 309 licensed offline `lobe.*` / `ai.*` AI/LLM logos, `brand.redis`, and a curated `lucide.*` set for common semantic roles without runtime network access. SysML (`mxgraph.sysml.*`) and BPMN (`mxgraph.bpmn.*`) base names are searchable too.
 - **Network topology support**: semantic device types (`router`, `switch`, `firewall`, `server`, `load_balancer`, `subnet`, `internet`, `ap`) and automatic link labels from interface/IP/VLAN/bandwidth metadata.
-- **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec`.
+- **Offline config and IaC import**: turn declared Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, or GitLab CI into a canonical diagram — no provider CLI, Graphviz, or network.
+- **Code relationship import**: render Python, JavaScript/TypeScript, Go, or Rust module/class relationships from a local project directory.
+- **Live snapshots and drift**: project saved Terraform state, Docker inspect, or Kubernetes live JSON, and compare a declared-vs-live projection to render architecture drift.
+- **Multi-page bundles and postprocess**: author canonical bundle v1 with stable page/object identity, and project or transform diagrams offline with `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, or script-free `html`.
+- **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec` (add `--all-pages` for multi-page bundles).
 - **Validation before export**: structure, layout, quality, formula, and replication text-position checks.
 
 ## Runtime Model
@@ -242,10 +246,31 @@ Render one directly:
 node skills/drawio/scripts/cli.js skills/drawio/references/examples/vendor-device-mapping.yaml output.drawio --validate --write-sidecars
 ```
 
+## Offline Importers and Adapters
+
+Beyond `create` / `edit` / `replicate`, the offline base promotes a batch of upstream capabilities behind the same canonical boundary. Every route normalizes its input to canonical YAML or multi-page bundle v1 before validation, JavaScript ELK layout, and the renderer — no provider CLI, Graphviz, network, Desktop, browser, MCP, or model is required. Optional parsers and exports report precise missing dependencies or fallbacks.
+
+| Route              | Input                                                                       | `--input-format` / command                                                                  |
+| ------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `config-import`    | Terraform, Kubernetes, Compose, SQL DDL, OpenAPI, GitHub Actions, GitLab CI | `terraform` / `kubernetes` / `compose` / `sql` / `openapi` / `github-actions` / `gitlab-ci` |
+| `code-import`      | local Python, JS/TS, Go, Rust project directory                             | `python-imports` / `python-classes` / `js-imports` / `go-imports` / `rust-imports`          |
+| `live-drift`       | saved Terraform state, Docker inspect, Kubernetes live JSON                 | snapshot adapters + `compareGraphProjections`                                               |
+| `multi-page`       | canonical bundle v1                                                         | `--input-format drawio --all-pages --export-spec`                                           |
+| `raster-replicate` | trusted structured visual extraction                                        | `raster-extraction`                                                                         |
+| `postprocess`      | canonical YAML / `.drawio`                                                  | `postprocess mermaid\|explain\|relabel\|restyle\|heatmap\|html`                             |
+
+The shipped postprocess operations are exactly `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, and script-free `html`; runbook, animated SVG, tube/sequence layout, compression, buildup, PPTX, timelapse, and PR diff are deferred, not hidden commands. Deterministic paths are command evidence; Desktop, provider, browser/MCP, and visual-model runs remain reported as missing evidence when not executed. The full upstream job-to-capability map lives at `skills/drawio/references/docs/upstream-capability-compatibility.md`.
+
 ## Documentation
 
 - [Getting Started](https://bahayonghang.github.io/drawio-skills/guide/getting-started)
 - [Workflows](https://bahayonghang.github.io/drawio-skills/guide/workflows)
+- [Config and IaC Importers](https://bahayonghang.github.io/drawio-skills/guide/config-importers)
+- [Code Relationship Importers](https://bahayonghang.github.io/drawio-skills/guide/code-importers)
+- [Live Snapshots and Drift](https://bahayonghang.github.io/drawio-skills/guide/live-drift)
+- [Multi-page Bundles](https://bahayonghang.github.io/drawio-skills/guide/multi-page)
+- [Postprocess Suite](https://bahayonghang.github.io/drawio-skills/guide/postprocess)
+- [Upstream Capability Map](https://bahayonghang.github.io/drawio-skills/api/upstream-capability-map)
 - [CLI Tool](https://bahayonghang.github.io/drawio-skills/guide/cli)
 - [Optional MCP Tools](https://bahayonghang.github.io/drawio-skills/api/mcp-tools)
 - [Examples](https://bahayonghang.github.io/drawio-skills/examples/)

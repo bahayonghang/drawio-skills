@@ -6,25 +6,47 @@
 
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { basename, extname, join, resolve } from 'node:path'
+import { basename, extname, join, relative, resolve } from 'node:path'
 import {
   computeLayoutQualityMetrics,
-  parseSpecYaml,
   specToDrawioXml,
   validateSpec,
   validateXml
 } from './dsl/spec-to-drawio.js'
+import { parseDocumentYaml, selectDocumentPage, validateDocumentSpec } from './dsl/document-spec.js'
 import { applyAutoLayout } from './dsl/auto-layout.js'
-import { parseMermaidToSpec, parseCsvToSpec } from './adapters/index.js'
+import {
+  parseCiWorkflow,
+  parseComposeConfig,
+  parseCsvToSpec,
+  parseKubernetesManifests,
+  parseGoImportsProject,
+  parseJavaScriptImportsProject,
+  parseMermaidToSpec,
+  parseOpenApiDocument,
+  parseRasterExtraction,
+  parsePythonClassesProject,
+  parsePythonImportsProject,
+  parseRustImportsProject,
+  parseSqlDdl,
+  parseTerraformConfig,
+  projectGraphToSpec
+} from './adapters/index.js'
 import { drawioToSpec } from './dsl/drawio-to-spec.js'
+import { drawioToDocumentSpec, renderDocumentPages, validateDrawioDocument } from './dsl/multi-page.js'
 import { searchShapeCatalogBatch } from './dsl/catalog-search.js'
 import {
   buildArchMetadata,
+  buildMultiPageArchMetadata,
   createDrawioFileContent,
+  createMultiPageDrawioFileContent,
   deriveArtifactPaths,
+  serializeDocumentSpecYaml,
   serializeSpecYaml
 } from './runtime/artifacts.js'
 import { exportWithDrawioDesktop, isDesktopExportFormat } from './runtime/desktop.js'
+import { exportVisionPreview } from './runtime/vision-preview.js'
+import { runPostprocessCommand } from './postprocess/cli.js'
 
 /** draw.io format compatibility version */
 const DRAWIO_COMPAT_VERSION = '21.0.0'
@@ -34,6 +56,16 @@ const DRAWIO_COMPAT_VERSION = '21.0.0'
 // ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2)
+
+if (args[0] === 'postprocess') {
+  try {
+    await runPostprocessCommand(args.slice(1))
+    process.exit(0)
+  } catch (error) {
+    console.error(`Error: Postprocess failed: ${error.message}`)
+    process.exit(1)
+  }
+}
 
 if (args[0] === 'search') {
   const prefixIndex = args.indexOf('--prefix')
@@ -77,6 +109,7 @@ draw.io YAML → XML/SVG Converter
 Usage:
   node cli.js <input> [output.drawio|output.svg] [options]
   node cli.js search <query> [--prefix <library>] [--limit <n>] [--json]
+  node cli.js postprocess <operation> <input> <output> [options]
 
 Arguments:
   input               Path to input file, or - for stdin
@@ -89,9 +122,24 @@ Arguments:
                       If omitted, XML is printed to stdout.
 
 Options:
-  --input-format <f>  Input format: yaml (default), mermaid, csv, drawio
+  postprocess operation: mermaid, explain, relabel, restyle, heatmap, or html
+  postprocess options: --page <selector>, --all-pages, --map <json>,
+                      --preset <name|json>, --metrics <json|csv>, --fenced,
+                      --direction <LR|RL|TB|BT>, --palette <name>,
+                      --label-fallback, --title <text>, --search <text>
+  --input-format <f>  Input format: yaml (default), mermaid, csv, drawio,
+                      terraform, kubernetes, compose, sql, openapi,
+                      github-actions, gitlab-ci, python-imports,
+                      python-classes, js-imports, go-imports, rust-imports,
+                      or raster-extraction
+  --scope <name>      Kubernetes logical cluster/environment identity
+  --project <name>    Compose project identity override
+  --dialect <name>    SQL dialect (default: postgres)
+  --module-address <a> Terraform module address for the selected source
+  --workflow <path>   CI workflow repo-relative path (required for stdin)
   --theme <name>      Override theme (e.g. tech-blue, academic, nature, dark)
-  --page <selector>   drawio only: page index (0-based) or diagram name
+  --page <selector>   page index (0-based), page id, or unique page name
+  --all-pages         drawio import: import every page as canonical bundle v1
   --export-spec       Export the canonical YAML spec instead of generating XML/SVG
   --strict            Fail on complexity and spec validation warnings
   --strict-warnings   Alias of --strict (recommended for paper-grade validation)
@@ -100,6 +148,7 @@ Options:
   --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
   --sidecar-dir <dir> Emit sidecars in this directory when --write-sidecars is set
   --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
+  --visual-preview    Export a non-embedded PNG with longest edge <= 2000px for visual review
   search              Search the bundled shape catalog without network access
   --help, -h          Show this help message
 `.trim()
@@ -108,7 +157,18 @@ Options:
 }
 
 // Extract positional arguments (non-flag args, excluding values of --flags)
-const flagsWithValues = new Set(['--theme', '--input-format', '--page', '--sidecar-dir', '--dpi'])
+const flagsWithValues = new Set([
+  '--theme',
+  '--input-format',
+  '--page',
+  '--sidecar-dir',
+  '--dpi',
+  '--scope',
+  '--project',
+  '--dialect',
+  '--module-address',
+  '--workflow'
+])
 const positional = []
 for (let i = 0; i < args.length; i++) {
   if (flagsWithValues.has(args[i])) {
@@ -130,14 +190,75 @@ const allowUnknownShapes = args.includes('--allow-unknown-shapes')
 const doValidate = args.includes('--validate')
 const writeSidecars = args.includes('--write-sidecars')
 const useDesktop = args.includes('--use-desktop')
+const visualPreview = args.includes('--visual-preview')
 const dpiIndex = args.indexOf('--dpi')
 const dpi = dpiIndex !== -1 ? Number(args[dpiIndex + 1]) : 300
 const exportSpec = args.includes('--export-spec')
+const allPages = args.includes('--all-pages')
 const pageIndex = args.indexOf('--page')
 const pageSelector = pageIndex !== -1 ? args[pageIndex + 1] : null
 const sidecarDirIndex = args.indexOf('--sidecar-dir')
 const sidecarDir = sidecarDirIndex !== -1 ? args[sidecarDirIndex + 1] : null
 const resolvedSidecarDir = sidecarDir ? resolve(sidecarDir) : null
+
+if (allPages && pageIndex !== -1) {
+  console.error('Error: --all-pages cannot be combined with --page.')
+  process.exit(1)
+}
+if (allPages && inputFormat !== 'drawio') {
+  console.error('Error: --all-pages is only valid with --input-format drawio.')
+  process.exit(1)
+}
+const optionValue = (name) => {
+  const index = args.indexOf(name)
+  if (index === -1) return undefined
+  const value = args[index + 1]
+  if (!value || value.startsWith('--')) {
+    console.error(`Error: ${name} requires a value.`)
+    process.exit(1)
+  }
+  return value
+}
+const adapterScope = optionValue('--scope')
+const adapterProject = optionValue('--project')
+const adapterDialect = optionValue('--dialect') || 'postgres'
+const adapterModuleAddress = optionValue('--module-address') || ''
+const repoRelativeInput =
+  inputFile && inputFile !== '-' ? relative(process.cwd(), resolve(inputFile)).replaceAll('\\', '/') : undefined
+const adapterWorkflow = optionValue('--workflow') || repoRelativeInput
+const adapterLocator = repoRelativeInput || `${inputFormat}.stdin`
+const codeInputFormats = new Set([
+  'python-imports',
+  'python-classes',
+  'js-imports',
+  'go-imports',
+  'rust-imports'
+])
+const codeProjectInput = codeInputFormats.has(inputFormat)
+const codeAdapterLocator =
+  repoRelativeInput &&
+  !repoRelativeInput.startsWith('/') &&
+  !/^[A-Za-z]:/.test(repoRelativeInput) &&
+  !repoRelativeInput.split('/').includes('..')
+    ? repoRelativeInput
+    : inputFile && inputFile !== '-'
+      ? basename(resolve(inputFile))
+      : 'project'
+
+if (visualPreview && (!outputFile || extname(outputFile).toLowerCase() !== '.png')) {
+  console.error('Error: --visual-preview requires an explicit .png output path.')
+  process.exit(1)
+}
+
+if (visualPreview && dpiIndex !== -1) {
+  console.error('Error: --visual-preview cannot be combined with --dpi; preview dimensions are bounded directly.')
+  process.exit(1)
+}
+
+if (visualPreview && exportSpec) {
+  console.error('Error: --visual-preview cannot be combined with --export-spec.')
+  process.exit(1)
+}
 
 if (sidecarDirIndex !== -1 && (!sidecarDir || sidecarDir.startsWith('--'))) {
   console.error('Error: --sidecar-dir requires a directory path.')
@@ -175,7 +296,12 @@ try {
 // ---------------------------------------------------------------------------
 
 let inputText
-if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
+if (codeProjectInput) {
+  if (!inputFile || inputFile === '-') {
+    console.error(`Error: ${inputFormat} requires a local project directory; stdin is not supported.`)
+    process.exit(1)
+  }
+} else if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
   const chunks = []
   for await (const chunk of process.stdin) chunks.push(chunk)
   inputText = Buffer.concat(chunks).toString('utf-8')
@@ -192,25 +318,67 @@ if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
 }
 
 let spec
+let document = null
 try {
-  if (inputFormat === 'yaml') {
-    spec = parseSpecYaml(inputText)
+  if (codeProjectInput) {
+    const parser = {
+      'python-imports': parsePythonImportsProject,
+      'python-classes': parsePythonClassesProject,
+      'js-imports': parseJavaScriptImportsProject,
+      'go-imports': parseGoImportsProject,
+      'rust-imports': parseRustImportsProject
+    }[inputFormat]
+    spec = projectGraphToSpec(await parser(resolve(inputFile), { locator: codeAdapterLocator }))
+  } else if (inputFormat === 'yaml') {
+    const parsedDocument = parseDocumentYaml(inputText)
+    if (parsedDocument.kind === 'multi-page-v1') document = parsedDocument
+    else spec = parsedDocument.spec
   } else if (inputFormat === 'mermaid') {
     spec = parseMermaidToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'csv') {
     spec = parseCsvToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'drawio') {
-    spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
+    if (allPages) document = drawioToDocumentSpec(inputText)
+    else spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
+  } else if (inputFormat === 'terraform') {
+    spec = projectGraphToSpec(
+      parseTerraformConfig(inputText, { locator: adapterLocator, moduleAddress: adapterModuleAddress })
+    )
+  } else if (inputFormat === 'kubernetes') {
+    spec = projectGraphToSpec(
+      parseKubernetesManifests(inputText, { scope: adapterScope, locator: adapterLocator })
+    )
+  } else if (inputFormat === 'compose') {
+    spec = projectGraphToSpec(parseComposeConfig(inputText, { project: adapterProject, locator: adapterLocator }))
+  } else if (inputFormat === 'sql') {
+    spec = projectGraphToSpec(parseSqlDdl(inputText, { dialect: adapterDialect, locator: adapterLocator }))
+  } else if (inputFormat === 'openapi') {
+    spec = projectGraphToSpec(parseOpenApiDocument(inputText, { locator: adapterLocator }))
+  } else if (inputFormat === 'github-actions' || inputFormat === 'gitlab-ci') {
+    spec = projectGraphToSpec(
+      parseCiWorkflow(inputText, { provider: inputFormat, workflow: adapterWorkflow })
+    )
+  } else if (inputFormat === 'raster-extraction') {
+    spec = parseRasterExtraction(inputText)
   } else {
     throw new Error(`Unsupported input format "${inputFormat}"`)
   }
 } catch (err) {
-  console.error(`Error: Failed to parse ${inputFormat}: ${err.message}`)
+  const context = [
+    err.code,
+    err.adapter && `adapter=${err.adapter}`,
+    err.path && `path=${err.path}`,
+    Number.isInteger(err.context?.line) && `line=${err.context.line}`,
+    Number.isInteger(err.context?.column) && `column=${err.context.column}`
+  ].filter(Boolean)
+  const contextText = context.length > 0 ? `[${context.join(' ')}] ` : ''
+  console.error(`Error: Failed to parse ${inputFormat}: ${contextText}${err.message}`)
   process.exit(1)
 }
 
 try {
-  validateSpec(spec)
+  if (document) validateDocumentSpec(document)
+  else validateSpec(spec)
 } catch (err) {
   console.error(`Error: Spec validation failed: ${err.message}`)
   process.exit(1)
@@ -218,21 +386,52 @@ try {
 
 // Apply CLI theme override
 if (themeName) {
-  spec.meta = spec.meta || {}
-  spec.meta.theme = themeName
+  if (document) {
+    for (const page of document.pages) {
+      page.meta = page.meta || {}
+      page.meta.theme = themeName
+    }
+  } else {
+    spec.meta = spec.meta || {}
+    spec.meta.theme = themeName
+  }
 }
 
 // Edge-aware auto-layout pre-pass (hierarchical specs without explicit geometry)
-const autoLayoutResult = await applyAutoLayout(spec)
-if (autoLayoutResult.warning) {
-  console.error(`Warning: ${autoLayoutResult.warning}`)
+if (!document) {
+  const autoLayoutResult = await applyAutoLayout(spec)
+  if (autoLayoutResult.warning) {
+    console.error(`Warning: ${autoLayoutResult.warning}`)
+  }
+  spec = autoLayoutResult.spec
 }
-spec = autoLayoutResult.spec
 
 let xml
+let documentContent = null
+let renderedDocumentPages = null
 try {
   if (exportSpec) {
     xml = null
+  } else if (document) {
+    if (!outputFile) {
+      throw new Error('multi-page documents require an explicit .drawio output path')
+    }
+    const outputExtension = extname(outputFile).toLowerCase()
+    if (outputExtension !== '.drawio' && pageSelector == null) {
+      throw new Error('multi-page SVG/PNG/PDF/JPG export requires --page <index|id|name>')
+    }
+    renderedDocumentPages = await renderDocumentPages(document, { strict, allowUnknownShapes })
+    if (outputExtension === '.drawio') {
+      documentContent = createMultiPageDrawioFileContent(renderedDocumentPages, {
+        version: DRAWIO_COMPAT_VERSION,
+        documentMeta: document.meta
+      })
+    } else {
+      const selectedPage = selectDocumentPage(document, pageSelector)
+      const rendered = renderedDocumentPages.find((page) => page.id === selectedPage.id)
+      xml = rendered.xml
+      documentContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
+    }
   } else if (doValidate) {
     const result = specToDrawioXml(spec, { strict, allowUnknownShapes, returnWarnings: true, silent: true })
     xml = result.xml
@@ -260,7 +459,7 @@ try {
 // ---------------------------------------------------------------------------
 
 if (doValidate && !exportSpec) {
-  const result = validateXml(xml)
+  const result = document ? validateDrawioDocument(documentContent) : validateXml(xml)
   if (result.warnings?.length) {
     console.error(`XML validation warnings (${result.warnings.length}):`)
     for (const w of result.warnings) {
@@ -284,7 +483,7 @@ if (doValidate && !exportSpec) {
 
 if (
   !exportSpec &&
-  spec.meta?.profile === 'academic-paper' &&
+  spec?.meta?.profile === 'academic-paper' &&
   outputFile &&
   extname(outputFile).toLowerCase() !== '.svg'
 ) {
@@ -296,7 +495,7 @@ if (
 // ---------------------------------------------------------------------------
 
 if (exportSpec) {
-  const yamlOut = serializeSpecYaml(spec)
+  const yamlOut = document ? serializeDocumentSpecYaml(document) : serializeSpecYaml(spec)
   let specPath = outputFile
   if (!specPath && inputFormat === 'drawio' && inputFile && inputFile !== '-') {
     specPath = deriveArtifactPaths(inputFile).specPath
@@ -337,7 +536,13 @@ if (exportSpec) {
       try {
         writeFileSync(
           resolve(archPath),
-          JSON.stringify(buildArchMetadata(spec, { outputFile: drawioPath || specPath }), null, 2) + '\n',
+          JSON.stringify(
+            document
+              ? buildMultiPageArchMetadata(document, { outputFile: drawioPath || specPath })
+              : buildArchMetadata(spec, { outputFile: drawioPath || specPath }),
+            null,
+            2
+          ) + '\n',
           'utf-8'
         )
         console.error(`Saved arch: ${archPath}`)
@@ -358,7 +563,7 @@ if (!outputFile) {
 }
 
 const ext = extname(outputFile).toLowerCase()
-const drawioContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
+const drawioContent = documentContent || createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
 const artifactPaths = deriveArtifactPaths(outputFile)
 const sidecarArtifactPaths = resolvedSidecarDir
   ? deriveArtifactPaths(resolve(resolvedSidecarDir, basename(artifactPaths.drawioPath)))
@@ -370,10 +575,18 @@ let desktopInputPath = null
 function writeCanonicalSidecars() {
   if (!writeSidecars) return
 
-  writeFileSync(resolve(sidecarArtifactPaths.specPath), serializeSpecYaml(spec), 'utf-8')
+  writeFileSync(
+    resolve(sidecarArtifactPaths.specPath),
+    document ? serializeDocumentSpecYaml(document) : serializeSpecYaml(spec),
+    'utf-8'
+  )
   writeFileSync(
     resolve(sidecarArtifactPaths.archPath),
-    JSON.stringify(buildArchMetadata(spec, { outputFile }), null, 2) + '\n',
+    JSON.stringify(
+      document ? buildMultiPageArchMetadata(document, { outputFile }) : buildArchMetadata(spec, { outputFile }),
+      null,
+      2
+    ) + '\n',
     'utf-8'
   )
 }
@@ -402,14 +615,26 @@ try {
     console.error(`Saved: ${outputFile}`)
   } else if (needsDesktopExport) {
     try {
-      exportWithDrawioDesktop({
-        inputFile: ensureDesktopInput(),
-        outputFile: resolve(outputFile),
-        format: ext.slice(1),
-        scale: dpi / 96
-      })
+      const exportResult = visualPreview
+        ? await exportVisionPreview({
+            inputFile: ensureDesktopInput(),
+            outputFile: resolve(outputFile)
+          })
+        : await exportWithDrawioDesktop({
+            inputFile: ensureDesktopInput(),
+            outputFile: resolve(outputFile),
+            format: ext.slice(1),
+            scale: dpi / 96
+          })
       writeCanonicalSidecars()
-      console.error(`Saved: ${outputFile}`)
+      if (visualPreview) {
+        console.error(
+          `Saved vision preview: ${outputFile} (${exportResult.width}x${exportResult.height}; ` +
+            `${exportResult.reexported ? 'height re-exported' : 'width-bounded'}; ${exportResult.repairStatus})`
+        )
+      } else {
+        console.error(`Saved: ${outputFile}`)
+      }
     } catch (err) {
       const desktopMissing = /draw\.io Desktop CLI was not found/.test(err.message)
       if (desktopMissing && drawioToSvg) {
@@ -420,7 +645,8 @@ try {
           if (writeSidecars) writeFileSync(resolve(artifactPaths.drawioPath), drawioContent, 'utf-8')
           writeCanonicalSidecars()
           console.error(
-            `draw.io Desktop not found — fell back to SVG: ${svgOutput}. ` +
+            `${visualPreview ? 'draw.io Desktop not found — no PNG vision-preview was produced; ' : 'draw.io Desktop not found — '}` +
+              `fell back to SVG: ${svgOutput}. ` +
               `Install draw.io Desktop or set DRAWIO_CMD to export ${ext.slice(1).toUpperCase()}.`
           )
         } catch (svgErr) {

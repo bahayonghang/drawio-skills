@@ -143,6 +143,7 @@ Step 12: Render
 Step 13: Exported-Artifact Verification / Optional Live Handoff
 ├── Inspect the exported SVG first when it is available and readable by the current environment
 ├── If a raster/final-fidelity check is needed and draw.io Desktop is available -> export PNG/PDF/JPG or embedded SVG through the CLI
+├── For structured findings or repeated rework, follow `visual-review.md` and patch canonical YAML by stable ID
 ├── Do not create browser or Playwright screenshots when an exported SVG/PNG/PDF/JPG exists
 ├── live backend has `replace_diagram_xml` + user wants browser or inline refinement
 │   └── use the provider-specific tool mapping from `references/docs/mcp-tools.md`

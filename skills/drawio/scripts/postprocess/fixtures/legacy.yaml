@@ -1,0 +1,21 @@
+meta:
+  title: Legacy postprocess fixture
+  source: generated
+  theme: tech-blue
+  layout: horizontal
+nodes:
+  - id: api
+    label: API
+    type: service
+    icon: lucide.server-cog
+    bounds: { x: 40, y: 80, width: 120, height: 60 }
+  - id: cache
+    label: Redis
+    type: database
+    icon: redis.server
+    bounds: { x: 280, y: 80, width: 120, height: 60 }
+edges:
+  - from: api
+    to: cache
+    label: queries
+modules: []

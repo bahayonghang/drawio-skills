@@ -1,0 +1,31 @@
+{
+  "id": "drawio-dir1-import",
+  "name": "drawio-dir1-import",
+  "title": "方向①导入与漂移",
+  "description": "R1:代码/配置 importer、live snapshot 与 projection drift；adapter 只解析，稳定身份统一生成，布局回流本仓 JS ELK，Graphviz 默认 defer。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-07-18",
+  "completedAt": "2026-07-19",
+  "branch": null,
+  "base_branch": "dev",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "07-18-drawio-adapter-identity-foundation",
+    "07-18-drawio-code-importers",
+    "07-18-drawio-config-importers",
+    "07-18-drawio-live-snapshots-drift"
+  ],
+  "parent": "07-18-drawio-upstream-port",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}
