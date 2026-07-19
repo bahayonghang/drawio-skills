@@ -892,3 +892,34 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 22: 收口方向一导入与漂移 bucket
+
+**Date**: 2026-07-19
+**Task**: 收口方向一导入与漂移 bucket
+**Branch**: `dev`
+
+### Summary
+
+核实 foundation、code/config importers 与 live drift 四个 child 均已归档；C1 权威映射 15/15 唯一，task validation 与当前 just ci 通过，外部证据保持 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
