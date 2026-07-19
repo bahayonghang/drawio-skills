@@ -923,3 +923,37 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 23: 完成 raster canonical extraction adapter
+
+**Date**: 2026-07-19
+**Task**: 完成 raster canonical extraction adapter
+**Branch**: `dev`
+
+### Summary
+
+新增严格版本化的 raster-extraction adapter 与 CLI 路由，将结构化视觉抽取结果直接接入 canonical spec、JS ELK、统一 renderer 和 sidecars；完成 TDD、file-backed、错误矩阵、npm test、just ci，并保留 Desktop/model/human fidelity 为 missing evidence。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0b6a379` | (see git log) |
+| `b03e683` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
