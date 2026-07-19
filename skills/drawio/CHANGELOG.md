@@ -2,6 +2,44 @@
 
 ## Unreleased
 
+### Upstream capability integration
+
+Offline capabilities ported from upstream `drawio-skill` behind the canonical
+boundary; committed at version `2.7.0` but not yet cut as a tagged release.
+
+- Config and IaC importers: Terraform, Kubernetes, Compose, SQL DDL, OpenAPI,
+  GitHub Actions, and GitLab CI adapters (`--input-format terraform` /
+  `kubernetes` / `compose` / `sql` / `openapi` / `github-actions` / `gitlab-ci`),
+  each projected to `CanonicalGraphProjection v1` with stable declared identity;
+  optional isolated Python worker (`python-hcl2`, `sqlglot`) for HCL/SQL, offline.
+- Code relationship importers: Python imports/classes, JavaScript/TypeScript ESM,
+  Go, and Rust adapters over a bounded local project directory, using pinned
+  optional parsers and never invoking a language toolchain, Cargo, or Graphviz.
+- Live snapshots and architecture drift: saved Terraform state/plan, Docker
+  inspect, and Kubernetes live JSON adapters plus a deterministic drift comparator
+  and renderer over stable node/edge identity; no provider CLI, daemon, or cluster
+  capture (real provider, daemon, and cluster evidence remain missing).
+- Offline AI icon catalog: 309 fixed, licensed, offline `lobe.*` / `ai.*` brand
+  SVGs with deterministic aliases through the shared `icon-resolver.js`, replacing
+  CDN lookup; catalog, security, render, and Desktop-fixture checks
+  command-executed (visual-model review remains missing evidence).
+- Multi-page canonical bundle v1: stable page and object identity, structured
+  page links, per-page validation, and an `--all-pages --export-spec` round-trip
+  through a single `<mxfile>` and arch v2 sidecar (Desktop multi-page export
+  remains missing evidence).
+- Postprocess suite: offline `mermaid`, `explain`, `relabel`, `restyle`,
+  `heatmap`, and script-free self-contained `html`, each writing a
+  `*.postprocess.json` provenance sidecar. The shipped surface is exactly those
+  six; runbook, animated SVG, tube/sequence layout, compression, buildup, PPTX,
+  timelapse, and PR diff remain deferred, not hidden commands.
+- Structured raster extraction: `--input-format raster-extraction` normalizes a
+  strict, versioned, model- or human-produced extraction JSON into a canonical
+  spec, then reuses canonical validation, ELK, renderer, and sidecars (OCR and
+  model fidelity remain missing evidence).
+- SysML/BPMN stencils: searchable `mxgraph.sysml.*` and `mxgraph.bpmn.*` base
+  names in the bundled catalog; source-row counts are not capability counts and
+  nested constructs remain deferred.
+
 ### Packaging, provisioning docs, and slimmer entrypoint
 
 - Release zips now contain exactly git-tracked content, with in-recipe
