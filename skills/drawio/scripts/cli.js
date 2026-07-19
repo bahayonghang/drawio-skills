@@ -24,6 +24,7 @@ import {
   parseJavaScriptImportsProject,
   parseMermaidToSpec,
   parseOpenApiDocument,
+  parseRasterExtraction,
   parsePythonClassesProject,
   parsePythonImportsProject,
   parseRustImportsProject,
@@ -129,7 +130,8 @@ Options:
   --input-format <f>  Input format: yaml (default), mermaid, csv, drawio,
                       terraform, kubernetes, compose, sql, openapi,
                       github-actions, gitlab-ci, python-imports,
-                      python-classes, js-imports, go-imports, or rust-imports
+                      python-classes, js-imports, go-imports, rust-imports,
+                      or raster-extraction
   --scope <name>      Kubernetes logical cluster/environment identity
   --project <name>    Compose project identity override
   --dialect <name>    SQL dialect (default: postgres)
@@ -356,6 +358,8 @@ try {
     spec = projectGraphToSpec(
       parseCiWorkflow(inputText, { provider: inputFormat, workflow: adapterWorkflow })
     )
+  } else if (inputFormat === 'raster-extraction') {
+    spec = parseRasterExtraction(inputText)
   } else {
     throw new Error(`Unsupported input format "${inputFormat}"`)
   }

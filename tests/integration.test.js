@@ -317,6 +317,50 @@ test('CLI: structured config adapters project through the canonical renderer', (
   }
 })
 
+test('CLI: raster extraction stdin reuses the canonical renderer', () => {
+  const extraction = JSON.stringify({
+    schemaVersion: 1,
+    nodes: [
+      { id: 'source', label: 'Source', shape: 'rounded' },
+      { id: 'sink', label: 'Sink', shape: 'cylinder' }
+    ],
+    edges: [{ id: 'source-sink', source: 'source', target: 'sink', arrow: true }]
+  })
+
+  const output = runCli(['-', '--input-format', 'raster-extraction'], { input: extraction })
+  assert.match(output, /<mxGraphModel/)
+  assert.match(output, /Source/)
+  assert.match(output, /shape=cylinder3/)
+})
+
+test('CLI: raster extraction file writes canonical spec, drawio, and sidecars', () => {
+  const tempDir = createTempDir()
+  const inputFile = resolve(
+    PROJECT_ROOT,
+    'skills/drawio/scripts/adapters/fixtures/raster-extraction.json'
+  )
+  const specFile = resolve(tempDir, 'extracted.spec.yaml')
+  const drawioFile = resolve(tempDir, 'extracted.drawio')
+
+  try {
+    runCli([inputFile, specFile, '--input-format', 'raster-extraction', '--export-spec', '--write-sidecars'])
+    assert.ok(existsSync(specFile))
+    assert.ok(existsSync(resolve(tempDir, 'extracted.arch.json')))
+    const spec = readFileSync(specFile, 'utf8')
+    assert.match(spec, /source: replicated/)
+    assert.match(spec, /label: Source & ingress/)
+    assert.match(spec, /bounds:/)
+
+    runCli([inputFile, drawioFile, '--input-format', 'raster-extraction', '--write-sidecars', '--validate'])
+    assert.ok(existsSync(drawioFile))
+    assert.ok(existsSync(resolve(tempDir, 'extracted.spec.yaml')))
+    assert.ok(existsSync(resolve(tempDir, 'extracted.arch.json')))
+    assert.match(readFileSync(drawioFile, 'utf8'), /Source &amp; ingress/)
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true })
+  }
+})
+
 test('CLI: optional parser absence is isolated to Terraform and SQL routes', () => {
   const env = {
     SYSTEMROOT: process.env.SYSTEMROOT,

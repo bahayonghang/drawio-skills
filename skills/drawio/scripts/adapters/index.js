@@ -486,3 +486,4 @@ export { parsePythonImportsProject, parsePythonClassesProject } from './python-c
 export { parseJavaScriptImportsProject } from './js-code.js'
 export { parseGoImportsProject } from './go-code.js'
 export { parseRustImportsProject } from './rust-code.js'
+export { parseRasterExtraction } from './raster-extraction.js'
