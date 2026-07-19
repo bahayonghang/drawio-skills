@@ -3,7 +3,7 @@
   "name": "drawio-dir3-postprocess",
   "title": "方向③后处理导出",
   "description": "R3:JS 变换族(mermaid/html/runbook/heatmap/tubemap/svgflow/restyle/relabel/explain/seqlayout)+Python 外壳族(pptx/buildup/compress/timelapse/prdiff)。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,
