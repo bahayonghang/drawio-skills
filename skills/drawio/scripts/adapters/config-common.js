@@ -1,4 +1,4 @@
-import { loadAll, JSON_SCHEMA } from 'js-yaml'
+import { loadAll, JSON_SCHEMA } from '../vendor/js-yaml/js-yaml.mjs'
 
 import { AdapterContractError, ERROR_CODES, serializeIdentity } from './identity.js'
 import { finalizeGraphProjection } from './graph-projection.js'

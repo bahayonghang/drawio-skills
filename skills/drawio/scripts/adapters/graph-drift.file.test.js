@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import yaml from 'js-yaml'
+import yaml from '../vendor/js-yaml/js-yaml.mjs'
 
 import {
   compareGraphProjections,
