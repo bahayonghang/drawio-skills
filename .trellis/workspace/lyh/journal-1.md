@@ -1124,3 +1124,36 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 29: 修复 issue #16 的 js-yaml 独立安装打包
+
+**Date**: 2026-07-21
+**Task**: 修复 issue #16 的 js-yaml 独立安装打包
+**Branch**: `dev`
+
+### Summary
+
+为 drawio base skill 内置 js-yaml@4.1.1，移除根级运行时依赖，增加隔离安装与 ambient dependency 回归测试，更新变更日志和可复用打包规范；just ci、ZIP 清单及解压后独立 CLI smoke 均通过。
+
+### Main Changes
+
+- Detailed change bullets were not supplied; see the summary above.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `05533e2` | (see git log) |
+
+### Testing
+
+- Validation was not recorded for this session.
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
