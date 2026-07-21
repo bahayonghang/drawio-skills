@@ -60,7 +60,7 @@
    - Record local package evidence without claiming a remote install or release.
    - Run `just clean-zip` and verify generated archives/temp copies are gone.
 
-9. [ ] Complete the Trellis quality and lifecycle gates only after implementation
+9. [x] Complete the Trellis quality and lifecycle gates only after implementation
        approval.
    - Run `trellis-check`, update specs only if a reusable contract changed, make
      the scoped production commit, and archive/journal the task per Phase 3.
