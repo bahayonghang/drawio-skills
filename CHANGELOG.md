@@ -11,6 +11,12 @@ Upstream capability integration — a batch of offline capabilities ported from
 upstream `drawio-skill` behind the canonical boundary. Committed to the repo at
 version `2.7.0`; not yet cut as a tagged release.
 
+### Fixed
+
+- **Self-contained base skill runtime**: vendored the mandatory
+  `js-yaml@4.1.1` ESM runtime so copied `skills/drawio` installations no longer
+  depend on repository-root or user-home packages.
+
 ### Added
 
 - **Config and IaC importers**: declared Terraform, Kubernetes, Compose, SQL DDL,

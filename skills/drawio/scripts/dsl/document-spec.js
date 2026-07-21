@@ -1,5 +1,5 @@
 import { validateSpec } from './spec-to-drawio.js'
-import yaml from 'js-yaml'
+import yaml from '../vendor/js-yaml/js-yaml.mjs'
 
 const PAGE_ID = /^[A-Za-z][A-Za-z0-9_-]*$/
 const OBJECT_ID = /^[A-Za-z][A-Za-z0-9_-]*$/

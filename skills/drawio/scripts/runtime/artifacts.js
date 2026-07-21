@@ -1,4 +1,4 @@
-import yaml from 'js-yaml'
+import yaml from '../vendor/js-yaml/js-yaml.mjs'
 import { basename, extname, resolve } from 'node:path'
 import { escapeXml } from '../shared/xml-utils.js'
 

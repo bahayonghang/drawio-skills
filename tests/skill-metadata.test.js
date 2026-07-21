@@ -63,8 +63,8 @@ test('image icon resolver stays bundled and offline', () => {
     'utf8'
   )
 
-  assert.equal(packageJson.dependencies['lucide-static'], undefined)
-  assert.equal(packageJson.dependencies['@lobehub/icons-static-svg'], undefined)
+  assert.equal(packageJson.dependencies?.['lucide-static'], undefined)
+  assert.equal(packageJson.dependencies?.['@lobehub/icons-static-svg'], undefined)
   assert.equal(packageJson.devDependencies?.['@lobehub/icons-static-svg'], undefined)
   assert.doesNotMatch(resolverText, /readFileSync|createRequire|require\.resolve|LOBE_CDN_BASE/)
   assert.doesNotMatch(resolverText, /image=https?:\/\//)

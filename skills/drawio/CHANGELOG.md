@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed
+
+- Made the copied base skill self-contained by vendoring the mandatory
+  `js-yaml@4.1.1` ESM runtime, so recommended and manual skill-only installs no
+  longer depend on a repository-root or user-home `node_modules`.
+
 ### Upstream capability integration
 
 Offline capabilities ported from upstream `drawio-skill` behind the canonical
