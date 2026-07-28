@@ -1,13 +1,21 @@
-# Draw.io Skill for Claude, Gemini & Codex
+# Draw.io Skill for Claude & Codex
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
-> **Important**: Draw.io Skill 2.7.0 is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
+> **Important**: Draw.io Skill is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
+>
+> **Recommendation for Diagram Replication**: For replicating draw.io diagrams, using the `dev` branch of [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) produces significantly better results than using this skills package.
 
 [English](./README.md) | [中文文档](./README_CN.md) | [Documentation](https://bahayonghang.github.io/drawio-skills/)
 
 Draw.io Skill is a YAML-first draw.io authoring system for engineering diagrams, network diagrams, structured redraws, Mermaid/CSV conversion, and imported `.drawio` files. Publication-facing work is handled by an Academic Overlay that depends on the sibling base skill instead of copying its runtime.
+
+### Recommended Models
+
+- **GPT Sol Max**
+- **Claude Fable 5**
+- **Claude Opus 5**
 
 ## Skill Variants
 
@@ -49,7 +57,21 @@ Academic overlay uses the first two paths only. It does not create, require, or 
 
 ## Install
 
-### Recommended
+### Project-level Installation for Diagram Replication (Recommended)
+
+To replicate draw.io diagrams with superior fidelity, install [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) (`dev` branch) at the project level (which works better for replication than this skills package):
+
+- **Claude (Project Level)**:
+  ```bash
+  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .claude/skills/drawio-scientific-illustrator
+  ```
+
+- **Codex (Project Level)**:
+  ```bash
+  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .codex/skills/drawio-scientific-illustrator
+  ```
+
+### Standard Base Skill Installation
 
 ```bash
 npx skills add bahayonghang/drawio-skills
@@ -69,10 +91,6 @@ Common locations:
   - macOS: `~/Library/Application Support/Claude/skills/`
   - Linux: `~/.config/Claude/skills/`
   - Windows: `%APPDATA%\Claude\skills\`
-- **Gemini**
-  - macOS: `~/Library/Application Support/gemini/skills/`
-  - Linux: `~/.gemini/skills/`
-  - Windows: `%APPDATA%\gemini\skills\`
 - **Codex**
   - macOS / Linux: `~/.codex/skills/`
   - Windows: `%USERPROFILE%\.codex\skills\`
@@ -83,7 +101,7 @@ Normal create/edit/export work does **not** require MCP. Configure `@next-ai-dra
 
 Academic overlay does not need this setup.
 
-### Claude / Gemini JSON config
+### Claude JSON config
 
 macOS / Linux:
 

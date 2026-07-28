@@ -1,14 +1,22 @@
-# Draw.io Skill for Claude、Gemini 与 Codex
+# Draw.io Skill for Claude 与 Codex
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
-> **重要说明**：Draw.io Skill 2.2.0 是 **YAML-first、离线优先的 Base 工作流**。默认路径是 `YAML/CLI -> .drawio + sidecars` 本地生成；需要 PNG、PDF、JPG 或 embedded SVG 时再由 draw.io Desktop 增强导出。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）只作为 Base Skill 的可选浏览器精修层，不是硬依赖。
+> **重要说明**：Draw.io Skill 是 **YAML-first、离线优先的 Base 工作流**。默认路径是 `YAML/CLI -> .drawio + sidecars` 本地生成；需要 PNG、PDF、JPG 或 embedded SVG 时再由 draw.io Desktop 增强导出。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）只作为 Base Skill 的可选浏览器精修层，不是硬依赖。
+>
+> **图表复刻推荐**：对于复刻 draw.io 图表的需求，推荐使用 [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) 的 `dev` 分支，其复刻效果显著优于使用本 skill 库。
 
 [English](./README.md) | [中文文档](./README_CN.md) | [在线文档](https://bahayonghang.github.io/drawio-skills/zh/)
 
 Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、网络拓扑、结构化重绘、Mermaid/CSV 转换和已有 `.drawio` 导入。论文或出版场景由 Academic Overlay 处理；它依赖 sibling Base，而不是复制一份底层 runtime。
+
+### 推荐模型
+
+- **GPT Sol Max**
+- **Claude Fable 5**
+- **Claude Opus 5**
 
 ## Skill 变体
 
@@ -50,7 +58,21 @@ Academic Overlay 只使用前两条路径。它不创建、不要求、不路由
 
 ## 安装
 
-### 推荐方式
+### 图表复刻项目级安装（推荐）
+
+如果需要复刻 draw.io 图表，推荐分别在 Claude 和 Codex 进行项目级安装 [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) 的 `dev` 分支（复刻效果优于本 skills 库）：
+
+- **Claude（项目级安装）**：
+  ```bash
+  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .claude/skills/drawio-scientific-illustrator
+  ```
+
+- **Codex（项目级安装）**：
+  ```bash
+  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .codex/skills/drawio-scientific-illustrator
+  ```
+
+### 标准 Base Skill 安装
 
 ```bash
 npx skills add bahayonghang/drawio-skills
@@ -70,10 +92,6 @@ npx skills add bahayonghang/drawio-skills
   - macOS：`~/Library/Application Support/Claude/skills/`
   - Linux：`~/.config/Claude/skills/`
   - Windows：`%APPDATA%\Claude\skills\`
-- **Gemini**
-  - macOS：`~/Library/Application Support/gemini/skills/`
-  - Linux：`~/.gemini/skills/`
-  - Windows：`%APPDATA%\gemini\skills\`
 - **Codex**
   - macOS / Linux：`~/.codex/skills/`
   - Windows：`%USERPROFILE%\.codex\skills\`
@@ -84,7 +102,7 @@ npx skills add bahayonghang/drawio-skills
 
 Academic Overlay 不需要这一步。
 
-### Claude / Gemini 的 JSON 配置
+### Claude 的 JSON 配置
 
 macOS / Linux：
 
