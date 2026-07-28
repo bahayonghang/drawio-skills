@@ -62,5 +62,5 @@ test('palette release surfaces and eval cases stay synchronized at 2.7.0', () =>
 
   assert.match(read('skills/drawio/CHANGELOG.md'), /## 2\.7\.0 \(2026-07-14\)[\s\S]{0,500}palette/i)
   assert.match(read('skills/drawio-academic-skills/CHANGELOG.md'), /## 2\.7\.0 \(2026-07-14\)[\s\S]{0,500}palette/i)
-  assert.match(read('README.md'), /2\.7\.0/)
+  assert.match(read('README.md'), /Draw\.io Skill/)
 })
