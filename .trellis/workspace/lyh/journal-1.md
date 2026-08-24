@@ -1157,3 +1157,40 @@ Implemented diagram-level meta.font policy for drawio, documented the contract, 
 ### Next Steps
 
 - None - task complete
+
+
+## Session 30: 本地图片资产能力
+
+**Date**: 2026-08-24
+**Task**: 本地图片资产能力
+**Branch**: `dev`
+
+### Summary
+
+实施并归档 08-24-local-image-assets。Draw.io Base Skill 增加 assets 与 node.image；Academic Overlay 增加栅格审计门。AC17/AC18 因本机无论文 PNG 记 missing evidence。
+
+### Main Changes
+
+- canonical YAML 顶层 assets 与 node.image，PNG/JPEG 内联为 data URI，UserObject 往返六个字段
+- academic-paper 栅格审计门；version-sync 覆盖 overlay evals.json；版本 2.8.0
+- 同步 Trellis 模板脚本，并添加 journal merge=union 的 .gitattributes
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f284c5d` | (see git log) |
+| `5277146` | (see git log) |
+
+### Testing
+
+- [OK] npm test：660 通过，0 失败，2 跳过
+- [OK] just lint 与 just ci 通过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 论文素材到位后补跑 AC17/AC18 驱动场景冒烟
