@@ -37,6 +37,7 @@ Multi-page rendering runs layout, rendering, and XML validation per page, then w
 | Missing/unsafe/duplicate same-page object ID | `MULTI_PAGE_INVALID` at the page/object path                     |
 | Missing edge ID or dangling edge endpoint    | `MULTI_PAGE_INVALID` at the edge path                            |
 | Missing/wrong-kind/duplicate link endpoint   | `MULTI_PAGE_INVALID` at the link path                            |
+| Top-level or per-page `assets`               | `MULTI_PAGE_INVALID`; v1 supports assets only on flat specs      |
 | Duplicate page-name selector                 | ambiguous `--page` error listing candidate IDs                   |
 | Unknown selector or out-of-range index       | explicit `--page` error with available IDs/index range           |
 | Invalid XML on one page                      | page-scoped validation error; other page root IDs do not collide |

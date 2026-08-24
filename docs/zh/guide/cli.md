@@ -43,6 +43,8 @@ raster extraction 都会先归一化为 canonical YAML 或 bundle v1，再进入
 | `--strict`               | warning 和严格质量问题也会导致失败              |
 | `--strict-warnings`      | `--strict` 的别名                               |
 | `--allow-unknown-shapes` | 临时把 covered stencil 的未知名称降级为 warning |
+| `--asset-root <dir>`     | 相对该目录解析 `assets.<id>.path`（默认 cwd） |
+| `--extract-assets <dir>` | 导入 `.drawio` 时把外来 PNG/JPEG 字节写到该目录 |
 
 ## 产物与 Desktop 选项
 

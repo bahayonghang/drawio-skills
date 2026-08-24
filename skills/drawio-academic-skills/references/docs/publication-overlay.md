@@ -144,6 +144,10 @@ Prompt constraints:
 - Avoid decorative gradients, stock imagery, icons used as decoration, heavy shadows, and diagonal connector arrows.
 - Treat generated text as approximate. Correct exact labels, formulas, and captions in YAML.
 
+## Local Raster Assets
+
+When a Publication Figure must keep an atomic PNG/JPEG that native shapes cannot rebuild, use the sibling base `assets` registry and `node.image` (see `../drawio/references/docs/local-image-assets.md`). Do not put a file path in `node.icon`. For `meta.profile: academic-paper`, every referenced asset must have a non-empty `raster_reason`, `atomic_raster_unit: true`, and `contains_reconstructable_content: false`. Compress oversized files with the documented Pillow recipe outside the CLI; do not add runtime image libraries.
+
 ## Bundle Contract
 
 Default academic final delivery is:

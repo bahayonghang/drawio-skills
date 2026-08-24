@@ -34,13 +34,41 @@ function validatePageIdentity(page, index) {
   }
 }
 
-function pageSpec(page) {
-  return {
-    meta: isRecord(page.meta) ? page.meta : {},
-    nodes: Array.isArray(page.nodes) ? page.nodes : [],
-    edges: Array.isArray(page.edges) ? page.edges : [],
-    modules: Array.isArray(page.modules) ? page.modules : []
+function copyAssets(target, source) {
+  if (source != null && Object.prototype.hasOwnProperty.call(source, 'assets') && source.assets != null) {
+    target.assets = source.assets
   }
+  return target
+}
+
+function rejectBundleAssets(value) {
+  if (value != null && Object.prototype.hasOwnProperty.call(value, 'assets') && value.assets != null) {
+    fail(
+      'assets',
+      'v1 multi-page documents do not support assets; use a flat single-page spec with top-level assets'
+    )
+  }
+  const pages = Array.isArray(value?.pages) ? value.pages : []
+  pages.forEach((page, index) => {
+    if (page != null && Object.prototype.hasOwnProperty.call(page, 'assets') && page.assets != null) {
+      fail(
+        `pages[${index}].assets`,
+        'v1 multi-page documents do not support assets; use a flat single-page spec with top-level assets'
+      )
+    }
+  })
+}
+
+function pageSpec(page) {
+  return copyAssets(
+    {
+      meta: isRecord(page.meta) ? page.meta : {},
+      nodes: Array.isArray(page.nodes) ? page.nodes : [],
+      edges: Array.isArray(page.edges) ? page.edges : [],
+      modules: Array.isArray(page.modules) ? page.modules : []
+    },
+    page
+  )
 }
 
 function validatePage(page, index) {
@@ -170,10 +198,16 @@ export function validateDocumentSpec(document) {
   const kind = document?.kind || classifyDocumentSpec(document)
   if (kind === 'legacy-single-page') {
     const spec = document.spec || document
-    validateSpec({ meta: spec.meta || {}, nodes: spec.nodes || [], edges: spec.edges || [], modules: spec.modules || [] })
+    validateSpec(
+      copyAssets(
+        { meta: spec.meta || {}, nodes: spec.nodes || [], edges: spec.edges || [], modules: spec.modules || [] },
+        spec
+      )
+    )
     return document
   }
   if (kind !== 'multi-page-v1') throw new Error(`Unknown document kind "${kind}"`)
+  rejectBundleAssets(document)
   if (!Array.isArray(document.pages) || document.pages.length === 0) fail('pages', 'must contain at least one page')
   if (document.meta != null && !isRecord(document.meta)) fail('meta', 'must be an object')
   for (const field of Object.keys(document.meta || {})) {
@@ -193,7 +227,10 @@ export function validateDocumentSpec(document) {
 export function normalizeDocumentSpec(value) {
   const kind = classifyDocumentSpec(value)
   if (kind === 'legacy-single-page') {
-    const spec = { meta: value.meta || {}, nodes: value.nodes || [], edges: value.edges || [], modules: value.modules || [] }
+    const spec = copyAssets(
+      { meta: value.meta || {}, nodes: value.nodes || [], edges: value.edges || [], modules: value.modules || [] },
+      value
+    )
     validateDocumentSpec({ kind, spec })
     return {
       kind,
@@ -204,6 +241,7 @@ export function normalizeDocumentSpec(value) {
       links: []
     }
   }
+  rejectBundleAssets(value)
   const normalized = {
     kind,
     legacy: false,

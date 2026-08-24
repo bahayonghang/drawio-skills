@@ -11,7 +11,7 @@
 
 Draw.io Skill is a YAML-first draw.io authoring system for engineering diagrams, network diagrams, structured redraws, Mermaid/CSV conversion, and imported `.drawio` files. Publication-facing work is handled by an Academic Overlay that depends on the sibling base skill instead of copying its runtime.
 
-### Recommended Models
+## Recommended Models
 
 - **GPT Sol Max**
 - **Claude Fable 5**
@@ -41,7 +41,8 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 - **Code relationship import**: render Python, JavaScript/TypeScript, Go, or Rust module/class relationships from a local project directory.
 - **Live snapshots and drift**: project saved Terraform state, Docker inspect, or Kubernetes live JSON, and compare a declared-vs-live projection to render architecture drift.
 - **Multi-page bundles and postprocess**: author canonical bundle v1 with stable page/object identity, and project or transform diagrams offline with `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, or script-free `html`.
-- **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec` (add `--all-pages` for multi-page bundles).
+- **Local PNG/JPEG assets**: register files under top-level `assets` and place them with `node.image`. Paths are relative to `--asset-root` (default cwd). SVG and multi-page `assets` are out of v1.
+- **Import and normalize existing diagrams**: convert `.drawio` into a YAML-first bundle with `--input-format drawio --export-spec` (add `--all-pages` for multi-page bundles; add `--extract-assets` for foreign embedded rasters).
 - **Validation before export**: structure, layout, quality, formula, and replication text-position checks.
 
 ## Runtime Model
@@ -62,11 +63,13 @@ Academic overlay uses the first two paths only. It does not create, require, or 
 To replicate draw.io diagrams with superior fidelity, install [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) (`dev` branch) at the project level (which works better for replication than this skills package):
 
 - **Claude (Project Level)**:
+
   ```bash
   git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .claude/skills/drawio-scientific-illustrator
   ```
 
 - **Codex (Project Level)**:
+
   ```bash
   git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .codex/skills/drawio-scientific-illustrator
   ```

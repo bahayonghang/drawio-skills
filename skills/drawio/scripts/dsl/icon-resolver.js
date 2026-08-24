@@ -5,7 +5,7 @@
 
 import { getAiIcon } from './ai-icon-catalog.js'
 
-const IMAGE_ICON_STYLE_PREFIX =
+export const IMAGE_ICON_STYLE_PREFIX =
   'shape=image;html=1;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;verticalAlign=top;image='
 
 const LUCIDE_ALIASES = {

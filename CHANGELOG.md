@@ -5,6 +5,15 @@ Format follows Keep a Changelog; this project uses date-based entries.
 This is the repository-level summary; authoritative per-skill detail lives in
 `skills/drawio/CHANGELOG.md` and `skills/drawio-academic-skills/CHANGELOG.md`.
 
+## 2.8.0 (2026-08-24)
+
+- **Local image assets**: canonical YAML `assets` + `node.image` inlines local
+  PNG/JPEG files as self-contained `shape=image` cells. Paths are relative to
+  `--asset-root` (default cwd). SVG and multi-page `assets` are hard errors.
+  Foreign `.drawio` images use `--extract-assets`. Academic-paper profile
+  audits raster reason fields. `version-sync.js` now covers overlay
+  `evals.json`.
+
 ## [Unreleased]
 
 Upstream capability integration — a batch of offline capabilities ported from

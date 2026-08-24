@@ -6,6 +6,7 @@
 import { isLikelyStandaloneMathLabel, prepareMathLabel } from '../math/index.js'
 import { normalizeIdentity } from '../adapters/identity.js'
 import { resolveImageIconStyle } from './icon-resolver.js'
+import { resolveAssetImageStyle, resolveSpecAssets, specHasAssets } from './asset-resolver.js'
 import { resolveShapeNameKind } from './shape-catalog.js'
 import { resolveIconShape } from './icon-mappings.js'
 import { searchShapeCatalog } from './catalog-search.js'
@@ -1029,7 +1030,7 @@ export function generateNodeStyle(node, theme) {
   return generateNodeStyleWithSpec(node, theme, { meta: {} })
 }
 
-function generateNodeStyleWithSpec(node, theme, spec) {
+function generateNodeStyleWithSpec(node, theme, spec, renderOptions = {}) {
   const semanticType = detectSemanticType(node.label, node.type, node.network)
   const shapeStyle = SHAPE_STYLES[semanticType] || SHAPE_STYLES.service
 
@@ -1085,9 +1086,18 @@ function generateNodeStyleWithSpec(node, theme, spec) {
     return parts.join(';')
   }
 
-  // If node has an icon, override shape to use the icon
-  const iconName = node.icon || deriveNodeIcon(node)
-  const imageIconStyle = resolveImageIconStyle(iconName)
+  // If node has an icon or local image, override shape to use the image style
+  let iconName = null
+  let imageIconStyle = null
+  if (node.image) {
+    const resolved =
+      renderOptions.resolvedAssets?.get(node.image) ||
+      resolveAssetImageStyle(node.image, spec.assets, { assetRoot: renderOptions.assetRoot })
+    imageIconStyle = resolved.style
+  } else {
+    iconName = node.icon || deriveNodeIcon(node)
+    imageIconStyle = resolveImageIconStyle(iconName)
+  }
   const iconShape = imageIconStyle ? null : resolveIconShape(iconName)
   let effectiveShapeStyle = applyThemeRounding(shapeStyle, nodeTheme.rounded ?? defaultTheme.rounded)
   const parts = []
@@ -1371,6 +1381,39 @@ export function buildXml(spec, theme, layout, options = {}) {
     return `<UserObject ${attrs.join(' ')}>${cellXml}</UserObject>`
   }
 
+  const wrapAssetUserObject = (cellXml, node, specValue, label, canonicalWrap) => {
+    const asset = specValue.assets?.[node.image]
+    if (!asset) return canonicalWrap ? canonicalCell(cellXml, 'node', node.id, canonicalWrap.link) : cellXml
+    const attrs = [
+      `label="${label}"`,
+      `dataAssetId="${escapeXml(String(node.image))}"`,
+      `dataAssetPath="${escapeXml(String(asset.path))}"`
+    ]
+    if (asset.sha256 != null) attrs.push(`dataAssetSha256="${escapeXml(String(asset.sha256))}"`)
+    if (asset.raster_reason != null) attrs.push(`dataAssetRasterReason="${escapeXml(String(asset.raster_reason))}"`)
+    if (asset.atomic_raster_unit != null) {
+      attrs.push(`dataAssetAtomic="${asset.atomic_raster_unit ? 'true' : 'false'}"`)
+    }
+    if (asset.contains_reconstructable_content != null) {
+      attrs.push(`dataAssetReconstructable="${asset.contains_reconstructable_content ? 'true' : 'false'}"`)
+    }
+    if (asset.decomposition_note != null) {
+      attrs.push(`dataAssetDecomposition="${escapeXml(String(asset.decomposition_note))}"`)
+    }
+    if (canonicalWrap) {
+      attrs.push(`dataPageId="${escapeXml(String(canonicalWrap.pageId))}"`)
+      attrs.push(`dataObjectId="${escapeXml(String(node.id))}"`)
+      attrs.push(`dataObjectKind="node"`)
+      if (canonicalWrap.link?.targetPageId) {
+        attrs.push(`link="${escapeXml(String(canonicalWrap.link.href))}"`)
+        if (canonicalWrap.link.targetObjectId) {
+          attrs.push(`dataTargetObjectId="${escapeXml(String(canonicalWrap.link.targetObjectId))}"`)
+        }
+      }
+    }
+    return `<UserObject ${attrs.join(' ')}>${cellXml}</UserObject>`
+  }
+
   // Calculate canvas size
   let maxX = 0
   let maxY = 0
@@ -1421,7 +1464,7 @@ export function buildXml(spec, theme, layout, options = {}) {
     const cellId = allocId()
     nodeIdMap.set(node.id, cellId)
 
-    const style = generateNodeStyleWithSpec(node, theme, spec)
+    const style = generateNodeStyleWithSpec(node, theme, spec, options)
     const label = toHtmlLineBreaks(prepareMathLabel(node.label), node.label)
     const parentId = node.module && moduleIdMap.has(node.module) ? moduleIdMap.get(node.module) : '1'
 
@@ -1436,16 +1479,23 @@ export function buildXml(spec, theme, layout, options = {}) {
       }
     }
 
-    cells.push(
-      canonicalCell(
-        `<mxCell id="${cellId}" value="${label}" style="${style}" vertex="1" parent="${parentId}">` +
-          `<mxGeometry x="${x}" y="${y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
-          `</mxCell>`,
-        'node',
-        node.id,
-        canonical?.links?.[node.id]
+    const cellValue = node.image ? '' : label
+    let cellXml =
+      `<mxCell id="${cellId}" value="${cellValue}" style="${style}" vertex="1" parent="${parentId}">` +
+      `<mxGeometry x="${x}" y="${y}" width="${pos.width}" height="${pos.height}" as="geometry"/>` +
+      `</mxCell>`
+    if (node.image) {
+      cellXml = wrapAssetUserObject(
+        cellXml,
+        node,
+        spec,
+        label,
+        canonical ? { pageId: canonical.pageId, link: canonical.links?.[node.id] } : null
       )
-    )
+      cells.push(cellXml)
+    } else {
+      cells.push(canonicalCell(cellXml, 'node', node.id, canonical?.links?.[node.id]))
+    }
   }
 
   // Generate edges
@@ -2204,6 +2254,7 @@ export function validateShapeReferences(spec) {
   const errors = []
   const warnings = []
   for (const node of spec.nodes || []) {
+    if (node.image) continue
     const iconName = node.icon || deriveNodeIcon(node)
     if (resolveImageIconStyle(iconName)) continue
     const aiIdentifier = /^(?:lobe|ai)\.([a-z][a-z0-9._-]*)$/i.exec(String(iconName || ''))
@@ -2429,6 +2480,28 @@ export function validateAcademicProfile(spec) {
   }
 
   warnings.push(...collectAcademicLayoutSizeWarning(spec))
+
+  const referencedAssets = new Set()
+  for (const node of spec.nodes || []) {
+    if (node.image) referencedAssets.add(node.image)
+  }
+  for (const id of referencedAssets) {
+    const asset = spec.assets?.[id]
+    const field = `assets.${id}`
+    if (asset == null || typeof asset.raster_reason !== 'string' || asset.raster_reason.trim() === '') {
+      warnings.push(
+        `Academic-paper profile requires non-empty ${field}.raster_reason for referenced raster assets.`
+      )
+    }
+    if (asset?.atomic_raster_unit !== true) {
+      warnings.push(`Academic-paper profile requires ${field}.atomic_raster_unit to be true for referenced raster assets.`)
+    }
+    if (asset?.contains_reconstructable_content !== false) {
+      warnings.push(
+        `Academic-paper profile requires ${field}.contains_reconstructable_content to be false for referenced raster assets.`
+      )
+    }
+  }
 
   return warnings
 }
@@ -3037,7 +3110,10 @@ export function specToDrawioXml(spec, options = {}) {
       strict: Boolean(options.strict)
     })
   ]
-  const allDiagnostics = [...legacyDiagnostics, ...paletteDiagnostics]
+  const assetResolution = specHasAssets(spec)
+    ? resolveSpecAssets(spec, { assetRoot: options.assetRoot })
+    : { byId: new Map(), diagnostics: [] }
+  const allDiagnostics = [...legacyDiagnostics, ...paletteDiagnostics, ...assetResolution.diagnostics]
   const formatDiagnostic = (item) => `[${item.code}] ${item.message}`
 
   if (allDiagnostics.length > 0) {
@@ -3050,7 +3126,7 @@ export function specToDrawioXml(spec, options = {}) {
     if (strictFailures.length > 0) {
       throw new Error(
         `Spec validation failed with ${strictFailures.length} diagnostic(s):\n` +
-          strictFailures.map((item) => `  • ${formatDiagnostic(item)}`).join('\n')
+          strictFailures.map((item) => `  • [${item.level}] ${formatDiagnostic(item)}`).join('\n')
       )
     }
   }
@@ -3059,7 +3135,7 @@ export function specToDrawioXml(spec, options = {}) {
   warnings.push(...allDiagnostics)
 
   // Build XML
-  const xml = buildXml(spec, theme, layout, options)
+  const xml = buildXml(spec, theme, layout, { ...options, resolvedAssets: assetResolution.byId })
 
   // Return with warnings if requested
   if (options.returnWarnings) {
@@ -3329,6 +3405,52 @@ export function validateSpec(spec) {
     }
   }
 
+  const assetIds = new Set()
+  if (spec.assets != null) {
+    if (typeof spec.assets !== 'object' || Array.isArray(spec.assets)) {
+      throw new Error('assets must be an object when provided')
+    }
+    for (const [id, record] of Object.entries(spec.assets)) {
+      if (!VALID_ID.test(id) || id.length > 128) {
+        throw new Error(`Invalid asset id "${id}": must match /^[A-Za-z][A-Za-z0-9_-]*$/`)
+      }
+      assetIds.add(id)
+      if (record == null || typeof record !== 'object' || Array.isArray(record)) {
+        throw new Error(`assets.${id} must be an object`)
+      }
+      if (typeof record.path !== 'string' || record.path.length === 0) {
+        throw new Error(`assets.${id}.path is required`)
+      }
+      if (record.sha256 != null && (typeof record.sha256 !== 'string' || !/^[0-9A-Fa-f]{64}$/.test(record.sha256))) {
+        throw new Error(`assets.${id}.sha256 must be a 64-character hex string`)
+      }
+      if (record.raster_reason != null && typeof record.raster_reason !== 'string') {
+        throw new Error(`assets.${id}.raster_reason must be a string when provided`)
+      }
+      if (record.atomic_raster_unit != null && typeof record.atomic_raster_unit !== 'boolean') {
+        throw new Error(`assets.${id}.atomic_raster_unit must be a boolean when provided`)
+      }
+      if (record.contains_reconstructable_content != null && typeof record.contains_reconstructable_content !== 'boolean') {
+        throw new Error(`assets.${id}.contains_reconstructable_content must be a boolean when provided`)
+      }
+      if (record.decomposition_note != null && typeof record.decomposition_note !== 'string') {
+        throw new Error(`assets.${id}.decomposition_note must be a string when provided`)
+      }
+      const allowedAssetFields = new Set([
+        'path',
+        'sha256',
+        'raster_reason',
+        'atomic_raster_unit',
+        'contains_reconstructable_content',
+        'decomposition_note'
+      ])
+      const unknownAssetField = Object.keys(record).find((key) => !allowedAssetFields.has(key))
+      if (unknownAssetField) {
+        throw new Error(`assets.${id} has unknown field "${unknownAssetField}"`)
+      }
+    }
+  }
+
   // Hard limit checks
   if (spec.nodes.length > MAX_NODES) {
     throw new Error(`Too many nodes (${spec.nodes.length}): maximum is ${MAX_NODES}`)
@@ -3365,6 +3487,17 @@ export function validateSpec(spec) {
     }
     if (node.icon != null && !VALID_ICON.test(node.icon)) {
       throw new Error(`Node "${node.id}" has invalid icon "${node.icon}": must match /^[a-zA-Z][a-zA-Z0-9._-]*$/`)
+    }
+    if (node.image != null && node.icon != null) {
+      throw new Error(`Node "${node.id}" cannot set both icon and image`)
+    }
+    if (node.image != null) {
+      if (typeof node.image !== 'string' || !VALID_ID.test(node.image)) {
+        throw new Error(`Node "${node.id}" has invalid image "${node.image}": must match /^[A-Za-z][A-Za-z0-9_-]*$/`)
+      }
+      if (!assetIds.has(node.image)) {
+        throw new Error(`Node "${node.id}" image "${node.image}" is not declared in assets`)
+      }
     }
     if (node.network != null) {
       if (typeof node.network !== 'object' || Array.isArray(node.network)) {

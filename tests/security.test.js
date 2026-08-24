@@ -133,6 +133,16 @@ test('validateSpec rejects invalid icon names on nodes', () => {
   assert.throws(() => validateSpec(spec), /invalid icon/)
 })
 
+test('validateSpec still rejects icon values that contain a slash', () => {
+  const spec = {
+    meta: {},
+    nodes: [{ id: 'A', label: 'Test', icon: 'path/to/icon' }],
+    edges: [],
+    modules: []
+  }
+  assert.throws(() => validateSpec(spec), /invalid icon/)
+})
+
 test('validateSpec rejects non-numeric positions', () => {
   const spec = {
     meta: {},

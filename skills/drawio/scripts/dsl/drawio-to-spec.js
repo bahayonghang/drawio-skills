@@ -11,6 +11,11 @@ import { inflateRawSync, inflateSync } from 'node:zlib'
 
 import { detectSemanticType, snapToGrid } from './spec-to-drawio.js'
 import {
+  assetRecordFingerprint,
+  extractRasterDataUriFromStyle,
+  writeExtractedAsset
+} from './asset-resolver.js'
+import {
   attr,
   buildCell,
   decodeEntities,
@@ -179,6 +184,54 @@ function inferTypeFromStyle(style, label) {
   return detectSemanticType(label, null)
 }
 
+function nonemptyAttr(value) {
+  if (value == null || value === '') return undefined
+  return value
+}
+
+function parseOptionalBoolean(value) {
+  if (value === 'true') return true
+  if (value === 'false') return false
+  return undefined
+}
+
+function extractUserObjectWrappers(xml) {
+  const byCell = new Map()
+  const re = /<UserObject\b([^>]*)>([\s\S]*?)<\/UserObject>/gi
+  let match
+  while ((match = re.exec(xml)) !== null) {
+    const attrs = match[1] || ''
+    const body = match[2] || ''
+    const cellMatch = /<mxCell\b([^>]*)/i.exec(body)
+    if (!cellMatch) continue
+    const cellId = attr(cellMatch[1], 'id')
+    if (!cellId) continue
+    byCell.set(cellId, {
+      label: decodeEntities(attr(attrs, 'label') || ''),
+      assetId: nonemptyAttr(decodeEntities(attr(attrs, 'dataAssetId') || '')),
+      path: decodeEntities(attr(attrs, 'dataAssetPath') || ''),
+      sha256: nonemptyAttr(decodeEntities(attr(attrs, 'dataAssetSha256') || '')),
+      raster_reason: nonemptyAttr(decodeEntities(attr(attrs, 'dataAssetRasterReason') || '')),
+      atomic_raster_unit: parseOptionalBoolean(attr(attrs, 'dataAssetAtomic')),
+      contains_reconstructable_content: parseOptionalBoolean(attr(attrs, 'dataAssetReconstructable')),
+      decomposition_note: nonemptyAttr(decodeEntities(attr(attrs, 'dataAssetDecomposition') || ''))
+    })
+  }
+  return byCell
+}
+
+function wrapperToAssetRecord(wrapper) {
+  const record = { path: wrapper.path }
+  if (wrapper.sha256 != null) record.sha256 = wrapper.sha256
+  if (wrapper.raster_reason != null) record.raster_reason = wrapper.raster_reason
+  if (wrapper.atomic_raster_unit != null) record.atomic_raster_unit = wrapper.atomic_raster_unit
+  if (wrapper.contains_reconstructable_content != null) {
+    record.contains_reconstructable_content = wrapper.contains_reconstructable_content
+  }
+  if (wrapper.decomposition_note != null) record.decomposition_note = wrapper.decomposition_note
+  return record
+}
+
 function inferIconFromStyle(style) {
   const resIcon = style.get('resIcon')
   const shape = style.get('shape')
@@ -307,7 +360,10 @@ export function drawioToSpec(drawioFileText, options = {}) {
   const diagrams = extractDiagrams(drawioFileText)
   const selected = pickDiagram(diagrams, options.page)
   const decoded = decodeDiagramContent(selected.content)
-  const { cells } = parseMxGraphModelXml(decoded)
+  const { cells, mxGraphModelXml } = parseMxGraphModelXml(decoded)
+  const wrappers = extractUserObjectWrappers(mxGraphModelXml)
+  const assets = {}
+  const extractHashIndex = new Map()
 
   const cellMap = new Map()
   for (const cell of cells) {
@@ -395,10 +451,12 @@ export function drawioToSpec(drawioFileText, options = {}) {
     const id = makeSpecId('n', v.id)
     nodeIdByCellId.set(v.id, id)
 
-    const label = labelFromCellValue(v.value) || id
+    const wrapper = wrappers.get(v.id)
     const style = parseStyle(v.style)
+    const raster = extractRasterDataUriFromStyle(v.style || '')
+    let label = labelFromCellValue(v.value) || id
+    if (wrapper?.assetId && wrapper.label) label = wrapper.label
     const inferredType = inferTypeFromStyle(style, label)
-    const icon = inferIconFromStyle(style)
 
     const pos = absPosition(v)
     const node = {
@@ -407,7 +465,36 @@ export function drawioToSpec(drawioFileText, options = {}) {
       type: inferredType
     }
 
-    if (icon) node.icon = icon
+    if (wrapper?.assetId) {
+      const record = wrapperToAssetRecord(wrapper)
+      if (!assets[wrapper.assetId]) {
+        assets[wrapper.assetId] = record
+      } else if (assetRecordFingerprint(assets[wrapper.assetId]) !== assetRecordFingerprint(record)) {
+        throw new Error(
+          `assets.${wrapper.assetId}: XML carriers disagree; the same asset id has conflicting metadata`
+        )
+      }
+      node.image = wrapper.assetId
+    } else if (raster) {
+      if (!options.extractAssets) {
+        throw new Error(
+          'Imported shape=image cell has no asset metadata. Pass --extract-assets <dir> to write PNG/JPEG bytes and emit path references.'
+        )
+      }
+      const bytes = Buffer.from(raster.base64, 'base64')
+      const written = writeExtractedAsset(bytes, raster.mime, {
+        extractDir: options.extractAssets,
+        assetRoot: options.assetRoot,
+        byHash: extractHashIndex
+      })
+      if (!assets[written.id]) {
+        assets[written.id] = { path: written.path, sha256: written.sha256 }
+      }
+      node.image = written.id
+    } else {
+      const icon = inferIconFromStyle(style)
+      if (icon) node.icon = icon
+    }
     if (v.parent && moduleIdByCellId.has(v.parent)) {
       node.module = moduleIdByCellId.get(v.parent)
     }
@@ -488,10 +575,12 @@ export function drawioToSpec(drawioFileText, options = {}) {
   if (profile) meta.profile = profile
   if (title) meta.title = title
 
-  return {
+  const result = {
     meta,
     modules,
     nodes,
     edges: specEdges
   }
+  if (Object.keys(assets).length > 0) result.assets = assets
+  return result
 }

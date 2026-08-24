@@ -41,7 +41,7 @@ test('palette docs describe the orthogonal contract, venue map, and print gate',
   assert.match(overlay, /strict[\s\S]{0,200}(ieee-bw|tol-high-contrast)/i)
 })
 
-test('palette release surfaces and eval cases stay synchronized at 2.7.0', () => {
+test('palette release surfaces and eval cases stay synchronized at 2.8.0', () => {
   const packageJson = JSON.parse(read('package.json'))
   const baseEvals = JSON.parse(read('skills/drawio/evals/evals.json'))
   const academicEvals = JSON.parse(read('skills/drawio-academic-skills/evals/evals.json'))
@@ -51,9 +51,9 @@ test('palette release surfaces and eval cases stay synchronized at 2.7.0', () =>
     read('skills/drawio-academic-skills/agents/openai.yaml')
   ]
 
-  assert.equal(packageJson.version, '2.7.0')
-  assert.equal(baseEvals.version, '2.7.0')
-  assert.equal(academicEvals.version, '2.7.0')
+  assert.equal(packageJson.version, '2.8.0')
+  assert.equal(baseEvals.version, '2.8.0')
+  assert.equal(academicEvals.version, '2.8.0')
   assert.ok(baseEvals.evals.some((item) => item.id === 'base-palette-selection'))
   assert.ok(baseEvals.evals.some((item) => item.id === 'base-replicate-palette-preservation'))
   assert.ok(academicEvals.evals.some((item) => item.id === 'academic-ieee-print-palette'))

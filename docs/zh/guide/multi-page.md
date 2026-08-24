@@ -37,6 +37,7 @@ node skills/drawio/scripts/cli.js existing.drawio bundle.spec.yaml --input-forma
 | 缺失/不安全/重复的同页 object ID | `MULTI_PAGE_INVALID`，位于 page/object 路径  |
 | 缺失 edge ID 或悬空 edge 端点    | `MULTI_PAGE_INVALID`，位于 edge 路径         |
 | 缺失/类型错误/重复的 link 端点   | `MULTI_PAGE_INVALID`，位于 link 路径         |
+| 顶层或页内 `assets`              | `MULTI_PAGE_INVALID`；v1 只在扁平规范支持 assets |
 | 重复的 page-name 选择器          | 歧义 `--page` 错误，列出候选 ID              |
 | 未知选择器或越界索引             | 明确 `--page` 错误，给出可用 ID/索引范围     |
 | 某页 XML 非法                    | 页级校验错误；其他页 root ID 不冲突          |

@@ -12,7 +12,7 @@
 
 Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、网络拓扑、结构化重绘、Mermaid/CSV 转换和已有 `.drawio` 导入。论文或出版场景由 Academic Overlay 处理；它依赖 sibling Base，而不是复制一份底层 runtime。
 
-### 推荐模型
+## 推荐模型
 
 - **GPT Sol Max**
 - **Claude Fable 5**
@@ -42,7 +42,8 @@ Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、
 - **代码关系导入**：从本地项目目录渲染 Python、JavaScript/TypeScript、Go 或 Rust 的 module/class 关系。
 - **运行态快照与漂移**：投影已保存的 Terraform state、Docker inspect 或 Kubernetes live JSON，并对比声明态与 live 投影以渲染架构漂移。
 - **多页 bundle 与 postprocess**：以稳定 page/object 身份编写 canonical bundle v1，并用 `mermaid`、`explain`、`relabel`、`restyle`、`heatmap` 或无脚本 `html` 离线投影/变换图。
-- **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle（多页加 `--all-pages`）。
+- **本地 PNG/JPEG 资产**：在顶层 `assets` 注册文件，用 `node.image` 放置。路径相对 `--asset-root`（默认 cwd）。v1 不支持 SVG 与多页 `assets`。
+- **已有图表导入归一化**：通过 `--input-format drawio --export-spec` 把已有 `.drawio` 转成 YAML-first bundle（多页加 `--all-pages`；外来内嵌栅格加 `--extract-assets`）。
 - **导出前校验**：结构、布局、质量、公式和复刻文字位置校验齐全。
 
 ## 运行模型
@@ -63,11 +64,13 @@ Academic Overlay 只使用前两条路径。它不创建、不要求、不路由
 如果需要复刻 draw.io 图表，推荐分别在 Claude 和 Codex 进行项目级安装 [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) 的 `dev` 分支（复刻效果优于本 skills 库）：
 
 - **Claude（项目级安装）**：
+
   ```bash
   git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .claude/skills/drawio-scientific-illustrator
   ```
 
 - **Codex（项目级安装）**：
+
   ```bash
   git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .codex/skills/drawio-scientific-illustrator
   ```

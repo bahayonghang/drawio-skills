@@ -149,6 +149,8 @@ Options:
   --sidecar-dir <dir> Emit sidecars in this directory when --write-sidecars is set
   --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
   --visual-preview    Export a non-embedded PNG with longest edge <= 2000px for visual review
+  --asset-root <dir>  Directory that assets.<id>.path is resolved against (default: cwd)
+  --extract-assets <dir>  When importing .drawio, write foreign PNG/JPEG bytes here
   search              Search the bundled shape catalog without network access
   --help, -h          Show this help message
 `.trim()
@@ -167,7 +169,9 @@ const flagsWithValues = new Set([
   '--project',
   '--dialect',
   '--module-address',
-  '--workflow'
+  '--workflow',
+  '--asset-root',
+  '--extract-assets'
 ])
 const positional = []
 for (let i = 0; i < args.length; i++) {
@@ -226,6 +230,12 @@ const adapterModuleAddress = optionValue('--module-address') || ''
 const repoRelativeInput =
   inputFile && inputFile !== '-' ? relative(process.cwd(), resolve(inputFile)).replaceAll('\\', '/') : undefined
 const adapterWorkflow = optionValue('--workflow') || repoRelativeInput
+const assetRoot = optionValue('--asset-root') || process.cwd()
+const extractAssets = optionValue('--extract-assets')
+if (extractAssets && inputFormat !== 'drawio') {
+  console.error('Error: --extract-assets is only valid with --input-format drawio.')
+  process.exit(1)
+}
 const adapterLocator = repoRelativeInput || `${inputFormat}.stdin`
 const codeInputFormats = new Set([
   'python-imports',
@@ -296,12 +306,13 @@ try {
 // ---------------------------------------------------------------------------
 
 let inputText
+const readFromStdin = !codeProjectInput && (inputFile === '-' || (!inputFile && !process.stdin.isTTY))
 if (codeProjectInput) {
   if (!inputFile || inputFile === '-') {
     console.error(`Error: ${inputFormat} requires a local project directory; stdin is not supported.`)
     process.exit(1)
   }
-} else if (inputFile === '-' || (!inputFile && !process.stdin.isTTY)) {
+} else if (readFromStdin) {
   const chunks = []
   for await (const chunk of process.stdin) chunks.push(chunk)
   inputText = Buffer.concat(chunks).toString('utf-8')
@@ -338,8 +349,8 @@ try {
   } else if (inputFormat === 'csv') {
     spec = parseCsvToSpec(inputText, { profile: themeName?.startsWith('academic') ? 'academic-paper' : 'default' })
   } else if (inputFormat === 'drawio') {
-    if (allPages) document = drawioToDocumentSpec(inputText)
-    else spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector })
+    if (allPages) document = drawioToDocumentSpec(inputText, { extractAssets, assetRoot })
+    else spec = drawioToSpec(inputText, { theme: themeName || undefined, page: pageSelector, extractAssets, assetRoot })
   } else if (inputFormat === 'terraform') {
     spec = projectGraphToSpec(
       parseTerraformConfig(inputText, { locator: adapterLocator, moduleAddress: adapterModuleAddress })
@@ -373,6 +384,11 @@ try {
   ].filter(Boolean)
   const contextText = context.length > 0 ? `[${context.join(' ')}] ` : ''
   console.error(`Error: Failed to parse ${inputFormat}: ${contextText}${err.message}`)
+  process.exit(1)
+}
+
+if (readFromStdin && spec?.assets && args.indexOf('--asset-root') === -1) {
+  console.error('Error: stdin input cannot include assets; use a file path or pass --asset-root <dir>.')
   process.exit(1)
 }
 
@@ -420,7 +436,7 @@ try {
     if (outputExtension !== '.drawio' && pageSelector == null) {
       throw new Error('multi-page SVG/PNG/PDF/JPG export requires --page <index|id|name>')
     }
-    renderedDocumentPages = await renderDocumentPages(document, { strict, allowUnknownShapes })
+    renderedDocumentPages = await renderDocumentPages(document, { strict, allowUnknownShapes, assetRoot })
     if (outputExtension === '.drawio') {
       documentContent = createMultiPageDrawioFileContent(renderedDocumentPages, {
         version: DRAWIO_COMPAT_VERSION,
@@ -433,7 +449,7 @@ try {
       documentContent = createDrawioFileContent(xml, { version: DRAWIO_COMPAT_VERSION })
     }
   } else if (doValidate) {
-    const result = specToDrawioXml(spec, { strict, allowUnknownShapes, returnWarnings: true, silent: true })
+    const result = specToDrawioXml(spec, { strict, allowUnknownShapes, returnWarnings: true, silent: true, assetRoot })
     xml = result.xml
     const problems = (result.warnings || []).filter((w) => w.level && w.level !== 'fatal')
     if (problems.length === 0) {
@@ -447,7 +463,7 @@ try {
       `Layout metrics: node-crossings=${metrics.edgeNodeCrossings}, edge-crossings=${metrics.edgeEdgeCrossings}, total-edge-length=${metrics.totalEdgeLength}px`
     )
   } else {
-    xml = specToDrawioXml(spec, { strict, allowUnknownShapes })
+    xml = specToDrawioXml(spec, { strict, allowUnknownShapes, assetRoot })
   }
 } catch (err) {
   console.error(`Error: Conversion failed: ${err.message}`)
