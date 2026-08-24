@@ -1,6 +1,6 @@
 ---
 name: drawio
-version: "2.7.0"
+version: "2.8.0"
 description: "Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow: architecture, network topologies, flowcharts, UML/ER, org charts, Mermaid/CSV conversion, existing .drawio bundles, style presets, themes, and non-publication formula diagrams. For publication figures (paper, thesis, IEEE, camera-ready) use drawio-academic-skills instead."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
@@ -54,6 +54,7 @@ Choose the route first, then load only that route's references. All paths below 
 - `code-import` — Python module/class, JavaScript/TypeScript ESM, Go package, or Rust module relationships from a local project directory → `docs/code-importers.md`, `docs/canonical-graph-projection.md`
 - `multi-page` — create, import, validate, or transform bundle v1 pages with stable page/object identity and structured links → `docs/upstream-capability-compatibility.md`, `docs/xml-format.md`
 - `raster-replicate` — normalize a trusted structured visual extraction through `--input-format raster-extraction` before canonical rendering → `workflows/replicate.md`, `docs/upstream-capability-compatibility.md`
+- `local-image` — embed local PNG/JPEG files as atomic image nodes through top-level `assets` and `node.image` → `docs/local-image-assets.md`
 - `postprocess` — project or transform canonical YAML/Draw.io with offline `mermaid`, `explain`, `relabel`, `restyle`, `heatmap`, or script-free `html` → `docs/upstream-capability-compatibility.md`
 - `architecture` — system/software architecture, microservice or cloud-service maps with role-based color coding, plus AI agent / RAG / memory diagrams（架构、微服务、云架构、agent、RAG、记忆、multi-agent、工具调用；非拓扑、非论文）→ `workflows/create.md`, `docs/architecture-diagrams.md`, `docs/agent-diagrams.md`, `docs/design-system/README.md`
 - `edit` — modify an existing sidecar bundle or imported `.drawio` → `workflows/edit.md`, `docs/migration-readiness.md`
@@ -100,6 +101,10 @@ node <base-skill-dir>/scripts/cli.js input.yaml output.png --validate --use-desk
 ```
 
 Use `--strict`/`--strict-warnings` for release-grade review.
+
+## Local Image Assets
+
+Register local PNG/JPEG files under top-level `assets` and reference them with `node.image` (never `node.icon`, and never `style.image`). Paths are relative to the asset root (`cwd` or `--asset-root`), not to the spec file. The renderer inlines `data:image/png;base64,` (or JPEG) into a `shape=image` cell. SVG files and multi-page bundles with `assets` are hard errors. Size diagnostics (`warning` above 2 MiB, `error` above 8 MiB per asset or 24 MiB citation-weighted total) point at `references/docs/local-image-assets.md`. Foreign `.drawio` images without this skill's metadata require `--extract-assets <dir>`.
 
 ## Edit, Import, and Replicate
 

@@ -1,5 +1,14 @@
 # Changelog — drawio academic skills overlay
 
+## 2.8.0 (2026-08-24)
+
+### Raster audit gate
+
+- `meta.profile: academic-paper` requires referenced local image assets to
+  declare a non-empty `raster_reason`, `atomic_raster_unit: true`, and
+  `contains_reconstructable_content: false`. Runtime stays in the sibling
+  Draw.io Base Skill. Overlay docs: `publication-overlay.md`.
+
 ## Unreleased
 
 ### Playbook example index and slimmer entrypoint

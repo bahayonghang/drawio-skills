@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 29
-- **Last Active**: 2026-07-21
+- **Total Sessions**: 30
+- **Last Active**: 2026-08-24
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1159 | Active |
+| `journal-1.md` | ~1196 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 30 | 2026-08-24 | 本地图片资产能力 | `f284c5d`, `5277146` | `dev` |
 | 29 | 2026-07-21 | 修复 issue #16 的 js-yaml 独立安装打包 | `05533e2` | `dev` |
 | 28 | 2026-07-19 | 补录上游整合批到 skill 侧 base CHANGELOG | `718231e` | `dev` |
 | 27 | 2026-07-19 | 归档 drawio 上游能力整合父任务 | `52eb520` | `dev` |

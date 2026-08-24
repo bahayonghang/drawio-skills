@@ -121,6 +121,7 @@ export async function renderDocumentPages(value, options = {}) {
       edges: page.edges || [],
       modules: page.modules || []
     }
+    if (page.assets != null) pageSpec.assets = page.assets
     const autoLayout = await applyAutoLayout(pageSpec)
     const linkMap = {}
     for (const link of document.links) {
@@ -175,7 +176,7 @@ export function validateDrawioDocument(drawioFileText) {
   return { valid: errors.length === 0, errors, warnings, pages }
 }
 
-export function drawioToDocumentSpec(drawioFileText) {
+export function drawioToDocumentSpec(drawioFileText, options = {}) {
   const diagrams = extractDiagrams(drawioFileText)
   const documentMetaMatch = /<mxfile\b([^>]*)>/i.exec(drawioFileText)
   const documentMeta = decodeJsonAttribute(documentMetaMatch ? attr(documentMetaMatch[1], 'dataDocumentMeta') : null, {
@@ -193,18 +194,33 @@ export function drawioToDocumentSpec(drawioFileText) {
     const metadata = wrapperMetadata(decoded)
     const spec = drawioToSpec(pageContainerXml(decoded, { id: pageId, name: pageName }), {
       page: 0,
-      title: pageName
+      title: pageName,
+      extractAssets: options.extractAssets,
+      assetRoot: options.assetRoot
     })
     links.push(...restoreCanonicalIdentity(spec, metadata, pageId))
-    pages.push({
+    const page = {
       id: pageId,
       name: pageName,
       meta: decodeJsonAttribute(diagram.pageMeta, spec.meta),
       nodes: spec.nodes,
       edges: spec.edges,
       modules: spec.modules
-    })
+    }
+    if (spec.assets != null) page.assets = spec.assets
+    pages.push(page)
   })
+  const hasAssets = pages.some((page) => page.assets != null)
+  if (hasAssets && pages.length === 1 && links.length === 0) {
+    const page = pages[0]
+    return normalizeDocumentSpec({
+      meta: page.meta,
+      nodes: page.nodes,
+      edges: page.edges,
+      modules: page.modules,
+      assets: page.assets
+    })
+  }
   return normalizeDocumentSpec({ schemaVersion: 1, meta: documentMeta, pages, links })
 }
 

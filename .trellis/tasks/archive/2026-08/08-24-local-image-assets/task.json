@@ -1,0 +1,33 @@
+{
+  "id": "local-image-assets",
+  "name": "local-image-assets",
+  "title": "为 draw.io skill 增加本地图片资产能力",
+  "description": "canonical YAML 增加顶层 assets 注册表与 node.image，把项目本地 PNG/JPEG 作为原子图片节点内联为 data URI 并保持 .drawio 往返无损（SVG v1 推迟）；零新增运行时依赖，不做像素处理；academic overlay 增加栅格审计门。驱动场景为论文任务 08-24-recreate-chapter2-fig2-1 的离线图片能力阻塞。",
+  "status": "completed",
+  "dev_type": "feature",
+  "scope": "skills/drawio + skills/drawio-academic-skills",
+  "package": "drawio",
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-08-24",
+  "completedAt": "2026-08-24",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [
+    "skills/drawio/scripts/dsl/document-spec.js",
+    "skills/drawio/scripts/dsl/spec-to-drawio.js",
+    "skills/drawio/scripts/dsl/drawio-to-spec.js",
+    "skills/drawio/scripts/postprocess/input.js",
+    "skills/drawio/scripts/cli.js",
+    "skills/drawio/assets/schemas/spec.schema.json"
+  ],
+  "notes": "工作分支 dev；base_branch 保持 main（仓库 PR 目标分支）。规划已过一轮独立复核，12 条 findings 中 11 条采纳，详见 research/capability-gap-analysis.md §6。",
+  "meta": {}
+}

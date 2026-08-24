@@ -60,6 +60,11 @@ function edgeOperator(edge) {
 }
 
 function buildMermaidNode(pageId, object, type, warnings) {
+  if (object.image) {
+    warnings.push(
+      `page ${pageId} object ${object.id} is a raster image asset; Mermaid has no image node, rendered as a labeled shape`
+    )
+  }
   const shape = MERMAID_TYPES.get(type || 'service')
   if (!shape) {
     warnings.push(`page ${pageId} object ${object.id} uses unsupported Mermaid type "${type}"; rendered as a neutral node`)
@@ -131,7 +136,8 @@ function identityText(object) {
 function explainObject(object, kind) {
   const type = object.type || (kind === 'module' ? 'module' : kind)
   const icon = object.icon ? `; icon ${inlineCode(object.icon)}` : ''
-  return `- ${inlineCode(object.id)}: ${inlineCode(objectLabel(object))} (${type})${icon}${identityText(object)}`
+  const image = object.image ? `; image ${inlineCode(object.image)}` : ''
+  return `- ${inlineCode(object.id)}: ${inlineCode(objectLabel(object))} (${type})${icon}${image}${identityText(object)}`
 }
 
 export function explainDocument(value, options = {}) {

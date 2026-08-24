@@ -1,6 +1,6 @@
 ---
 name: drawio-academic-skills
-version: "2.7.0"
+version: "2.8.0"
 description: "Publication-figure overlay for draw.io. Use instead of drawio whenever the diagram is for a paper, thesis, dissertation, journal, conference, IEEE/ACM submission, manuscript, camera-ready, Word/LaTeX figure, or other publication. Applies venue, figure-type, color, caption/legend, formula, and paper-readability gates for architecture, workflow, roadmap, network-topology, and replicated paper figures."
 license: MIT
 homepage: https://github.com/bahayonghang/drawio-skills
@@ -79,7 +79,7 @@ Choose one route, then load only its files. `overlay` = this directory; `base` =
 - `math-formula` — formula, equation, LaTeX, AsciiMath, MathJax, 公式 → base `../drawio/references/docs/math-typesetting.md`, `design-system/formulas.md`
 - `edit` — modify an academic bundle or imported `.drawio` → base `../drawio/references/workflows/edit.md`, `../drawio/references/docs/migration-readiness.md`
 - `replicate` — redraw screenshot, image, SVG, or reference paper figure → overlay `references/docs/publication-overlay.md`; base `../drawio/references/workflows/replicate.md`, `../drawio/references/docs/design-system/specification.md`, `color-guide.md`
-- `base-capabilities` — code/config/live imports, raster extraction, multi-page bundles, AI/SysML/BPMN stencils, or offline postprocess before publication checks → base `../drawio/references/docs/upstream-capability-compatibility.md`; overlay `references/docs/publication-overlay.md`
+- `base-capabilities` — code/config/live imports, raster extraction, local PNG/JPEG assets, multi-page bundles, AI/SysML/BPMN stencils, or offline postprocess before publication checks → base `../drawio/references/docs/upstream-capability-compatibility.md`, `local-image-assets.md`; overlay `references/docs/publication-overlay.md`
 - `stencil-heavy` — academic cloud, network, AWS, Azure, GCP, Cisco, Kubernetes figure → base `../drawio/references/docs/stencil-library-guide.md`, `ieee-network-diagrams.md`, `../drawio/references/official/xml-reference.md`
 - `style-preset` — learn/use/list/delete/rename visual style presets → base `../drawio/references/docs/style-extraction.md`, `style-presets.md`, `../drawio/styles/built-in/`
 - `direct-xml-exception` — tiny handoff-only XML or exact mxGraph control → base `../drawio/references/upstream/pure-drawio-skill.md`, `../drawio/references/official/xml-reference.md`
@@ -155,6 +155,7 @@ Do not claim completion until:
 - colors are not the only carrier of meaning; `meta.palette` matches the venue decision; `PALETTE_PRINT_GATE` is clear — offer `ieee-bw`/`tol-high-contrast` when strict print safety fails
 - the visual self-check followed sibling base `../drawio/references/workflows/visual-review.md` on the exported PNG (or fallback SVG) before any live/browser preview; academic checks additionally cover A4 readability, caption/legend, formulas, print meaning, and venue constraints
 - requested Desktop exports were attempted or reported unavailable; no MCP config, server, or live backend required
+- referenced local image assets declare a non-empty `raster_reason`, `atomic_raster_unit: true`, and `contains_reconstructable_content: false`
 
 ## Completion Report
 

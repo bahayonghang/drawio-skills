@@ -46,6 +46,8 @@ and rendering — see [Config and IaC Importers](./config-importers.md),
 | `--strict`               | fail on warnings and strict quality findings               |
 | `--strict-warnings`      | alias of `--strict`                                        |
 | `--allow-unknown-shapes` | temporarily downgrade unknown covered stencils to warnings |
+| `--asset-root <dir>`     | resolve `assets.<id>.path` against this directory (default: cwd) |
+| `--extract-assets <dir>` | when importing `.drawio`, write foreign PNG/JPEG bytes here |
 
 ## Artifact And Desktop Options
 

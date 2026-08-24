@@ -205,6 +205,43 @@
         }
       }
     },
+    "assets": {
+      "type": "object",
+      "description": "Local PNG/JPEG registry. Keys are asset ids. Paths are relative to the asset root (cwd or --asset-root), never to the spec file.",
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path relative to the asset root"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9A-Fa-f]{64}$",
+            "description": "Optional SHA-256 of the source file bytes"
+          },
+          "raster_reason": {
+            "type": "string",
+            "description": "Why this content is an atomic raster instead of native shapes"
+          },
+          "atomic_raster_unit": {
+            "type": "boolean"
+          },
+          "contains_reconstructable_content": {
+            "type": "boolean"
+          },
+          "decomposition_note": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "nodes": {
       "type": "array",
       "description": "Diagram nodes/elements",
@@ -286,6 +323,11 @@
             "type": "string",
             "pattern": "^[a-zA-Z][a-zA-Z0-9._-]*$",
             "description": "Icon identifier (e.g. aws.lambda, gcp.compute, lobe.openai, ai.claude, brand.redis, lucide.database-zap, lucide.server-cog)"
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$",
+            "description": "Asset id from the top-level assets registry. Mutually exclusive with icon."
           },
           "network": {
             "type": "object",
@@ -409,6 +451,9 @@
             },
             "additionalProperties": false
           }
+        },
+        "not": {
+          "required": ["icon", "image"]
         }
       }
     },

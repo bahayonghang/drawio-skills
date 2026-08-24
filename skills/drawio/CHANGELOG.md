@@ -1,5 +1,22 @@
 # Changelog — drawio base skill
 
+## 2.8.0 (2026-08-24)
+
+### Local image assets
+
+- Canonical YAML accepts a top-level `assets` registry and `node.image` so
+  local PNG/JPEG files render as atomic `shape=image` data URI cells.
+- Paths are relative to the asset root (`cwd` or `--asset-root`), never to the
+  spec file. SVG files and multi-page bundles with `assets` are hard errors.
+- Round-trip uses a `UserObject` carrier for path, sha256, and academic audit
+  fields. Foreign images require `--extract-assets <dir>`.
+- Size diagnostics: `warning` above 2 MiB per asset, `error` above 8 MiB per
+  asset or 24 MiB citation-weighted total. Recipe:
+  `references/docs/local-image-assets.md`.
+- `version-sync.js` now also writes
+  `skills/drawio-academic-skills/evals/evals.json` so `just ci` does not leave
+  an unsynced overlay eval version.
+
 ## Unreleased
 
 ### Fixed

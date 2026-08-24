@@ -16,7 +16,8 @@ The shipped operation set is exactly `mermaid`, `explain`, `relabel`, `restyle`,
 | `html`    | projection | self-contained, script-free HTML viewer                       |
 
 - **Projections** (`mermaid`, `explain`, `html`) are deterministic outputs, not canonical authoring sources.
-- **Mutators** (`relabel`, `restyle`, `heatmap`) return existing YAML or `.drawio` and preserve page order, `(pageId, objectId)`, links, adapter identity, icons, stencils, geometry, and academic metadata unless the selected mutator owns a bounded field.
+- **Mutators** (`relabel`, `restyle`, `heatmap`) return existing YAML or `.drawio` and preserve page order, `(pageId, objectId)`, links, adapter identity, icons, stencils, geometry, `assets` / `node.image`, and academic metadata unless the selected mutator owns a bounded field.
+- Image-node projections: Mermaid keeps a labeled shape and warns; Explain lists `image <id>`; HTML draws a rectangle because the offline SVG renderer has no raster `<image>` path.
 - `relabel` resolves stable page/object addresses; `restyle` accepts only allowlisted style tokens; `heatmap` resolves identity, then address, then an explicitly enabled unambiguous label fallback.
 - The `html` output is self-contained and script-free: tabs, zoom controls, generated search results, and page links use HTML/CSS controls only — no remote assets, browser runtime, or inline script.
 

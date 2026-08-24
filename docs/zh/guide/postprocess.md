@@ -16,7 +16,8 @@ Postprocess 在离线状态下投影或变换 canonical 输入。它把 YAML 或
 | `html`    | 投影 | 自包含、无脚本的 HTML 查看器                                |
 
 - **投影**（`mermaid`、`explain`、`html`）是确定性输出，不是 canonical authoring 源。
-- **变换**（`relabel`、`restyle`、`heatmap`）返回现有 YAML 或 `.drawio`，并保留 page 顺序、`(pageId, objectId)`、link、adapter 身份、icon、stencil、几何与学术元数据，除非所选变换拥有某个受限字段。
+- **变换**（`relabel`、`restyle`、`heatmap`）返回现有 YAML 或 `.drawio`，并保留 page 顺序、`(pageId, objectId)`、link、adapter 身份、icon、stencil、几何、`assets` / `node.image` 与学术元数据，除非所选变换拥有某个受限字段。
+- 图片节点投影：Mermaid 保留带标签的形状并告警；Explain 列出 `image <id>`；HTML 画矩形，因为离线 SVG 渲染器没有栅格 `<image>` 路径。
 - `relabel` 解析稳定的 page/object 地址；`restyle` 只接受 allowlist style token；`heatmap` 先按身份、再按地址、最后按显式启用的无歧义 label 回退来解析。
 - `html` 输出自包含且无脚本：tab、缩放控件、生成的搜索结果与 page link 仅使用 HTML/CSS 控件——不需要远程资源、browser 运行时或内联 script。
 

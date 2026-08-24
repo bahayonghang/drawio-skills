@@ -100,6 +100,11 @@ nodes:
     icon: aws.api-gateway
 ```
 
+`node.image` references a top-level `assets` id (PNG/JPEG only). Do not set
+`icon` and `image` on the same node. Paths are relative to the asset root
+(`cwd` or `--asset-root`), not to the spec file. Full rules:
+`skills/drawio/references/docs/local-image-assets.md`.
+
 ### `edges`
 
 Optional, but most diagrams use them.

@@ -284,6 +284,10 @@ nodes:
 
 When both fields are present, `bounds` is the fidelity-preserving geometry and should be treated as authoritative.
 
+### Local Image Assets
+
+Register PNG/JPEG files under top-level `assets` and reference them with `node.image`. Do not set `icon` and `image` on the same node. Paths are relative to the asset root (`cwd` or `--asset-root`). SVG files and multi-page bundles with `assets` are hard errors. Recipe and size guardrails: `docs/local-image-assets.md`.
+
 ### Size Presets
 
 | Size     | Dimensions   |

@@ -104,4 +104,17 @@ describe('multi-page import and round-trip', () => {
     const unsafe = file.replace('id="context"', 'id="bad:page"')
     assert.throws(() => drawioToDocumentSpec(unsafe), /pages\[0\]\.id.*safe page id/i)
   })
+
+  test('rejects assets on a multi-page bundle instead of dropping them', () => {
+    assert.throws(
+      () =>
+        normalizeDocumentSpec({
+          schemaVersion: 1,
+          meta: { title: 'Bundle' },
+          assets: { photo: { path: 'a.png' } },
+          pages: [{ id: 'p1', name: 'One', nodes: [{ id: 'n1', label: 'A' }], edges: [], modules: [] }]
+        }),
+      (error) => error.code === 'MULTI_PAGE_INVALID' && error.path === 'assets'
+    )
+  })
 })

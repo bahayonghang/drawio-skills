@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/08-24-local-image-assets/research/capability-gap-analysis.md", "reason": "核对实现是否覆盖五条探针、四处所有权链剥离点，且未削弱既有拦截"}
+{"file": ".trellis/spec/drawio-skill/skill-doc-and-release-contract.md", "reason": "核对零新增运行时依赖、SKILL.md 断言未破、overlay references 白名单同步、版本面完整、eval 每断言证据"}
+{"file": ".trellis/spec/drawio-skill/postprocess.md", "reason": "核对 assets 在 canonical 变换中确实透传，投影降级行为已实测并文档化"}
+{"file": ".trellis/spec/drawio-skill/raster-replicate-adapter.md", "reason": "核对 raster-extraction 适配器边界与用例未被改动"}
+{"file": "CONTEXT.md", "reason": "核对 base/overlay 分层与术语使用是否符合 ubiquitous language"}

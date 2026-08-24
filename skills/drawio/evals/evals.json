@@ -1,6 +1,6 @@
 {
   "skill_name": "drawio",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "evals": [
     {
       "id": "base-general-architecture",
@@ -217,6 +217,21 @@
         "Uses only the shipped mermaid and script-free html postprocess operations",
         "Does not require Graphviz, network, Desktop, browser, MCP, or a model",
         "Preserves unavailable provider and model execution as missing evidence"
+      ]
+    },
+    {
+      "id": "base-local-image-assets",
+      "prompt": "Embed two local PNG equipment photos as atomic image nodes using top-level assets and node.image. Keep labels as native text. Render offline YAML to .drawio, then export-spec and re-render.",
+      "expected_output": "A self-contained .drawio with shape=image data URIs and a round-trippable assets registry.",
+      "files": [],
+      "assertions": [
+        "Uses top-level assets and node.image rather than node.icon or style.image",
+        "Paths are relative to the asset root, not the spec file",
+        "Rendered XML contains shape=image and data:image/png;base64,",
+        "Does not require a new runtime image library or NODE_PATH",
+        "Does not place assets on a multi-page bundle",
+        "Round-trip export-spec restores path and audit fields",
+        "Desktop visual review of the image cells is missing evidence when Desktop is not run"
       ]
     }
   ]

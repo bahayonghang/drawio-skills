@@ -96,6 +96,8 @@ nodes:
     icon: aws.api-gateway
 ```
 
+`node.image` 引用顶层 `assets` 的 id（仅 PNG/JPEG）。同一节点不能同时设置 `icon` 与 `image`。路径相对 asset root（cwd 或 `--asset-root`），不相对规范文件。完整规则见 `skills/drawio/references/docs/local-image-assets.md`。
+
 ### `edges`
 
 可选，但大多数图都会用到。

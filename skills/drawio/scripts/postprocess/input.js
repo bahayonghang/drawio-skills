@@ -11,12 +11,16 @@ function isRecord(value) {
 }
 
 function pageSpec(page) {
-  return {
+  const spec = {
     meta: page.meta || {},
     nodes: page.nodes || [],
     edges: page.edges || [],
     modules: page.modules || []
   }
+  if (page != null && Object.prototype.hasOwnProperty.call(page, 'assets') && page.assets != null) {
+    spec.assets = page.assets
+  }
+  return spec
 }
 
 function normalizedInput(value) {
