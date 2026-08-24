@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/08-24-local-image-assets/research/capability-gap-analysis.md", "reason": "五条探针的代码定位、既有合同约束、体积精确复核，以及 §6 复核期间新增的四处所有权链剥离点与 strict 语义"}
+{"file": ".trellis/spec/drawio-skill/skill-doc-and-release-contract.md", "reason": "安装边界禁止新增运行时依赖；SKILL.md 措辞被四个根测试 pin 住；zip == git ls-files；eval 证据为每断言口径"}
+{"file": ".trellis/spec/drawio-skill/postprocess.md", "reason": "未被 mutator 拥有的字段必须保留，决定 assets 在 postprocess 中透传而非拒绝"}
+{"file": ".trellis/spec/drawio-skill/multi-page-foundation.md", "reason": "bundle 规范化与校验路径；assets 在 v1 需显式拒绝而非静默丢弃"}
+{"file": ".trellis/spec/drawio-skill/raster-replicate-adapter.md", "reason": "适配器边界明文禁止 image data，新能力必须走 canonical YAML 而非该适配器"}
+{"file": ".trellis/spec/drawio-skill/semantic-types.md", "reason": "主题静默回退陷阱与 grep 验证配方；确认图片节点不触发主题覆盖检查表"}
+{"file": "CONTEXT.md", "reason": "Overlay Resource Boundary、YAML-First Authoring、Font Policy 等术语，决定 base/overlay 分层与文档措辞"}
