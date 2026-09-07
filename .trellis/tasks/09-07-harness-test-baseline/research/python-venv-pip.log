@@ -1,0 +1,17 @@
+Requirement already satisfied: pip in C:\Users\lyh\AppData\Local\Temp\drawio-parser-venv\Lib\site-packages (26.2.1)
+Collecting python-hcl2==8.1.2 (from -r D:\Documents\Code\Agents\drawio-skills\skills\drawio\scripts\adapters\python\requirements.txt (line 1))
+  Using cached python_hcl2-8.1.2-py3-none-any.whl.metadata (7.2 kB)
+Collecting sqlglot==30.12.0 (from -r D:\Documents\Code\Agents\drawio-skills\skills\drawio\scripts\adapters\python\requirements.txt (line 2))
+  Using cached sqlglot-30.12.0-py3-none-any.whl.metadata (24 kB)
+Collecting lark<2.0,>=1.1.5 (from python-hcl2==8.1.2->-r D:\Documents\Code\Agents\drawio-skills\skills\drawio\scripts\adapters\python\requirements.txt (line 1))
+  Using cached lark-1.3.1-py3-none-any.whl.metadata (1.8 kB)
+Collecting regex>=2024.4.16 (from python-hcl2==8.1.2->-r D:\Documents\Code\Agents\drawio-skills\skills\drawio\scripts\adapters\python\requirements.txt (line 1))
+  Downloading regex-2026.9.3-cp314-cp314-win_amd64.whl.metadata (41 kB)
+Using cached python_hcl2-8.1.2-py3-none-any.whl (98 kB)
+Using cached sqlglot-30.12.0-py3-none-any.whl (707 kB)
+Using cached lark-1.3.1-py3-none-any.whl (113 kB)
+Downloading regex-2026.9.3-cp314-cp314-win_amd64.whl (280 kB)
+Installing collected packages: sqlglot, regex, lark, python-hcl2
+
+
+Successfully installed lark-1.3.1 python-hcl2-8.1.2 regex-2026.9.3 sqlglot-30.12.0

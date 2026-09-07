@@ -1,0 +1,11 @@
+{
+  "note": "omit-optional install; parsers missing; must be non-zero and not skip-pass",
+  "exit_code": 1,
+  "started": "2026-09-07T20:31:37.6611907+08:00",
+  "env": {
+    "DRAWIO_TEST_PYTHON": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-parser-venv\\Scripts\\python.exe"
+  },
+  "cwd": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-omit-optional",
+  "finished": "2026-09-07T20:31:38.8754402+08:00",
+  "command": "npm run test:parsers"
+}

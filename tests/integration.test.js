@@ -10,7 +10,7 @@ import { execFileSync, spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { fileURLToPath } from 'node:url'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, resolve } from 'node:path'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -383,20 +383,6 @@ test('CLI: optional parser absence is isolated to Terraform and SQL routes', () 
   })
   assert.equal(yaml.status, 0)
   assert.match(yaml.stdout, /api/)
-})
-
-test('CLI: code importer directory route projects through the canonical renderer', () => {
-  const tempDir = createTempDir()
-  try {
-    writeFileSync(join(tempDir, 'a.js'), "import './b.js'\n")
-    writeFileSync(join(tempDir, 'b.js'), 'export const b = 1\n')
-    const output = runCli([tempDir, '--input-format', 'js-imports'])
-    assert.match(output, /a\.js/)
-    assert.match(output, /b\.js/)
-    assert.match(output, /<mxGraphModel/)
-  } finally {
-    rmSync(tempDir, { recursive: true, force: true })
-  }
 })
 
 test('CLI: code importer routes reject stdin before reading source text', () => {

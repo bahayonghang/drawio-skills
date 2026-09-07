@@ -29,6 +29,29 @@ function writePoisonYamlPackage(root) {
   writeFileSync(join(packageDir, 'index.js'), "throw new Error('ambient js-yaml dependency was loaded')\n")
 }
 
+function disconnectAmbientParserPackages(root) {
+  for (const name of ['es-module-lexer', 'tree-sitter', 'tree-sitter-go', 'tree-sitter-rust']) {
+    const packageDir = join(root, 'node_modules', name)
+    mkdirSync(packageDir, { recursive: true })
+    writeFileSync(
+      join(packageDir, 'package.json'),
+      `${JSON.stringify(
+        {
+          name,
+          version: '0.0.0-disconnected',
+          type: 'module',
+          exports: {
+            '.': './missing.mjs',
+            './js': './missing.mjs'
+          }
+        },
+        null,
+        2
+      )}\n`
+    )
+  }
+}
+
 function collectProductionScripts(root, files = []) {
   for (const entry of readdirSync(root, { withFileTypes: true })) {
     const path = join(root, entry.name)
@@ -71,6 +94,51 @@ test('installed base skill owns its mandatory YAML runtime', () => {
     const xml = readFileSync(outputFile, 'utf8')
     assert.match(xml, /<mxGraphModel[\s>]/)
     assert.match(xml, /<\/mxGraphModel>/)
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('installed base skill keeps YAML working when optional parsers are disconnected', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'drawio-skill-parser-install-'))
+  const installedSkill = join(tempRoot, 'installed', 'drawio')
+  const yamlInput = join(tempRoot, 'input.yaml')
+  const yamlOutput = join(tempRoot, 'output.drawio')
+  const jsProject = join(tempRoot, 'js-project')
+  const cli = join(installedSkill, 'scripts', 'cli.js')
+
+  try {
+    cpSync(SKILL_ROOT, installedSkill, { recursive: true })
+    writePoisonYamlPackage(tempRoot)
+    disconnectAmbientParserPackages(tempRoot)
+    writeFileSync(yamlInput, 'nodes:\n  - id: start\n    label: Start\n')
+    mkdirSync(jsProject)
+    writeFileSync(join(jsProject, 'a.js'), "import './b.js'\n")
+    writeFileSync(join(jsProject, 'b.js'), 'export const b = 1\n')
+
+    const yamlResult = spawnSync(process.execPath, [cli, yamlInput, yamlOutput, '--validate'], {
+      cwd: tempRoot,
+      env: withoutNodePath(),
+      encoding: 'utf8',
+      timeout: 10_000,
+      windowsHide: true
+    })
+    assert.equal(
+      yamlResult.status,
+      0,
+      `isolated YAML CLI failed\nstdout:\n${yamlResult.stdout}\nstderr:\n${yamlResult.stderr}`
+    )
+    assert.equal(existsSync(yamlOutput), true)
+
+    const jsResult = spawnSync(process.execPath, [cli, jsProject, '--input-format', 'js-imports'], {
+      cwd: tempRoot,
+      env: withoutNodePath(),
+      encoding: 'utf8',
+      timeout: 10_000,
+      windowsHide: true
+    })
+    assert.notEqual(jsResult.status, 0)
+    assert.match(jsResult.stderr, /\[OPTIONAL_DEPENDENCY_MISSING\]/)
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }

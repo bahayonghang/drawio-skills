@@ -1,0 +1,7 @@
+{
+  "robocopy_exit": 1,
+  "dir_count": 144,
+  "has_tree_sitter": true,
+  "command": "robocopy AC1 node_modules into workspace (after clean temp npm ci)",
+  "has_es_module_lexer": true
+}

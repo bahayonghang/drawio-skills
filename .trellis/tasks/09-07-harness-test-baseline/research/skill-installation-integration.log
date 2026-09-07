@@ -1,0 +1,167 @@
+
+鈿狅笍  drawio spec validation diagnostics:
+  鈥?[warning] [LEGACY] Label of edge "mfa->verify" overlaps connector "mfa->success"; move the label or reroute the edge.
+
+鈿狅笍  drawio spec validation diagnostics:
+  鈥?[warning] [LEGACY] Label of edge "cart->orderDb" overlaps connector "cart->cache"; move the label or reroute the edge.
+  鈥?[warning] [LEGACY] Label of edge "catalog->cache" overlaps connector "cart->cache"; move the label or reroute the edge.
+  鈥?[warning] [LEGACY] Labels cart->orderDb and catalog->cache overlap; separate them or shorten the text.
+Spec validation: WARNINGS (5)
+  鈥?[warning] Label of edge "core->distA" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "distA->access" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "distA->access" overlaps connector "distB->access"; move the label or reroute the edge.
+  鈥?[warning] Label of edge "access->users" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Labels distA->access and distB->access overlap; separate them or shorten the text.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=720px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (2)
+  鈥?[info] 1 node label(s) exceed 14 characters ("internet"). Consider abbreviation.
+  鈥?[warning] Label of edge "web1->db" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+Layout metrics: node-crossings=0, edge-crossings=1, total-edge-length=761px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  鈥?[info] 2 node label(s) exceed 14 characters ("firewall", "db"). Consider abbreviation.
+  鈥?[warning] Label of edge "firewall->revproxy" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "firewall->revproxy" overlaps connector "firewall->web"; move the label or reroute the edge.
+  鈥?[warning] Label of edge "firewall->web" overlaps connector "revproxy->web"; move the label or reroute the edge.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=536px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  鈥?[info] 1 node label(s) exceed 14 characters ("igw"). Consider abbreviation.
+  鈥?[warning] Label of edge "alb->fw" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "alb->fw" overlaps connector "fw->wap"; move the label or reroute the edge.
+  鈥?[warning] Label of edge "fw->wap" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=503px
+XML validation: PASSED (no errors)
+
+鈿狅笍  drawio spec validation diagnostics:
+  鈥?[warning] [LEGACY] Academic-paper profile should set meta.figureType to one of architecture, roadmap, workflow.
+  鈥?[warning] [LEGACY] Academic-paper profile requires meta.title for figure captioning.
+  鈥?[warning] [LEGACY] Academic-paper profile should include meta.description for figure context.
+Error: Failed to parse yaml: Failed to parse YAML document: tag suffix cannot contain exclamation marks (1:3)
+
+ 1 | !!!invalid: [yaml: {
+-------^
+Error: Failed to parse yaml: Invalid node id "123bad": must match /^[A-Za-z][A-Za-z0-9_-]*$/
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=0px
+XML validation: PASSED (no errors)
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=538px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (2)
+  鈥?[info] 1 node label(s) exceed 14 characters ("input"). Consider abbreviation.
+  鈥?[warning] Label of edge "mfa->verify" overlaps connector "mfa->success"; move the label or reroute the edge.
+Layout metrics: node-crossings=1, edge-crossings=0, total-edge-length=1013px
+XML validation: PASSED (no errors)
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=531px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  鈥?[info] 2 node label(s) exceed 14 characters ("catalog", "payment"). Consider abbreviation.
+  鈥?[warning] Label of edge "cart->orderDb" overlaps connector "cart->cache"; move the label or reroute the edge.
+  鈥?[warning] Label of edge "catalog->cache" overlaps connector "cart->cache"; move the label or reroute the edge.
+  鈥?[warning] Labels cart->orderDb and catalog->cache overlap; separate them or shorten the text.
+Layout metrics: node-crossings=0, edge-crossings=1, total-edge-length=1155px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (5)
+  鈥?[warning] Label of edge "core->distA" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "distA->access" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "distA->access" overlaps connector "distB->access"; move the label or reroute the edge.
+  鈥?[warning] Label of edge "access->users" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Labels distA->access and distB->access overlap; separate them or shorten the text.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=720px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (2)
+  鈥?[info] 1 node label(s) exceed 14 characters ("internet"). Consider abbreviation.
+  鈥?[warning] Label of edge "web1->db" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+Layout metrics: node-crossings=0, edge-crossings=1, total-edge-length=761px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  鈥?[info] 2 node label(s) exceed 14 characters ("firewall", "db"). Consider abbreviation.
+  鈥?[warning] Label of edge "firewall->revproxy" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  鈥?[warning] Label of edge "firewall->revproxy" overlaps connector "firewall->web"; move the label or reroute the edge.
+  鈥?[warning] Label of edge "firewall->web" overlaps connector "revproxy->web"; move the label or reroute the edge.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=536px
+XML validation: PASSED (no errors)
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-X0GK2V\imported.spec.yaml
+Saved arch: C:/Users/lyh/AppData/Local/Temp/drawio-skill-test-X0GK2V/imported.arch.json
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-R814VR\extracted.spec.yaml
+Saved arch: C:/Users/lyh/AppData/Local/Temp/drawio-skill-test-R814VR/extracted.arch.json
+Spec validation: WARNINGS (1)
+  鈥?[info] 1 node label(s) exceed 14 characters ("source"). Consider abbreviation.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=64px
+XML validation: PASSED (no errors)
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-R814VR\extracted.drawio
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-DA12Sy\simple-flow.svg
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-83GWTs\hybrid-flow.drawio
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-jeY0sL\final\hybrid-flow.drawio
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-lTGFOg\paper-figure.svg
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-vbxrbp\final\paper-figure.svg
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-tRXFEz\.drawio-tmp\imported\imported.spec.yaml
+Saved arch: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-tRXFEz\.drawio-tmp\imported\imported.arch.json
+XML validation: PASSED (no errors)
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-iXxKoH\bundle.drawio
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-5cRuvG\bundle.drawio
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-5cRuvG\default.spec.yaml
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-5cRuvG\all-pages.spec.yaml
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-3fbQZo\selected-0.svg
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-3fbQZo\selected-second.svg
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-3fbQZo\selected-Second-page.svg
+XML validation: PASSED (no errors)
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-XUhAPr\unsafe-labels.drawio
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-FGQbvs\replicated-brand-flow.drawio
+鉁?CLI: microservices.yaml produces valid XML (173.4512ms)
+鉁?CLI: login-flow.yaml produces valid XML (146.6082ms)
+鉁?CLI: neural-network.yaml produces valid XML (134.3738ms)
+鉁?CLI: e-commerce.yaml produces valid XML (149.7111ms)
+鉁?CLI: campus-lan-topology.yaml produces network topology XML (358.7823ms)
+鉁?CLI: aws-vpc-topology.yaml produces provider icon XML (185.6219ms)
+鉁?CLI: onprem-dmz-topology.yaml produces DMZ topology XML (161.5201ms)
+鉁?CLI: vendor-device-mapping.yaml derives icons from network metadata (188.4052ms)
+鉁?CLI: reads YAML from stdin with - arg (160.1968ms)
+鉁?CLI: reads YAML from stdin without explicit - arg when piped (148.6813ms)
+鉁?CLI: --theme dark overrides theme (142.8537ms)
+鉁?CLI: --theme academic applies grayscale (159.4641ms)
+鉁?CLI: invalid YAML exits with non-zero code (157.6608ms)
+鉁?CLI: YAML with invalid node ID exits with error (173.8108ms)
+鉁?CLI: --visual-preview is documented and requires a PNG output path (451.8016ms)
+鉁?CLI: --visual-preview rejects DPI scaling (144.1838ms)
+鉁?CLI: --visual-preview reports SVG fallback without claiming a PNG (167.3781ms)
+鉁?CLI: --validate passes on valid input (144.5815ms)
+鉁?CLI: --validate with example files (1346.5042ms)
+鉁?CLI: Mermaid flowchart converts via adapter (150.0362ms)
+鉁?CLI: Mermaid sequence diagram converts via adapter (157.0318ms)
+鉁?CLI: drawio import can export a spec bundle (173.3392ms)
+鉁?CLI: CSV org chart converts via adapter (151.043ms)
+鉁?CLI: structured config adapters project through the canonical renderer (1155.1266ms)
+鉁?CLI: raster extraction stdin reuses the canonical renderer (284.0953ms)
+鉁?CLI: raster extraction file writes canonical spec, drawio, and sidecars (659.1184ms)
+鉁?CLI: optional parser absence is isolated to Terraform and SQL routes (466.3932ms)
+鉁?CLI: code importer routes reject stdin before reading source text (172.9943ms)
+鉁?CLI: config adapter options reject missing values (175.1559ms)
+鉁?CLI: svg output writes a standalone svg file (192.4503ms)
+鉁?CLI: --write-sidecars creates drawio, spec, and arch files for drawio output (194.6872ms)
+鉁?CLI: --sidecar-dir keeps drawio output directory free of sidecars (242.2194ms)
+鉁?CLI: --write-sidecars with svg output writes drawio companion and sidecars (233.6362ms)
+鉁?CLI: --sidecar-dir keeps svg output directory to svg and drawio companion (375.0559ms)
+鉁?CLI: --export-spec writes spec and arch to sidecar dir when requested (278.733ms)
+鉁?CLI: multi-page YAML writes one drawio bundle and arch v2 sidecars (239.7384ms)
+鉁?CLI: drawio import remains first-page flat by default and all-pages is explicit (596.5785ms)
+鉁?CLI: multi-page page boundaries and all-pages conflicts fail explicitly (346.5894ms)
+鉁?CLI: multi-page binary selection accepts index, id, and unique name (561.5544ms)
+鉁?CLI: multi-page selection rejects out-of-range and ambiguous names with safe diagnostics (362.7367ms)
+鉁?CLI: multi-page stdin requires an explicit drawio output and keeps stdout clean (179.7883ms)
+鉁?CLI: multi-page page metadata is escaped and never emits raw injection payloads (190.9686ms)
+鉁?CLI: replicated specs preserve source background and replication metadata in sidecars (171.1031ms)
+鉁?installed base skill owns its mandatory YAML runtime (1062.7017ms)
+鉁?installed base skill keeps YAML working when optional parsers are disconnected (1296.9723ms)
+鉁?production scripts do not import js-yaml as an ambient package (39.8352ms)
+鈩?tests 46
+鈩?suites 0
+鈩?pass 46
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 12521.3206

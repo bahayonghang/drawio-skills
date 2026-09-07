@@ -1,0 +1,19 @@
+{
+  "package_json_sha256_after": "6B7D8E205CA1537CA6A8292DE40A629D706A39D7C04B79056E1C63188B20439B",
+  "command": "npm ci",
+  "exit_code": 0,
+  "lock_sha256_before": "27531B2C59654DCB2380BBD644706067261E60DA961C86B181559585CB06B1DE",
+  "lock_sha256_after": "27531B2C59654DCB2380BBD644706067261E60DA961C86B181559585CB06B1DE",
+  "cwd": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-ac1-npmci",
+  "lock_unchanged": true,
+  "env": {
+    "npm": "12.0.2",
+    "registry": "https://registry.npmjs.org/",
+    "node": "v26.7.0",
+    "allow_remote": "none"
+  },
+  "finished": "2026-09-07T20:27:06.9793964+08:00",
+  "package_json_sha256_before": "6B7D8E205CA1537CA6A8292DE40A629D706A39D7C04B79056E1C63188B20439B",
+  "package_json_unchanged": true,
+  "started": "2026-09-07T20:27:00.3786947+08:00"
+}

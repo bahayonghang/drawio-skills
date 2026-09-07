@@ -1,0 +1,6 @@
+warning: in the working copy of '.trellis/spec/drawio-skill/code-importers.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/run-tests.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'skills/drawio/scripts/adapters/code-parsers.integration.test.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/skill-installation.test.js', LF will be replaced by CRLF the next time Git touches it

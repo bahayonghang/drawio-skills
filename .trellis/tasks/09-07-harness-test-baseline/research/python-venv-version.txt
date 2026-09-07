@@ -1,0 +1,3 @@
+C:\Users\lyh\AppData\Local\Temp\drawio-parser-venv\Scripts\python.exe
+3.14.7
+sqlglot 30.12.0

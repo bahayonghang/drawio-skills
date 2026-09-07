@@ -1,0 +1,8 @@
+{
+  "python": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-parser-venv\\Scripts\\python.exe",
+  "env": {
+    "python_system": "Python 3.14.7"
+  },
+  "exit_code": 0,
+  "command": "python -m venv; pip install -r skills/drawio/scripts/adapters/python/requirements.txt"
+}

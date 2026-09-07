@@ -1,0 +1,8 @@
+{
+  "finished": "2026-09-07T20:30:33.5581401+08:00",
+  "started": "2026-09-07T20:30:33.0333887+08:00",
+  "exit_code": 1,
+  "cwd": "D:\\Documents\\Code\\Agents\\drawio-skills",
+  "note": "DRAWIO_TEST_PYTHON unset; must be non-zero before tests",
+  "command": "npm run test:parsers"
+}

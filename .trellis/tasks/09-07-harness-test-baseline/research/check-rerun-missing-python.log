@@ -1,0 +1,4 @@
+npm notice run drawio-skills@2.8.0 test:parsers
+npm notice run node scripts/run-tests.js --code-parsers
+Error: DRAWIO_TEST_PYTHON is required for --code-parsers and must point at a Python interpreter with the pinned config-parser packages.
+EXIT:1

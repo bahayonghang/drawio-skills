@@ -1,0 +1,12 @@
+{
+  "env": {
+    "DRAWIO_TEST_CODE_PARSERS": null,
+    "node": "v26.7.0",
+    "DRAWIO_TEST_PYTHON": null
+  },
+  "command": "node --test tests/skill-installation.test.js tests/integration.test.js",
+  "exit_code": 0,
+  "cwd": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-omit-optional",
+  "started": "2026-09-07T20:30:29.3143963+08:00",
+  "finished": "2026-09-07T20:30:41.9511094+08:00"
+}

@@ -44,6 +44,38 @@ function collectTestFiles(root, files = []) {
   return files
 }
 
+const CODE_PARSER_TEST_FILES = [
+  join('skills', 'drawio', 'scripts', 'adapters', 'code-parsers.integration.test.js'),
+  join('skills', 'drawio', 'scripts', 'adapters', 'optional-python.integration.test.js')
+]
+
+function parseArgs(argv) {
+  let codeParsers = false
+  for (const arg of argv) {
+    if (arg === '--code-parsers') {
+      codeParsers = true
+      continue
+    }
+    throw new Error(`Unknown argument: ${arg}`)
+  }
+  return { codeParsers }
+}
+
+function collectDefaultTestFiles() {
+  return [...collectTestFiles('tests'), ...collectTestFiles('skills')].sort()
+}
+
+function resolveCodeParserTestFiles() {
+  process.env.DRAWIO_TEST_CODE_PARSERS = '1'
+  if (!process.env.DRAWIO_TEST_PYTHON) {
+    console.error(
+      'Error: DRAWIO_TEST_PYTHON is required for --code-parsers and must point at a Python interpreter with the pinned config-parser packages.'
+    )
+    process.exit(1)
+  }
+  return CODE_PARSER_TEST_FILES
+}
+
 function main() {
   /*
    * ========================================================================
@@ -53,11 +85,12 @@ function main() {
    * 操作要点：
    * 1) 明确限定测试目录，避免 Node 新版本误扫 node_modules
    * 2) 使用 node --test 运行完整项目测试集
+   * 3) --code-parsers 仅运行真实 parser 集成文件，缺 DRAWIO_TEST_PYTHON 直接非0
    */
   logger.info('开始运行项目测试集...')
 
-  // 2.1 收集仓库级和 skill 级测试
-  const files = [...collectTestFiles('tests'), ...collectTestFiles('skills')].sort()
+  const { codeParsers } = parseArgs(process.argv.slice(2))
+  const files = codeParsers ? resolveCodeParserTestFiles() : collectDefaultTestFiles()
 
   // 2.2 缩短输出路径，便于失败时定位
   for (const file of files) {

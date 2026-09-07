@@ -1,0 +1,11 @@
+{
+  "exit_code": 0,
+  "finished": "2026-09-07T20:31:38.5130854+08:00",
+  "started": "2026-09-07T20:31:37.8105105+08:00",
+  "command": "node --test skills/drawio/scripts/adapters/optional-python.integration.test.js",
+  "cwd": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-full-parsers",
+  "env": {
+    "node": "v26.7.0",
+    "DRAWIO_TEST_PYTHON": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-parser-venv\\Scripts\\python.exe"
+  }
+}

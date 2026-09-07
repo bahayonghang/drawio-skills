@@ -1,0 +1,16 @@
+{
+  "cwd": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-omit-optional",
+  "exit_code": 0,
+  "env": {
+    "DRAWIO_TEST_CODE_PARSERS": null,
+    "npm": "12.0.2",
+    "node": "v26.7.0",
+    "DRAWIO_TEST_PYTHON": null,
+    "registry": "https://registry.npmjs.org/",
+    "allow_remote": "none"
+  },
+  "note": "reuse omit-optional node_modules after copying remaining repo files",
+  "finished": "2026-09-07T20:29:53.6649612+08:00",
+  "command": "npm test",
+  "started": "2026-09-07T20:29:36.3187925+08:00"
+}

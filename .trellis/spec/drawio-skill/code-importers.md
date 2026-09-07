@@ -40,6 +40,16 @@ runOptionalPythonCodeParser(request, options)
   `tree-sitter@0.21.1`, `tree-sitter-go@0.23.4`, and
   `tree-sitter-rust@0.23.0`. All are optional MIT dependencies loaded only by
   their routes. Tree-sitter native bindings require Node 20 install evidence.
+- Default `npm test` is the offline suite: YAML, CLI, and injected-seam adapter
+  tests must pass without loading optional parser packages. Real JS/Go/Rust
+  Tree-sitter and Python AST/HCL/SQL success is opt-in evidence, not a
+  default-suite requirement.
+- `npm run test:parsers` (`scripts/run-tests.js --code-parsers`) sets
+  `DRAWIO_TEST_CODE_PARSERS=1` and runs only
+  `code-parsers.integration.test.js` and `optional-python.integration.test.js`.
+  Missing `DRAWIO_TEST_PYTHON` exits non-zero immediately; it is not a
+  skip-as-pass. Default `npm test` may skip those gated files when the env is
+  unset.
 - Go/Rust are source languages only. Never invoke or probe `go`, `cargo`,
   `rustc`, Graphviz, `dot`, or `tred`.
 - Output flows through `projectGraphToSpec`, `validateSpec`, JavaScript ELK,
@@ -72,8 +82,14 @@ runOptionalPythonCodeParser(request, options)
   syntax/unsupported errors, and deterministic finalization.
 - Worker tests assert fixed script, `-I`, `shell: false`, timeout, stdout bound,
   cwd, env allowlist, missing Python, malformed JSON, and safe location context.
-- Opt-in real-parser integration runs Python AST, es-module-lexer, and both
-  Tree-sitter grammars; injected seams do not replace this evidence.
+- Default `npm test` must not implicitly require `es-module-lexer` or
+  Tree-sitter. Isolation tests assert base YAML still succeeds and `js-imports`
+  returns `OPTIONAL_DEPENDENCY_MISSING` when parser packages are disconnected.
+- Opt-in real-parser integration (`npm run test:parsers` /
+  `DRAWIO_TEST_CODE_PARSERS=1` plus `DRAWIO_TEST_PYTHON`) runs Python AST,
+  es-module-lexer, both Tree-sitter grammars, and the JS CLI directory route
+  through adapter -> canonical projector -> validation -> renderer; injected
+  seams do not replace this evidence. Skip is not success.
 - CLI tests assert directory routing happens before file reads and rejects
   stdin. Pipeline tests assert projection -> spec -> validation -> JS ELK ->
   renderer -> valid XML.

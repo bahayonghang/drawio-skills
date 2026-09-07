@@ -1,0 +1,5 @@
+{
+  "command": "node scripts/version-sync.js --check",
+  "exit_code": 0,
+  "cwd": "D:\\Documents\\Code\\Agents\\drawio-skills"
+}

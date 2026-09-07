@@ -1,0 +1,20 @@
+npm notice run drawio-skills@2.8.0 test:parsers
+npm notice run node scripts/run-tests.js --code-parsers
+(node:56768) V8: file:///C:/Users/lyh/AppData/Local/Temp/drawio-full-parsers/node_modules/es-module-lexer/dist/lexer.asm.js:2 Invalid asm.js: Invalid return type
+(Use `node --trace-warnings ...` to show where the warning was created)
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=64px
+XML validation: PASSED (no errors)
+鉁?real optional code parsers enforce their approved syntax subsets (254.7829ms)
+鉁?CLI: code importer directory route projects through the canonical renderer (306.5937ms)
+(node:82380) V8: file:///C:/Users/lyh/AppData/Local/Temp/drawio-full-parsers/node_modules/es-module-lexer/dist/lexer.asm.js:2 Invalid asm.js: Invalid return type
+(Use `node --trace-warnings ...` to show where the warning was created)
+鉁?optional Python worker parses pinned HCL and SQL packages (1578.3723ms)
+鈩?tests 3
+鈩?suites 0
+鈩?pass 3
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 1746.4822

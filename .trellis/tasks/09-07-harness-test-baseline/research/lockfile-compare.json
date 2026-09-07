@@ -1,0 +1,42 @@
+{
+  "headPackages": 244,
+  "currPackages": 244,
+  "added": [],
+  "removed": [],
+  "versionIntegrityOrNameChanged": [],
+  "resolvedHostOnlyChanges": 108,
+  "resolvedOnlySample": [
+    {
+      "path": "node_modules/@esbuild/aix-ppc64",
+      "from": "https://registry.npmmirror.com/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz",
+      "to": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.21.5.tgz"
+    },
+    {
+      "path": "node_modules/@esbuild/android-arm",
+      "from": "https://registry.npmmirror.com/@esbuild/android-arm/-/android-arm-0.21.5.tgz",
+      "to": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.21.5.tgz"
+    },
+    {
+      "path": "node_modules/@esbuild/android-arm64",
+      "from": "https://registry.npmmirror.com/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz",
+      "to": "https://registry.npmjs.org/@esbuild/android-arm64/-/android-arm64-0.21.5.tgz"
+    },
+    {
+      "path": "node_modules/@esbuild/android-x64",
+      "from": "https://registry.npmmirror.com/@esbuild/android-x64/-/android-x64-0.21.5.tgz",
+      "to": "https://registry.npmjs.org/@esbuild/android-x64/-/android-x64-0.21.5.tgz"
+    },
+    {
+      "path": "node_modules/@esbuild/darwin-arm64",
+      "from": "https://registry.npmmirror.com/@esbuild/darwin-arm64/-/darwin-arm64-0.21.5.tgz",
+      "to": "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.21.5.tgz"
+    }
+  ],
+  "remainingNpmmirror": false,
+  "publicResolvedHosts": [
+    "registry.npmjs.org"
+  ],
+  "fromHosts": [
+    "registry.npmmirror.com"
+  ]
+}
