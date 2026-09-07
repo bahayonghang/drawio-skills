@@ -1,0 +1,13 @@
+exit=1
+stdout:
+
+> drawio-skills@2.8.0 ci
+> npm run version:check && npm run lint && npm test && npm run test:parsers && npm run docs:build
+
+
+stderr:
+npm notice run drawio-skills@2.8.0 version:check
+npm notice run node scripts/version-sync.js --check
+Version mismatch detected:
+- skills/drawio/SKILL.md: 0.0.0-drift != 2.8.0
+

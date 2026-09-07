@@ -1,0 +1,7 @@
+{
+  "beforeCount": 906,
+  "afterCount": 906,
+  "changed": [],
+  "command": "just ci with DRAWIO_TEST_PYTHON",
+  "result": "tracked file hashes unchanged"
+}

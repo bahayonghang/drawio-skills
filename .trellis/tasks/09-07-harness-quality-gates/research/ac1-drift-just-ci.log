@@ -1,0 +1,13 @@
+exit=1
+stdout:
+
+stderr:
+npm run ci
+npm notice run drawio-skills@2.8.0 ci
+npm notice run npm run version:check && npm run lint && npm test && npm run test:parsers && npm run docs:build
+npm notice run drawio-skills@2.8.0 version:check
+npm notice run node scripts/version-sync.js --check
+Version mismatch detected:
+- skills/drawio/SKILL.md: 0.0.0-drift != 2.8.0
+error: recipe `ci` failed on line 248 with exit code 1
+

@@ -1,0 +1,8 @@
+{
+  "exit_code": 0,
+  "finished": "2026-09-07T21:01:30.5527903+08:00",
+  "command": "npm test",
+  "node": "v26.7.0",
+  "DRAWIO_TEST_PYTHON": null,
+  "npm": "12.0.2"
+}

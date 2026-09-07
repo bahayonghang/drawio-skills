@@ -1,0 +1,7 @@
+{
+  "finished": "2026-09-07T21:00:56.7725927+08:00",
+  "exit_code": 0,
+  "npm": "12.0.2",
+  "node": "v26.7.0",
+  "command": "node --test tests/workflow-contract.test.js"
+}

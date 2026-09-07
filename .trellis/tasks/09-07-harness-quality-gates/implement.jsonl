@@ -1,0 +1,4 @@
+{"file":".trellis/spec/frontend/quality-guidelines.md","reason":"按项目已有契约规划最小变更"}
+{"file":".trellis/spec/drawio-skill/code-importers.md","reason":"按项目已有契约规划最小变更"}
+{"file":".trellis/tasks/09-07-evergreen-harness-alignment/research/audit-report.md","reason":"首次失败、源码与安装分叉、范围及未验证项"}
+{"file":".trellis/tasks/09-07-evergreen-harness-alignment/research/harness-matrix.md","reason":"五harness加载、选模与权限语义"}

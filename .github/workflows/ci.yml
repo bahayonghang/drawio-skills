@@ -1,25 +1,29 @@
-name: Deploy Documentation to GitHub Pages
+name: Quality
 
 on:
-  release:
-    types:
-      - published
+  pull_request:
+  push:
+    branches:
+      - dev
+      - main
 
 permissions:
   contents: read
 
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  quality:
+    name: Quality
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           persist-credentials: false
 
       - name: Setup Node
@@ -34,9 +38,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
       - name: Install locked npm dependencies
         run: npm ci
 
@@ -47,24 +48,3 @@ jobs:
         run: npm run ci
         env:
           DRAWIO_TEST_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/.vitepress/dist
-
-  deploy:
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

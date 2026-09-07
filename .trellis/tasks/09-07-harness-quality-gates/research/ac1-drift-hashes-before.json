@@ -1,0 +1,10 @@
+{
+  "package.json": "9d5efcc4bc1a71af09aa612752314d4186e7a3a9db8172d07dcfc60addaf31fa",
+  "package-lock.json": "27531b2c59654dcb2380bbd644706067261e60da961c86b181559585cb06b1de",
+  "scripts/version-sync.js": "db5202c7f52b10113c3f362399c1feef46d648fe37d6d16334d4876dde496149",
+  "skills/drawio/SKILL.md": "90d2510df84347d9400018e8a4d8fcef41d19a18eea4dee0704abb352cf3c55d",
+  "skills/drawio-academic-skills/SKILL.md": "2db0a034d034a174c3c3582b49ebb401a21d1ad0eb6a9a3aeea70cb5ad93126d",
+  "skills/drawio/evals/evals.json": "ffc44618b556a06aa04dfb1aa947f97633d0a1714bf4d3e33eec6197580c8004",
+  "skills/drawio-academic-skills/evals/evals.json": "4486b92f5a0070790e25b2a2313152f033f992e9a2b7b1316c44726333bb08c3",
+  "justfile": "20e03972b9677ee6cd72cd464fc90e66ceb9c17b69dc03881df757265c6018be"
+}

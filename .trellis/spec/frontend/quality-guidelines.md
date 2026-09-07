@@ -10,11 +10,15 @@ Node tests plus docs/build checks when relevant.
 ## Overview
 
 Use the smallest change that satisfies the requested behavior and keeps the
-existing artifact model intact. The closest local CI command is `just ci`,
-which runs version sync checks, Markdown linting, tests, and docs build. For a
-narrow source-only change, `npm test` or the relevant `node --test` files can
-be run first, but do not report completion without explaining which broader
-gate was or was not run.
+existing artifact model intact. The closest local CI command is the read-only
+gate `npm run ci` (`just ci` only proxies that script). It runs version-check,
+Markdown linting, default tests, real parser tests, and docs build. It does
+not run `version-sync`; keep that as the explicit mutating
+`just version-sync` / `just version-sync-to` commands. The old mutating
+`just ci` that depended on version-sync is gone. For a narrow source-only
+change, `npm test` or the relevant `node --test` files can be run first, but
+do not report completion without explaining which broader gate was or was not
+run.
 
 Repository examples:
 
@@ -450,11 +454,17 @@ Use image generation only as an optional concept preview, then correct YAML and 
 - Run targeted tests first when isolating a failure, for example:
   `node --test tests/security.test.js`.
 - Run `npm run docs:build` or `just docs-build` for VitePress docs changes.
-- Run `just lint` when Markdown docs under `docs/`, `skills/`, or `README*.md`
-  change.
-- Run `just version-check` after any version metadata change.
-- Run `just ci` before final completion when the change touches shared CLI,
-  DSL, docs, skill policy, or release/version surfaces.
+- Run `npm run lint` or `just lint` when Markdown docs under `docs/`,
+  `skills/`, or `README*.md` change.
+- Run `npm run version:check` or `just version-check` after any version
+  metadata change. Do not use `version-sync` as a quality gate.
+- Run `npm run ci` or `just ci` before final completion when the change
+  touches shared CLI, DSL, docs, skill policy, or release/version surfaces.
+  This gate is read-only and must not rewrite tracked files.
+- GitHub Actions previously pinned Node 20, which is EOL and is not a current
+  support guarantee. The proposed CI baseline is Node 24 LTS. Hosted
+  Windows/Linux Node 24 runtime evidence is UNVERIFIED until a GitHub run on
+  that pin exists. Local Node 26 results are not Node 24 ABI evidence.
 - For policy-only wording tests, make assertions policy-oriented and
   case-insensitive where possible; avoid brittle exact prose unless exact text
   is the contract.

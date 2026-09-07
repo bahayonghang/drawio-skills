@@ -1,0 +1,16 @@
+鉁?package.json ci is a read-only npm-script chain (1.0097ms)
+鉁?just ci dry-run only proxies npm run ci (94.7915ms)
+鉁?version drift fails the npm ci gate without rewriting files (717.4994ms)
+鉁?consistent versions pass version:check without rewriting files (159.145ms)
+鉁?quality workflow is a read-only PR and branch gate (1.2403ms)
+鉁?deploy workflow stays release-only and reuses the quality gate (0.4821ms)
+鉁?just clean and tree operate only inside a temp fixture (1342.8696ms)
+鉁?just clean refuses link traversal and keeps the escape target (208.0822ms)
+鈩?tests 8
+鈩?suites 0
+鈩?pass 8
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 2638.5469

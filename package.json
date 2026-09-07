@@ -8,7 +8,10 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "test": "node scripts/run-tests.js",
-    "test:parsers": "node scripts/run-tests.js --code-parsers"
+    "test:parsers": "node scripts/run-tests.js --code-parsers",
+    "version:check": "node scripts/version-sync.js --check",
+    "lint": "markdownlint \"docs/**/*.md\" \"skills/**/*.md\" \"README*.md\" --ignore \"skills/drawio/references/official/**\" --ignore \"skills/drawio/references/upstream/**\" --ignore \"skills/drawio/scripts/vendor/**\"",
+    "ci": "npm run version:check && npm run lint && npm test && npm run test:parsers && npm run docs:build"
   },
   "repository": {
     "type": "git",

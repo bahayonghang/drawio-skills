@@ -33,7 +33,7 @@ help:
     @echo "  just version-check  - 检查版本号是否已同步（不修改文件）"
     @echo "  just version-sync   - 同步版本号（默认以 package.json 为准）"
     @echo "  just version-sync-to <v> - 同步版本号到指定版本号（例如 2.3.0）"
-    @echo "  just ci             - 运行 CI 检查（version-sync + version-check + lint + test + docs-build）"
+    @echo "  just ci             - 运行只读 CI 检查（代理 npm run ci；不含 version-sync）"
     @echo ""
     @echo "📁 实用工具："
     @echo "  just zip            - 将两个 skill 分别打包到 archive 目录"
@@ -65,12 +65,56 @@ install:
     @echo "📥 正在安装依赖..."
     npm install
 
-# 清理所有构建产物
+# 清理 docs dist/cache 与工作目录内的 node_modules。拒绝越界路径与链接穿越。
+[script('node')]
 clean:
-    @echo "🧹 正在清理构建产物..."
-    rm -rf docs/.vitepress/dist
-    rm -rf docs/.vitepress/cache
-    rm -rf node_modules
+    const { existsSync, lstatSync, realpathSync, rmSync } = require('node:fs')
+    const { isAbsolute, join, relative, resolve } = require('node:path')
+
+    const root = realpathSync(process.cwd())
+    const TARGETS = [join('docs', '.vitepress', 'dist'), join('docs', '.vitepress', 'cache'), 'node_modules']
+
+    function asPosix(path) {
+      return path.split(/[/\\]/).join('/')
+    }
+
+    function isInsideRoot(candidate) {
+      const rel = relative(root, candidate)
+      if (rel === '' || isAbsolute(rel)) return false
+      return !rel.split(/[/\\]/).includes('..')
+    }
+
+    function resolveDeletable(target) {
+      const expected = asPosix(target)
+      const parts = expected.split('/').filter(Boolean)
+      let current = root
+      for (const part of parts) {
+        if (part === '.' || part === '..') {
+          throw new Error(`Refusing to delete out-of-scope path: ${expected}`)
+        }
+        current = join(current, part)
+        if (!existsSync(current)) return null
+        if (lstatSync(current).isSymbolicLink()) {
+          throw new Error(`Refusing to delete via link: ${expected}`)
+        }
+      }
+      const resolved = resolve(current)
+      if (!isInsideRoot(resolved) || asPosix(relative(root, resolved)) !== expected) {
+        throw new Error(`Refusing to delete out-of-scope path: ${expected}`)
+      }
+      return resolved
+    }
+
+    console.log('Cleaning build artifacts...')
+    for (const target of TARGETS) {
+      const path = resolveDeletable(target)
+      if (!path) {
+        console.log(`Not found: ${asPosix(target)}`)
+        continue
+      }
+      rmSync(path, { recursive: true, force: false })
+      console.log(`Removed ${asPosix(target)}`)
+    }
 
 # 快速启动文档（安装 + 开发）
 start: install docs
@@ -140,15 +184,42 @@ clean-zip:
         else:
             print(f'Not found: {archive_path}')
 
-# 显示项目目录结构
+# 显示项目目录结构（Node 枚举，不调用外部 tree）
+[script('node')]
 tree:
-    @echo "📁 项目目录结构："
-    @tree -L 3 -I 'node_modules|.git|dist|cache' .
+    const { readdirSync } = require('node:fs')
+    const { join, relative, sep } = require('node:path')
 
-# 检查 Markdown 文件（需要 markdownlint-cli）
+    const IGNORE = new Set(['node_modules', '.git', 'dist', 'cache'])
+    const MAX_DEPTH = 3
+    const root = process.cwd()
+
+    function walk(dir, depth, lines) {
+      let entries
+      try {
+        entries = readdirSync(dir, { withFileTypes: true })
+      } catch (error) {
+        throw new Error(`Unable to list ${dir}: ${error.message}`)
+      }
+      entries.sort((a, b) => a.name.localeCompare(b.name))
+      for (const entry of entries) {
+        if (IGNORE.has(entry.name)) continue
+        const full = join(dir, entry.name)
+        lines.push(relative(root, full).split(sep).join('/'))
+        if (entry.isDirectory() && !entry.isSymbolicLink() && depth < MAX_DEPTH) {
+          walk(full, depth + 1, lines)
+        }
+      }
+    }
+
+    const lines = ['.']
+    walk(root, 1, lines)
+    console.log(lines.join('\n'))
+
+# 检查 Markdown 文件（只读；代理 npm run lint）
 lint:
     @echo "🔍 正在检查 Markdown 文件..."
-    npx markdownlint-cli "docs/**/*.md" "skills/**/*.md" "README*.md" --ignore "skills/drawio/references/official/**" --ignore "skills/drawio/references/upstream/**" --ignore "skills/drawio/scripts/vendor/**"
+    npm run lint
 
 # 格式化 Markdown 文件（需要 prettier）
 format:
@@ -160,10 +231,10 @@ test:
     @echo "🧪 正在运行测试..."
     npm test
 
-# 运行所有 CI 检查和测试
+# 版本检查只读；version-sync / version-sync-to 仍是显式写操作
 version-check:
     @echo "🔎 正在检查版本号同步状态..."
-    node scripts/version-sync.js --check
+    npm run version:check
 
 version-sync:
     @echo "🔁 正在同步版本号（以 package.json 为准）..."
@@ -173,4 +244,5 @@ version-sync-to VERSION:
     @echo "🔁 正在同步版本号到 {{VERSION}}..."
     node scripts/version-sync.js --version {{VERSION}}
 
-ci: version-sync version-check lint test docs-build
+ci:
+    npm run ci
