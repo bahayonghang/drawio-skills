@@ -1,0 +1,4 @@
+{
+  "command": "node scripts/version-sync.js --check",
+  "exit": 0
+}

@@ -2,13 +2,17 @@
 
 Install the Draw.io Base Skill first. Add the Academic Overlay beside it only when you need publication-facing defaults. Add optional live-edit MCP only if you want base-skill browser sessions.
 
+Five-tool discovery, model-control locations, and verified vs UNVERIFIED evidence live in the portable matrix at `skills/drawio/references/docs/harness-compatibility.md`. A harness is not a model tier.
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) with `npx`
-- One supported client:
-  - Claude
-  - Gemini
+- One in-scope client:
+  - Claude Code
   - Codex
+  - Grok Build
+  - Kimi Code
+  - OMP (Oh My Pi)
 
 Verify Node:
 
@@ -23,7 +27,7 @@ npx --version
 npx skills add bahayonghang/drawio-skills
 ```
 
-This installs the repository skill set into the correct skill directory for the current client integration.
+This installs the repository skill set into the skill directory for the current client integration. Restart the client, then verify **actual discovery** in a fresh session: the client must report the loaded `SKILL.md` absolute path and `version`. Copying files or opening them by path is not a discovery proof.
 
 ## Skill Variants
 
@@ -51,26 +55,34 @@ skills/
 └── drawio-academic-skills/
 ```
 
-The overlay resolves `../drawio/scripts/cli.js`, `../drawio/references/`, `../drawio/assets/themes/`, and `../drawio/styles/built-in/` at runtime.
+The overlay resolves `../drawio/scripts/cli.js`, `../drawio/references/`, `../drawio/assets/themes/`, and `../drawio/styles/built-in/` at runtime. It must read the five-tool matrix at `../drawio/references/docs/harness-compatibility.md` and must not copy that file.
 
-#### Claude
+#### Claude Code
 
-- macOS: `~/Library/Application Support/Claude/skills/`
-- Linux: `~/.config/Claude/skills/`
-- Windows: `%APPDATA%\Claude\skills\`
-
-#### Gemini
-
-- macOS: `~/Library/Application Support/gemini/skills/`
-- Linux: `~/.gemini/skills/`
-- Windows: `%APPDATA%\gemini\skills\`
+- Project: `.claude/skills/`
+- User: `~/.claude/skills` (Windows: `%USERPROFILE%\.claude\skills\`)
 
 #### Codex
 
-- macOS / Linux: `~/.codex/skills/`
-- Windows: `%USERPROFILE%\.codex\skills\`
+- Project: `.agents/skills/`
+- User: `~/.agents/skills` (Windows: `%USERPROFILE%\.agents\skills\`)
 
-Restart the client after copying the folders.
+Codex is `.agents/skills`, not `.codex/skills`.
+
+#### Grok Build
+
+- Native: `.grok/skills/`
+- User: `~/.grok/skills` and `~/.agents/skills`
+
+#### Kimi Code
+
+- `.agents/skills/` and `.kimi-code/skills/`
+
+#### OMP (Oh My Pi)
+
+- `.agents/skills/` may be discovered depending on enabled providers
+
+Missing project `.grok` / `.kimi-code` / `.omp` directories is not proof of missing capability. Restart the client after copying the folders.
 
 ## Optional Live Editing Setup
 
@@ -78,7 +90,7 @@ Normal create/edit/export work does **not** require MCP. Configure `@next-ai-dra
 
 Academic overlay does not need MCP and should not route through a live backend.
 
-### Claude / Gemini JSON config
+### Claude JSON config (and hosts that use the same `mcpServers` JSON)
 
 macOS / Linux:
 
@@ -130,13 +142,18 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 
 Install draw.io Desktop if you want:
 
-- `.png`, `.pdf`, `.jpg` export
+- default 300dpi `.png`
+- `.pdf`, `.jpg` export
 - embedded `.drawio.svg`
 - local desktop preview
 
-The standalone SVG path does **not** require draw.io Desktop.
+Without Desktop, PNG export falls back to standalone SVG and must be reported. Explicit journal/IEEE vector still uses PDF or SVG. The standalone SVG path does **not** require draw.io Desktop.
 
 ## Verify the Installation
+
+### Verify actual skill discovery
+
+In a **fresh** session, ask the client which `SKILL.md` it loaded. A pass names the absolute path and `version`. Directory existence, `npx skills add`, or opening `skills/` by path is not that proof. Details: `skills/drawio/references/docs/harness-compatibility.md`.
 
 ### Verify the base skill is reachable
 
@@ -182,7 +199,7 @@ You are using MCP tools without a live session. Call `start_session` first, or s
 
 ### Desktop export fails
 
-Use standalone SVG instead, or install draw.io Desktop before using `--use-desktop`.
+Use standalone SVG instead, or install draw.io Desktop before using `--use-desktop`. Do not claim a 300dpi PNG was produced if Desktop was unavailable.
 
 ### Windows MCP launch fails
 

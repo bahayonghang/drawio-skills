@@ -246,6 +246,68 @@ test('installed academic overlay uses sibling ../drawio CLI', () => {
   }
 })
 
+test('installed skill-only copy can read the portable harness matrix', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'drawio-skill-harness-matrix-'))
+  const installedSkill = join(tempRoot, 'installed', 'drawio')
+  const matrixPath = join(installedSkill, 'references', 'docs', 'harness-compatibility.md')
+
+  try {
+    cpSync(SKILL_ROOT, installedSkill, { recursive: true })
+    assert.equal(existsSync(matrixPath), true)
+    const matrix = readFileSync(matrixPath, 'utf8')
+    assert.match(matrix, /2026-09-07/)
+    assert.match(matrix, /Claude Code/)
+    assert.match(matrix, /Codex/)
+    assert.match(matrix, /Grok Build/)
+    assert.match(matrix, /Kimi Code/)
+    assert.match(matrix, /Oh My Pi/)
+    assert.match(matrix, /\.agents\/skills/)
+    assert.match(readFileSync(join(installedSkill, 'SKILL.md'), 'utf8'), /harness-compatibility\.md/)
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('installed academic overlay reads the harness matrix from sibling base', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'drawio-academic-harness-matrix-'))
+  const installedRoot = join(tempRoot, 'installed')
+  const installedBase = join(installedRoot, 'drawio')
+  const installedOverlay = join(installedRoot, 'drawio-academic-skills')
+  const overlayCopy = join(installedOverlay, 'references', 'docs', 'harness-compatibility.md')
+  const siblingMatrix = join(installedOverlay, '..', 'drawio', 'references', 'docs', 'harness-compatibility.md')
+
+  try {
+    cpSync(SKILL_ROOT, installedBase, { recursive: true })
+    cpSync(OVERLAY_ROOT, installedOverlay, { recursive: true })
+
+    assert.equal(existsSync(overlayCopy), false)
+    assert.equal(existsSync(siblingMatrix), true)
+    assert.equal(resolve(siblingMatrix), resolve(installedBase, 'references', 'docs', 'harness-compatibility.md'))
+    assert.match(
+      readFileSync(join(installedOverlay, 'SKILL.md'), 'utf8'),
+      /\.\.\/drawio\/references\/docs\/harness-compatibility\.md/
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('public install docs point at the five-tool matrix and Codex .agents/skills', () => {
+  const files = ['README.md', 'README_CN.md', 'docs/guide/installation.md', 'docs/zh/guide/installation.md']
+  for (const rel of files) {
+    const text = readFileSync(resolve(PROJECT_ROOT, rel), 'utf8')
+    assert.match(text, /Claude Code/)
+    assert.match(text, /Grok Build/)
+    assert.match(text, /Kimi Code/)
+    assert.match(text, /Oh My Pi|\bOMP\b/)
+    assert.match(text, /\.agents\/skills/)
+    assert.match(text, /harness-compatibility\.md/)
+    assert.doesNotMatch(text, /git clone[\s\S]{0,200}\.codex\/skills/)
+    assert.doesNotMatch(text, /~\/\.codex\/skills/)
+    assert.doesNotMatch(text, /%USERPROFILE%\\.codex\\skills/)
+  }
+})
+
 test('production scripts do not import js-yaml as an ambient package', () => {
   const bareImport = /\b(?:from\s+|import\s*\(\s*|require\s*\(\s*)['"]js-yaml(?:\/[^'"]*)?['"]/
   const offenders = collectProductionScripts(resolve(SKILL_ROOT, 'scripts'))

@@ -2,13 +2,17 @@
 
 先安装 Draw.io Base Skill。只有需要出版级默认策略时，才把 Academic Overlay 放在旁边。只有需要 Base Skill 浏览器会话时，才额外配置 live-edit MCP。
 
+五工具发现方式、选模位置以及已验证 / UNVERIFIED 证据见可携带矩阵 `skills/drawio/references/docs/harness-compatibility.md`。Harness 不是模型档位。
+
 ## 前置要求
 
 - 已安装带 `npx` 的 [Node.js](https://nodejs.org/)
-- 任一受支持客户端：
-  - Claude
-  - Gemini
+- 任一范围内客户端：
+  - Claude Code
   - Codex
+  - Grok Build
+  - Kimi Code
+  - OMP（Oh My Pi）
 
 先确认 Node 环境：
 
@@ -23,7 +27,7 @@ npx --version
 npx skills add bahayonghang/drawio-skills
 ```
 
-这会把仓库 skill set 安装到当前客户端集成对应的技能目录。
+这会把仓库 skill set 安装到当前客户端集成对应的技能目录。重启客户端后，在**新会话**里核实实际发现：客户端必须报出已加载的 `SKILL.md` 绝对路径和 `version`。复制文件或按路径打开不等于发现证明。
 
 ## Skill 变体
 
@@ -51,26 +55,34 @@ skills/
 └── drawio-academic-skills/
 ```
 
-Overlay 运行时会解析 `../drawio/scripts/cli.js`、`../drawio/references/`、`../drawio/assets/themes/` 和 `../drawio/styles/built-in/`。
+Overlay 运行时会解析 `../drawio/scripts/cli.js`、`../drawio/references/`、`../drawio/assets/themes/` 和 `../drawio/styles/built-in/`。五工具矩阵位于 `../drawio/references/docs/harness-compatibility.md`，overlay 不得复制该文件。
 
-#### Claude
+#### Claude Code
 
-- macOS：`~/Library/Application Support/Claude/skills/`
-- Linux：`~/.config/Claude/skills/`
-- Windows：`%APPDATA%\Claude\skills\`
-
-#### Gemini
-
-- macOS：`~/Library/Application Support/gemini/skills/`
-- Linux：`~/.gemini/skills/`
-- Windows：`%APPDATA%\gemini\skills\`
+- 项目：`.claude/skills/`
+- 用户：`~/.claude/skills`（Windows：`%USERPROFILE%\.claude\skills\`）
 
 #### Codex
 
-- macOS / Linux：`~/.codex/skills/`
-- Windows：`%USERPROFILE%\.codex\skills\`
+- 项目：`.agents/skills/`
+- 用户：`~/.agents/skills`（Windows：`%USERPROFILE%\.agents\skills\`）
 
-复制完成后重启客户端。
+Codex 是 `.agents/skills`，不是 `.codex/skills`。
+
+#### Grok Build
+
+- Native：`.grok/skills/`
+- 用户：`~/.grok/skills` 与 `~/.agents/skills`
+
+#### Kimi Code
+
+- `.agents/skills/` 与 `.kimi-code/skills/`
+
+#### OMP（Oh My Pi）
+
+- `.agents/skills/` 是否发现取决于已启用的 provider
+
+项目里缺少 `.grok` / `.kimi-code` / `.omp` 目录不是缺能力证明。复制完成后重启客户端。
 
 ## 可选：配置 Live Editing MCP
 
@@ -78,7 +90,7 @@ Overlay 运行时会解析 `../drawio/scripts/cli.js`、`../drawio/references/`�
 
 Academic Overlay 不需要 MCP，也不应路由到 live backend。
 
-### Claude / Gemini 的 JSON 配置
+### Claude 的 JSON 配置（以及使用同一 `mcpServers` JSON 的宿主）
 
 macOS / Linux：
 
@@ -130,13 +142,18 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 
 如果你需要以下能力，再安装 draw.io Desktop：
 
-- `.png`、`.pdf`、`.jpg` 导出
+- 默认 300dpi `.png`
+- `.pdf`、`.jpg` 导出
 - embedded `.drawio.svg`
 - 本地桌面预览
 
-独立 SVG 不依赖 draw.io Desktop。
+没有 Desktop 时，PNG 导出回退为独立 SVG，必须如实报告。Journal/IEEE 矢量投稿仍须显式 PDF 或 SVG。独立 SVG 不依赖 draw.io Desktop。
 
 ## 验证安装
+
+### 核实实际 skill 发现
+
+在**新会话**里询问客户端加载了哪份 `SKILL.md`。通过条件是报出绝对路径和 `version`。目录存在、`npx skills add` 或按路径打开 `skills/` 都不是该证明。详见 `skills/drawio/references/docs/harness-compatibility.md`。
 
 ### 验证 Base Skill 能被调用
 
@@ -182,7 +199,7 @@ npm view @next-ai-drawio/mcp-server version
 
 ### Desktop 导出失败
 
-先改用独立 SVG，或者先安装 draw.io Desktop 再使用 `--use-desktop`。
+先改用独立 SVG，或者先安装 draw.io Desktop 再使用 `--use-desktop`。如果 Desktop 不可用，不得声称已生成 300dpi PNG。
 
 ### Windows 上 MCP 启动失败
 

@@ -1,0 +1,4 @@
+{
+  "command": "just lint",
+  "exit": 0
+}

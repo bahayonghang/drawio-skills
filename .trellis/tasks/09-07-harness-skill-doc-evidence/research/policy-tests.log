@@ -1,0 +1,29 @@
+鉁?drawio-academic-skills: overlay shape depends on sibling base without copied runtime (80.0088ms)
+鉁?drawio-academic-skills: diagrams.net URL helper round-trips drawio XML from base (0.7683ms)
+鉁?drawio-academic-skills: sibling base CLI separates final artifacts from sidecars (307.3937ms)
+鉁?drawio examples: scientific paper examples render through base CLI (437.5587ms)
+鉁?drawio evals: base and academic sets encode separate responsibilities (1.664ms)
+鉁?base and academic skills encode distinct palette question policies (9.2922ms)
+鉁?palette docs describe the orthogonal contract, venue map, and print gate (1.6831ms)
+鉁?palette release surfaces and eval cases stay synchronized at 2.8.0 (2.686ms)
+鉁?installed base skill owns its mandatory YAML runtime (1061.5132ms)
+鉁?installed base skill keeps YAML working when optional parsers are disconnected (816.936ms)
+鉁?installed same-source copy keeps current SKILL version and compose import (1240.9021ms)
+鉁?installed academic overlay uses sibling ../drawio CLI (871.7783ms)
+鉁?installed skill-only copy can read the portable harness matrix (565.7484ms)
+鉁?installed academic overlay reads the harness matrix from sibling base (584.1568ms)
+鉁?public install docs point at the five-tool matrix and Codex .agents/skills (1.6368ms)
+鉁?production scripts do not import js-yaml as an ambient package (18.3516ms)
+鉁?skill metadata versions match package.json (5.169ms)
+鉁?skill metadata descriptions stay within installer limits (2.4074ms)
+鉁?image icon resolver stays bundled and offline (2.1809ms)
+鉁?drawio visual verification policy prefers exported artifacts over screenshots (9.0608ms)
+鉁?drawio skills keep final deliverables separate from intermediate sidecars (3.2709ms)
+鈩?tests 21
+鈩?suites 0
+鈩?pass 21
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 5392.6679

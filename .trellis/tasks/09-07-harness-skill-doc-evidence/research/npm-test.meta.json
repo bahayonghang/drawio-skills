@@ -1,0 +1,4 @@
+{
+  "command": "npm test",
+  "exit": 0
+}

@@ -1,0 +1,4 @@
+?? 正在检查 Markdown 文件...
+npm run lint
+npm notice run drawio-skills@2.8.0 lint
+npm notice run markdownlint "docs/**/*.md" "skills/**/*.md" "README*.md" --ignore "skills/drawio/references/official/**" --ignore "skills/drawio/references/upstream/**" --ignore "skills/drawio/scripts/vendor/**"

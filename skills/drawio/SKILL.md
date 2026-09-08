@@ -20,7 +20,6 @@ metadata:
     - design-system
     - math
 argument-hint: [diagram-description-or-instruction]
-allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 
 # Draw.io Base Skill
@@ -43,6 +42,8 @@ Use the lightest path that satisfies the request:
 - **Direct XML Exception** — tiny one-off or raw mxGraph handoff when exact XML control is the real requirement.
 
 The optional MCP/live backend is a refinement provider only. Never required for normal authoring, editing, import, replication, or export.
+
+On-demand five-tool loading, model-control locations, and verified vs UNVERIFIED evidence: `references/docs/harness-compatibility.md`.
 
 ## Task Routing
 
@@ -140,7 +141,7 @@ Never mutate bundled presets. Copy a bundled preset to the user preset directory
 
 Theme and palette are independent: theme owns typography, spacing, shapes, line styles, modules, and canvas; `meta.palette` optionally replaces semantic/category colors. Omitting `meta.palette` preserves the selected theme byte-for-byte.
 
-Ask only when the request mentions palette/color choice, colorblind safety, grayscale or black-and-white printing, or multi-category distinction and does not name a palette. Then use `AskUserQuestion` as a single-select: offer 3-4 relevant palettes, put the best fit first with `(Recommended)`, use each palette's `displayName` as the label, and summarize colorblind/grayscale safety plus intended use in the description. If the user already specified a palette, apply it directly and do not ask.
+Ask only when the request mentions palette/color choice, colorblind safety, grayscale or black-and-white printing, or multi-category distinction and does not name a palette. Then use the host's actual single-select question tool if the host provides one; otherwise ask in ordinary text. Offer 3-4 relevant palettes, put the best fit first with `(Recommended)`, use each palette's `displayName` as the label, and summarize colorblind/grayscale safety plus intended use in the description. Honor the host's option-count limits. If the user already specified a palette, apply it directly and do not ask.
 
 For `replicate`, preserve source colors by default and do not ask for a palette. Ask only when the user explicitly requests normalization or a replacement palette; record that choice in `meta.replication.colorMode` and set `meta.palette` only for the normalized result.
 

@@ -1,10 +1,10 @@
-# Draw.io Skill for Claude 与 Codex
+# Draw.io Skill
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![Deploy Docs (Push)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs-push.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
-> **重要说明**：Draw.io Skill 是 **YAML-first、离线优先的 Base 工作流**。默认路径是 `YAML/CLI -> .drawio + sidecars` 本地生成；需要 PNG、PDF、JPG 或 embedded SVG 时再由 draw.io Desktop 增强导出。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）只作为 Base Skill 的可选浏览器精修层，不是硬依赖。
+> **重要说明**：Draw.io Skill 是 **YAML-first、离线优先的 Base 工作流**。默认路径是 `YAML/CLI -> .drawio`，再由 draw.io Desktop 给出 **300dpi PNG**（无 Desktop 时独立 SVG fallback）。sidecar 放在工作目录。[next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP 服务（`@next-ai-drawio/mcp-server`）只作为 Base Skill 的可选浏览器精修层，不是硬依赖。
 >
 > **图表复刻推荐**：对于复刻 draw.io 图表的需求，推荐使用 [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) 的 `dev` 分支，其复刻效果显著优于使用本 skill 库。
 
@@ -12,11 +12,13 @@
 
 Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、网络拓扑、结构化重绘、Mermaid/CSV 转换和已有 `.drawio` 导入。论文或出版场景由 Academic Overlay 处理；它依赖 sibling Base，而不是复制一份底层 runtime。
 
-## 推荐模型
+## Harness 与模型档位
 
-- **GPT Sol Max**
-- **Claude Fable 5**
-- **Claude Opus 5**
+在范围的 harness：**Claude Code**、**Codex**、**Grok Build**、**Kimi Code**、**OMP（Oh My Pi）**。Harness 不是模型档位：发现 SKILL 文件不等于跨工具的权限等价，也不等于 SKILL `allowed-tools` / `model` 字段等价。
+
+规划、出版交付语义和审查用强模型；低成本模型只用于账户实际暴露该档位时的有界双语同步、引用修正和 fixture。不要把营销别名写成长期能力保证。
+
+可携带矩阵（native / compatibility / explicit-file-read、选模位置、已验证 vs UNVERIFIED）：[`skills/drawio/references/docs/harness-compatibility.md`](./skills/drawio/references/docs/harness-compatibility.md)。Academic Overlay 通过 sibling `../drawio` 读取同一文件，不复制。
 
 ## Skill 变体
 
@@ -27,7 +29,7 @@ Draw.io Skill 是一个 YAML-first 的 draw.io 图表系统，覆盖工程图、
 
 ## 功能特性
 
-- **YAML-first 产物包**：统一维护 `.drawio`、`.spec.yaml`、`.arch.json`，便于本地重复编辑。
+- **YAML-first 产物包**：统一维护 `.drawio`、`.spec.yaml`、`.arch.json`，便于本地重复编辑。默认**最终**交付是 `.drawio` 加 300dpi PNG（无 Desktop 时独立 SVG fallback）。
 - **桌面感知导出**：有 draw.io Desktop 时，可额外导出 PNG、PDF、JPG 和 embedded `.drawio.svg`。
 - **可选浏览器精修**：只在 Base Skill 需要浏览器精修时配置 next-ai MCP；Academic Overlay 保持离线。
 - **3 条核心路线**：`create`、`edit`、`replicate`。
@@ -61,9 +63,9 @@ Academic Overlay 只使用前两条路径。它不创建、不要求、不路由
 
 ### 图表复刻项目级安装（推荐）
 
-如果需要复刻 draw.io 图表，推荐分别在 Claude 和 Codex 进行项目级安装 [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) 的 `dev` 分支（复刻效果优于本 skills 库）：
+如果需要复刻 draw.io 图表，推荐在项目级安装 [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) 的 `dev` 分支（复刻效果优于本 skills 库）：
 
-- **Claude（项目级安装）**：
+- **Claude Code（项目级安装）**：
 
   ```bash
   git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .claude/skills/drawio-scientific-illustrator
@@ -72,8 +74,10 @@ Academic Overlay 只使用前两条路径。它不创建、不要求、不路由
 - **Codex（项目级安装）**：
 
   ```bash
-  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .codex/skills/drawio-scientific-illustrator
+  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .agents/skills/drawio-scientific-illustrator
   ```
+
+其它宿主（Grok Build、Kimi Code、OMP）使用 [harness 矩阵](./skills/drawio/references/docs/harness-compatibility.md) 中的 native 路径。Codex 是 `.agents/skills`，不是 `.codex/skills`。
 
 ### 标准 Base Skill 安装
 
@@ -81,7 +85,7 @@ Academic Overlay 只使用前两条路径。它不创建、不要求、不路由
 npx skills add bahayonghang/drawio-skills
 ```
 
-安装后重启客户端，让 skill 被重新加载。
+安装后重启客户端，让 skill 被重新加载。然后在**新会话**里核实实际发现：客户端必须报出已加载的 `SKILL.md` 绝对路径和 `version`。复制文件或按路径打开不等于发现证明。
 
 ### 手动安装
 
@@ -89,15 +93,22 @@ npx skills add bahayonghang/drawio-skills
 2. 默认把 `skills/drawio` 复制到客户端 skill 目录。
 3. 如果需要论文/出版工作流，也把 `skills/drawio-academic-skills` 复制到 `drawio` 旁边，这样 overlay 可以解析 sibling `../drawio`。
 
-常见路径：
+常见路径（native / compatibility / explicit-file-read 见 [harness 矩阵](./skills/drawio/references/docs/harness-compatibility.md)）：
 
-- **Claude**
-  - macOS：`~/Library/Application Support/Claude/skills/`
-  - Linux：`~/.config/Claude/skills/`
-  - Windows：`%APPDATA%\Claude\skills\`
+- **Claude Code**
+  - 项目：`.claude/skills/`
+  - 用户：`~/.claude/skills`（Windows：`%USERPROFILE%\.claude\skills\`）
 - **Codex**
-  - macOS / Linux：`~/.codex/skills/`
-  - Windows：`%USERPROFILE%\.codex\skills\`
+  - 项目：`.agents/skills/`
+  - 用户：`~/.agents/skills`（Windows：`%USERPROFILE%\.agents\skills\`）
+- **Grok Build**
+  - Native：`.grok/skills/`；用户 `~/.grok/skills` 与 `~/.agents/skills`
+- **Kimi Code**
+  - `.agents/skills/` 与 `.kimi-code/skills/`
+- **OMP（Oh My Pi）**
+  - `.agents/skills/` 是否发现取决于已启用的 provider
+
+项目里缺少 `.grok` / `.kimi-code` / `.omp` 目录，并不证明该工具无法加载 `AGENTS.md` 或已复制的 skill。
 
 ## 可选：配置 Live Editing MCP
 
@@ -170,7 +181,7 @@ args = ["/c", "npx", "--yes", "@next-ai-drawio/mcp-server@latest"]
 使用 Academic Overlay 创建出版图：
 
 ```text
-/drawio-academic-skills create 生成一个 IEEE 风格 manuscript workflow figure，交付 .drawio + .spec.yaml + .arch.json + .svg
+/drawio-academic-skills create 生成一个 IEEE 风格 manuscript workflow figure。默认交付 .drawio + 300dpi PNG；IEEE 需要矢量，再显式导出 PDF。
 ```
 
 把已有 `.drawio` 导入成离线 bundle：
@@ -238,17 +249,17 @@ node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
 
 ## 规范产物包
 
-只要图表后续还会继续演化，就尽量把这些文件放在一起：
+默认**最终**交付（与已发布 SKILL 契约一致）：
 
 - `<name>.drawio`
+- draw.io Desktop 给出的 300dpi `<name>.png`（无 Desktop 时独立 `<name>.svg` fallback）
+
+除非用户要求把 sidecar 放在最终产物旁边，否则 sidecar 放在项目本地工作目录，例如 `.drawio-tmp/<name>/`：
+
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-Academic Overlay 默认还会交付独立 SVG：
-
-- `<name>.svg`
-
-PNG/PDF/JPG 是 Desktop-enhanced 可选产物；如果 draw.io Desktop 不可用，必须如实说明未生成。
+用户显式指定的格式优先。Journal/IEEE 矢量投稿仍须显式导出 PDF 或 SVG；不要把默认栅格 PNG 当成矢量替代。未生成的 PNG/PDF/JPG 不得声称已交付。
 
 ## 网络拓扑编写
 

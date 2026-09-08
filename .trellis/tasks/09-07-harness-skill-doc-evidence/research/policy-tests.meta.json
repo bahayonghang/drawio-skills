@@ -1,0 +1,6 @@
+{
+  "command": "node --test tests/visual-verification-policy.test.js tests/drawio-academic-skill.test.js tests/palette-skill-policy.test.js tests/skill-installation.test.js tests/skill-metadata.test.js",
+  "date": "2026-09-08T09:00:54.5594215+08:00",
+  "node": "v26.7.0",
+  "exit": 0
+}

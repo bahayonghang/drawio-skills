@@ -128,7 +128,7 @@ Use this pattern when a paper screenshot or existing figure must become editable
 
 ## Venue Palette Mapping
 
-After determining the venue, choose `meta.palette` independently from the theme. If the user did not specify a palette, ask once with `AskUserQuestion`: put the venue recommendation first with `(Recommended)`, offer 3-4 options, use each palette's display name as the label, and state colorblind/grayscale safety in the description. If the user named an unambiguous palette or style, apply it directly and do not ask.
+After determining the venue, choose `meta.palette` independently from the theme. If the user did not specify a palette, ask once as a single-select using the host's actual question tool if present; otherwise ask in ordinary text: put the venue recommendation first with `(Recommended)`, offer 3-4 options, use each palette's display name as the label, and state colorblind/grayscale safety in the description. If the user named an unambiguous palette or style, apply it directly and do not ask.
 
 | Venue or scenario             | Recommended  | Alternatives                                              |
 | ----------------------------- | ------------ | --------------------------------------------------------- |
@@ -144,24 +144,19 @@ For replication, preserve the source palette and skip this question unless the u
 
 ## Academic Delivery Matrix
 
-Default output for paper-mode requests:
+Default output for paper-mode requests (matches the overlay SKILL):
 
 - `.drawio`
-- `.svg`
+- 300dpi `.png` via draw.io Desktop (standalone `.svg` fallback when Desktop is unavailable)
 
 Keep reproducibility sidecars in the work directory by default, not in the final delivery directory:
 
 - `.spec.yaml`
 - `.arch.json`
 
-Add `.png` only when one of these is true:
+Honor an explicit user format request first. For journal / IEEE vector submission, export PDF (or SVG) explicitly — vector required, not raster PNG.
 
-- the request is thesis or A4 focused
-- the figure is for Word or another raster-first workflow
-- the task is a screenshot or image rebuild that needs a matching raster companion
-- the user explicitly asks for PNG
-
-If draw.io Desktop export is unavailable, keep the offline bundle plus SVG as the completed baseline and note that PNG is optional follow-up.
+If draw.io Desktop export is unavailable, keep the offline bundle plus standalone SVG as the completed baseline and report that the 300dpi PNG was not produced.
 
 ## Node Budget Management
 

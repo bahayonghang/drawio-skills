@@ -1,9 +1,9 @@
-# Draw.io Skill for Claude & Codex
+# Draw.io Skill
 
 [![Deploy Docs](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/bahayonghang/drawio-skills/actions/workflows/deploy-docs.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
-> **Important**: Draw.io Skill is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio + sidecars`, optionally enhanced by draw.io Desktop for PNG/PDF/JPG and embedded SVG export. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
+> **Important**: Draw.io Skill is a **YAML-first, offline-first base workflow**. The default path is local generation through `YAML/CLI -> .drawio` plus a **300dpi PNG** via draw.io Desktop (standalone SVG fallback without Desktop). Keep sidecars in a work directory. The [next-ai-draw-io](https://github.com/DayuanJiang/next-ai-draw-io) MCP server (`@next-ai-drawio/mcp-server`) is optional **live refinement** for the base skill only, not a hard dependency.
 >
 > **Recommendation for Diagram Replication**: For replicating draw.io diagrams, using the `dev` branch of [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) produces significantly better results than using this skills package.
 
@@ -11,11 +11,13 @@
 
 Draw.io Skill is a YAML-first draw.io authoring system for engineering diagrams, network diagrams, structured redraws, Mermaid/CSV conversion, and imported `.drawio` files. Publication-facing work is handled by an Academic Overlay that depends on the sibling base skill instead of copying its runtime.
 
-## Recommended Models
+## Harness and model routing
 
-- **GPT Sol Max**
-- **Claude Fable 5**
-- **Claude Opus 5**
+In-scope harnesses: **Claude Code**, **Codex**, **Grok Build**, **Kimi Code**, and **OMP (Oh My Pi)**. A harness is not a model tier: discovering a SKILL file is not permission equivalence and is not SKILL `allowed-tools` / `model` equivalence across tools.
+
+Use a strong configured model for planning, publication-delivery semantics, and review. Use a cheaper configured model only for bounded bilingual edits, citation fixes, and fixtures when the account actually exposes that tier. Do not treat marketing aliases as a long-term capability guarantee.
+
+Portable matrix (native vs compatibility vs explicit-file-read, model-control locations, verified vs UNVERIFIED): [`skills/drawio/references/docs/harness-compatibility.md`](./skills/drawio/references/docs/harness-compatibility.md). Academic overlay reads the same file through sibling `../drawio`; it does not copy it.
 
 ## Skill Variants
 
@@ -26,7 +28,7 @@ Boundary rule: themes and shared execution primitives live in the base; academic
 
 ## Features
 
-- **YAML-first artifact bundle**: keep `.drawio`, `.spec.yaml`, and `.arch.json` aligned for repeatable local editing.
+- **YAML-first artifact bundle**: keep `.drawio`, `.spec.yaml`, and `.arch.json` aligned for repeatable local editing. Default **final** delivery is `.drawio` plus a 300dpi PNG (standalone SVG fallback without Desktop).
 - **Desktop-aware export**: use draw.io Desktop for PNG, PDF, JPG, and embedded `.drawio.svg` when available.
 - **Optional live refinement**: configure next-ai MCP only for base-skill browser refinement; academic overlay stays offline.
 - **3 core routes**: `create`, `edit`, and `replicate`.
@@ -62,7 +64,7 @@ Academic overlay uses the first two paths only. It does not create, require, or 
 
 To replicate draw.io diagrams with superior fidelity, install [drawio-scientific-illustrator](https://github.com/bahayonghang/drawio-scientific-illustrator/tree/dev) (`dev` branch) at the project level (which works better for replication than this skills package):
 
-- **Claude (Project Level)**:
+- **Claude Code (Project Level)**:
 
   ```bash
   git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .claude/skills/drawio-scientific-illustrator
@@ -71,8 +73,10 @@ To replicate draw.io diagrams with superior fidelity, install [drawio-scientific
 - **Codex (Project Level)**:
 
   ```bash
-  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .codex/skills/drawio-scientific-illustrator
+  git clone -b dev https://github.com/bahayonghang/drawio-scientific-illustrator.git .agents/skills/drawio-scientific-illustrator
   ```
+
+Other hosts (Grok Build, Kimi Code, OMP) use the native paths in the [harness matrix](./skills/drawio/references/docs/harness-compatibility.md). Codex is `.agents/skills`, not `.codex/skills`.
 
 ### Standard Base Skill Installation
 
@@ -80,7 +84,7 @@ To replicate draw.io diagrams with superior fidelity, install [drawio-scientific
 npx skills add bahayonghang/drawio-skills
 ```
 
-Restart your client after installation so it reloads the skills.
+Restart your client after installation so it reloads the skills. Then verify **actual discovery** in a fresh session: the client must report the loaded `SKILL.md` absolute path and `version`. Copying files or opening them by path is not a discovery proof.
 
 ### Manual
 
@@ -88,15 +92,22 @@ Restart your client after installation so it reloads the skills.
 2. Copy `skills/drawio` into your client's skill directory.
 3. For publication-facing workflows, also copy `skills/drawio-academic-skills` next to `drawio` so the overlay can resolve sibling `../drawio`.
 
-Common locations:
+Common locations (see the [harness matrix](./skills/drawio/references/docs/harness-compatibility.md) for native vs compatibility vs explicit-file-read):
 
-- **Claude**
-  - macOS: `~/Library/Application Support/Claude/skills/`
-  - Linux: `~/.config/Claude/skills/`
-  - Windows: `%APPDATA%\Claude\skills\`
+- **Claude Code**
+  - Project: `.claude/skills/`
+  - User: `~/.claude/skills` (Windows: `%USERPROFILE%\.claude\skills\`)
 - **Codex**
-  - macOS / Linux: `~/.codex/skills/`
-  - Windows: `%USERPROFILE%\.codex\skills\`
+  - Project: `.agents/skills/`
+  - User: `~/.agents/skills` (Windows: `%USERPROFILE%\.agents\skills\`)
+- **Grok Build**
+  - Native: `.grok/skills/`; user `~/.grok/skills` and `~/.agents/skills`
+- **Kimi Code**
+  - `.agents/skills/` and `.kimi-code/skills/`
+- **OMP (Oh My Pi)**
+  - `.agents/skills/` may be discovered depending on enabled providers
+
+Missing project `.grok` / `.kimi-code` / `.omp` directories is not proof the tool cannot load `AGENTS.md` or a copied skill.
 
 ## Optional Live Editing Setup
 
@@ -169,7 +180,7 @@ Create a network topology with structured metadata:
 Create a publication figure with the overlay:
 
 ```text
-/drawio-academic-skills create an IEEE-style workflow figure for a manuscript. Deliver .drawio + .spec.yaml + .arch.json + .svg.
+/drawio-academic-skills create an IEEE-style workflow figure for a manuscript. Default delivery is .drawio + 300dpi PNG; also export PDF because IEEE needs vector.
 ```
 
 Import an existing `.drawio` file into the offline bundle:
@@ -238,17 +249,17 @@ node skills/drawio/scripts/runtime/diagrams-net-url.js output.drawio
 
 ## Canonical Artifact Bundle
 
-When the diagram will continue evolving, keep these files together:
+Default **final** delivery (matches the shipped SKILL contract):
 
 - `<name>.drawio`
+- 300dpi `<name>.png` via draw.io Desktop (standalone `<name>.svg` fallback when Desktop is unavailable)
+
+Keep sidecars in a project-local work directory such as `.drawio-tmp/<name>/` unless the user asks for a beside-output editing bundle:
+
 - `<name>.spec.yaml`
 - `<name>.arch.json`
 
-Academic overlay adds standalone SVG as part of the default publication bundle:
-
-- `<name>.svg`
-
-PNG/PDF/JPG are Desktop-enhanced optional outputs and should be reported as unavailable if draw.io Desktop is missing.
+Honor an explicit format request first. Journal/IEEE vector submission still requires an explicit PDF or SVG export; do not treat the default raster PNG as a vector substitute. Do not claim PNG/PDF/JPG files that were not produced.
 
 ## Network Topology Authoring
 

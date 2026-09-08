@@ -19,7 +19,6 @@ metadata:
     - math
     - svg
 argument-hint: [figure-description-or-instruction]
-allowed-tools: Read, Write, Bash, AskUserQuestion
 ---
 
 # Draw.io Academic Overlay
@@ -32,7 +31,7 @@ Resolve shared resources relative to this overlay directory:
 
 - CLI `../drawio/scripts/cli.js`; URL fallback `../drawio/scripts/runtime/diagrams-net-url.js`
 - Schema `../drawio/assets/schemas/spec.schema.json`; themes `../drawio/assets/themes/`; palettes `../drawio/assets/palettes/`
-- References `../drawio/references/docs/`, `../drawio/references/official/`, `../drawio/references/workflows/`, `../drawio/references/examples/`; shared rework contract `../drawio/references/workflows/visual-review.md`
+- References `../drawio/references/docs/`, `../drawio/references/official/`, `../drawio/references/workflows/`, `../drawio/references/examples/`; shared rework contract `../drawio/references/workflows/visual-review.md`; on-demand five-tool matrix `../drawio/references/docs/harness-compatibility.md` (do not copy into this overlay)
 - Built-in style presets `../drawio/styles/built-in/`
 
 Overlay-local assets: `references/docs/publication-overlay.md`, `academic-figure-playbook.md`, `academic-export-checklist.md`, `references/examples/`, `references/templates/`.
@@ -55,7 +54,7 @@ Before generating or editing, determine and state: venue/audience; figure type (
 
 ### Palette Preflight
 
-After the venue is known, if the user did not specify a palette, use `AskUserQuestion` as a single-select: venue recommendation first with `(Recommended)`, 3-4 choices, each palette's `displayName` as the label, and colorblind/grayscale safety plus venue rationale in each description. Venue map: `references/docs/academic-figure-playbook.md § Venue Palette Mapping`.
+After the venue is known, if the user did not specify a palette, ask once as a single-select using the host's actual question tool if present; otherwise ask in ordinary text: venue recommendation first with `(Recommended)`, 3-4 choices, each palette's `displayName` as the label, and colorblind/grayscale safety plus venue rationale in each description. Venue map: `references/docs/academic-figure-playbook.md § Venue Palette Mapping`.
 
 If the user already specified a palette or an unambiguous style, map it directly and do not ask. For academic replication, preserve the source palette and skip selection unless the user explicitly requests normalization. Record the chosen name in `meta.palette`. The completion report must name the palette and its colorblind/grayscale safety flags, including any print-gate downgrade.
 

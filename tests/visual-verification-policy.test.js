@@ -70,6 +70,9 @@ test('drawio skills keep final deliverables separate from intermediate sidecars'
   assert.match(academicSkill, /--sidecar-dir \.drawio-tmp\/figure/)
   assert.match(academicSkill, /Do not create or modify scratch JS scripts under a user's project-local `\.agents\/skills\/drawio`/)
 
+  assert.match(baseSkill, /references\/docs\/harness-compatibility\.md/)
+  assert.match(academicSkill, /\.\.\/drawio\/references\/docs\/harness-compatibility\.md/)
+
   const defaultDeliverables = academicSkill.match(/Default deliverables:\s*\n\n([\s\S]*?)\n\nIntermediate work directory:/)
   assert.ok(defaultDeliverables, 'academic skill should separate final deliverables from intermediate work')
   assert.doesNotMatch(defaultDeliverables[1], /<name>\.spec\.yaml/)

@@ -1,0 +1,11 @@
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=245px
+XML validation: PASSED (no errors)
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-doc-evidence-cli\academic-system.svg
+
+--- workdir listing ---
+\sidecars
+\academic-system.drawio
+\academic-system.svg
+\sidecars\academic-system.arch.json
+\sidecars\academic-system.spec.yaml

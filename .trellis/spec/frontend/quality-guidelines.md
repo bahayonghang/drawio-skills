@@ -78,7 +78,9 @@ Always preserve these repository contracts:
 
 #### 2. Signatures
 
-- Default clean final output with work-dir sidecars:
+- Default delivered image when Desktop is available:
+  `node skills/drawio/scripts/cli.js input.yaml output.png --validate --use-desktop --write-sidecars --sidecar-dir .drawio-tmp/output`
+- Explicit SVG, or the Desktop-unavailable PNG fallback, still uses work-dir sidecars:
   `node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output`
 - Explicit beside-output sidecars remain supported:
   `node skills/drawio/scripts/cli.js input.yaml output.svg --validate --write-sidecars`
@@ -88,7 +90,8 @@ Always preserve these repository contracts:
 
 - Final delivery directories should contain only final artifacts by default:
   - `.drawio`
-  - `.svg`
+  - 300dpi `.png` (standalone `.svg` fallback when Desktop is unavailable)
+- Honor an explicit user format request first. Journal/IEEE vector submission still requires an explicit PDF or SVG export; do not treat the default raster PNG as a vector substitute.
 - Intermediate sidecars should be written to the provided work directory:
   - `.spec.yaml`
   - `.arch.json`
@@ -103,9 +106,9 @@ Always preserve these repository contracts:
 
 #### 5. Good/Base/Bad Cases
 
-- Good: `.svg` output directory contains only `name.svg` and `name.drawio`; `.drawio-tmp/name/` contains `name.spec.yaml` and `name.arch.json`.
-- Base: `--write-sidecars` without `--sidecar-dir` keeps legacy beside-output sidecars for explicit reproducible bundles.
-- Bad: skill docs or evals describe `.spec.yaml` and `.arch.json` as default final deliverables.
+- Good: default final directory contains `name.drawio` and 300dpi `name.png` (or fallback `name.svg` without Desktop); `.drawio-tmp/name/` contains `name.spec.yaml` and `name.arch.json`.
+- Base: `--write-sidecars` without `--sidecar-dir` keeps legacy beside-output sidecars for explicit reproducible bundles. Explicit SVG output still keeps only `name.svg` and `name.drawio` in the final directory.
+- Bad: skill docs or evals describe `.spec.yaml` and `.arch.json` as default final deliverables, or treat SVG as the default delivered image when Desktop PNG is the SKILL contract.
 
 #### 6. Tests Required
 
@@ -124,8 +127,10 @@ node skills/drawio/scripts/cli.js input.yaml final/figure.svg --validate --write
 Correct for default final delivery:
 
 ```bash
-node skills/drawio/scripts/cli.js input.yaml final/figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure
+node skills/drawio/scripts/cli.js input.yaml final/figure.png --validate --use-desktop --write-sidecars --sidecar-dir .drawio-tmp/figure
 ```
+
+Without Desktop, write `final/figure.svg` with the same sidecar flags and report the PNG fallback.
 
 ### Draw.io Vision Preview and Rework Contract
 
@@ -398,13 +403,14 @@ return record ? embeddedImageStyle(record.svg) : null
 #### 2. Signatures
 
 - Canonical execution stays in the sibling base skill:
-  `node ../drawio/scripts/cli.js input.yaml final/figure.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/figure`
+  `node ../drawio/scripts/cli.js input.yaml final/figure.png --validate --use-desktop --write-sidecars --sidecar-dir .drawio-tmp/figure`
+  Without Desktop, the same flow falls back to standalone SVG. Explicit journal/IEEE vector still uses PDF or SVG.
 - External image-generation preview has no bundled command, dependency, API key, or required client in this repo.
 
 #### 3. Contracts
 
 - YAML remains the canonical source for final geometry, labels, formulas, captions, and metadata.
-- Final academic deliverables remain `.drawio` and `.svg` by default, with `.spec.yaml` and `.arch.json` in an explicit work directory.
+- Final academic deliverables remain `.drawio` and a 300dpi `.png` by default, with standalone `.svg` as the Desktop-unavailable fallback; `.spec.yaml` and `.arch.json` stay in an explicit work directory.
 - External image generation may be used only as an optional concept preview for structure, hierarchy, and academic tone.
 - Use the image preview by default only for complex paper-derived figures or reference-image redraws that need academic improvement.
 - Simple, clear academic diagrams should proceed directly to YAML/SVG.
@@ -414,15 +420,15 @@ return record ? embeddedImageStyle(record.svg) : null
 
 #### 4. Validation & Error Matrix
 
-- No image-generation tool available -> fall back to local YAML/SVG preview.
-- User declines external processing -> fall back to local YAML/SVG preview.
+- No image-generation tool available -> fall back to local YAML plus the exported PNG or fallback SVG.
+- User declines external processing -> fall back to local YAML plus the exported PNG or fallback SVG.
 - Image model returns incorrect text -> correct final labels and formulas in YAML before export.
 - Exported artifact shows overlap, clipped text, connector-label collision, arrows crossing text/nodes, missing modules, or plan mismatch -> correct YAML and rerender once before final reporting.
 
 #### 5. Good/Base/Bad Cases
 
-- Good: complex paper-derived figure -> evidence-chain extraction -> confirmed diagram plan -> privacy-gated concept preview -> YAML -> `.drawio`/`.svg` export QA.
-- Base: simple workflow figure with known labels and layout -> direct YAML/SVG without image preview.
+- Good: complex paper-derived figure -> evidence-chain extraction -> confirmed diagram plan -> privacy-gated concept preview -> YAML -> `.drawio`/`.png` export QA (SVG fallback without Desktop).
+- Base: simple workflow figure with known labels and layout -> direct YAML plus exported PNG/SVG without image preview.
 - Bad: treating a generated raster image as the final artifact, uploading raw unpublished paper text without approval, or adding a required image-generation dependency to the overlay.
 
 #### 6. Tests Required
@@ -442,7 +448,7 @@ Use image generation as the final diagram, then skip draw.io export verification
 Correct:
 
 ```text
-Use image generation only as an optional concept preview, then correct YAML and verify the exported draw.io SVG.
+Use image generation only as an optional concept preview, then correct YAML and verify the exported draw.io PNG (or fallback SVG).
 ```
 
 ---
@@ -475,8 +481,8 @@ Use image generation only as an optional concept preview, then correct YAML and 
 
 - Does the change preserve the base vs academic overlay boundary?
 - Does YAML remain the source of truth and do derived artifacts stay derived?
-- Are `.drawio` and `.svg` final deliverables kept separate from work-dir
-  sidecars by default?
+- Are `.drawio` and 300dpi `.png` (SVG fallback without Desktop) final
+  deliverables kept separate from work-dir sidecars by default?
 - Are user-controlled YAML, XML, icon, theme, style, path, and environment
   inputs validated before use?
 - Are validation errors explicit and actionable?

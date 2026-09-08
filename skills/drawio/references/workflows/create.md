@@ -74,7 +74,7 @@ Step 4: Classify scientific diagram intent when relevant
 └── reference-image redraw -> switch to replicate inventory rules
 
 Step 5: Decide Fast Path vs Full Path
-├── Fast Path -> skip AskUserQuestion and skip ASCII confirmation
+├── Fast Path -> skip palette/design questions and skip ASCII confirmation
 └── Full Path -> continue to Step 6
 
 Step 6: Design Consultation (Full Path only)
@@ -134,8 +134,8 @@ Step 11: Edge Audit
 
 Step 12: Render
 ├── node <skill-dir>/scripts/cli.js input --input-format <yaml|mermaid|csv> output.drawio --validate --write-sidecars --sidecar-dir .drawio-tmp/output
-├── For paper-quality diagrams prefer output.svg --validate --write-sidecars --sidecar-dir .drawio-tmp/output
-├── For thesis / A4 / Word / PNG requests, add a matching PNG only when draw.io Desktop export is available
+├── Default delivered image is 300dpi PNG via --use-desktop; without Desktop, PNG export falls back to standalone SVG
+├── Generate SVG, PDF, or JPG only on explicit request; journal/IEEE vector submission still needs explicit PDF or SVG
 ├── Note: standalone SVG (without --use-desktop) replays anchors/waypoints and approximates orthogonal routes (L/Z bends).
 │   For exact Desktop routing (jetty spacing, obstacle avoidance), add --use-desktop or refine in draw.io.
 └── When embedded export matters and draw.io Desktop exists, add --use-desktop for SVG or export to PNG/PDF/JPG
@@ -148,7 +148,7 @@ Step 13: Exported-Artifact Verification / Optional Live Handoff
 ├── live backend has `replace_diagram_xml` + user wants browser or inline refinement
 │   └── use the provider-specific tool mapping from `references/docs/mcp-tools.md`
 ├── browser/live screenshots are a last-resort review aid only when the user explicitly requested live review and no exported artifact can be inspected
-└── otherwise present .drawio + standalone SVG and report any remaining manual visual check
+└── otherwise present .drawio + 300dpi PNG (or the fallback SVG) and report any remaining manual visual check
 ```
 
 ## Academic Branch Rules
@@ -160,8 +160,8 @@ When `meta.profile = academic-paper`:
 - `meta.description` is recommended for figure context.
 - `meta.legend` is required when icons are used or connector types are mixed.
 - Prefer `academic` theme unless the request explicitly asks for a color paper figure.
-- Default final deliverables are `.drawio` and `.svg`; keep `.spec.yaml` and `.arch.json` in a project-local work directory unless a sidecar bundle is explicitly requested.
-- Add `.png` only for thesis, A4, Word, raster-first, screenshot rebuild, or explicit PNG requests.
+- Default final deliverables are `.drawio` and a 300dpi `.png` (standalone `.svg` fallback when Desktop is unavailable); keep `.spec.yaml` and `.arch.json` in a project-local work directory unless a sidecar bundle is explicitly requested.
+- Honor explicit format requests first. Journal / IEEE vector submission still requires an explicit PDF or SVG export.
 - Do not rely on color alone to distinguish semantics.
 - Treat A4 readability and grayscale print safety as final review gates, not optional polish.
 

@@ -9,16 +9,28 @@ const read = (path) => readFileSync(resolve(root, path), 'utf8')
 test('base and academic skills encode distinct palette question policies', () => {
   const base = read('skills/drawio/SKILL.md')
   const academic = read('skills/drawio-academic-skills/SKILL.md')
+  const playbook = read('skills/drawio-academic-skills/references/docs/academic-figure-playbook.md')
+  const createWorkflow = read('skills/drawio/references/workflows/create.md')
 
-  assert.match(base, /AskUserQuestion[\s\S]{0,500}(palette|colorblind|grayscale|black-and-white|multi-category)/i)
+  assert.doesNotMatch(base, /AskUserQuestion/)
+  assert.doesNotMatch(academic, /AskUserQuestion/)
+  assert.doesNotMatch(playbook, /AskUserQuestion/)
+  assert.doesNotMatch(createWorkflow, /AskUserQuestion/)
+  assert.doesNotMatch(base, /^allowed-tools:/m)
+  assert.doesNotMatch(academic, /^allowed-tools:/m)
+
+  assert.match(base, /(palette|colorblind|grayscale|black-and-white|multi-category)[\s\S]{0,500}host['’]?s actual[\s\S]{0,120}single-select/i)
+  assert.match(base, /otherwise ask in ordinary text/i)
   assert.match(base, /(already|explicitly|specified)[\s\S]{0,250}(do not ask|skip)/i)
   assert.match(base, /replicat[\s\S]{0,500}(preserve|source palette)[\s\S]{0,300}(do not ask|skip)/i)
 
-  assert.match(academic, /venue[\s\S]{0,500}AskUserQuestion/i)
+  assert.match(academic, /venue[\s\S]{0,500}(single-select|question tool)/i)
+  assert.match(academic, /otherwise ask in ordinary text/i)
   assert.match(academic, /\(Recommended\)/)
   assert.match(academic, /meta\.palette/)
   assert.match(academic, /(safety|colorblind|grayscale)/i)
   assert.match(academic, /completion report[\s\S]{0,200}palette/i)
+  assert.match(playbook, /otherwise ask in ordinary text/i)
 })
 
 test('palette docs describe the orthogonal contract, venue map, and print gate', () => {
