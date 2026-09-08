@@ -362,27 +362,32 @@ test('CLI: raster extraction file writes canonical spec, drawio, and sidecars', 
 })
 
 test('CLI: optional parser absence is isolated to Terraform and SQL routes', () => {
-  const env = {
-    SYSTEMROOT: process.env.SYSTEMROOT,
-    WINDIR: process.env.WINDIR,
-    TEMP: process.env.TEMP,
-    TMP: process.env.TMP,
-    PATH: ''
-  }
-  const terraform = runCliResult(['-', '--input-format', 'terraform'], {
-    input: 'resource "aws_instance" "api" {}',
-    env
-  })
-  assert.notEqual(terraform.status, 0)
-  assert.match(terraform.stderr, /\[OPTIONAL_DEPENDENCY_MISSING\]/)
-  assert.match(terraform.stderr, /Python 3\.9\+ is unavailable/)
+  const binDir = createTempDir()
+  try {
+    const env = {
+      SYSTEMROOT: process.env.SYSTEMROOT,
+      WINDIR: process.env.WINDIR,
+      TEMP: process.env.TEMP,
+      TMP: process.env.TMP,
+      PATH: binDir
+    }
+    const terraform = runCliResult(['-', '--input-format', 'terraform'], {
+      input: 'resource "aws_instance" "api" {}',
+      env
+    })
+    assert.notEqual(terraform.status, 0)
+    assert.match(terraform.stderr, /\[OPTIONAL_DEPENDENCY_MISSING\]/)
+    assert.match(terraform.stderr, /Python 3\.9\+ is unavailable/)
 
-  const yaml = runCliResult(['-', '--input-format', 'compose'], {
-    input: 'name: shop\nservices: { api: { image: app:1 } }',
-    env
-  })
-  assert.equal(yaml.status, 0)
-  assert.match(yaml.stdout, /api/)
+    const yaml = runCliResult(['-', '--input-format', 'compose'], {
+      input: 'name: shop\nservices: { api: { image: app:1 } }',
+      env
+    })
+    assert.equal(yaml.status, 0)
+    assert.match(yaml.stdout, /api/)
+  } finally {
+    rmSync(binDir, { recursive: true, force: true })
+  }
 })
 
 test('CLI: code importer routes reject stdin before reading source text', () => {

@@ -66,11 +66,22 @@ function runJust(args, cwd = PROJECT_ROOT) {
 }
 
 function resolveNpmCli() {
-  const candidate = join(dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js')
-  if (!existsSync(candidate)) {
-    throw new Error(`npm CLI not found at ${candidate}`)
+  const execDir = dirname(process.execPath)
+  const candidates = [
+    process.env.npm_execpath,
+    join(execDir, 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+    join(execDir, '..', 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js')
+  ].filter((candidate) => typeof candidate === 'string' && candidate.endsWith('.js'))
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate
   }
-  return candidate
+  throw new Error(`npm CLI not found (tried ${candidates.join(', ') || 'no .js candidates'})`)
+}
+
+function justIsAvailable() {
+  const result = spawnTool('just', ['--version'])
+  return result.status === 0 && !result.error
 }
 
 function runNpm(args, cwd) {
@@ -280,7 +291,7 @@ test('package.json ci is a read-only npm-script chain', () => {
   assert.doesNotMatch(pkg.scripts.ci, /version-sync\.js(?! --check)/)
 })
 
-test('just ci dry-run only proxies npm run ci', () => {
+test('just ci dry-run only proxies npm run ci', (t) => {
   const justfile = readFileSync(JUSTFILE, 'utf8')
   const header = /^ci:(.*)$/m.exec(justfile)
   assert.ok(header, 'missing ci recipe')
@@ -289,6 +300,11 @@ test('just ci dry-run only proxies npm run ci', () => {
   assert.ok(bodyMatch, 'missing ci recipe body')
   assert.match(bodyMatch[1], /npm run ci/)
   assert.doesNotMatch(bodyMatch[1], /version-sync/)
+
+  if (!justIsAvailable()) {
+    t.skip('missing evidence: just is not installed')
+    return
+  }
 
   const result = runJust(['--dry-run', 'ci'])
   assert.equal(result.status, 0, result.stderr || result.stdout)
@@ -335,13 +351,13 @@ test('consistent versions pass version:check without rewriting files', () => {
   }
 })
 
-test('quality workflow is a read-only PR and branch gate', () => {
+test('quality workflow is a read-only pull_request gate', () => {
   const text = readFileSync(QUALITY_WORKFLOW, 'utf8')
   const workflow = parseYaml(text)
   assert.deepEqual(workflow.permissions, { contents: 'read' })
   assert.equal(Object.keys(workflow.permissions).length, 1)
   assert.ok(Object.prototype.hasOwnProperty.call(workflow.on, 'pull_request'))
-  assert.deepEqual(workflow.on.push.branches, ['dev', 'main'])
+  assert.equal(workflow.on.push, undefined)
   assert.equal(workflow.on.release, undefined)
   assert.doesNotMatch(text, /issues:\s*write/)
   assert.doesNotMatch(text, /pull-requests:\s*write/)
@@ -406,7 +422,12 @@ test('deploy workflow stays release-only and reuses the quality gate', () => {
   assert.ok(steps.some((step) => /python\/requirements\.txt/.test(step.run || '')))
 })
 
-test('just clean and tree operate only inside a temp fixture', () => {
+test('just clean and tree operate only inside a temp fixture', (t) => {
+  if (!justIsAvailable()) {
+    t.skip('missing evidence: just is not installed')
+    return
+  }
+
   const parent = mkdtempSync(join(tmpdir(), 'drawio-clean-'))
   const work = join(parent, 'work dir')
   mkdirSync(work)
@@ -437,6 +458,11 @@ test('just clean and tree operate only inside a temp fixture', () => {
 })
 
 test('just clean refuses link traversal and keeps the escape target', (t) => {
+  if (!justIsAvailable()) {
+    t.skip('missing evidence: just is not installed')
+    return
+  }
+
   const parent = mkdtempSync(join(tmpdir(), 'drawio-clean-link-'))
   const work = join(parent, 'work dir')
   const escapeTarget = join(parent, 'escape-target')

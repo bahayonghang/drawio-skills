@@ -39,6 +39,10 @@ def collect_references(value, output):
             collect_references(entry, output)
 
 
+def normalize_source(source):
+    return source.replace('\r\n', '\n').replace('\r', '\n')
+
+
 def hcl_label(value):
     if isinstance(value, str) and len(value) >= 2 and value[0] == value[-1] == '"':
         return value[1:-1]
@@ -58,7 +62,7 @@ def terraform_records(request):
         dependency_missing('python-hcl2==8.1.2 is unavailable')
 
     try:
-        parsed = hcl2.loads(request['source'])
+        parsed = hcl2.loads(normalize_source(request['source']))
     except Exception:
         parser_failure('Terraform HCL could not be parsed')
 
@@ -140,7 +144,7 @@ def sql_records(request):
     dialect = request.get('dialect') or 'postgres'
     default_schema = request.get('defaultSchema') or '_default'
     try:
-        statements = sqlglot.parse(request['source'], read=dialect)
+        statements = sqlglot.parse(normalize_source(request['source']), read=dialect)
     except Exception:
         parser_failure(f'SQL DDL could not be parsed for dialect {dialect}')
 

@@ -29,4 +29,14 @@ integrationTest('optional Python worker parses pinned HCL and SQL packages', () 
   )
   assert.equal(sql.edges.length, 1)
   assert.equal(sql.edges[0].discriminator, 'orders_user_fk:user_id->id')
+
+  const crlfSource = fixture('terraform.tf').replace(/\r?\n/g, '\r\n')
+  const terraformCrlf = parseTerraformConfig(
+    crlfSource,
+    { locator: 'infra/main.tf', moduleAddress: 'module.app', runParser }
+  )
+  assert.deepEqual(terraformCrlf.nodes.map((node) => node.identity.key), [
+    'module.app.aws_instance.api',
+    'module.app.aws_security_group.web'
+  ])
 })
