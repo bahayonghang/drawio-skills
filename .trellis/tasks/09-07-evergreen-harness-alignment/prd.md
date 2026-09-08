@@ -20,7 +20,7 @@
 - [x] AC2 (R2): quality-gates 版本漂移负例使检查失败且不修改文件；PR/部署职责分离；Windows fixture 不触碰用户目录。 子任务 AC1/AC2/AC4 已勾选；证据 `.trellis/tasks/archive/2026-09/09-07-harness-quality-gates/prd.md`、同目录 `research/verification-summary.md`。子任务 AC3 Node 24 Windows/Linux 与当前 HEAD 的 GitHub Actions 仍 UNVERIFIED（同目录 `research/unverified.md`）。
 - [x] AC3 (R3): rule-alignment 对五工具记录规则/skill/模型入口及证据等级；本机 2.5.0 旧副本和 2.8.0 源码的分叉得到解决及验证，不复制五份规则。 子任务 AC1–AC4 已勾选；证据 `.trellis/tasks/archive/2026-09/09-07-harness-rule-alignment/prd.md`、同目录 `research/verification-summary.md`。五工具 fresh session 仍 UNVERIFIED（同目录 `research/unverified.md`）。
 - [x] AC4 (R4): skill-doc-evidence 同步双语说明、spec 与 skill 引用；每项批准内容可追溯至子任务、适用工具和检查证据；未执行项标 UNVERIFIED。 子任务 AC1–AC5 已勾选；证据 `.trellis/tasks/archive/2026-09/09-07-harness-skill-doc-evidence/prd.md`、同目录 `research/verification-summary.md`。Desktop 视觉仍 UNVERIFIED（同目录 `research/unverified.md`）。
-- [x] AC5 (R5): 父子均有 PRD/design/implement 及真实 JSONL（concrete 路径，无 `{{placeholder}}` 模板占位）。用户批准后子任务按 test-baseline → quality-gates → rule-alignment → skill-doc-evidence 一次一项 start、完成、归档；四个子任务均已落入 `.trellis/tasks/archive/2026-09/`，且均发生在父任务归档之前。父任务在子任务活动期间保持未归档。集成地图 `research/r5-integration.md`；未执行项 `research/unverified.md`。只读质量门禁（`npm run ci` / trellis-check）待主会话执行，本轮不记为已通过。
+- [x] AC5 (R5): 父子均有 PRD/design/implement 及真实 JSONL（concrete 路径，无 `{{placeholder}}` 模板占位）。用户批准后子任务按 test-baseline → quality-gates → rule-alignment → skill-doc-evidence 一次一项 start、完成、归档；四个子任务均已落入 `.trellis/tasks/archive/2026-09/`，且均发生在父任务归档之前。父任务在子任务活动期间保持未归档。集成地图 `research/r5-integration.md`；未执行项 `research/unverified.md`。只读质量门禁 `just ci` / `npm run ci` 已在本机通过（`research/release-gate.md`，exit 0）。
 
 ## Task map
 | 子任务 | 优先级 | 需求 | 状态 |

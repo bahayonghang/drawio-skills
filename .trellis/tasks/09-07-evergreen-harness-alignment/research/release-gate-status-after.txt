@@ -1,0 +1,3 @@
+?? .trellis/tasks/09-07-evergreen-harness-alignment/research/release-gate-just-ci.log
+?? .trellis/tasks/09-07-evergreen-harness-alignment/research/release-gate-status-after.txt
+?? .trellis/tasks/09-07-evergreen-harness-alignment/research/release-gate-status-before.txt
