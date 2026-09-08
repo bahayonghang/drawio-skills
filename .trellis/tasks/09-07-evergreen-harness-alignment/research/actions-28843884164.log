@@ -1,0 +1,108 @@
+build	Comment PR	﻿2026-07-07T05:30:14.0825337Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+build	Comment PR	2026-07-07T05:30:14.0827560Z ##[group]Run actions/github-script@v7
+build	Comment PR	2026-07-07T05:30:14.0827984Z with:
+build	Comment PR	2026-07-07T05:30:14.0833612Z   script: const fs = require('fs');
+build	Comment PR	const path = require('path');
+build	Comment PR	
+build	Comment PR	// Get build size
+build	Comment PR	const { execSync } = require('child_process');
+build	Comment PR	const size = execSync('du -sh docs/.vitepress/dist').toString().split('\t')[0];
+build	Comment PR	
+build	Comment PR	// Count files
+build	Comment PR	const countFiles = (dir) => {
+build	Comment PR	  let count = 0;
+build	Comment PR	  const files = fs.readdirSync(dir);
+build	Comment PR	  for (const file of files) {
+build	Comment PR	    const filePath = path.join(dir, file);
+build	Comment PR	    if (fs.statSync(filePath).isDirectory()) {
+build	Comment PR	      count += countFiles(filePath);
+build	Comment PR	    } else {
+build	Comment PR	      count++;
+build	Comment PR	    }
+build	Comment PR	  }
+build	Comment PR	  return count;
+build	Comment PR	};
+build	Comment PR	
+build	Comment PR	const fileCount = countFiles('docs/.vitepress/dist');
+build	Comment PR	
+build	Comment PR	const comment = `## 📚 Documentation Build Preview
+build	Comment PR	
+build	Comment PR	✅ Documentation built successfully!
+build	Comment PR	
+build	Comment PR	**Build Statistics:**
+build	Comment PR	- 📦 Total size: ${size}
+build	Comment PR	- 📄 Files generated: ${fileCount}
+build	Comment PR	
+build	Comment PR	**Note:** This is a preview build. The documentation will be deployed to GitHub Pages when a release is published.
+build	Comment PR	`;
+build	Comment PR	
+build	Comment PR	github.rest.issues.createComment({
+build	Comment PR	  issue_number: context.issue.number,
+build	Comment PR	  owner: context.repo.owner,
+build	Comment PR	  repo: context.repo.repo,
+build	Comment PR	  body: comment
+build	Comment PR	});
+build	Comment PR	
+build	Comment PR	2026-07-07T05:30:14.0843679Z   github-token: ***
+build	Comment PR	2026-07-07T05:30:14.0844186Z   debug: false
+build	Comment PR	2026-07-07T05:30:14.0844532Z   user-agent: actions/github-script
+build	Comment PR	2026-07-07T05:30:14.0844967Z   result-encoding: json
+build	Comment PR	2026-07-07T05:30:14.0845316Z   retries: 0
+build	Comment PR	2026-07-07T05:30:14.0845680Z   retry-exempt-status-codes: 400,401,403,404,422
+build	Comment PR	2026-07-07T05:30:14.0846154Z ##[endgroup]
+build	Comment PR	2026-07-07T05:30:14.3573112Z RequestError [HttpError]: Resource not accessible by integration
+build	Comment PR	2026-07-07T05:30:14.3602457Z ##[error]Unhandled error: HttpError: Resource not accessible by integration
+build	Comment PR	2026-07-07T05:30:14.3613479Z     at /home/runner/work/_actions/actions/github-script/v7/dist/index.js:9537:21
+build	Comment PR	2026-07-07T05:30:14.3615027Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+build	Comment PR	2026-07-07T05:30:14.3615807Z   status: 403,
+build	Comment PR	2026-07-07T05:30:14.3616342Z   response: {
+build	Comment PR	2026-07-07T05:30:14.3617476Z     url: 'https://api.github.com/repos/bahayonghang/drawio-skills/issues/5/comments',
+build	Comment PR	2026-07-07T05:30:14.3618231Z     status: 403,
+build	Comment PR	2026-07-07T05:30:14.3618577Z     headers: {
+build	Comment PR	2026-07-07T05:30:14.3619017Z       'access-control-allow-origin': '*',
+build	Comment PR	2026-07-07T05:30:14.3621725Z       'access-control-expose-headers': 'ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning',
+build	Comment PR	2026-07-07T05:30:14.3624321Z       'content-encoding': 'gzip',
+build	Comment PR	2026-07-07T05:30:14.3624948Z       'content-security-policy': "default-src 'none'",
+build	Comment PR	2026-07-07T05:30:14.3625666Z       'content-type': 'application/json; charset=utf-8',
+build	Comment PR	2026-07-07T05:30:14.3626300Z       date: 'Tue, 07 Jul 2026 05:30:14 GMT',
+build	Comment PR	2026-07-07T05:30:14.3627161Z       'referrer-policy': 'origin-when-cross-origin, strict-origin-when-cross-origin',
+build	Comment PR	2026-07-07T05:30:14.3627930Z       server: 'github.com',
+build	Comment PR	2026-07-07T05:30:14.3628695Z       'strict-transport-security': 'max-age=31536000; includeSubdomains; preload',
+build	Comment PR	2026-07-07T05:30:14.3629495Z       'transfer-encoding': 'chunked',
+build	Comment PR	2026-07-07T05:30:14.3630106Z       vary: 'Accept-Encoding, Accept, X-Requested-With',
+build	Comment PR	2026-07-07T05:30:14.3630963Z       'x-accepted-github-permissions': 'issues=write; pull_requests=write',
+build	Comment PR	2026-07-07T05:30:14.3631826Z       'x-content-type-options': 'nosniff',
+build	Comment PR	2026-07-07T05:30:14.3632368Z       'x-frame-options': 'deny',
+build	Comment PR	2026-07-07T05:30:14.3632961Z       'x-github-api-version-selected': '2022-11-28',
+build	Comment PR	2026-07-07T05:30:14.3633637Z       'x-github-media-type': 'github.v3; format=json',
+build	Comment PR	2026-07-07T05:30:14.3635127Z       'x-github-request-id': '8800:1B45A2:2B948FF:980A4A5:6A4C8EE6',
+build	Comment PR	2026-07-07T05:30:14.3635803Z       'x-ratelimit-limit': '5000',
+build	Comment PR	2026-07-07T05:30:14.3636336Z       'x-ratelimit-remaining': '4997',
+build	Comment PR	2026-07-07T05:30:14.3636878Z       'x-ratelimit-reset': '1783405800',
+build	Comment PR	2026-07-07T05:30:14.3637431Z       'x-ratelimit-resource': 'core',
+build	Comment PR	2026-07-07T05:30:14.3637953Z       'x-ratelimit-used': '3',
+build	Comment PR	2026-07-07T05:30:14.3638408Z       'x-xss-protection': '0'
+build	Comment PR	2026-07-07T05:30:14.3638831Z     },
+build	Comment PR	2026-07-07T05:30:14.3639151Z     data: {
+build	Comment PR	2026-07-07T05:30:14.3639658Z       message: 'Resource not accessible by integration',
+build	Comment PR	2026-07-07T05:30:14.3640669Z       documentation_url: 'https://docs.github.com/rest/issues/comments#create-an-issue-comment',
+build	Comment PR	2026-07-07T05:30:14.3641500Z       status: '403'
+build	Comment PR	2026-07-07T05:30:14.3641859Z     }
+build	Comment PR	2026-07-07T05:30:14.3642168Z   },
+build	Comment PR	2026-07-07T05:30:14.3642487Z   request: {
+build	Comment PR	2026-07-07T05:30:14.3642841Z     method: 'POST',
+build	Comment PR	2026-07-07T05:30:14.3643589Z     url: 'https://api.github.com/repos/bahayonghang/drawio-skills/issues/5/comments',
+build	Comment PR	2026-07-07T05:30:14.3644572Z     headers: {
+build	Comment PR	2026-07-07T05:30:14.3645042Z       accept: 'application/vnd.github.v3+json',
+build	Comment PR	2026-07-07T05:30:14.3645852Z       'user-agent': 'actions/github-script octokit-core.js/5.0.1 Node.js/24',
+build	Comment PR	2026-07-07T05:30:14.3646632Z       authorization: 'bearer [REDACTED]',
+build	Comment PR	2026-07-07T05:30:14.3647280Z       'content-type': 'application/json; charset=utf-8'
+build	Comment PR	2026-07-07T05:30:14.3647817Z     },
+build	Comment PR	2026-07-07T05:30:14.3650540Z     body: '{"body":"## 📚 Documentation Build Preview\\n\\n✅ Documentation built successfully!\\n\\n**Build Statistics:**\\n- 📦 Total size: 4.1M\\n- 📄 Files generated: 160\\n\\n**Note:** This is a preview build. The documentation will be deployed to GitHub Pages when a release is published.\\n"}',
+build	Comment PR	2026-07-07T05:30:14.3652502Z     request: {
+build	Comment PR	2026-07-07T05:30:14.3652853Z       agent: [Agent],
+build	Comment PR	2026-07-07T05:30:14.3653301Z       fetch: [Function: proxyFetch],
+build	Comment PR	2026-07-07T05:30:14.3653866Z       hook: [Function: bound bound register]
+build	Comment PR	2026-07-07T05:30:14.3654532Z     }
+build	Comment PR	2026-07-07T05:30:14.3654853Z   }
+build	Comment PR	2026-07-07T05:30:14.3655145Z }

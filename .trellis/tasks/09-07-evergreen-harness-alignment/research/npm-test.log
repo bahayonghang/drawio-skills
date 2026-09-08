@@ -1,0 +1,961 @@
+npm notice run drawio-skills@2.8.0 test
+npm notice run node scripts/run-tests.js
+✔ parseCiWorkflow uses GitHub workflow path and job keys for identity (4.7218ms)
+✔ parseCiWorkflow supports GitLab jobs and stage modules (0.8024ms)
+✔ code class identity extends the canonical module identity (1.2189ms)
+✔ code project scanning is sorted, bounded, and rejects non-directories (12.4371ms)
+✔ code project scanning enforces the per-file capacity bound (4.7914ms)
+✔ optional parser loading maps a missing package without affecting adapter imports (1.1255ms)
+✔ code projection crosses validation, JavaScript ELK, renderer, and XML validation (153.2953ms)
+﹣ real optional code parsers enforce their approved syntax subsets (0.3854ms) # SKIP
+✔ parseComposeConfig emits services, named resources, and stable relations (4.2027ms)
+✔ parseComposeConfig requires an explicit or top-level project identity (0.4645ms)
+✔ parseComposeConfig never projects environment or build args (0.29ms)
+✔ parseComposeConfig does not treat bind mounts as named volumes (0.2641ms)
+✔ all config adapters use the canonical spec, JavaScript ELK, and renderer pipeline (277.3524ms)
+✔ structured config decoder rejects unsafe YAML tags (3.5059ms)
+✔ structured config decoder rejects prototype keys and recursive aliases (0.4301ms)
+✔ structured config decoder enforces the source-size limit (0.382ms)
+✔ Docker inspect aggregates Compose replicas using declared identity and attributes (3.6474ms)
+✔ Docker inspect output is deterministic across container order and instance names (0.4001ms)
+✔ Docker inspect rejects ambiguous replicas and invalid top-level input (0.3572ms)
+✔ Go adapter projects intra-module package imports without a Go toolchain (15.8723ms)
+✔ Go adapter requires one explicit go.mod module directive (3.3958ms)
+✔ Go adapter rejects workspace roots instead of treating them as one module (4.1764ms)
+✔ file-backed declared/live drift case pins sanitized report, canonical spec, and C0 evidence (177.2804ms)
+✔ drift compares nodes by identity and reports display label changes (1.869ms)
+✔ drift rejects mismatched explicit comparison contexts without echoing values (0.8557ms)
+✔ drift rejects incompatible versions, domains, and duplicate identities (0.4624ms)
+✔ drift reports deterministic four-state node, edge, and attribute buckets (1.4035ms)
+✔ drift treats an edge relation change as removed plus added (0.275ms)
+✔ drift sorts attribute buckets globally by serialized identity across owners (0.204ms)
+✔ drift report creates a finalized status-labeled projection and rejects unknown report versions (1.5448ms)
+✔ drift presentation uses shared projection, JavaScript ELK, renderer, and XML validation (157.6412ms)
+✔ finalizeGraphProjection validates, enriches, and deterministically sorts a projection (2.3476ms)
+✔ projection schema declares the same required top-level contract (1.0272ms)
+✔ projection validation rejects unknown versions, duplicate identities, and dangling edges (0.5417ms)
+✔ projection validation rejects raw styles, absolute locators, and non-allowlisted or secret attributes (0.3088ms)
+✔ parallel edges require stable discriminators while a single relation does not (0.265ms)
+✔ domain identity factories produce canonical label-independent keys (1.4005ms)
+✔ renderer ids are stable, safe, and independent from display metadata (0.6072ms)
+✔ edge identity uses a persisted control-character-free canonical tuple (0.1851ms)
+✔ identity factories reject ambiguous or unsafe inputs with stable codes (0.4748ms)
+▶ parseMermaidToSpec
+  ▶ flowchart
+    ✔ should parse a simple flowchart LR with nodes and edges (1.0122ms)
+  ✔ flowchart (1.4704ms)
+  ▶ sequence diagram
+    ✔ should parse participants as user type nodes (0.2886ms)
+  ✔ sequence diagram (0.3831ms)
+  ▶ state diagram
+    ✔ should parse [*] as Start/End terminal types (0.2686ms)
+  ✔ state diagram (0.3601ms)
+  ▶ ER diagram
+    ✔ should parse entities as database type nodes (0.3194ms)
+  ✔ ER diagram (0.4027ms)
+  ▶ class diagram
+    ✔ should parse classes as service type nodes (0.3302ms)
+  ✔ class diagram (0.4311ms)
+  ▶ error handling
+    ✔ should throw on empty input (0.717ms)
+    ✔ should throw on unsupported diagram type (0.1065ms)
+  ✔ error handling (0.9183ms)
+✔ parseMermaidToSpec (4.4933ms)
+▶ parseCsvToSpec
+  ✔ should parse CSV with name and parent columns into nodes and edges (0.319ms)
+  ✔ should respect explicit type column (0.1033ms)
+  ✔ should throw when name or parent columns are missing (0.1236ms)
+✔ parseCsvToSpec (0.6323ms)
+✔ JS/TS adapter resolves ESM static and string-literal dynamic imports (17.0627ms)
+✔ JS/TS unresolved relative imports fail instead of silently dropping an edge (3.8819ms)
+✔ Kubernetes declared/live wrappers reuse identities while preserving live mode (3.2122ms)
+✔ Kubernetes live wrapper requires explicit scope and rejects malformed input (0.4073ms)
+✔ parseKubernetesManifests extracts stable objects and declared relations (5.252ms)
+✔ parseKubernetesManifests rejects unknown kind scope without an override (0.4429ms)
+✔ parseKubernetesManifests supports explicit CRD scope overrides (0.4866ms)
+✔ parseOpenApiDocument preserves method/path identity and component refs (5.6953ms)
+✔ OpenAPI summary and operationId changes do not change operation identity (1.2368ms)
+﹣ optional Python worker parses pinned HCL and SQL packages (0.471ms) # SKIP
+✔ runOptionalPythonParser decodes a bounded successful response (1.1882ms)
+✔ runOptionalPythonParser maps missing Python and parser packages (0.4242ms)
+✔ runOptionalPythonParser maps timeout, malformed output, and output overflow (0.3265ms)
+✔ projectGraphToSpec emits stable renderer-safe ids and identity metadata (3.0244ms)
+✔ declared and live projections reuse the same identity factory across source metadata changes (0.6229ms)
+✔ projectGraphToSpec detects renderer hash collisions without traversal-order suffixes (0.388ms)
+✔ projectGraphToSpec rejects candidates that did not cross the finalization boundary (0.0919ms)
+✔ projected specs round-trip through YAML, arch metadata, JS ELK, and XML validation (156.8866ms)
+✔ legacy specs without identity remain valid (0.3815ms)
+✔ canonical schema and runtime validation enforce adapter identity metadata (1.0509ms)
+✔ Python imports use stdlib AST records and stable file identities (12.9083ms)
+✔ Python classes produce code-class identities and inheritance edges (4.5916ms)
+✔ Python parser failures preserve safe source location context (4.4327ms)
+✔ Python code worker uses a fixed bounded subprocess envelope (0.4795ms)
+✔ Python classes report a distinct empty graph diagnostic (2.853ms)
+✔ raster extraction maps explicit geometry and styles to one canonical spec (1.9068ms)
+✔ raster extraction rejects control characters with adapter path evidence (0.3518ms)
+✔ raster extraction rejects raw HTML labels at the adapter boundary (0.1281ms)
+✔ raster extraction drops all source bounds when any node has no geometry (162.1164ms)
+✔ raster extraction fixture uses the canonical ELK and renderer pipeline deterministically (52.5865ms)
+✔ raster extraction rejects malformed, ambiguous, or unsafe records (1.5728ms)
+✔ Rust adapter projects crate/self/super use edges without a Rust toolchain (14.1484ms)
+✔ Rust cfg and inline modules are reported as unsupported syntax (4.6069ms)
+✔ Rust super paths cannot escape the selected crate (5.7063ms)
+✔ parseSqlDdl projects schema-qualified tables and stable foreign keys (2.1734ms)
+✔ parseSqlDdl rejects foreign keys whose target table is absent (0.4335ms)
+✔ parseTerraformConfig uses worker records and shared Terraform identities (2.638ms)
+✔ parseTerraformConfig keeps identity stable across labels and record order (0.5521ms)
+✔ parseTerraformConfig preserves optional dependency errors (0.4035ms)
+✔ Terraform state snapshot emits a finalized live projection without sensitive payloads (3.8996ms)
+✔ Terraform declared/live exact addresses share identity and attributes (0.6383ms)
+✔ Terraform state snapshot rejects malformed and unsupported versions (0.4587ms)
+✔ ahToDrawioXml emits numeric mxCell ids and numeric edge references (2.3804ms)
+✔ ahToDrawioXml uses gridSize=8 by default (0.2389ms)
+✔ ahToDrawioXml applies theme colors when theme is passed (0.2045ms)
+✔ bundled AI icon catalog loads the fixed 309 immutable records (6.5452ms)
+✔ AI icon loader caches one successful read and one hard failure (4.4467ms)
+✔ searchAiIcons ranks exact and edit-distance suggestions deterministically (4.8872ms)
+✔ AI icon loader rejects schema, provenance, count, duplicate, and ordering drift (140.5157ms)
+✔ isPathInsideRoot uses separator boundaries rather than bare prefix (0.6631ms)
+✔ inspectAssetFile accepts a PNG relative to the asset root (10.6359ms)
+✔ absolute paths are hard errors with a field path (2.4912ms)
+✔ parent-directory traversal that leaves the asset root is rejected (11.0071ms)
+✔ symlink escape is a hard error or missing evidence on Windows (7.0299ms)
+✔ extension whitelist, SVG v1 message, directory, missing file, and magic mismatch (24.7721ms)
+✔ declared sha256 mismatch is a hard error (5.2878ms)
+✔ resolveAssetImageStyle emits a PNG data URI using the shared image prefix (4.3379ms)
+✔ size diagnostics use warning at 2 MiB+1, error at 8 MiB+1, and error at 24 MiB+1 weighted (0.6707ms)
+▶ auto-layout gate
+  ✔ accepts fully unpositioned hierarchical specs (0.621ms)
+  ✔ rejects non-hierarchical layouts (0.1186ms)
+  ✔ rejects specs with any explicit bounds or position (0.1403ms)
+✔ auto-layout gate (1.9384ms)
+▶ buildElkGraph
+  ✔ maps modules to compound containers with padding and membership (1.8068ms)
+  ✔ drops empty modules and keeps orphan-module nodes at top level (0.1438ms)
+  ✔ filters self-loops and dangling edges while keeping original indices (0.1326ms)
+✔ buildElkGraph (2.2577ms)
+▶ convertElkResult
+  ✔ resolves absolute bounds through nested containers and offsets waypoints by edge container (0.3215ms)
+✔ convertElkResult (0.4196ms)
+▶ applyAutoLayout
+  ✔ lays out a 12-node branching workflow without overlaps, flowing left to right (159.0421ms)
+  ✔ produces a spec that passes edge-quality validation and converts to XML (37.8852ms)
+  ✔ passes through specs that fail the gate (0.2012ms)
+  ✔ degrades with a warning when the engine is unavailable or fails (0.2889ms)
+✔ applyAutoLayout (197.7177ms)
+✔ catalog search finds k8s parameter values with skill syntax (9.6314ms)
+✔ catalog search supports comma-separated batches and no-result output (62.1921ms)
+✔ catalog search ranks exact last-segment matches first (9.0617ms)
+✔ catalog search finds kubernetes entries through natural-word aliases (1.9243ms)
+✔ catalog search routes the lobe prefix to canonical offline AI icons (5.6103ms)
+✔ catalog search discovers SysML and BPMN stencils from merged variant metadata (3.6654ms)
+▶ document spec classification and normalization
+  ✔ freezes the legacy YAML and arch v1 baseline before bundle routing (3.8823ms)
+  ✔ preserves legacy single-page shape and does not add bundle fields (0.3928ms)
+  ✔ accepts explicit bundle v1 while preserving page and object order (0.5381ms)
+  ✔ rejects unknown or mixed document versions instead of guessing (0.3725ms)
+✔ document spec classification and normalization (5.888ms)
+▶ document identity and page links
+  ✔ allows object ids to repeat across pages but rejects same-page cross-kind collisions (0.3864ms)
+  ✔ requires explicit multi-page edge ids and validates edge references (0.2276ms)
+  ✔ rejects missing, duplicate, wrong-kind and unsafe links (0.4093ms)
+  ✔ encodes and resolves structured page links without raw URI fallback (0.2391ms)
+✔ document identity and page links (1.4623ms)
+▶ page selectors
+  ✔ selects by zero-based index, then id, then unique name (0.2475ms)
+  ✔ reports ambiguous duplicate page names with candidate ids (0.2028ms)
+✔ page selectors (0.5582ms)
+✔ bundled examples and academic templates convert with zero errors in default mode (67.0334ms)
+[resolveIconShape] Invalid icon name 'shape;fillColor=red'. Ignoring.
+✔ icon mappings resolve aliases and k8s parameterized icons (1.6584ms)
+✔ icon mappings reverse supported skill syntax (0.2377ms)
+✔ icon mappings map natural kubernetes words to prIcon abbreviations (0.1261ms)
+✔ AI icon resolver preserves full-name compatibility before exact and slug aliases (6.8604ms)
+✔ AI icon resolver exposes the full offline catalog without changing Redis or Lucide (0.4366ms)
+✔ all 309 canonical slugs resolve in both namespaces with the documented exception (7.3896ms)
+✔ Redis, Lucide, and ordinary icons do not consult the AI catalog (0.4397ms)
+✔ parseDocumentYaml keeps spec.assets on the ownership chain (AC1) (3.4969ms)
+✔ node.icon and node.image are mutually exclusive (0.2758ms)
+✔ assets records reject a data field (0.1ms)
+✔ CLI renders a local PNG as shape=image data URI with zero strict warnings (AC1) (224.2339ms)
+✔ one asset can be cited by two nodes (AC2) (12.7062ms)
+✔ drawio export-spec round-trips six fields, path, sidecar-dir, and academic-paper (AC3) (1006.7055ms)
+✔ conflicting XML carriers for one asset id are a hard error (AC4) (2.8598ms)
+✔ stdin YAML with assets is a hard error (AC5) (199.4288ms)
+✔ validateSpec still rejects icon values that contain a slash (AC6) (0.2853ms)
+✔ size guardrails assert diagnostic level and strict vs non-strict (AC7) (1790.4823ms)
+✔ foreign shape=image requires --extract-assets and round-trips bytes (AC8) (276.16ms)
+✔ academic-paper gates raster audit fields; default profile does not (AC10) (5.3277ms)
+✔ multi-page bundles reject assets with MULTI_PAGE_INVALID (AC11) (0.3026ms)
+✔ canonical postprocess mutators keep assets and node.image (AC12) (3.7156ms)
+✔ mermaid, explain, and html degrade image nodes without dropping the node (AC12) (20.4735ms)
+✔ copied skill renders local images without NODE_PATH (AC13) (566.1648ms)
+▶ multi-page renderer and XML validation
+  ✔ renders ordered pages with canonical wrappers and page links (9.1056ms)
+  ✔ validates each page independently so repeated root cells are allowed (0.7461ms)
+✔ multi-page renderer and XML validation (10.8985ms)
+▶ multi-page import and round-trip
+  ✔ restores page metadata, object ids, edge ids, links, and order (7.4193ms)
+  ✔ round-trips uncompressed, compressed, and mixed page contents (2.9708ms)
+  ✔ assigns deterministic ids to pages without ids and rejects unsafe or duplicate ids (2.1008ms)
+  ✔ rejects assets on a multi-page bundle instead of dropping them (0.1611ms)
+✔ multi-page import and round-trip (12.9892ms)
+▶ palette catalog data
+  ✔ contains exactly 15 valid built-in palette definitions with complete metadata (35.7663ms)
+  ✔ matches the researched HEX anchors for Tol, NPG, C4, AWS, MATLAB, and Seaborn (3.8002ms)
+  ✔ keeps Morandi boundaries explicit and marks journal aesthetics as unsafe (0.9433ms)
+✔ palette catalog data (41.2216ms)
+▶ palette swatch catalog
+  ✔ regenerates all swatch bundles byte-for-byte (209.0057ms)
+  ✔ contains reproducible drawio and image artifacts for all palettes (31.7726ms)
+✔ palette swatch catalog (240.9521ms)
+▶ palette spec contract
+  ✔ keeps meta.palette aligned between the JSON schema and runtime validation (2.177ms)
+  ✔ accepts palette tokens only when a selected palette provides the entry (3.7952ms)
+✔ palette spec contract (6.8707ms)
+▶ palette renderer integration
+  ✔ layers Okabe-Ito colors over the academic theme without changing typography or connector style (9.027ms)
+  ✔ resolves palette tokens and rejects them under strict mode without meta.palette (3.3001ms)
+  ✔ falls back to the theme primary color for out-of-range palette tokens (2.9069ms)
+  ✔ keeps info diagnostics non-blocking under strict mode (2.2306ms)
+  ✔ escalates a grayscale-unsafe print palette only in strict mode (7.6526ms)
+  ✔ throws an actionable error for an explicitly selected unknown palette (1.0462ms)
+  ✔ keeps plain text nodes transparent with theme font color under any palette (5.1676ms)
+  ✔ keeps formula nodes on theme styling and out of palette usage under any palette (4.1437ms)
+✔ palette renderer integration (36.1311ms)
+▶ palette definition and loader
+  ✔ loads and validates the three representative built-in palettes (6.5685ms)
+  ✔ keeps the documented schema required list aligned with runtime validation (1.5746ms)
+  ✔ materializes complete entry colors without mutating the source theme (2.321ms)
+  ✔ uses a valid user palette override and reports it as info (7.6575ms)
+  ✔ throws actionable hard errors for unknown, malformed, and invalid palettes (14.3231ms)
+✔ palette definition and loader (33.2821ms)
+▶ applyPalette
+  ✔ is an identity operation when no palette is selected (0.2321ms)
+  ✔ overrides semantic colors while preserving typography and connector geometry (1.7325ms)
+✔ applyPalette (2.1076ms)
+▶ palette validation gate
+  ✔ implements WCAG luminance and contrast calculations (0.1494ms)
+  ✔ emits structured usage diagnostics with strict print escalation (0.3574ms)
+✔ palette validation gate (0.6413ms)
+✔ v2 catalog loads parameterized families and mscae entries (5.2696ms)
+✔ catalog covers the vendored SysML and BPMN stencil namespaces (0.332ms)
+[loadTheme] Could not load theme 'nonexistent': ENOENT: no such file or directory, open 'D:\Documents\Code\Agents\drawio-skills\skills\drawio\assets\themes\nonexistent.json'. Falling back to default.
+
+⚠️  drawio spec validation diagnostics:
+  • [warning] [LEGACY] Academic-paper profile should set meta.figureType to one of architecture, roadmap, workflow.
+  • [warning] [LEGACY] Academic-paper profile requires meta.title for figure captioning.
+  • [warning] [LEGACY] Academic-paper profile should include meta.description for figure context.
+
+⚠️  drawio spec validation diagnostics:
+  • [warning] [LEGACY] Academic-paper profile should set meta.figureType to one of architecture, roadmap, workflow.
+  • [warning] [LEGACY] Academic-paper profile requires meta.title for figure captioning.
+  • [warning] [LEGACY] Academic-paper profile should include meta.description for figure context.
+
+⚠️  drawio spec validation diagnostics:
+  • [warning] [LEGACY] Academic-paper profile should set meta.figureType to one of architecture, roadmap, workflow.
+  • [warning] [LEGACY] Academic-paper profile requires meta.title for figure captioning.
+  • [warning] [LEGACY] Academic-paper profile should include meta.description for figure context.
+▶ detectSemanticType
+  ✔ should return explicit type when provided (1.4131ms)
+  ✔ should detect database from label keywords (0.5434ms)
+  ✔ should detect decision from label keywords (0.1105ms)
+  ✔ should detect terminal from label keywords (0.0972ms)
+  ✔ should detect queue from label keywords (0.0886ms)
+  ✔ should detect formula from official delimiters (0.0739ms)
+  ✔ should detect standalone unlabeled equations as formula without converting mixed prose labels (0.0995ms)
+  ✔ should not treat discouraged delimiters as official formula signals (0.0764ms)
+  ✔ should default to service for unknown labels (0.0948ms)
+  ✔ should detect deep learning temporal types (0.1235ms)
+  ✔ should detect deep learning attention types (0.1052ms)
+  ✔ should detect deep learning feature extraction types (0.0747ms)
+  ✔ should detect deep learning normalization types (0.0593ms)
+  ✔ should detect deep learning graph types (0.0533ms)
+  ✔ should detect deep learning matrix operation types (0.0803ms)
+  ✔ should detect network topology types (0.0529ms)
+  ✔ should preserve legacy decision inference for bare "Switch" labels (0.0399ms)
+  ✔ should respect network.device metadata for semantic type (0.0325ms)
+✔ detectSemanticType (4.2306ms)
+▶ snapToGrid
+  ✔ should snap values to 8px grid (0.0655ms)
+  ✔ should support custom grid sizes (0.0314ms)
+✔ snapToGrid (0.149ms)
+▶ getNodeSize
+  ✔ should return correct preset sizes (0.5213ms)
+  ✔ should return correct tensor3d preset sizes (0.0961ms)
+  ✔ should default to medium for unknown sizes (0.0624ms)
+  ✔ should use type-based default size when no explicit size (0.088ms)
+  ✔ should prioritize explicit size over type default (0.0394ms)
+  ✔ fits text node width to content when no explicit size is given (0.2909ms)
+✔ getNodeSize (1.202ms)
+▶ generateNodeStyle
+  ✔ should generate style for service node (0.4311ms)
+  ✔ should generate style for database node (0.0724ms)
+  ✔ should allow style overrides (0.0608ms)
+  ✔ uses theme typography for generic diagrams and Times New Roman when the theme has none (0.0536ms)
+  ✔ keeps text nodes transparent with no label background (0.078ms)
+✔ generateNodeStyle (0.779ms)
+▶ generateConnectorStyle
+  ✔ should generate primary connector style (0.1753ms)
+  ✔ should generate data connector style with dashes (0.0339ms)
+  ✔ should generate optional connector style (0.0278ms)
+✔ generateConnectorStyle (0.2906ms)
+▶ generateModuleStyle
+  ✔ should generate solid border by default (0.1148ms)
+  ✔ should generate dashed border for IEEE style (0.0457ms)
+  ✔ should allow module-level style override (0.0464ms)
+  ✔ should resolve theme tokens in module color fields (0.1999ms)
+  ✔ defaults module titles to Times New Roman when no explicit font is provided (0.0698ms)
+✔ generateModuleStyle (0.5609ms)
+▶ calculateLayout
+  ✔ should calculate horizontal layout positions (0.5562ms)
+  ✔ should calculate star layout with a central network node (0.1849ms)
+  ✔ should calculate mesh layout with dispersed nodes (0.2231ms)
+  ✔ should calculate module containers for star layouts (0.1452ms)
+  ✔ should calculate module containers for mesh layouts with manual nodes (0.1062ms)
+✔ calculateLayout (1.3347ms)
+▶ checkComplexity
+  ✔ should warn when node count exceeds threshold (0.2248ms)
+  ✔ should error when node count is very high (0.261ms)
+  ✔ should warn about long labels (0.0776ms)
+  ✔ should return empty array for simple diagrams (0.0433ms)
+✔ checkComplexity (0.7028ms)
+▶ specToDrawioXml
+  ✔ should generate valid XML from simple spec (5.6712ms)
+  ✔ should use explicit meta.canvas dimensions as minimum page size (0.6755ms)
+  ✔ should expand beyond explicit meta.canvas when content exceeds the page (0.4399ms)
+  ✔ should throw error for invalid spec (0.2097ms)
+  ✔ should generate network edge labels from metadata (0.7971ms)
+  ✔ should emit module containers for star and mesh topology examples (1.067ms)
+  ✔ should resolve Cisco icon prefixes (0.1027ms)
+  ✔ should resolve documented icon aliases (0.082ms)
+  ✔ should derive node icons from network vendor/device metadata (0.2093ms)
+  ✔ should generate vendor-derived icon shapes when icon field is absent (6.4338ms)
+  ✔ default behavior: 25 nodes returns a string (no error) (2.2537ms)
+  ✔ strict mode with 61 nodes: should throw containing "Complexity check failed" (0.2985ms)
+  ✔ strict mode with 2 nodes: should NOT throw (0.2931ms)
+  ✔ returnWarnings with 41 nodes: returns { xml, warnings } with warning-level items (2.7116ms)
+  ✔ returnWarnings with 2 nodes: returns { xml, warnings } where warnings.length === 0 (0.3484ms)
+✔ specToDrawioXml (22.1538ms)
+▶ parseSpecYaml
+  ✔ should parse simple YAML specification (2.4326ms)
+  ✔ should parse nested style object on a node (0.1516ms)
+  ✔ should parse nested position object on a node (0.1253ms)
+  ✔ should parse nested meta.grid object (0.0953ms)
+  ✔ should parse replication metadata for replicated specs (0.1925ms)
+  ✔ should parse explicit canvas metadata (0.0715ms)
+  ✔ should return default empty spec for empty string (0.0597ms)
+  ✔ should throw TypeError for null input (0.0452ms)
+  ✔ should throw Error for invalid YAML (0.3014ms)
+  ✔ should reject invalid replication color modes (0.1182ms)
+  ✔ should reject invalid canvas metadata (0.0751ms)
+✔ parseSpecYaml (3.8529ms)
+▶ loadTheme
+  ✔ loadTheme("tech-blue") returns object with name: "tech-blue" (0.2908ms)
+  ✔ loadTheme("academic") returns object with Times New Roman font family (0.0392ms)
+  ✔ loadTheme("dark") returns object with dark background color (0.3598ms)
+  ✔ loadTheme("nonexistent") returns DEFAULT_THEME fallback (0.3652ms)
+  ✔ loadTheme() with no args returns tech-blue theme (0.0325ms)
+✔ loadTheme (1.1615ms)
+▶ specToDrawioXml theme integration
+  ✔ specifying meta.theme: "academic" produces XML that does NOT contain tech-blue primary color #2563EB (0.5898ms)
+✔ specToDrawioXml theme integration (0.623ms)
+▶ Phase 1.4: DEFAULT_THEME from tech-blue.json
+  ✔ loadTheme("tech-blue") returns full structure from tech-blue.json including canvas.gridColor (0.0475ms)
+✔ Phase 1.4: DEFAULT_THEME from tech-blue.json (0.0742ms)
+▶ Phase 2.1: startArrow/startFill rendering
+  ✔ bidirectional edge with academic-color theme should contain startArrow=block (0.3578ms)
+  ✔ primary edge should NOT contain startArrow (0.1131ms)
+  ✔ edge with style override for startArrow should use it (0.0502ms)
+✔ Phase 2.1: startArrow/startFill rendering (0.6029ms)
+▶ Phase 2.2: manual node positioning
+  ✔ node with position should be snapped to grid at specified coordinates (0.1854ms)
+  ✔ mixed manual and auto-positioned nodes both get positions (0.2106ms)
+  ✔ node without position property is auto-laid out as usual (0.0737ms)
+✔ Phase 2.2: manual node positioning (0.549ms)
+▶ Phase 2.3: edge labelPosition
+  ✔ edge with labelPosition "start" should produce x="0.2" in XML (0.2899ms)
+  ✔ edge with labelPosition "end" should produce x="0.8" in XML (0.209ms)
+  ✔ edge with no labelPosition should produce x="0.5" in XML (0.2212ms)
+✔ Phase 2.3: edge labelPosition (0.7763ms)
+▶ Phase 2.3b: text fidelity
+  ✔ should preserve explicit bounds for standalone text nodes and text styling (0.2865ms)
+  ✔ should keep formula nodes as dedicated annotations with explicit font styling (0.2512ms)
+  ✔ should export explicit edge label offsets away from the connector line (0.4437ms)
+  ✔ should force all covered text surfaces from meta.font and override node-level fontFamily (0.3395ms)
+  ✔ should fall back to a Times New Roman + SimSun stack for Chinese text when meta.font is absent (0.6585ms)
+  ✔ should validate meta.font as a complete safe object (0.1757ms)
+  ✔ should validate explicit text bounds and label offsets (0.1728ms)
+✔ Phase 2.3b: text fidelity (2.4589ms)
+▶ Phase 2.4: resolveIconShape
+  ✔ should resolve aws.lambda to mxgraph.aws4.lambda (0.0928ms)
+  ✔ should resolve gcp.functions to mxgraph.gcp2.functions (0.0315ms)
+  ✔ should resolve azure.vm to mxgraph.azure.vm (0.0251ms)
+  ✔ should resolve k8s.pod to the kubernetes icon2 parameter family (0.0239ms)
+  ✔ should pass through mxgraph. prefix directly (0.0461ms)
+  ✔ should return null for null/undefined (0.1868ms)
+  ✔ should resolve supported image icons to self-contained data URI styles (5.0801ms)
+  ✔ should reject unsupported image icon names (0.0768ms)
+  ✔ should treat unknown prefix as direct shape reference (0.0634ms)
+✔ Phase 2.4: resolveIconShape (5.8462ms)
+▶ Phase 2.4: generateNodeStyle with icon
+  ✔ node with icon aws.lambda should emit the aws4 resourceIcon compound style (0.1617ms)
+  ✔ node with icon gcp.functions should have shape=mxgraph.gcp2.functions in style (0.0731ms)
+  ✔ node with icon k8s.pod should emit the kubernetes icon2 compound style (0.0646ms)
+  ✔ imports kubernetes icon2 compound styles back to k8s.<prIcon> syntax (2.1487ms)
+  ✔ node with icon brand.openai should emit a Lobe Icons image style (0.0869ms)
+  ✔ node with icon lobe.gemini should emit a Lobe Icons image style (0.0621ms)
+  ✔ node with icon lucide.database-zap should emit an embedded image style (0.0461ms)
+  ✔ node with icon lucide.server-cog should resolve from the bundled icon set (0.0418ms)
+  ✔ node without icon should NOT contain shape=mxgraph (0.0887ms)
+✔ Phase 2.4: generateNodeStyle with icon (3.5452ms)
+▶ validateXml
+  ✔ should return valid:true and empty errors for well-formed XML (0.6027ms)
+  ✔ should return errors when root cells are missing (0.0822ms)
+  ✔ should return errors for duplicate cell IDs (0.0516ms)
+  ✔ should return errors when edge references nonexistent source (0.0717ms)
+  ✔ should reject a full-page embedded image cell (0.2067ms)
+  ✔ should allow small embedded image icon cells (0.0902ms)
+✔ validateXml (1.1844ms)
+▶ loadTheme additional themes
+  ✔ loadTheme("nature") returns object with green primary color (0.451ms)
+  ✔ loadTheme("academic-color") returns object with skip, residual, and attention connector types (0.0604ms)
+✔ loadTheme additional themes (0.5482ms)
+▶ calculateLayout additional layouts
+  ✔ vertical layout: 2 nodes in separate modules have different Y positions (0.1718ms)
+  ✔ hierarchical layout: 4 nodes are arranged in a grid pattern (0.1253ms)
+✔ calculateLayout additional layouts (0.3303ms)
+▶ specToDrawioXml additional integration tests
+  ✔ nature theme produces XML with green stroke color (#059669) not tech-blue (#2563EB) (0.2417ms)
+  ✔ dark theme produces XML with dark background color (#0F172A) (0.1019ms)
+  ✔ modules produce XML containing module container with correct label (0.1517ms)
+  ✔ each of the 5 connector types produces the correct endArrow in XML (0.7472ms)
+✔ specToDrawioXml additional integration tests (1.3041ms)
+▶ edge label in XML
+  ✔ edge with label produces XML containing that label text (0.2817ms)
+  ✔ edge without label does NOT produce edgeLabel cell in XML (0.2287ms)
+✔ edge label in XML (0.5537ms)
+▶ validateColorScheme
+  ✔ returns no warnings for a spec with no style overrides (0.1083ms)
+  ✔ returns no warnings for valid hex color overrides (#RGB) (0.0432ms)
+  ✔ returns no warnings for valid hex color overrides (#RRGGBB) (0.0317ms)
+  ✔ returns no warnings for valid theme token overrides (0.0264ms)
+  ✔ returns a warning for an invalid color value on a node (0.037ms)
+  ✔ returns a warning for an invalid strokeColor on an edge (0.0366ms)
+  ✔ returns a warning for an invalid color on a module (0.0292ms)
+  ✔ returns no warnings for valid module.color token values (0.0273ms)
+  ✔ returns multiple warnings for multiple invalid values (0.0249ms)
+  ✔ ignores undefined / null style color values without warning (0.0295ms)
+  ✔ validates replication metadata colors (0.0544ms)
+  ✔ warns when replication palette colors are not flat hex values (0.0326ms)
+✔ validateColorScheme (0.5933ms)
+▶ validateLayoutConsistency
+  ✔ returns no warnings when fewer than 2 positioned nodes (0.0639ms)
+  ✔ returns no warnings when layout and positions are consistent (horizontal) (0.037ms)
+  ✔ returns no warnings when layout and positions are consistent (vertical) (0.036ms)
+  ✔ warns when horizontal layout has disproportionately large vertical span (0.0359ms)
+  ✔ warns when vertical layout has disproportionately large horizontal span (0.0461ms)
+  ✔ warns when two positioned nodes are too close together (overlap) (0.0413ms)
+  ✔ does not warn when nodes are sufficiently separated (0.0286ms)
+  ✔ skips overlap check when nodes exceed 30 (performance guard) (0.0585ms)
+✔ validateLayoutConsistency (0.4201ms)
+▶ specToDrawioXml validation integration
+  ✔ includes color warnings in returnWarnings output (0.7877ms)
+  ✔ throws in strict mode when color validation fails (0.2369ms)
+  ✔ does not throw in non-strict mode with invalid colors (0.2778ms)
+✔ specToDrawioXml validation integration (1.6068ms)
+▶ theme style fidelity
+  ✔ academic theme renders service nodes with square corners (0.1143ms)
+  ✔ academic theme renders modules with square corners (0.0505ms)
+  ✔ terminal stadium shapes keep their semantic rounding under square themes (0.0423ms)
+  ✔ tech-blue theme rounded token overrides SHAPE_STYLES arcSize (0.0428ms)
+  ✔ theme typography supplies node fonts with meta.font staying strongest (0.2079ms)
+  ✔ maps aws subnet devices to the swimlane group instead of an RDS icon (0.1041ms)
+  ✔ emits aws4 resource icons through the compound resourceIcon style (0.0697ms)
+  ✔ keeps every SHAPE_STYLES stencil reference inside the shape catalog (0.1942ms)
+  ✔ reports errors with search suggestions for unknown covered shape names (84.9328ms)
+  ✔ rejects unknown covered stencil names by default and allows an explicit downgrade (34.2974ms)
+  ✔ validates and renders canonical SysML and BPMN stencil icons through the existing pipeline (0.4407ms)
+✔ theme style fidelity (120.7014ms)
+▶ academic consistency
+  ✔ exempts explicit text nodes from the verbose-label warning (0.1303ms)
+  ✔ measures label verbosity by visible length, not raw TeX source length (0.0882ms)
+  ✔ no longer emits the academic density warning (checkComplexity owns density) (0.1261ms)
+  ✔ warns when a wide canvas drops labels below 8pt at single-column width (0.1125ms)
+  ✔ keeps existing-scale canvases (<= 1500px) silent (0.0529ms)
+  ✔ flags unknown meta keys but accepts template metadata (0.0572ms)
+  ✔ flags unknown node.style keys such as shape and rounded (0.0602ms)
+  ✔ flags unknown module keys such as bounds (0.0654ms)
+  ✔ fails strict conversion when schema drift is present (0.3315ms)
+  ✔ aggregates long-label infos and keeps the 200-char fatal per node (0.1058ms)
+✔ academic consistency (1.2742ms)
+▶ tiered layout and centered slots
+  ✔ places network tiers in North-South rows (0.6685ms)
+  ✔ keeps explicitly positioned nodes untouched in tiered layout (0.145ms)
+  ✔ validateSpec accepts tiered and still rejects unknown layouts (0.158ms)
+  ✔ centers the connection point when a face has a single edge (0.3859ms)
+  ✔ distributes multiple edges on a shared face across slots (0.8462ms)
+✔ tiered layout and centered slots (2.3352ms)
+▶ layout quality metrics
+  ✔ counts an edge cutting through an unrelated node (0.3825ms)
+  ✔ counts crossing edge pairs and stays silent for clean layouts (0.2252ms)
+✔ layout quality metrics (0.6685ms)
+▶ straight orthogonal routing
+  ✔ aligns a vertical edge between different-width boxes into one straight line (0.6526ms)
+  ✔ keeps multiple edges into a wide bar aligned with each counterpart center (0.8146ms)
+  ✔ separates a bidirectional pair into two parallel straight lines (0.4389ms)
+  ✔ falls back to face slots when no collinear interval exists (0.3176ms)
+  ✔ keeps explicit user connection points untouched (0.3356ms)
+  ✔ routes overlapping wide/narrow boxes vertically instead of through their bodies (0.3554ms)
+  ✔ warns when explicit points bend an edge that could be straight (0.2456ms)
+✔ straight orthogonal routing (3.4618ms)
+▶ replicate quality gates
+  ✔ forces plain text nodes transparent even when the spec asks for white (0.2836ms)
+  ✔ warns when text bounds are smaller than the content estimate (0.1361ms)
+  ✔ adds a bold default endSize to default (open) and explicit block arrows, honoring overrides (0.0797ms)
+  ✔ converts label newlines to <br> so vertical CJK labels survive XML attributes (0.2466ms)
+  ✔ keeps math labels free of injected <br> tags (0.0951ms)
+  ✔ reports floating edges and arrow-shape connectors as validateXml warnings (0.1416ms)
+  ✔ flags edge labels that sit on their own connector (0.2535ms)
+  ✔ accepts none as an explicit transparent module fill (0.305ms)
+✔ replicate quality gates (1.7007ms)
+▶ font ladder and fit system
+  ✔ materializes the ladder (module 22 / node 20 / edge 18) and keeps author YAML untouched (0.4591ms)
+  ✔ grows preset boxes to fit long labels only in content-aware mode (0.1331ms)
+  ✔ shrinks a class uniformly to the tightest explicit bounds (0.3713ms)
+  ✔ clamps the shrink at the floor and reports the leftover overflow (0.1315ms)
+  ✔ keeps explicit style.fontSize overrides on nodes and edges (0.1682ms)
+  ✔ meta.print drives the print-readability warning (0.1738ms)
+  ✔ validates meta.print shape (0.1471ms)
+  ✔ no longer warns about 8-10pt labels on the academic profile (0.1117ms)
+✔ font ladder and fit system (1.8339ms)
+✔ normalizeDiscouragedMathDelimiters converts \[...\] to $$...$$ (1.0041ms)
+✔ normalizeDiscouragedMathDelimiters converts $...$ to inline LaTeX (0.1251ms)
+✔ validateMathText rejects discouraged math delimiters (0.4158ms)
+✔ ensureLatexDelimiters auto-wraps raw standalone LaTeX as block math (0.418ms)
+✔ ensureLatexDelimiters wraps colon-delimited algebraic suffix inline (0.3577ms)
+✔ ensureLatexDelimiters wraps colon-delimited bare LaTeX suffix inline (0.1042ms)
+✔ looksLikeMathExpression detects plain algebraic equations but ignores config-style assignments (0.1992ms)
+✔ isLikelyStandaloneMathLabel is true only for equation-like full labels (0.1109ms)
+✔ prepareMathLabel normalizes discouraged delimiters and escapes XML safely (0.2116ms)
+✔ prepareMathLabel auto-wraps mixed labels without wrapping the prose prefix (0.2095ms)
+✔ prepareMathLabel leaves non-math assignment labels unchanged (0.1434ms)
+✔ builds deterministic path-free postprocess provenance from canonical input bytes (4.754ms)
+✔ derives an adjacent postprocess sidecar and atomically writes without source aliasing (11.6461ms)
+✔ CLI runs all six approved postprocess operations and writes deterministic sidecars (1187.7114ms)
+✔ CLI rejects selector conflicts, source aliasing, deferred operations, and mutator stdout (503.2319ms)
+✔ CLI records Mermaid downgrade warnings and preserves auxiliary input files (412.3526ms)
+✔ renders deterministic self-contained HTML with tabs, zoom, search, inline SVG, and safe page links (95.3919ms)
+✔ renders only the explicitly selected page and escapes HTML title/search payloads (0.7723ms)
+✔ rejects executable labels, unsafe page ids, and unsafe rendered SVG payloads (0.607ms)
+✔ normalizes legacy YAML without changing its canonical serialization (6.5359ms)
+✔ preserves bundle order, page-local identity, links, icons, adapter, and academic metadata (3.1028ms)
+✔ selects a page by index, id, or unique name and rejects page/all-pages conflicts (1.382ms)
+✔ maps selected pages without mutating the source or changing unselected pages and links (1.4835ms)
+✔ relabels bundle objects by stable page/object address without mutating identity, geometry, links, or source (2.2ms)
+✔ supports legacy object-id maps and returns deterministic match diagnostics (0.284ms)
+✔ rejects duplicate and missing map addresses unless explicitly allowed (1.2022ms)
+✔ page selection limits relabeling to the selected page (0.5141ms)
+✔ restyles through a bundled preset while preserving protected canonical fields (5.7026ms)
+✔ accepts bounded user style tokens and rejects shape, icon, and unsafe preset text (0.6622ms)
+✔ restyled legacy output renders and validates through the existing XML path (52.2279ms)
+✔ applies heatmap metrics by identity, address, then explicit label fallback (1.5567ms)
+✔ parses bounded JSON and CSV heatmap metrics deterministically (0.5685ms)
+✔ rejects unknown palettes and ambiguous label fallback (0.4754ms)
+✔ bounds optional heatmap geometry scaling and keeps center stable (0.5915ms)
+✔ canonical mutators round-trip through validated multi-page Draw.io and restore stable links (110.9705ms)
+✔ renders deterministic Mermaid subgraphs in page and object order with structured links (1.4293ms)
+✔ escapes Mermaid labels and reports bounded semantic downgrade warnings (0.1517ms)
+✔ explains only observable canonical fields and keeps author order (0.5553ms)
+✔ uses a safe Markdown code-span fence for labels containing backticks (0.2809ms)
+✔ supports deterministic selected-page Mermaid and Markdown projections (0.9574ms)
+▶ buildDrawioExportArgs scale (300dpi PNG default)
+  ✔ adds -s scale for png raster export (0.8098ms)
+  ✔ adds -s scale for jpg raster export (0.1286ms)
+  ✔ omits scale for svg (vector) export (0.0884ms)
+  ✔ omits scale for pdf (vector) export (0.2229ms)
+  ✔ omits scale when none is provided (0.154ms)
+✔ buildDrawioExportArgs scale (300dpi PNG default) (2.4377ms)
+▶ buildDrawioExportArgs export profiles
+  ✔ preserves embedded scaled PNG behavior for the default final profile (0.2128ms)
+  ✔ builds a width-bounded vision preview without embed or scale (0.6434ms)
+  ✔ builds a height-bounded vision preview (0.1313ms)
+  ✔ rejects invalid vision preview combinations (0.6714ms)
+✔ buildDrawioExportArgs export profiles (1.8872ms)
+▶ exportWithDrawioDesktop output stabilization
+  ✔ waits for the exported file after Desktop returns (0.4677ms)
+✔ exportWithDrawioDesktop output stabilization (0.5432ms)
+✔ waitForStableFile accepts two consecutive non-zero size samples (1.1081ms)
+✔ waitForStableFile handles delayed appearance and growing output (0.2544ms)
+✔ waitForStableFile times out with path and duration (0.4306ms)
+✔ waitForStableFile propagates non-missing filesystem failures (0.1534ms)
+✔ inspectPng returns dimensions and terminal IEND for a complete PNG (1.3363ms)
+✔ repairKnownIendTruncation leaves complete PNG bytes unchanged (0.2905ms)
+✔ repairKnownIendTruncation repairs only the missing IEND type and CRC (0.232ms)
+✔ inspectPng rejects non-PNG input and malformed IHDR (0.4975ms)
+✔ inspectPng rejects a truncated non-IEND chunk (0.2785ms)
+✔ inspectPng rejects trailing garbage after IEND (0.1329ms)
+✔ repairKnownIendTruncationFile writes a sibling temp file before atomic rename (0.2416ms)
+✔ exportVisionPreview keeps a width-bounded PNG when both dimensions fit (1.7074ms)
+✔ exportVisionPreview removes and re-exports tall output by height (0.1969ms)
+✔ exportVisionPreview rejects invalid output and failed dimension enforcement (0.3606ms)
+✔ exportVisionPreview rejects a structurally incomplete inspected PNG (0.2014ms)
+▶ drawioToSvg
+  ✔ should convert basic 2-node 1-edge diagram to SVG (3.0929ms)
+  ✔ should render service node as rounded rect (0.3435ms)
+  ✔ should render database shape as cylinder with ellipse (0.2066ms)
+  ✔ should render edges between nodes (0.2357ms)
+  ✔ should include arrow marker definition for endArrow=block (0.201ms)
+  ✔ should render text label from node value (0.1653ms)
+  ✔ should apply fill color from style (0.137ms)
+  ✔ should embed original XML as data-drawio attribute (0.3026ms)
+  ✔ should throw on empty input (0.3453ms)
+  ✔ should include marker-start when startArrow is specified (0.2432ms)
+  ✔ should render multi-edge diagram with 3+ edges (0.3055ms)
+  ✔ should render module/container and child node (0.1256ms)
+  ✔ should handle open arrow type (0.1504ms)
+  ✔ should handle none arrow type (no marker-end) (0.1457ms)
+  ✔ should render edge label text (0.2079ms)
+  ✔ should render rhombus shape as <polygon> (0.1086ms)
+  ✔ should render ellipse shape as <ellipse> (0.0926ms)
+  ✔ should render roundedRect with rx attribute on <rect> (0.0911ms)
+  ✔ should render cylinder shape with <ellipse> elements (0.0975ms)
+  ✔ should render switch shapes without falling back to plain rectangles (0.0955ms)
+  ✔ should render load balancer hexagons as polygons (0.1061ms)
+  ✔ should render firewall stencils as composed SVG shapes (0.1446ms)
+  ✔ should render wireless access points with antenna arcs (0.1179ms)
+  ✔ should render edge as <line> element (0.1313ms)
+  ✔ should render standalone text cells without drawing a surrounding rectangle (0.1093ms)
+  ✔ should render edgeLabel child cells using their explicit offset (0.4809ms)
+  ✔ should render background color from graph attributes (0.1456ms)
+  ✔ should throw Error on null input (0.1015ms)
+  ✔ should throw Error on non-string input (0.061ms)
+✔ drawioToSvg (9.3066ms)
+▶ drawioToSvg fidelity
+  ✔ should place container children at absolute canvas coordinates (0.294ms)
+  ✔ should accumulate offsets across nested containers (0.2455ms)
+  ✔ should render cross-container edges with non-degenerate anchored endpoints (0.4411ms)
+  ✔ should replay edge waypoints as a polyline path (0.5279ms)
+  ✔ should honor exit/entry anchors for straight edges (0.6621ms)
+  ✔ should clip floating straight edges to node boundaries instead of centers (0.1889ms)
+  ✔ should approximate orthogonal edges with Z-shaped bends (0.1374ms)
+  ✔ should detour orthogonal backward edges around node bodies (0.1496ms)
+  ✔ should render multi-line labels as one tspan per line (0.1753ms)
+  ✔ should split labels on <br> tags into tspan rows (0.1341ms)
+  ✔ should keep single-line labels as plain text without tspans (0.0783ms)
+  ✔ should render multi-line edge label children as tspans (0.1598ms)
+  ✔ should render cube shapes as extruded paths instead of plain rectangles (0.1033ms)
+  ✔ should expand the viewBox using absolute child coordinates (0.0928ms)
+✔ drawioToSvg fidelity (3.7668ms)
+✔ buildAiIconCatalog selects canonical variants and writes deterministic gzip metadata (11.5088ms)
+✔ buildAiIconCatalog rejects external SVG resource URLs (15.8221ms)
+✔ buildAiIconCatalog rejects unsafe SVG structures through the source boundary (84.1806ms)
+✔ buildAiIconCatalog rejects source metadata, integrity, and count mismatches (16.7696ms)
+✔ buildAiIconCatalog reproduces bytes and leaves an existing output intact on failure (13.8714ms)
+✔ buildCatalog extracts deterministic flat and parameterized entries (6.7356ms)
+✔ buildCatalog includes SysML and BPMN stencils while merging variant search tags (0.3578ms)
+✔ academic templates and examples convert cleanly under strict warnings (24.0272ms)
+✔ parseMermaidToSpec supports flowchart (1.1582ms)
+✔ parseMermaidToSpec supports sequenceDiagram (0.2406ms)
+✔ parseMermaidToSpec supports classDiagram (0.3941ms)
+✔ parseMermaidToSpec supports stateDiagram-v2 (0.3265ms)
+✔ parseMermaidToSpec supports erDiagram (0.2537ms)
+✔ parseMermaidToSpec supports gantt (0.2036ms)
+✔ parseMermaidToSpec rejects unsupported diagram type (0.2879ms)
+✔ parseCsvToSpec builds parent-child edges (0.2677ms)
+✔ validateConnectionPointPolicy warns on partial connection points (0.2495ms)
+✔ validateAcademicProfile requires title and legend for academic-paper (0.5841ms)
+✔ validateAcademicProfile warns on missing figureType and dense academic labels (0.7415ms)
+✔ validateAcademicProfile leaves figure density to checkComplexity (0.1726ms)
+✔ validateSpec accepts academic figureType and rejects invalid values (0.7462ms)
+✔ validateEdgeQuality warns on short final segment (1.8799ms)
+✔ ahToDrawioXml generates draw.io XML with nodes, edges, and math enabled (2.2902ms)
+✔ ahToDrawioXml rejects unbalanced math delimiters (0.5292ms)
+✔ AI icon catalog evidence cases are file-backed, offline, and deterministically renderable (31.0787ms)
+✔ deriveArtifactPaths keeps drawio stem for embedded export filenames (1.0745ms)
+✔ deriveArtifactPaths derives drawio companion for plain svg filenames (0.2249ms)
+✔ serializeSpecYaml emits parseable canonical yaml (3.2145ms)
+✔ buildArchMetadata omits raw xml/style fields and keeps stable graph metadata (0.8124ms)
+✔ buildArchMetadata keeps sanitized replication metadata for replicated specs (0.2578ms)
+✔ multi-page artifacts keep ordered bundle YAML and arch v2 identity metadata (1.4033ms)
+✔ multi-page artifact serialization is deterministic and preserves document metadata (0.9838ms)
+✔ listDrawioDesktopCandidates prefers explicit DRAWIO_CMD when safe (0.8826ms)
+✔ detectDrawioDesktop rejects suspicious DRAWIO_CMD values (0.1688ms)
+✔ detectDrawioDesktop returns null when no trusted candidate exists (0.1008ms)
+✔ buildDrawioExportArgs embeds editable XML for png and svg exports (0.2283ms)
+✔ buildDrawioExportArgs does not request embed for jpg (0.1095ms)
+✔ drawio-academic-skills: overlay shape depends on sibling base without copied runtime (158.7624ms)
+✔ drawio-academic-skills: diagrams.net URL helper round-trips drawio XML from base (1.1169ms)
+✔ drawio-academic-skills: sibling base CLI separates final artifacts from sidecars (226.8278ms)
+✔ drawio examples: scientific paper examples render through base CLI (332.5852ms)
+✔ drawio evals: base and academic sets encode separate responsibilities (0.5749ms)
+
+⚠️  drawio spec validation diagnostics:
+  • [warning] [LEGACY] Label of edge "mfa->verify" overlaps connector "mfa->success"; move the label or reroute the edge.
+
+⚠️  drawio spec validation diagnostics:
+  • [warning] [LEGACY] Label of edge "cart->orderDb" overlaps connector "cart->cache"; move the label or reroute the edge.
+  • [warning] [LEGACY] Label of edge "catalog->cache" overlaps connector "cart->cache"; move the label or reroute the edge.
+  • [warning] [LEGACY] Labels cart->orderDb and catalog->cache overlap; separate them or shorten the text.
+Spec validation: WARNINGS (5)
+  • [warning] Label of edge "core->distA" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "distA->access" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "distA->access" overlaps connector "distB->access"; move the label or reroute the edge.
+  • [warning] Label of edge "access->users" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Labels distA->access and distB->access overlap; separate them or shorten the text.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=720px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (2)
+  • [info] 1 node label(s) exceed 14 characters ("internet"). Consider abbreviation.
+  • [warning] Label of edge "web1->db" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+Layout metrics: node-crossings=0, edge-crossings=1, total-edge-length=761px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  • [info] 2 node label(s) exceed 14 characters ("firewall", "db"). Consider abbreviation.
+  • [warning] Label of edge "firewall->revproxy" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "firewall->revproxy" overlaps connector "firewall->web"; move the label or reroute the edge.
+  • [warning] Label of edge "firewall->web" overlaps connector "revproxy->web"; move the label or reroute the edge.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=536px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  • [info] 1 node label(s) exceed 14 characters ("igw"). Consider abbreviation.
+  • [warning] Label of edge "alb->fw" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "alb->fw" overlaps connector "fw->wap"; move the label or reroute the edge.
+  • [warning] Label of edge "fw->wap" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=503px
+XML validation: PASSED (no errors)
+
+⚠️  drawio spec validation diagnostics:
+  • [warning] [LEGACY] Academic-paper profile should set meta.figureType to one of architecture, roadmap, workflow.
+  • [warning] [LEGACY] Academic-paper profile requires meta.title for figure captioning.
+  • [warning] [LEGACY] Academic-paper profile should include meta.description for figure context.
+Error: Failed to parse yaml: Failed to parse YAML document: tag suffix cannot contain exclamation marks (1:3)
+
+ 1 | !!!invalid: [yaml: {
+-------^
+Error: Failed to parse yaml: Invalid node id "123bad": must match /^[A-Za-z][A-Za-z0-9_-]*$/
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=0px
+XML validation: PASSED (no errors)
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=538px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (2)
+  • [info] 1 node label(s) exceed 14 characters ("input"). Consider abbreviation.
+  • [warning] Label of edge "mfa->verify" overlaps connector "mfa->success"; move the label or reroute the edge.
+Layout metrics: node-crossings=1, edge-crossings=0, total-edge-length=1013px
+XML validation: PASSED (no errors)
+Spec validation: PASSED (no warnings)
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=531px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  • [info] 2 node label(s) exceed 14 characters ("catalog", "payment"). Consider abbreviation.
+  • [warning] Label of edge "cart->orderDb" overlaps connector "cart->cache"; move the label or reroute the edge.
+  • [warning] Label of edge "catalog->cache" overlaps connector "cart->cache"; move the label or reroute the edge.
+  • [warning] Labels cart->orderDb and catalog->cache overlap; separate them or shorten the text.
+Layout metrics: node-crossings=0, edge-crossings=1, total-edge-length=1155px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (5)
+  • [warning] Label of edge "core->distA" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "distA->access" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "distA->access" overlaps connector "distB->access"; move the label or reroute the edge.
+  • [warning] Label of edge "access->users" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Labels distA->access and distB->access overlap; separate them or shorten the text.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=720px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (2)
+  • [info] 1 node label(s) exceed 14 characters ("internet"). Consider abbreviation.
+  • [warning] Label of edge "web1->db" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+Layout metrics: node-crossings=0, edge-crossings=1, total-edge-length=761px
+XML validation: PASSED (no errors)
+Spec validation: WARNINGS (4)
+  • [info] 2 node label(s) exceed 14 characters ("firewall", "db"). Consider abbreviation.
+  • [warning] Label of edge "firewall->revproxy" sits on its own connector; offset it 12-20px away from the line via labelOffset.
+  • [warning] Label of edge "firewall->revproxy" overlaps connector "firewall->web"; move the label or reroute the edge.
+  • [warning] Label of edge "firewall->web" overlaps connector "revproxy->web"; move the label or reroute the edge.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=536px
+XML validation: PASSED (no errors)
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-I2Hqgu\imported.spec.yaml
+Saved arch: C:/Users/lyh/AppData/Local/Temp/drawio-skill-test-I2Hqgu/imported.arch.json
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-BVeGSW\extracted.spec.yaml
+Saved arch: C:/Users/lyh/AppData/Local/Temp/drawio-skill-test-BVeGSW/extracted.arch.json
+Spec validation: WARNINGS (1)
+  • [info] 1 node label(s) exceed 14 characters ("source"). Consider abbreviation.
+Layout metrics: node-crossings=0, edge-crossings=0, total-edge-length=64px
+XML validation: PASSED (no errors)
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-BVeGSW\extracted.drawio
+Error: Failed to parse js-imports: [OPTIONAL_DEPENDENCY_MISSING] es-module-lexer@2.3.1 is unavailable
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-cILtQk\simple-flow.svg
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-uC5r21\hybrid-flow.drawio
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-jzXRxD\final\hybrid-flow.drawio
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-1KJtlp\paper-figure.svg
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-WzSGxz\final\paper-figure.svg
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-BvlNhm\.drawio-tmp\imported\imported.spec.yaml
+Saved arch: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-BvlNhm\.drawio-tmp\imported\imported.arch.json
+XML validation: PASSED (no errors)
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-4octKn\bundle.drawio
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-smt5H6\bundle.drawio
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-smt5H6\default.spec.yaml
+Saved spec: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-smt5H6\all-pages.spec.yaml
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-9coDFh\selected-0.svg
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-9coDFh\selected-second.svg
+Saved SVG: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-9coDFh\selected-Second-page.svg
+XML validation: PASSED (no errors)
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-AGYegW\unsafe-labels.drawio
+Saved: C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-Tnxkom\replicated-brand-flow.drawio
+✔ CLI: microservices.yaml produces valid XML (184.2683ms)
+✔ CLI: login-flow.yaml produces valid XML (185.8639ms)
+✔ CLI: neural-network.yaml produces valid XML (158.461ms)
+✔ CLI: e-commerce.yaml produces valid XML (136.7759ms)
+✔ CLI: campus-lan-topology.yaml produces network topology XML (279.3878ms)
+✔ CLI: aws-vpc-topology.yaml produces provider icon XML (142.089ms)
+✔ CLI: onprem-dmz-topology.yaml produces DMZ topology XML (181.4716ms)
+✔ CLI: vendor-device-mapping.yaml derives icons from network metadata (147.9366ms)
+✔ CLI: reads YAML from stdin with - arg (118.5313ms)
+✔ CLI: reads YAML from stdin without explicit - arg when piped (118.895ms)
+✔ CLI: --theme dark overrides theme (118.4542ms)
+✔ CLI: --theme academic applies grayscale (132.959ms)
+✔ CLI: invalid YAML exits with non-zero code (116.5543ms)
+✔ CLI: YAML with invalid node ID exits with error (108.2669ms)
+✔ CLI: --visual-preview is documented and requires a PNG output path (324.2856ms)
+✔ CLI: --visual-preview rejects DPI scaling (116.4418ms)
+✔ CLI: --visual-preview reports SVG fallback without claiming a PNG (147.6077ms)
+✔ CLI: --validate passes on valid input (115.9135ms)
+✔ CLI: --validate with example files (1109.387ms)
+✔ CLI: Mermaid flowchart converts via adapter (123.2331ms)
+✔ CLI: Mermaid sequence diagram converts via adapter (111.5065ms)
+✔ CLI: drawio import can export a spec bundle (121.4414ms)
+✔ CLI: CSV org chart converts via adapter (127.5961ms)
+✔ CLI: structured config adapters project through the canonical renderer (1039.4045ms)
+✔ CLI: raster extraction stdin reuses the canonical renderer (239.6768ms)
+✔ CLI: raster extraction file writes canonical spec, drawio, and sidecars (485.3081ms)
+✔ CLI: optional parser absence is isolated to Terraform and SQL routes (392.3161ms)
+✖ CLI: code importer directory route projects through the canonical renderer (123.5891ms)
+✔ CLI: code importer routes reject stdin before reading source text (111.3358ms)
+✔ CLI: config adapter options reject missing values (119.5468ms)
+✔ CLI: svg output writes a standalone svg file (130.2736ms)
+✔ CLI: --write-sidecars creates drawio, spec, and arch files for drawio output (141.3134ms)
+✔ CLI: --sidecar-dir keeps drawio output directory free of sidecars (154.7088ms)
+✔ CLI: --write-sidecars with svg output writes drawio companion and sidecars (168.158ms)
+✔ CLI: --sidecar-dir keeps svg output directory to svg and drawio companion (159.7893ms)
+✔ CLI: --export-spec writes spec and arch to sidecar dir when requested (141.4536ms)
+✔ CLI: multi-page YAML writes one drawio bundle and arch v2 sidecars (125.0986ms)
+✔ CLI: drawio import remains first-page flat by default and all-pages is explicit (371.5416ms)
+✔ CLI: multi-page page boundaries and all-pages conflicts fail explicitly (236.187ms)
+✔ CLI: multi-page binary selection accepts index, id, and unique name (391.9713ms)
+✔ CLI: multi-page selection rejects out-of-range and ambiguous names with safe diagnostics (254.3349ms)
+✔ CLI: multi-page stdin requires an explicit drawio output and keeps stdout clean (106.6134ms)
+✔ CLI: multi-page page metadata is escaped and never emits raw injection payloads (121.1886ms)
+✔ CLI: replicated specs preserve source background and replication metadata in sidecars (115.1871ms)
+✔ wrapLatexInline wraps \( ... \) and forbids nested delimiters (0.856ms)
+✔ wrapLatexBlock wraps $$ ... $$ and forbids nested $$ (0.232ms)
+✔ wrapAsciiMathInline wraps ` ... ` and forbids backticks inside (0.1473ms)
+✔ validateMathText rejects HTML tags and unbalanced delimiters (0.5044ms)
+✔ escapeXmlAttr escapes XML attribute special characters (0.0948ms)
+✔ toMxCellValue validates then escapes (0.0771ms)
+✔ detectUnwrappedMath returns empty array for already-wrapped math (0.6103ms)
+✔ detectUnwrappedMath detects bare LaTeX commands (0.1853ms)
+✔ ensureLatexDelimiters wraps unwrapped math in $$ by default (0.4421ms)
+✔ ensureLatexDelimiters respects inline mode (0.1816ms)
+✔ ensureLatexDelimiters returns already-wrapped text unchanged (0.0797ms)
+✔ ensureLatexDelimiters returns plain text unchanged (0.0804ms)
+✔ prepareMathLabel auto-wraps and escapes by default (0.1258ms)
+✔ prepareMathLabel throws in strict mode without autoWrap (0.1123ms)
+✔ prepareMathLabel escapes XML special characters (0.1553ms)
+✔ prepareMathLabel handles mixed text and math (0.1139ms)
+✔ drawio skills do not include Visio-specific implementation guidance (136.6301ms)
+✔ base and academic skills encode distinct palette question policies (2.7342ms)
+✔ palette docs describe the orthogonal contract, venue map, and print gate (3.5021ms)
+✔ palette release surfaces and eval cases stay synchronized at 2.8.0 (6.8549ms)
+[loadTheme] Invalid theme name '../../../etc/passwd'. Falling back to default.
+[loadTheme] Invalid theme name '..%2f..%2fetc'. Falling back to default.
+[loadTheme] Invalid theme name 'Tech-Blue'. Falling back to default.
+[resolveIconShape] Invalid icon name 'shape;fillColor=#FF0000'. Ignoring.
+[resolveIconShape] Invalid icon name 'shape fillColor'. Ignoring.
+[resolveIconShape] Invalid icon name 'icon=malicious'. Ignoring.
+[resolveIconShape] Invalid icon name '123icon'. Ignoring.
+✔ loadTheme rejects path traversal in theme name (1.6533ms)
+✔ loadTheme rejects dots in theme name (0.4043ms)
+✔ loadTheme rejects uppercase in theme name (0.1524ms)
+✔ loadTheme accepts valid theme names (0.1063ms)
+✔ loadTheme returns default for null/undefined (0.1126ms)
+✔ resolveIconShape rejects style injection characters (0.464ms)
+✔ resolveIconShape rejects empty and numeric-start icons (0.259ms)
+✔ resolveIconShape accepts valid prefixed icons (0.169ms)
+✔ resolveIconShape accepts valid unprefixed icons (0.1279ms)
+✔ resolveIconShape returns null for null/undefined (0.1489ms)
+✔ validateSpec rejects invalid node IDs (1.0941ms)
+✔ validateSpec rejects node ID with path traversal chars (0.1279ms)
+✔ validateSpec rejects missing node label (0.0955ms)
+✔ validateSpec rejects unknown node type (0.1165ms)
+✔ validateSpec rejects invalid icon names on nodes (0.0609ms)
+✔ validateSpec still rejects icon values that contain a slash (0.0558ms)
+✔ validateSpec rejects non-numeric positions (0.0597ms)
+✔ validateSpec rejects invalid meta.theme (0.07ms)
+✔ validateSpec rejects invalid meta.layout (0.0965ms)
+✔ validateSpec rejects invalid meta.routing (0.1008ms)
+✔ validateSpec rejects invalid meta.profile (0.0687ms)
+✔ validateSpec rejects invalid edge.from (0.1311ms)
+✔ validateSpec rejects invalid edge.to (0.0635ms)
+✔ validateSpec rejects non-string edge label (0.0622ms)
+✔ validateSpec rejects malformed edge waypoints (0.0987ms)
+✔ validateSpec rejects invalid module id (0.0593ms)
+✔ validateSpec rejects module without label (0.0609ms)
+✔ validateSpec accepts valid spec (0.0645ms)
+✔ checkComplexity returns fatal for > 100 nodes (0.3013ms)
+✔ checkComplexity returns fatal for > 200 edges (1.2128ms)
+✔ checkComplexity returns fatal for > 20 modules (0.1704ms)
+✔ checkComplexity returns fatal for label > 200 chars (0.134ms)
+✔ specToDrawioXml throws on fatal complexity (0.5258ms)
+✔ parseSpecYaml calls validateSpec and rejects bad input (1.9318ms)
+✔ parseSpecYaml accepts valid YAML (0.2733ms)
+✔ specToDrawioXml rejects script tags in labels via math validation (4.0819ms)
+✔ specToDrawioXml escapes ampersands in labels (1.3808ms)
+✔ injection-like labels are treated as literal text (0.5406ms)
+✔ parseSpecYaml rejects !!python/object tags (0.4519ms)
+✔ parseSpecYaml rejects !!js/function YAML tags (0.2006ms)
+✔ validateSpec enforces hard limits via parseSpecYaml (0.7513ms)
+✔ installed base skill owns its mandatory YAML runtime (668.9975ms)
+✔ production scripts do not import js-yaml as an ambient package (10.7586ms)
+✔ skill metadata versions match package.json (4.2153ms)
+✔ skill metadata descriptions stay within installer limits (1.0669ms)
+✔ image icon resolver stays bundled and offline (1.6563ms)
+✔ publishes one authoritative 37-script compatibility matrix with honest evidence (3.6814ms)
+✔ registers at least five valid file-backed cross-capability eval cases (1.6061ms)
+✔ promotes shipped routes across skills, interfaces, docs, and release evidence without runtime duplication (5.8803ms)
+✔ vision preview evidence cases are file-backed and deterministically renderable (32.6401ms)
+✔ drawio visual verification policy prefers exported artifacts over screenshots (4.9333ms)
+✔ drawio skills keep final deliverables separate from intermediate sidecars (0.9306ms)
+ℹ tests 662
+ℹ suites 63
+ℹ pass 659
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 12105.2118
+
+✖ failing tests:
+
+test at tests\integration.test.js:388:1
+✖ CLI: code importer directory route projects through the canonical renderer (123.5891ms)
+  Error: Command failed: D:\GreenSoftware\node\node.exe D:\Documents\Code\Agents\drawio-skills\skills\drawio\scripts\cli.js C:\Users\lyh\AppData\Local\Temp\drawio-skill-test-38mifO --input-format js-imports
+  Error: Failed to parse js-imports: [OPTIONAL_DEPENDENCY_MISSING] es-module-lexer@2.3.1 is unavailable
+  
+      at genericNodeError (node:internal/errors:999:15)
+      at wrappedFn (node:internal/errors:544:14)
+      at checkExecSyncError (node:child_process:942:11)
+      at execFileSync (node:child_process:978:15)
+      at runCli (file:///D:/Documents/Code/Agents/drawio-skills/tests/integration.test.js:28:10)
+      at TestContext.<anonymous> (file:///D:/Documents/Code/Agents/drawio-skills/tests/integration.test.js:393:20)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19) {
+    status: 1,
+    signal: null,
+    output: [ null, '', 'Error: Failed to parse js-imports: [OPTIONAL_DEPENDENCY_MISSING] es-module-lexer@2.3.1 is unavailable\n' ],
+    pid: 87804,
+    stdout: '',
+    stderr: 'Error: Failed to parse js-imports: [OPTIONAL_DEPENDENCY_MISSING] es-module-lexer@2.3.1 is unavailable\n'
+  }

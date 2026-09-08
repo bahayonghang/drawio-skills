@@ -1,0 +1,325 @@
+build	UNKNOWN STEP	﻿2026-07-07T06:07:43.3777183Z Current runner version: '2.335.1'
+build	UNKNOWN STEP	2026-07-07T06:07:43.3809162Z ##[group]Runner Image Provisioner
+build	UNKNOWN STEP	2026-07-07T06:07:43.3810070Z Hosted Compute Agent
+build	UNKNOWN STEP	2026-07-07T06:07:43.3811211Z Version: 20260624.560
+build	UNKNOWN STEP	2026-07-07T06:07:43.3811905Z Commit: 925d229a51159bc391ae97e54a2dd1fe20af789d
+build	UNKNOWN STEP	2026-07-07T06:07:43.3812700Z Build Date: 2026-06-24T18:26:47Z
+build	UNKNOWN STEP	2026-07-07T06:07:43.3813417Z Worker ID: {d281b20e-421d-4a6b-a302-a744aaee68e0}
+build	UNKNOWN STEP	2026-07-07T06:07:43.3814165Z Azure Region: eastus
+build	UNKNOWN STEP	2026-07-07T06:07:43.3814785Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:43.3816483Z ##[group]Operating System
+build	UNKNOWN STEP	2026-07-07T06:07:43.3817163Z Ubuntu
+build	UNKNOWN STEP	2026-07-07T06:07:43.3817792Z 24.04.4
+build	UNKNOWN STEP	2026-07-07T06:07:43.3818313Z LTS
+build	UNKNOWN STEP	2026-07-07T06:07:43.3818866Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:43.3819444Z ##[group]Runner Image
+build	UNKNOWN STEP	2026-07-07T06:07:43.3820071Z Image: ubuntu-24.04
+build	UNKNOWN STEP	2026-07-07T06:07:43.3820988Z Version: 20260628.225.1
+build	UNKNOWN STEP	2026-07-07T06:07:43.3822364Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260628.225/images/ubuntu/Ubuntu2404-Readme.md
+build	UNKNOWN STEP	2026-07-07T06:07:43.3824152Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260628.225
+build	UNKNOWN STEP	2026-07-07T06:07:43.3825201Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:43.3826562Z ##[group]GITHUB_TOKEN Permissions
+build	UNKNOWN STEP	2026-07-07T06:07:43.3829453Z Contents: read
+build	UNKNOWN STEP	2026-07-07T06:07:43.3830347Z Issues: write
+build	UNKNOWN STEP	2026-07-07T06:07:43.3830969Z Metadata: read
+build	UNKNOWN STEP	2026-07-07T06:07:43.3831525Z PullRequests: read
+build	UNKNOWN STEP	2026-07-07T06:07:43.3832141Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:43.3834505Z Secret source: Actions
+build	UNKNOWN STEP	2026-07-07T06:07:43.3835679Z Prepare workflow directory
+build	UNKNOWN STEP	2026-07-07T06:07:43.4196499Z Prepare all required actions
+build	UNKNOWN STEP	2026-07-07T06:07:43.4236685Z Getting action download info
+build	UNKNOWN STEP	2026-07-07T06:07:43.6702516Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+build	UNKNOWN STEP	2026-07-07T06:07:43.7512845Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+build	UNKNOWN STEP	2026-07-07T06:07:43.8892032Z Download action repository 'actions/github-script@v7' (SHA:f28e40c7f34bde8b3046d885e986cb6290c5673b)
+build	UNKNOWN STEP	2026-07-07T06:07:44.1569845Z Complete job name: build
+build	UNKNOWN STEP	2026-07-07T06:07:44.2388278Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+build	UNKNOWN STEP	2026-07-07T06:07:44.2397604Z ##[group]Run actions/checkout@v4
+build	UNKNOWN STEP	2026-07-07T06:07:44.2398362Z with:
+build	UNKNOWN STEP	2026-07-07T06:07:44.2398808Z   repository: bahayonghang/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:07:44.2402922Z   token: ***
+build	UNKNOWN STEP	2026-07-07T06:07:44.2403349Z   ssh-strict: true
+build	UNKNOWN STEP	2026-07-07T06:07:44.2403768Z   ssh-user: git
+build	UNKNOWN STEP	2026-07-07T06:07:44.2404209Z   persist-credentials: true
+build	UNKNOWN STEP	2026-07-07T06:07:44.2404684Z   clean: true
+build	UNKNOWN STEP	2026-07-07T06:07:44.2405120Z   sparse-checkout-cone-mode: true
+build	UNKNOWN STEP	2026-07-07T06:07:44.2405641Z   fetch-depth: 1
+build	UNKNOWN STEP	2026-07-07T06:07:44.2406058Z   fetch-tags: false
+build	UNKNOWN STEP	2026-07-07T06:07:44.2406496Z   show-progress: true
+build	UNKNOWN STEP	2026-07-07T06:07:44.2406963Z   lfs: false
+build	UNKNOWN STEP	2026-07-07T06:07:44.2407398Z   submodules: false
+build	UNKNOWN STEP	2026-07-07T06:07:44.2407834Z   set-safe-directory: true
+build	UNKNOWN STEP	2026-07-07T06:07:44.2408588Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.3510067Z Syncing repository: bahayonghang/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:07:44.3513291Z ##[group]Getting Git version info
+build	UNKNOWN STEP	2026-07-07T06:07:44.3514226Z Working directory is '/home/runner/work/drawio-skills/drawio-skills'
+build	UNKNOWN STEP	2026-07-07T06:07:44.3516119Z [command]/usr/bin/git version
+build	UNKNOWN STEP	2026-07-07T06:07:44.3603354Z git version 2.54.0
+build	UNKNOWN STEP	2026-07-07T06:07:44.3662487Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.3682494Z Temporarily overriding HOME='/home/runner/work/_temp/11bad415-6569-4445-874d-f8d2f569b964' before making global git config changes
+build	UNKNOWN STEP	2026-07-07T06:07:44.3685334Z Adding repository directory to the temporary git global config as a safe directory
+build	UNKNOWN STEP	2026-07-07T06:07:44.3691458Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/drawio-skills/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:07:44.3754479Z Deleting the contents of '/home/runner/work/drawio-skills/drawio-skills'
+build	UNKNOWN STEP	2026-07-07T06:07:44.3759406Z ##[group]Initializing the repository
+build	UNKNOWN STEP	2026-07-07T06:07:44.3766605Z [command]/usr/bin/git init /home/runner/work/drawio-skills/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:07:44.3876511Z hint: Using 'master' as the name for the initial branch. This default branch name
+build	UNKNOWN STEP	2026-07-07T06:07:44.3878357Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+build	UNKNOWN STEP	2026-07-07T06:07:44.3880898Z hint: to use in all of your new repositories, which will suppress this warning,
+build	UNKNOWN STEP	2026-07-07T06:07:44.3882565Z hint: call:
+build	UNKNOWN STEP	2026-07-07T06:07:44.3884846Z hint:
+build	UNKNOWN STEP	2026-07-07T06:07:44.3886273Z hint: 	git config --global init.defaultBranch <name>
+build	UNKNOWN STEP	2026-07-07T06:07:44.3887837Z hint:
+build	UNKNOWN STEP	2026-07-07T06:07:44.3889109Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+build	UNKNOWN STEP	2026-07-07T06:07:44.3891354Z hint: 'development'. The just-created branch can be renamed via this command:
+build	UNKNOWN STEP	2026-07-07T06:07:44.3892836Z hint:
+build	UNKNOWN STEP	2026-07-07T06:07:44.3893844Z hint: 	git branch -m <name>
+build	UNKNOWN STEP	2026-07-07T06:07:44.3894865Z hint:
+build	UNKNOWN STEP	2026-07-07T06:07:44.3896346Z hint: Disable this message with "git config set advice.defaultBranchName false"
+build	UNKNOWN STEP	2026-07-07T06:07:44.3898891Z Initialized empty Git repository in /home/runner/work/drawio-skills/drawio-skills/.git/
+build	UNKNOWN STEP	2026-07-07T06:07:44.3902858Z [command]/usr/bin/git remote add origin https://github.com/bahayonghang/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:07:44.3952925Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.3954563Z ##[group]Disabling automatic garbage collection
+build	UNKNOWN STEP	2026-07-07T06:07:44.3957982Z [command]/usr/bin/git config --local gc.auto 0
+build	UNKNOWN STEP	2026-07-07T06:07:44.4001811Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.4003230Z ##[group]Setting up auth
+build	UNKNOWN STEP	2026-07-07T06:07:44.4010010Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build	UNKNOWN STEP	2026-07-07T06:07:44.4065794Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build	UNKNOWN STEP	2026-07-07T06:07:44.4522332Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build	UNKNOWN STEP	2026-07-07T06:07:44.4578859Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build	UNKNOWN STEP	2026-07-07T06:07:44.4862502Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build	UNKNOWN STEP	2026-07-07T06:07:44.4902145Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build	UNKNOWN STEP	2026-07-07T06:07:44.5166304Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+build	UNKNOWN STEP	2026-07-07T06:07:44.5209570Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.5211233Z ##[group]Fetching the repository
+build	UNKNOWN STEP	2026-07-07T06:07:44.5221350Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +80a7da57e47a0d275dc3f9c9fdea352e5025ab2e:refs/remotes/pull/5/merge
+build	UNKNOWN STEP	2026-07-07T06:07:44.8429211Z From https://github.com/bahayonghang/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:07:44.8432276Z  * [new ref]         80a7da57e47a0d275dc3f9c9fdea352e5025ab2e -> pull/5/merge
+build	UNKNOWN STEP	2026-07-07T06:07:44.8473698Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.8475694Z ##[group]Determining the checkout info
+build	UNKNOWN STEP	2026-07-07T06:07:44.8477746Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.8482776Z [command]/usr/bin/git sparse-checkout disable
+build	UNKNOWN STEP	2026-07-07T06:07:44.8540560Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+build	UNKNOWN STEP	2026-07-07T06:07:44.8580027Z ##[group]Checking out the ref
+build	UNKNOWN STEP	2026-07-07T06:07:44.8586396Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/5/merge
+build	UNKNOWN STEP	2026-07-07T06:07:44.8980054Z Note: switching to 'refs/remotes/pull/5/merge'.
+build	UNKNOWN STEP	2026-07-07T06:07:44.8981632Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8982336Z You are in 'detached HEAD' state. You can look around, make experimental
+build	UNKNOWN STEP	2026-07-07T06:07:44.8983659Z changes and commit them, and you can discard any commits you make in this
+build	UNKNOWN STEP	2026-07-07T06:07:44.8985436Z state without impacting any branches by switching back to a branch.
+build	UNKNOWN STEP	2026-07-07T06:07:44.8986502Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8987069Z If you want to create a new branch to retain commits you create, you may
+build	UNKNOWN STEP	2026-07-07T06:07:44.8988279Z do so (now or later) by using -c with the switch command. Example:
+build	UNKNOWN STEP	2026-07-07T06:07:44.8989002Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8989348Z   git switch -c <new-branch-name>
+build	UNKNOWN STEP	2026-07-07T06:07:44.8989893Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8990523Z Or undo this operation with:
+build	UNKNOWN STEP	2026-07-07T06:07:44.8991073Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8991385Z   git switch -
+build	UNKNOWN STEP	2026-07-07T06:07:44.8991811Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8992461Z Turn off this advice by setting config variable advice.detachedHead to false
+build	UNKNOWN STEP	2026-07-07T06:07:44.8993439Z 
+build	UNKNOWN STEP	2026-07-07T06:07:44.8994537Z HEAD is now at 80a7da5 Merge d1c4cccac48bb64d9ded24bf49a78b0229d39db3 into 5a57d15f15cda0f6dddebf7b0bfc0348f67bfe12
+build	UNKNOWN STEP	2026-07-07T06:07:44.8999357Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:44.9038671Z [command]/usr/bin/git log -1 --format=%H
+build	UNKNOWN STEP	2026-07-07T06:07:44.9067253Z 80a7da57e47a0d275dc3f9c9fdea352e5025ab2e
+build	UNKNOWN STEP	2026-07-07T06:07:44.9532578Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+build	UNKNOWN STEP	2026-07-07T06:07:44.9537937Z ##[group]Run actions/setup-node@v4
+build	UNKNOWN STEP	2026-07-07T06:07:44.9539101Z with:
+build	UNKNOWN STEP	2026-07-07T06:07:44.9539972Z   node-version: 20
+build	UNKNOWN STEP	2026-07-07T06:07:44.9541191Z   cache: npm
+build	UNKNOWN STEP	2026-07-07T06:07:44.9542064Z   always-auth: false
+build	UNKNOWN STEP	2026-07-07T06:07:44.9543002Z   check-latest: false
+build	UNKNOWN STEP	2026-07-07T06:07:44.9551853Z   token: ***
+build	UNKNOWN STEP	2026-07-07T06:07:44.9552786Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:45.1098580Z Attempting to download 20...
+build	UNKNOWN STEP	2026-07-07T06:07:45.1215985Z (node:2241) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+build	UNKNOWN STEP	2026-07-07T06:07:45.1218729Z (Use `node --trace-deprecation ...` to show where the warning was created)
+build	UNKNOWN STEP	2026-07-07T06:07:45.4581078Z Acquiring 20.20.2 - x64 from https://github.com/actions/node-versions/releases/download/20.20.2-23521894959/node-20.20.2-linux-x64.tar.gz
+build	UNKNOWN STEP	2026-07-07T06:07:45.7707723Z Extracting ...
+build	UNKNOWN STEP	2026-07-07T06:07:45.7831432Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/bd4a8982-f692-4893-8842-bc2756f82693 -f /home/runner/work/_temp/7a9b2cee-dfab-4662-ac9c-fe54f2be23b7
+build	UNKNOWN STEP	2026-07-07T06:07:46.8536849Z Adding to the cache ...
+build	UNKNOWN STEP	2026-07-07T06:07:49.2871515Z ##[group]Environment details
+build	UNKNOWN STEP	2026-07-07T06:07:49.5162971Z node: v20.20.2
+build	UNKNOWN STEP	2026-07-07T06:07:49.5163330Z npm: 10.8.2
+build	UNKNOWN STEP	2026-07-07T06:07:49.5163549Z yarn: 1.22.22
+build	UNKNOWN STEP	2026-07-07T06:07:49.5164092Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:49.5187964Z [command]/opt/hostedtoolcache/node/20.20.2/x64/bin/npm config get cache
+build	UNKNOWN STEP	2026-07-07T06:07:49.6291047Z /home/runner/.npm
+build	UNKNOWN STEP	2026-07-07T06:07:49.7014034Z npm cache is not found
+build	UNKNOWN STEP	2026-07-07T06:07:49.7226849Z ##[group]Run npm ci
+build	UNKNOWN STEP	2026-07-07T06:07:49.7227222Z ^[[36;1mnpm ci^[[0m
+build	UNKNOWN STEP	2026-07-07T06:07:49.7393536Z shell: /usr/bin/bash -e {0}
+build	UNKNOWN STEP	2026-07-07T06:07:49.7394024Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:54.2064741Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2074413Z added 193 packages, and audited 194 packages in 4s
+build	UNKNOWN STEP	2026-07-07T06:07:54.2074824Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2075062Z 80 packages are looking for funding
+build	UNKNOWN STEP	2026-07-07T06:07:54.2075422Z   run `npm fund` for details
+build	UNKNOWN STEP	2026-07-07T06:07:54.2296505Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2297739Z 14 vulnerabilities (7 moderate, 7 high)
+build	UNKNOWN STEP	2026-07-07T06:07:54.2298307Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2298824Z To address issues that do not require attention, run:
+build	UNKNOWN STEP	2026-07-07T06:07:54.2299274Z   npm audit fix
+build	UNKNOWN STEP	2026-07-07T06:07:54.2299438Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2299789Z To address all issues possible (including breaking changes), run:
+build	UNKNOWN STEP	2026-07-07T06:07:54.2300732Z   npm audit fix --force
+build	UNKNOWN STEP	2026-07-07T06:07:54.2300970Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2301238Z Some issues need review, and may require choosing
+build	UNKNOWN STEP	2026-07-07T06:07:54.2302454Z a different dependency.
+build	UNKNOWN STEP	2026-07-07T06:07:54.2302695Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.2302874Z Run `npm audit` for details.
+build	UNKNOWN STEP	2026-07-07T06:07:54.2544234Z ##[group]Run npm run docs:build
+build	UNKNOWN STEP	2026-07-07T06:07:54.2544709Z ^[[36;1mnpm run docs:build^[[0m
+build	UNKNOWN STEP	2026-07-07T06:07:54.2578688Z shell: /usr/bin/bash -e {0}
+build	UNKNOWN STEP	2026-07-07T06:07:54.2579019Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:07:54.3759888Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.3760881Z > drawio-skills@2.4.0 docs:build
+build	UNKNOWN STEP	2026-07-07T06:07:54.3761731Z > vitepress build docs
+build	UNKNOWN STEP	2026-07-07T06:07:54.3762136Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.7043824Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.7044800Z   ^[[32m^[[1mvitepress^[[22m v1.6.4^[[39m
+build	UNKNOWN STEP	2026-07-07T06:07:54.7045128Z 
+build	UNKNOWN STEP	2026-07-07T06:07:54.7089387Z - building client + server bundles...
+build	UNKNOWN STEP	2026-07-07T06:07:59.6125924Z ^[[32m✓^[[0m building client + server bundles...
+build	UNKNOWN STEP	2026-07-07T06:07:59.6312645Z - rendering pages...
+build	UNKNOWN STEP	2026-07-07T06:08:00.1784312Z ^[[32m✓^[[0m rendering pages...
+build	UNKNOWN STEP	2026-07-07T06:08:00.1867856Z build complete in 5.53s.
+build	UNKNOWN STEP	2026-07-07T06:08:00.2487056Z ##[group]Run if [ ! -d "docs/.vitepress/dist" ]; then
+build	UNKNOWN STEP	2026-07-07T06:08:00.2487518Z ^[[36;1mif [ ! -d "docs/.vitepress/dist" ]; then^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2487899Z ^[[36;1m  echo "❌ Build failed: dist directory not found"^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2488237Z ^[[36;1m  exit 1^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2488442Z ^[[36;1mfi^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2488649Z ^[[36;1mecho "✅ Build successful"^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2488921Z ^[[36;1mecho "📊 Build size:"^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2489180Z ^[[36;1mdu -sh docs/.vitepress/dist^[[0m
+build	UNKNOWN STEP	2026-07-07T06:08:00.2523520Z shell: /usr/bin/bash -e {0}
+build	UNKNOWN STEP	2026-07-07T06:08:00.2523804Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:08:00.2591370Z ✅ Build successful
+build	UNKNOWN STEP	2026-07-07T06:08:00.2591880Z 📊 Build size:
+build	UNKNOWN STEP	2026-07-07T06:08:00.3180970Z 4.1M	docs/.vitepress/dist
+build	UNKNOWN STEP	2026-07-07T06:08:00.3270555Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+build	UNKNOWN STEP	2026-07-07T06:08:00.3272297Z ##[group]Run actions/github-script@v7
+build	UNKNOWN STEP	2026-07-07T06:08:00.3272586Z with:
+build	UNKNOWN STEP	2026-07-07T06:08:00.3276356Z   script: const fs = require('fs');
+build	UNKNOWN STEP	const path = require('path');
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	// Get build size
+build	UNKNOWN STEP	const { execSync } = require('child_process');
+build	UNKNOWN STEP	const size = execSync('du -sh docs/.vitepress/dist').toString().split('\t')[0];
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	// Count files
+build	UNKNOWN STEP	const countFiles = (dir) => {
+build	UNKNOWN STEP	  let count = 0;
+build	UNKNOWN STEP	  const files = fs.readdirSync(dir);
+build	UNKNOWN STEP	  for (const file of files) {
+build	UNKNOWN STEP	    const filePath = path.join(dir, file);
+build	UNKNOWN STEP	    if (fs.statSync(filePath).isDirectory()) {
+build	UNKNOWN STEP	      count += countFiles(filePath);
+build	UNKNOWN STEP	    } else {
+build	UNKNOWN STEP	      count++;
+build	UNKNOWN STEP	    }
+build	UNKNOWN STEP	  }
+build	UNKNOWN STEP	  return count;
+build	UNKNOWN STEP	};
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	const fileCount = countFiles('docs/.vitepress/dist');
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	const comment = `## 📚 Documentation Build Preview
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	✅ Documentation built successfully!
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	**Build Statistics:**
+build	UNKNOWN STEP	- 📦 Total size: ${size}
+build	UNKNOWN STEP	- 📄 Files generated: ${fileCount}
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	**Note:** This is a preview build. The documentation will be deployed to GitHub Pages when a release is published.
+build	UNKNOWN STEP	`;
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	await github.rest.issues.createComment({
+build	UNKNOWN STEP	  issue_number: context.issue.number,
+build	UNKNOWN STEP	  owner: context.repo.owner,
+build	UNKNOWN STEP	  repo: context.repo.repo,
+build	UNKNOWN STEP	  body: comment
+build	UNKNOWN STEP	});
+build	UNKNOWN STEP	
+build	UNKNOWN STEP	2026-07-07T06:08:00.3282641Z   github-token: ***
+build	UNKNOWN STEP	2026-07-07T06:08:00.3282868Z   debug: false
+build	UNKNOWN STEP	2026-07-07T06:08:00.3283095Z   user-agent: actions/github-script
+build	UNKNOWN STEP	2026-07-07T06:08:00.3283359Z   result-encoding: json
+build	UNKNOWN STEP	2026-07-07T06:08:00.3283571Z   retries: 0
+build	UNKNOWN STEP	2026-07-07T06:08:00.3283790Z   retry-exempt-status-codes: 400,401,403,404,422
+build	UNKNOWN STEP	2026-07-07T06:08:00.3284083Z ##[endgroup]
+build	UNKNOWN STEP	2026-07-07T06:08:00.6342438Z RequestError [HttpError]: Resource not accessible by integration
+build	UNKNOWN STEP	2026-07-07T06:08:00.6343984Z     at /home/runner/work/_actions/actions/github-script/v7/dist/index.js:9537:21
+build	UNKNOWN STEP	2026-07-07T06:08:00.6345470Z     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+build	UNKNOWN STEP	2026-07-07T06:08:00.6347364Z     at async eval (eval at callAsyncFunction (/home/runner/work/_actions/actions/github-script/v7/dist/index.js:36187:16), <anonymous>:38:1)
+build	UNKNOWN STEP	2026-07-07T06:08:00.6349712Z     at async main (/home/runner/work/_actions/actions/github-script/v7/dist/index.js:36285:20) {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6378336Z ##[error]Unhandled error: HttpError: Resource not accessible by integration
+build	UNKNOWN STEP	2026-07-07T06:08:00.6389383Z   status: 403,
+build	UNKNOWN STEP	2026-07-07T06:08:00.6390585Z   response: {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6391580Z     url: 'https://api.github.com/repos/bahayonghang/drawio-skills/issues/5/comments',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6392565Z     status: 403,
+build	UNKNOWN STEP	2026-07-07T06:08:00.6393106Z     headers: {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6393699Z       'access-control-allow-origin': '*',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6396716Z       'access-control-expose-headers': 'ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6399447Z       'content-encoding': 'gzip',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6400429Z       'content-security-policy': "default-src 'none'",
+build	UNKNOWN STEP	2026-07-07T06:08:00.6401368Z       'content-type': 'application/json; charset=utf-8',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6402184Z       date: 'Tue, 07 Jul 2026 06:08:00 GMT',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6403207Z       'referrer-policy': 'origin-when-cross-origin, strict-origin-when-cross-origin',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6404175Z       server: 'github.com',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6405073Z       'strict-transport-security': 'max-age=31536000; includeSubdomains; preload',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6406032Z       'transfer-encoding': 'chunked',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6406859Z       vary: 'Accept-Encoding, Accept, X-Requested-With',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6408286Z       'x-accepted-github-permissions': 'issues=write; pull_requests=write',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6409307Z       'x-content-type-options': 'nosniff',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6410017Z       'x-frame-options': 'deny',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6411029Z       'x-github-api-version-selected': '2022-11-28',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6411877Z       'x-github-media-type': 'github.v3; format=json',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6412773Z       'x-github-request-id': 'F018:34148F:FCB35D:37110BF:6A4C97C0',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6413578Z       'x-ratelimit-limit': '5000',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6414330Z       'x-ratelimit-remaining': '4994',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6415032Z       'x-ratelimit-reset': '1783405800',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6415726Z       'x-ratelimit-resource': 'core',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6416387Z       'x-ratelimit-used': '6',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6416982Z       'x-xss-protection': '0'
+build	UNKNOWN STEP	2026-07-07T06:08:00.6417552Z     },
+build	UNKNOWN STEP	2026-07-07T06:08:00.6418019Z     data: {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6418659Z       message: 'Resource not accessible by integration',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6419808Z       documentation_url: 'https://docs.github.com/rest/issues/comments#create-an-issue-comment',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6421017Z       status: '403'
+build	UNKNOWN STEP	2026-07-07T06:08:00.6421533Z     }
+build	UNKNOWN STEP	2026-07-07T06:08:00.6421987Z   },
+build	UNKNOWN STEP	2026-07-07T06:08:00.6422447Z   request: {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6422947Z     method: 'POST',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6423827Z     url: 'https://api.github.com/repos/bahayonghang/drawio-skills/issues/5/comments',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6424717Z     headers: {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6425329Z       accept: 'application/vnd.github.v3+json',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6426284Z       'user-agent': 'actions/github-script octokit-core.js/5.0.1 Node.js/24',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6427183Z       authorization: 'bearer [REDACTED]',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6427963Z       'content-type': 'application/json; charset=utf-8'
+build	UNKNOWN STEP	2026-07-07T06:08:00.6428643Z     },
+build	UNKNOWN STEP	2026-07-07T06:08:00.6431721Z     body: '{"body":"## 📚 Documentation Build Preview\\n\\n✅ Documentation built successfully!\\n\\n**Build Statistics:**\\n- 📦 Total size: 4.1M\\n- 📄 Files generated: 160\\n\\n**Note:** This is a preview build. The documentation will be deployed to GitHub Pages when a release is published.\\n"}',
+build	UNKNOWN STEP	2026-07-07T06:08:00.6433863Z     request: {
+build	UNKNOWN STEP	2026-07-07T06:08:00.6434374Z       agent: [Agent],
+build	UNKNOWN STEP	2026-07-07T06:08:00.6434971Z       fetch: [Function: proxyFetch],
+build	UNKNOWN STEP	2026-07-07T06:08:00.6435953Z       hook: [Function: bound bound register]
+build	UNKNOWN STEP	2026-07-07T06:08:00.6436595Z     }
+build	UNKNOWN STEP	2026-07-07T06:08:00.6437049Z   }
+build	UNKNOWN STEP	2026-07-07T06:08:00.6437525Z }
+build	UNKNOWN STEP	2026-07-07T06:08:00.6809120Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+build	UNKNOWN STEP	2026-07-07T06:08:00.6810667Z Post job cleanup.
+build	UNKNOWN STEP	2026-07-07T06:08:00.7735871Z [command]/usr/bin/git version
+build	UNKNOWN STEP	2026-07-07T06:08:00.7790814Z git version 2.54.0
+build	UNKNOWN STEP	2026-07-07T06:08:00.7841713Z Temporarily overriding HOME='/home/runner/work/_temp/831f124e-b762-4e36-8aed-e60aab5c96ab' before making global git config changes
+build	UNKNOWN STEP	2026-07-07T06:08:00.7843558Z Adding repository directory to the temporary git global config as a safe directory
+build	UNKNOWN STEP	2026-07-07T06:08:00.7850509Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/drawio-skills/drawio-skills
+build	UNKNOWN STEP	2026-07-07T06:08:00.7922230Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+build	UNKNOWN STEP	2026-07-07T06:08:00.7968161Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+build	UNKNOWN STEP	2026-07-07T06:08:00.8263750Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+build	UNKNOWN STEP	2026-07-07T06:08:00.8295898Z http.https://github.com/.extraheader
+build	UNKNOWN STEP	2026-07-07T06:08:00.8311395Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+build	UNKNOWN STEP	2026-07-07T06:08:00.8362654Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+build	UNKNOWN STEP	2026-07-07T06:08:00.8638960Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+build	UNKNOWN STEP	2026-07-07T06:08:00.8721220Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+build	UNKNOWN STEP	2026-07-07T06:08:00.9366809Z Cleaning up orphan processes
+build	UNKNOWN STEP	2026-07-07T06:08:00.9666383Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/github-script@v7, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

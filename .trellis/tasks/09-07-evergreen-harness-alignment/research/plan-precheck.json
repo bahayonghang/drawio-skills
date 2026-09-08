@@ -1,0 +1,531 @@
+{
+  "repo_root": "D:/Documents/Code/Agents/drawio-skills",
+  "review_scope": {
+    "mode": "task-tree",
+    "root": "09-07-evergreen-harness-alignment",
+    "task_count": 5,
+    "members": [
+      {
+        "name": "09-07-evergreen-harness-alignment",
+        "path": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-evergreen-harness-alignment",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-test-baseline",
+        "path": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-test-baseline",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-quality-gates",
+        "path": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-quality-gates",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-rule-alignment",
+        "path": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-rule-alignment",
+        "location": "active",
+        "status": "planning"
+      },
+      {
+        "name": "09-07-harness-skill-doc-evidence",
+        "path": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-skill-doc-evidence",
+        "location": "active",
+        "status": "planning"
+      }
+    ],
+    "edges": [
+      {
+        "parent": "09-07-evergreen-harness-alignment",
+        "child": "09-07-harness-test-baseline"
+      },
+      {
+        "parent": "09-07-evergreen-harness-alignment",
+        "child": "09-07-harness-quality-gates"
+      },
+      {
+        "parent": "09-07-evergreen-harness-alignment",
+        "child": "09-07-harness-rule-alignment"
+      },
+      {
+        "parent": "09-07-evergreen-harness-alignment",
+        "child": "09-07-harness-skill-doc-evidence"
+      }
+    ],
+    "legacy_fallback_tasks": []
+  },
+  "tasks": [
+    {
+      "task_dir": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-evergreen-harness-alignment",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 0,
+        "by_status": {},
+        "entries": []
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R5"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 6
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R5"
+            ],
+            "clause_hint": 4
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-evergreen-harness-alignment",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-test-baseline",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 4,
+        "by_status": {
+          "resolved": 4
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "tests/integration.test.js:388",
+            "status": "resolved",
+            "resolved_path": "tests/integration.test.js",
+            "file_lines": 747
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "skills/drawio/scripts/adapters/code-parsers.integration.test.js:12",
+            "status": "resolved",
+            "resolved_path": "skills/drawio/scripts/adapters/code-parsers.integration.test.js",
+            "file_lines": 71
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "package.json:28",
+            "status": "resolved",
+            "resolved_path": "package.json",
+            "file_lines": 34
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "package-lock.json:3383",
+            "status": "resolved",
+            "resolved_path": "package-lock.json",
+            "file_lines": 3627
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-test-baseline",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-quality-gates",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 1,
+        "by_status": {
+          "resolved": 1
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "github/workflows/deploy-docs.yml:5",
+            "status": "resolved",
+            "resolved_path": ".github/workflows/deploy-docs.yml",
+            "file_lines": 60
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 3
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 3
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-quality-gates",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-rule-alignment",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 5,
+        "by_status": {
+          "resolved": 5
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "skills/drawio/SKILL.md:3",
+            "status": "resolved",
+            "resolved_path": "skills/drawio/SKILL.md",
+            "file_lines": 162
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "agents/skills/drawio/SKILL.md:3",
+            "status": "resolved",
+            "resolved_path": ".agents/skills/drawio/SKILL.md",
+            "file_lines": 196
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "agents/skills/drawio/scripts/cli.js:56",
+            "status": "resolved",
+            "resolved_path": ".agents/skills/drawio/scripts/cli.js",
+            "file_lines": 414
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "skills/drawio/scripts/cli.js:133",
+            "status": "resolved",
+            "resolved_path": "skills/drawio/scripts/cli.js",
+            "file_lines": 716
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "README.md:71",
+            "status": "resolved",
+            "resolved_path": "README.md",
+            "file_lines": 326
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 5
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 6
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-rule-alignment",
+      "location": "active"
+    },
+    {
+      "task_dir": "D:/Documents/Code/Agents/drawio-skills/.trellis/tasks/09-07-harness-skill-doc-evidence",
+      "task_status": "planning",
+      "artifacts": {
+        "present": {
+          "prd.md": true,
+          "design.md": true,
+          "implement.md": true,
+          "implement.jsonl": true,
+          "check.jsonl": true,
+          "task.json": true
+        },
+        "shape": "complex",
+        "note": ""
+      },
+      "placeholders": [],
+      "citations": {
+        "total": 3,
+        "by_status": {
+          "resolved": 3
+        },
+        "entries": [
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "README.md:247",
+            "status": "resolved",
+            "resolved_path": "README.md",
+            "file_lines": 326
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "skills/drawio-academic-skills/SKILL.md:45",
+            "status": "resolved",
+            "resolved_path": "skills/drawio-academic-skills/SKILL.md",
+            "file_lines": 162
+          },
+          {
+            "artifact": "prd.md",
+            "artifact_line": 7,
+            "citation": "trellis/spec/frontend/quality-guidelines.md:85",
+            "status": "resolved",
+            "resolved_path": ".trellis/spec/frontend/quality-guidelines.md",
+            "file_lines": 478
+          }
+        ]
+      },
+      "identifiers": {
+        "requirements": [
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        "criteria": [
+          {
+            "id": "AC1",
+            "requirements": [
+              "R1"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC2",
+            "requirements": [
+              "R2"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC3",
+            "requirements": [
+              "R3"
+            ],
+            "clause_hint": 4
+          },
+          {
+            "id": "AC4",
+            "requirements": [
+              "R1",
+              "R2",
+              "R3"
+            ],
+            "clause_hint": 2
+          },
+          {
+            "id": "AC5",
+            "requirements": [
+              "R4"
+            ],
+            "clause_hint": 2
+          }
+        ],
+        "criteria_without_requirement": [],
+        "requirements_without_criterion": [],
+        "referenced_but_undefined": []
+      },
+      "blocking": [],
+      "drift_pass_required": false,
+      "task_name": "09-07-harness-skill-doc-evidence",
+      "location": "active"
+    }
+  ],
+  "reviews_git": {
+    "path": ".trellis/reviews/09-07-evergreen-harness-alignment.md",
+    "state": "untracked"
+  },
+  "blocking": []
+}

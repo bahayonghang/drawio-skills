@@ -1,0 +1,15 @@
+npm warn cleanup Failed to remove some directories [
+npm warn cleanup   [
+npm warn cleanup     '\\\\?\\D:\\Documents\\Code\\Agents\\drawio-skills\\node_modules',
+npm warn cleanup     [Error: EPERM: operation not permitted, rmdir 'D:\Documents\Code\Agents\drawio-skills\node_modules\@babel\types\lib\builders'] {
+npm warn cleanup       errno: -4048,
+npm warn cleanup       code: 'EPERM',
+npm warn cleanup       syscall: 'rmdir',
+npm warn cleanup       path: 'D:\\Documents\\Code\\Agents\\drawio-skills\\node_modules\\@babel\\types\\lib\\builders'
+npm warn cleanup     }
+npm warn cleanup   ]
+npm warn cleanup ]
+npm error code EALLOWREMOTE
+npm error Fetching packages of type "remote" have been disabled
+npm error Refusing to fetch "uc.micro@https://registry.npmmirror.com/uc.micro/-/uc.micro-2.1.0.tgz"
+npm error A complete log of this run can be found in: C:\home\lyh\.npm-global\.cache\_logs\2026-09-07T11_35_24_065Z-debug-0.log

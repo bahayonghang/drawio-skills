@@ -1,0 +1,31 @@
+{
+  "id": "evergreen-harness-alignment",
+  "name": "evergreen-harness-alignment",
+  "title": "常青项目审查与五套 harness 对齐",
+  "description": "父任务集成复核 R5：四子任务已归档；记录证据与 UNVERIFIED，不改产品源码",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "lyh",
+  "assignee": "lyh",
+  "createdAt": "2026-09-07",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-07-harness-test-baseline",
+    "09-07-harness-quality-gates",
+    "09-07-harness-rule-alignment",
+    "09-07-harness-skill-doc-evidence"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "R5 2026-09-08: children archived under archive/2026-09/; see research/r5-integration.md and research/unverified.md. Release gate pending main session.",
+  "meta": {}
+}
