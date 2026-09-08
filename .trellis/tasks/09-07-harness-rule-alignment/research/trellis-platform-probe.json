@@ -1,0 +1,51 @@
+{
+  "created_at": "2026-09-07T13:26:07.751781+00:00",
+  "cwd": "D:\\Documents\\Code\\Agents\\drawio-skills",
+  "PYTHONPATH": "D:\\Documents\\Code\\Agents\\drawio-skills\\.trellis\\scripts",
+  "explicit": [
+    {
+      "TRELLIS_PLATFORM": "claude",
+      "returncode": 0,
+      "stdout": "claude",
+      "stderr_head": "",
+      "ok": true
+    },
+    {
+      "TRELLIS_PLATFORM": "codex",
+      "returncode": 0,
+      "stdout": "codex",
+      "stderr_head": "",
+      "ok": true
+    },
+    {
+      "TRELLIS_PLATFORM": "grok",
+      "returncode": 0,
+      "stdout": "grok",
+      "stderr_head": "",
+      "ok": true
+    },
+    {
+      "TRELLIS_PLATFORM": "kimi",
+      "returncode": 0,
+      "stdout": "kimi",
+      "stderr_head": "",
+      "ok": true
+    },
+    {
+      "TRELLIS_PLATFORM": "omp",
+      "returncode": 0,
+      "stdout": "omp",
+      "stderr_head": "",
+      "ok": true
+    }
+  ],
+  "auto_without_env": {
+    "TRELLIS_PLATFORM": null,
+    "returncode": 0,
+    "stdout": "claude",
+    "stderr_head": "",
+    "ok": true
+  },
+  "note": "Auto-detect without TRELLIS_PLATFORM currently returns claude when .claude exists. Hosted adapter/workflow were not rewritten.",
+  "all_explicit_ok": true
+}

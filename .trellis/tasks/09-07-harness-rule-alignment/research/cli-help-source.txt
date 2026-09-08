@@ -1,0 +1,49 @@
+draw.io YAML 鈫?XML/SVG Converter
+
+Usage:
+  node cli.js <input> [output.drawio|output.svg] [options]
+  node cli.js search <query> [--prefix <library>] [--limit <n>] [--json]
+  node cli.js postprocess <operation> <input> <output> [options]
+
+Arguments:
+  input               Path to input file, or - for stdin
+  output file         Optional output file. Extension determines format:
+                        .drawio  鈫?draw.io XML file format
+                        .svg     鈫?Standalone SVG (or desktop SVG with --use-desktop)
+                        .png     鈫?PNG via draw.io Desktop CLI
+                        .pdf     鈫?PDF via draw.io Desktop CLI
+                        .jpg     鈫?JPG via draw.io Desktop CLI
+                      If omitted, XML is printed to stdout.
+
+Options:
+  postprocess operation: mermaid, explain, relabel, restyle, heatmap, or html
+  postprocess options: --page <selector>, --all-pages, --map <json>,
+                      --preset <name|json>, --metrics <json|csv>, --fenced,
+                      --direction <LR|RL|TB|BT>, --palette <name>,
+                      --label-fallback, --title <text>, --search <text>
+  --input-format <f>  Input format: yaml (default), mermaid, csv, drawio,
+                      terraform, kubernetes, compose, sql, openapi,
+                      github-actions, gitlab-ci, python-imports,
+                      python-classes, js-imports, go-imports, rust-imports,
+                      or raster-extraction
+  --scope <name>      Kubernetes logical cluster/environment identity
+  --project <name>    Compose project identity override
+  --dialect <name>    SQL dialect (default: postgres)
+  --module-address <a> Terraform module address for the selected source
+  --workflow <path>   CI workflow repo-relative path (required for stdin)
+  --theme <name>      Override theme (e.g. tech-blue, academic, nature, dark)
+  --page <selector>   page index (0-based), page id, or unique page name
+  --all-pages         drawio import: import every page as canonical bundle v1
+  --export-spec       Export the canonical YAML spec instead of generating XML/SVG
+  --strict            Fail on complexity and spec validation warnings
+  --strict-warnings   Alias of --strict (recommended for paper-grade validation)
+  --allow-unknown-shapes  Downgrade unknown covered stencil names to warnings
+  --validate          Run XML validation and print results (also summarizes spec warnings)
+  --write-sidecars    Emit canonical .spec.yaml and .arch.json next to the output
+  --sidecar-dir <dir> Emit sidecars in this directory when --write-sidecars is set
+  --use-desktop       Prefer draw.io Desktop CLI for SVG export; required for PNG/PDF/JPG
+  --visual-preview    Export a non-embedded PNG with longest edge <= 2000px for visual review
+  --asset-root <dir>  Directory that assets.<id>.path is resolved against (default: cwd)
+  --extract-assets <dir>  When importing .drawio, write foreign PNG/JPEG bytes here
+  search              Search the bundled shape catalog without network access
+  --help, -h          Show this help message

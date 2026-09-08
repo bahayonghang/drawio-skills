@@ -1,0 +1,3 @@
+node --test tests/skill-installation.test.js tests/skill-metadata.test.js
+EXIT=0
+pass=8 fail=0 skipped=0

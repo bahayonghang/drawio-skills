@@ -10,6 +10,29 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const PROJECT_ROOT = resolve(__dirname, '..')
 const SKILL_ROOT = resolve(PROJECT_ROOT, 'skills/drawio')
+const OVERLAY_ROOT = resolve(PROJECT_ROOT, 'skills/drawio-academic-skills')
+
+function packageVersion() {
+  return JSON.parse(readFileSync(resolve(PROJECT_ROOT, 'package.json'), 'utf8')).version
+}
+
+function skillFrontmatterVersion(skillPath) {
+  const text = readFileSync(skillPath, 'utf8')
+  const match = text.match(/^version:\s*["']?([^"'\r\n]+)["']?/m)
+  assert.ok(match, `missing version in ${skillPath}`)
+  return match[1]
+}
+
+function runIsolatedCli(cli, args, cwd, extra = {}) {
+  return spawnSync(process.execPath, [cli, ...args], {
+    cwd,
+    env: withoutNodePath(),
+    encoding: 'utf8',
+    timeout: extra.timeout ?? 10_000,
+    windowsHide: true,
+    input: extra.input
+  })
+}
 
 function withoutNodePath() {
   const env = { ...process.env }
@@ -139,6 +162,85 @@ test('installed base skill keeps YAML working when optional parsers are disconne
     })
     assert.notEqual(jsResult.status, 0)
     assert.match(jsResult.stderr, /\[OPTIONAL_DEPENDENCY_MISSING\]/)
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('installed same-source copy keeps current SKILL version and compose import', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'drawio-skill-same-source-'))
+  const installedSkill = join(tempRoot, 'installed', 'drawio')
+  const inputFile = join(tempRoot, 'compose.yaml')
+  const outputFile = join(tempRoot, 'output.drawio')
+  const cli = join(installedSkill, 'scripts', 'cli.js')
+
+  try {
+    cpSync(SKILL_ROOT, installedSkill, { recursive: true })
+    writePoisonYamlPackage(tempRoot)
+    writeFileSync(
+      inputFile,
+      'name: audit\nservices:\n  api:\n    image: example/api:1\n'
+    )
+
+    assert.equal(skillFrontmatterVersion(join(installedSkill, 'SKILL.md')), packageVersion())
+
+    const help = runIsolatedCli(cli, ['--help'], tempRoot)
+    assert.equal(help.status, 0, `installed --help failed\nstdout:\n${help.stdout}\nstderr:\n${help.stderr}`)
+    assert.match(help.stdout, /compose/)
+    assert.match(help.stdout, /js-imports/)
+
+    const result = runIsolatedCli(cli, [inputFile, outputFile, '--input-format', 'compose', '--validate'], tempRoot)
+    assert.equal(result.status, 0, `isolated compose CLI failed\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`)
+    assert.equal(existsSync(outputFile), true)
+    const xml = readFileSync(outputFile, 'utf8')
+    assert.match(xml, /<mxGraphModel[\s>]/)
+    assert.match(xml, /<\/mxGraphModel>/)
+    assert.match(xml, /api/)
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+
+test('installed academic overlay uses sibling ../drawio CLI', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'drawio-academic-sibling-'))
+  const installedRoot = join(tempRoot, 'installed')
+  const installedBase = join(installedRoot, 'drawio')
+  const installedOverlay = join(installedRoot, 'drawio-academic-skills')
+  const outputFile = join(tempRoot, 'output.drawio')
+  const overlayExample = join(
+    installedOverlay,
+    'references',
+    'examples',
+    'system-architecture-paper.yaml'
+  )
+  const siblingCli = join(installedOverlay, '..', 'drawio', 'scripts', 'cli.js')
+
+  try {
+    cpSync(SKILL_ROOT, installedBase, { recursive: true })
+    cpSync(OVERLAY_ROOT, installedOverlay, { recursive: true })
+    writePoisonYamlPackage(tempRoot)
+
+    assert.equal(existsSync(join(installedOverlay, 'scripts', 'cli.js')), false)
+    assert.equal(skillFrontmatterVersion(join(installedOverlay, 'SKILL.md')), packageVersion())
+    assert.match(readFileSync(join(installedOverlay, 'SKILL.md'), 'utf8'), /\.\.\/drawio\/scripts\/cli\.js/)
+    assert.equal(existsSync(overlayExample), true)
+    assert.equal(resolve(siblingCli), resolve(installedBase, 'scripts', 'cli.js'))
+
+    const result = runIsolatedCli(
+      siblingCli,
+      [overlayExample, outputFile, '--validate'],
+      installedOverlay
+    )
+    assert.equal(
+      result.status,
+      0,
+      `academic sibling CLI failed\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`
+    )
+    assert.equal(existsSync(outputFile), true)
+    const xml = readFileSync(outputFile, 'utf8')
+    assert.match(xml, /<mxGraphModel[\s>]/)
+    assert.match(xml, /<\/mxGraphModel>/)
+    assert.match(xml, /API Service/)
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }

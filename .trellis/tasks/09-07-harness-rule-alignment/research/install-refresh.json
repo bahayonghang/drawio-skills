@@ -1,0 +1,91 @@
+{
+  "backup": {
+    "backup_root": "C:\\Users\\lyh\\AppData\\Local\\Temp\\drawio-skills-agents-backup-20260907-212514",
+    "created_at": "2026-09-07T13:25:14.793625+00:00",
+    "drawio_entries": 120,
+    "academic_entries": 30,
+    "drawio_skill_version": "2.5.0",
+    "academic_skill_version": "2.5.0",
+    "preserved_agents_skills_before": [
+      "drawio",
+      "drawio-academic-skills",
+      "trellis-before-dev",
+      "trellis-brainstorm",
+      "trellis-break-loop",
+      "trellis-channel",
+      "trellis-check",
+      "trellis-continue",
+      "trellis-finish-work",
+      "trellis-meta",
+      "trellis-session-insight",
+      "trellis-spec-bootstarp",
+      "trellis-spec-bootstrap",
+      "trellis-start",
+      "trellis-update-spec"
+    ]
+  },
+  "after": {
+    "agents_skills": [
+      "drawio",
+      "drawio-academic-skills",
+      "trellis-before-dev",
+      "trellis-brainstorm",
+      "trellis-break-loop",
+      "trellis-channel",
+      "trellis-check",
+      "trellis-continue",
+      "trellis-finish-work",
+      "trellis-meta",
+      "trellis-session-insight",
+      "trellis-spec-bootstarp",
+      "trellis-spec-bootstrap",
+      "trellis-start",
+      "trellis-update-spec"
+    ],
+    "drawio": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.agents\\skills\\drawio",
+      "exists": true,
+      "is_symlink": false,
+      "resolve": "D:\\Documents\\Code\\Agents\\drawio-skills\\skills\\drawio",
+      "fsutil_ok": false,
+      "fsutil_head": "Error 123: The filename, directory name, or volume label syntax is incorrect."
+    },
+    "academic": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.agents\\skills\\drawio-academic-skills",
+      "exists": true,
+      "is_symlink": false,
+      "resolve": "D:\\Documents\\Code\\Agents\\drawio-skills\\skills\\drawio-academic-skills",
+      "fsutil_ok": false,
+      "fsutil_head": "Error 123: The filename, directory name, or volume label syntax is incorrect."
+    },
+    "claude_drawio": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.claude\\skills\\drawio",
+      "exists": true,
+      "is_symlink": false,
+      "resolve": "D:\\Documents\\Code\\Agents\\drawio-skills\\skills\\drawio",
+      "fsutil_ok": false,
+      "fsutil_head": "Error 123: The filename, directory name, or volume label syntax is incorrect."
+    },
+    "claude_academic": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.claude\\skills\\drawio-academic-skills",
+      "exists": true,
+      "is_symlink": false,
+      "resolve": "D:\\Documents\\Code\\Agents\\drawio-skills\\skills\\drawio-academic-skills",
+      "fsutil_ok": false,
+      "fsutil_head": "Error 123: The filename, directory name, or volume label syntax is incorrect."
+    },
+    "source_drawio_version": "2.8.0",
+    "source_academic_version": "2.8.0",
+    "install_drawio_version": "2.8.0",
+    "install_academic_version": "2.8.0"
+  },
+  "cli_help": {
+    "source_status": 0,
+    "install_status": 0,
+    "source_has_compose": true,
+    "install_has_compose": true,
+    "source_has_js_imports": true,
+    "install_has_js_imports": true,
+    "stdout_equal": true
+  }
+}

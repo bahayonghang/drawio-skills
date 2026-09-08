@@ -1,0 +1,11 @@
+diff --git "a/_tmp_pause_diff\\git25\\SKILL.md" "b/_tmp_pause_diff\\inst\\SKILL.md"
+index dba957b..ee03d25 100644
+--- "a/_tmp_pause_diff\\git25\\SKILL.md"
++++ "b/_tmp_pause_diff\\inst\\SKILL.md"
+@@ -2,5 +2,5 @@
+ name: drawio
+ version: "2.5.0"
+-description: "Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow. Use for general engineering and product diagrams: architecture, network topologies, flowcharts, UML/ER, org charts, Mermaid/CSV conversion, existing .drawio bundles, style presets, themes, and non-publication formula diagrams. For paper, thesis, journal, conference, IEEE/ACM, manuscript, camera-ready, or publication figures, prefer drawio-academic-skills; this base provides shared CLI, references, themes, schemas, styles, and optional Desktop export."
++description: "Create, edit, replicate, import, and export draw.io diagrams with an offline YAML-first workflow: architecture, network topologies, flowcharts, UML/ER, org charts, Mermaid/CSV conversion, existing .drawio bundles, style presets, themes, and non-publication formula diagrams. For publication figures (paper, thesis, IEEE, camera-ready) use drawio-academic-skills instead."
+ license: MIT
+ homepage: https://github.com/bahayonghang/drawio-skills

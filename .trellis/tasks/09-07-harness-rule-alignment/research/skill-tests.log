@@ -1,0 +1,16 @@
+鉁?installed base skill owns its mandatory YAML runtime (747.7832ms)
+鉁?installed base skill keeps YAML working when optional parsers are disconnected (827.8903ms)
+鉁?installed same-source copy keeps current SKILL version and compose import (848.8175ms)
+鉁?installed academic overlay uses sibling ../drawio CLI (633.9323ms)
+鉁?production scripts do not import js-yaml as an ambient package (17.5008ms)
+鉁?skill metadata versions match package.json (2.5373ms)
+鉁?skill metadata descriptions stay within installer limits (1.0331ms)
+鉁?image icon resolver stays bundled and offline (1.0056ms)
+鈩?tests 8
+鈩?suites 0
+鈩?pass 8
+鈩?fail 0
+鈩?cancelled 0
+鈩?skipped 0
+鈩?todo 0
+鈩?duration_ms 3172.5828

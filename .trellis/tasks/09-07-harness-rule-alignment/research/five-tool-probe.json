@@ -1,0 +1,246 @@
+{
+  "created_at": "2026-09-07T13:26:36.950494+00:00",
+  "cwd": "D:\\Documents\\Code\\Agents\\drawio-skills",
+  "node": {
+    "args": [
+      "node",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout_head": "v26.7.0\n",
+    "stderr_head": ""
+  },
+  "paid_inference": false,
+  "desktop_ui_started": false,
+  "fresh_session_probes": "UNVERIFIED",
+  "tools": [
+    {
+      "id": "claude",
+      "label": "Claude Code",
+      "resolved": {
+        "binary": "claude",
+        "path": "C:\\Users\\lyh\\.local\\bin\\claude.EXE"
+      },
+      "version": {
+        "args": [
+          "C:\\Users\\lyh\\.local\\bin\\claude.EXE",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout_head": "2.1.263 (Claude Code)\n",
+        "stderr_head": ""
+      },
+      "help": {
+        "args": [
+          "C:\\Users\\lyh\\.local\\bin\\claude.EXE",
+          "--help"
+        ],
+        "returncode": 0,
+        "stdout_head": "Usage: claude [options] [command] [prompt]\n\nClaude Code - starts an interactive session by default, use -p/--print for\nnon-interactive output\n\nArguments:\n  prompt                                Your prompt\n\nOptions:\n  --add-dir <directories...>            Additional directories to allow tool\n                                        access to\n  --agent <agent>                       Agent for the current session. Overrides\n                                        the 'agent' setting.\n  --agents <json>                       JSON object defining custom agents (e.g.\n                                        '{\"reviewer\": {\"description\": \"Reviews\n                                        code\", \"prompt\": \"You are a code\n                                        reviewer\"}}')\n  --allow-dangerously-skip-permissions  Enable bypassing all permission checks\n                                        as an option, without it being enabled\n                                        by default. Recommended only for\n                                        sandboxes with no internet access.\n  --allowedTools, --allowed-tools <tools...>\n      Comma or space-separated list of tool names to allow (e.g. \"Bash(git *)\n      Edit\")\n  --append-system-prompt <prompt>       Append a system prompt to the default\n                                        system prompt\n  --autocompact <auto|tokens>           Auto-compact window size (auto, or\n                                        100k\u20131M tokens)\n  --ax-screen-reader                    Render screen-reader friendly output\n                                        (flat text, no decorative borders or\n                                        animations).\n  --bg, --background                    Start the session in the background and\n                                        return immediately. Prints the id that\n                                        `claude attach`, `logs`, `stop` and `rm`\n                                        take; `claude agents` lists them. Wi",
+        "stderr_head": ""
+      },
+      "paid_or_external_action": "none observed; only --version/--help"
+    },
+    {
+      "id": "codex",
+      "label": "Codex",
+      "resolved": {
+        "binary": "codex",
+        "path": "C:\\home\\lyh\\.npm-global\\codex.CMD"
+      },
+      "version": {
+        "args": [
+          "C:\\home\\lyh\\.npm-global\\codex.CMD",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout_head": "codex-cli 0.153.4\n",
+        "stderr_head": ""
+      },
+      "help": {
+        "args": [
+          "C:\\home\\lyh\\.npm-global\\codex.CMD",
+          "--help"
+        ],
+        "returncode": 0,
+        "stdout_head": "Codex CLI\n\nIf no subcommand is specified, options will be forwarded to the interactive CLI.\n\nUsage: codex [OPTIONS] [PROMPT]\n       codex [OPTIONS] <COMMAND> [ARGS]\n\nCommands:\n  agents            Browse all agent sessions on the shared local app-server daemon\n  exec              Run Codex non-interactively [aliases: e]\n  review            Run a code review non-interactively\n  login             Manage login\n  logout            Remove stored authentication credentials\n  mcp               Manage external MCP servers for Codex\n  plugin            Manage Codex plugins\n  mcp-server        Start Codex as an MCP server (stdio)\n  app-server        [experimental] Run the app server or related tooling\n  remote-control    [experimental] Manage the app-server daemon with remote control enabled\n  app               Launch the Desktop app (opens the app installer if missing)\n  completion        Generate shell completion scripts\n  update            Update Codex to the latest version\n  doctor            Diagnose local Codex installation, config, auth, and runtime health\n  sandbox           Run commands within a Codex-provided sandbox\n  debug             Debugging tools\n  apply             Apply the latest diff produced by Codex agent as a `git apply` to your local\n                    working tree [aliases: a]\n  resume            Resume a previous interactive session (picker by default; use --last to continue\n                    the most recent)\n  queue             Queue a message for an existing session\n  archive           Archive a saved session by id or session name\n  delete            Permanently delete a saved session by id or session name\n  migrate-rollouts  Inspect or migrate legacy local sessions to paginated thread history\n  unarchive         Unarchive a saved session by id or session name\n  fork              Fork a previous interactive session (picker by default; use --last to fork the\n                    most recent)\n  cloud             [EXPERIMENTAL] Browse tasks from Code",
+        "stderr_head": ""
+      },
+      "paid_or_external_action": "none observed; only --version/--help"
+    },
+    {
+      "id": "grok",
+      "label": "Grok Build",
+      "resolved": {
+        "binary": "grok",
+        "path": "C:\\Users\\lyh\\.grok\\bin\\grok.EXE"
+      },
+      "version": {
+        "args": [
+          "C:\\Users\\lyh\\.grok\\bin\\grok.EXE",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout_head": "grok 1.0.22 (8f40483ca2a5)\n",
+        "stderr_head": ""
+      },
+      "help": {
+        "args": [
+          "C:\\Users\\lyh\\.grok\\bin\\grok.EXE",
+          "--help"
+        ],
+        "returncode": 0,
+        "stdout_head": "Grok Build TUI\n\nUsage: grok [OPTIONS] [PROMPT] [COMMAND]\n\nArguments:\n  [PROMPT]\n          Initial prompt for the interactive session, e.g. `grok \"fix the bug\"` or `grok --worktree=feat \"create this feature\"`\n\nOptions:\n      --agent <NAME>\n          Agent name or definition file path\n\n      --agents <JSON>\n          Inline subagent definitions as JSON\n\n      --allow <RULE>\n          Permission allow rule (compat alias: --allowedTools)\n\n      --always-approve\n          Auto-approve all tool executions\n\n  -c, --continue\n          Continue the most recent session for the current working directory\n\n      --cwd <CWD>\n          Working directory\n\n      --debug\n          Enable debug logging\n\n      --debug-file <FILE>\n          Write debug logs to FILE\n\n      --deny <RULE>\n          Permission deny rule (compat alias: --disallowedTools)\n\n      --disable-web-search\n          Disable web search and web fetch tools\n\n      --disallowed-tools <TOOLS>\n          Built-in tools to remove (comma-separated)\n\n      --fork-session\n          When resuming (`--resume` / `--continue`), create a new session ID instead of reusing the original (optionally set via `--session-id`)\n\n      --fullscreen\n          Open in the standard fullscreen TUI for this session, overriding a config `[ui] screen_mode = \"minimal\"` preference. Session-scoped only, does not write config. Fullscreen-vs-inline still follows the alt-screen policy (--no-alt-screen, [terminal] alt_screen, terminal auto-detection)\n\n  -h, --help\n          Print help (see a summary with '-h')\n\n      --include-partial-messages\n          Emit incremental `stream_event` lines (text/thinking deltas) alongside whole messages. Only affects `--output-format streaming-messages-json`\n\n      --json-schema <SCHEMA>\n          JSON Schema for structured output. When set, the model is constrained to produce JSON matching this schema. Implies --output-format json. Example: --json-schema '{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"}}}'\n\n     ",
+        "stderr_head": ""
+      },
+      "paid_or_external_action": "none observed; only --version/--help"
+    },
+    {
+      "id": "kimi",
+      "label": "Kimi Code",
+      "resolved": {
+        "binary": "kimi",
+        "path": "C:\\Users\\lyh\\.kimi-code\\bin\\kimi.EXE"
+      },
+      "version": {
+        "args": [
+          "C:\\Users\\lyh\\.kimi-code\\bin\\kimi.EXE",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout_head": "0.41.0\n",
+        "stderr_head": ""
+      },
+      "help": {
+        "args": [
+          "C:\\Users\\lyh\\.kimi-code\\bin\\kimi.EXE",
+          "--help"
+        ],
+        "returncode": 0,
+        "stdout_head": "Usage: kimi [options] [command]\n\nThe Starting Point for Next-Gen Agents\n\nOptions:\n  -V, --version                 output the version number\n  -S, --session [id]            Resume a session. With ID: resume that session. Without ID:\n                                interactively pick.\n  -c, --continue                Continue the previous session for the working directory. (default:\n                                false)\n  -y, --yolo                    Start in Ask When Needed mode: routine edits and commands run\n                                automatically; risky actions, questions, and plans still ask.\n                                (default: false)\n  --auto                        Start in Never Ask mode: never interrupts you; everything runs and\n                                is decided automatically. (default: false)\n  -m, --model <model>           LLM model alias to use for this invocation. Defaults to\n                                default_model in config.toml.\n  -p, --prompt <prompt>         Run one prompt non-interactively and print the response.\n  --output-format <format>      Output format for prompt mode. Defaults to text. (choices: \"text\",\n                                \"stream-json\")\n  --skills-dir <dir>            Load skills from this directory instead of auto-discovered user and\n                                project directories. Can be repeated. (default: [])\n  --agent <name>                Agent profile to start the new session with. Custom profiles are\n                                discovered from agent directories or loaded via --agent-file. Cannot\n                                be combined with --session/--continue.\n  --agent-file <path>           Load an agent definition from a Markdown file and select it for the\n                                new session. Cannot be combined with --session/--continue. (default:\n                                [])\n  --add-dir <dir>               Add an additional workspace directory for this session. Can ",
+        "stderr_head": ""
+      },
+      "paid_or_external_action": "none observed; only --version/--help"
+    },
+    {
+      "id": "omp",
+      "label": "OMP",
+      "resolved": {
+        "binary": "omp",
+        "path": "C:\\home\\lyh\\.npm-global\\omp.CMD"
+      },
+      "version": {
+        "args": [
+          "C:\\home\\lyh\\.npm-global\\omp.CMD",
+          "--version"
+        ],
+        "returncode": 0,
+        "stdout_head": "omp/18.1.12\n",
+        "stderr_head": ""
+      },
+      "help": {
+        "args": [
+          "C:\\home\\lyh\\.npm-global\\omp.CMD",
+          "--help"
+        ],
+        "returncode": 0,
+        "stdout_head": "omp v18.1.12\n\nUSAGE\n  $ omp [COMMAND]\n\nARGUMENTS\n  MESSAGES   Messages to send (prefix files with @)\n\nFLAGS\n      --model=<value>                 Model to use (fuzzy match: \"opus\", \"gpt-5.2\", or \"openai/gpt-5.2\")\n      --smol=<value>                  Smol/fast model for lightweight tasks (or PI_SMOL_MODEL env)\n      --slow=<value>                  Slow/reasoning model for thorough analysis (or PI_SLOW_MODEL env)\n      --plan=<value>                  Plan model for architectural planning (or PI_PLAN_MODEL env)\n      --prewalk                       Switch from the active model to a fast/cheap model at the first edit/write after the plan's todo list exists (default off; see prewalk.enabled)\n      --no-prewalk                    Disable prewalk even if prewalk.enabled is set\n      --prewalk-into=<value>          Target model for prewalk (default the \"smol\" role)\n      --plan-yolo                     Force read-only plan mode at start, auto-approve the plan on the model's first resolve call, then switch to --plan-yolo-into to implement it\n      --plan-yolo-into=<value>        Target model for plan-yolo execution (default the \"smol\" role)\n      --provider=<value>              Provider to use (legacy; prefer --model)\n      --api-key=<value>               API key (defaults to env vars)\n      --system-prompt=<value>         System prompt (default: coding assistant prompt)\n      --append-system-prompt=<value>  Append text or file contents to the system prompt\n      --allow-home                    Allow starting in ~ without auto-switching to a temp dir\n      --profile=<value>               Use an isolated profile for auth, sessions, settings, and caches\n      --alias=<value>                 Create a shell shortcut for the selected profile and exit\n      --cwd=<value>                   Directory to start in (overrides the launch cwd)\n      --mode=<value>                  Output mode: text (default), json, rpc, or rpc-ui\n      --config=<value>                Load an extra confi",
+        "stderr_head": ""
+      },
+      "paid_or_external_action": "none observed; only --version/--help"
+    }
+  ],
+  "project_static_paths": {
+    "AGENTS.md": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\AGENTS.md",
+      "exists": true,
+      "is_dir": false
+    },
+    "CLAUDE.md": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\CLAUDE.md",
+      "exists": true,
+      "is_dir": false
+    },
+    ".claude": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.claude",
+      "exists": true,
+      "is_dir": true
+    },
+    ".claude/skills": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.claude\\skills",
+      "exists": true,
+      "is_dir": true
+    },
+    ".agents/skills": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.agents\\skills",
+      "exists": true,
+      "is_dir": true
+    },
+    ".codex": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.codex",
+      "exists": true,
+      "is_dir": true
+    },
+    ".grok": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.grok",
+      "exists": false,
+      "is_dir": false
+    },
+    ".kimi-code": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.kimi-code",
+      "exists": false,
+      "is_dir": false
+    },
+    ".omp": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.omp",
+      "exists": false,
+      "is_dir": false
+    },
+    ".pi": {
+      "path": "D:\\Documents\\Code\\Agents\\drawio-skills\\.pi",
+      "exists": false,
+      "is_dir": false
+    }
+  },
+  "user_static_paths_existence_only": {
+    "~/.claude/skills": {
+      "path": "C:\\Users\\lyh\\.claude\\skills",
+      "exists": true,
+      "is_dir": true
+    },
+    "~/.agents/skills": {
+      "path": "C:\\Users\\lyh\\.agents\\skills",
+      "exists": true,
+      "is_dir": true
+    },
+    "~/.grok/skills": {
+      "path": "C:\\Users\\lyh\\.grok\\skills",
+      "exists": true,
+      "is_dir": true
+    },
+    "~/.kimi-code/skills": {
+      "path": "C:\\Users\\lyh\\.kimi-code\\skills",
+      "exists": false,
+      "is_dir": false
+    },
+    "~/.omp": {
+      "path": "C:\\Users\\lyh\\.omp",
+      "exists": true,
+      "is_dir": true
+    }
+  },
+  "model_control_locations_from_matrix": {
+    "claude": "agent model / permissionMode in Claude agent files",
+    "codex": "custom agent TOML model and model_reasoning_effort",
+    "grok": "native agent/model control; SKILL allowed-tools/model/effort are not applied as Grok permission or model fields",
+    "kimi": "native agent pool / call interface; Claude agent model fields are not portable",
+    "omp": "Task agent model/role selector and modelRoles"
+  },
+  "rule_and_skill_sources_from_matrix": {
+    "claude": "CLAUDE.md (@AGENTS.md), .claude/skills, ~/.claude/skills",
+    "codex": "AGENTS.md, .agents/skills, ~/.agents/skills",
+    "grok": "AGENTS family and Claude compatibility; native .grok/skills, ~/.grok/skills, ~/.agents/skills",
+    "kimi": "root AGENTS; .agents/skills and .kimi-code/skills",
+    "omp": "root AGENTS, native .omp / provider compatibility; .agents/skills depending on enabled provider"
+  }
+}

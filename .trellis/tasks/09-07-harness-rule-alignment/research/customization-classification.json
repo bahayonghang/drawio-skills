@@ -1,0 +1,32 @@
+{
+  "classification": "version-install-drift-only; no unique unrecorded customizations",
+  "drawio_history_matches": {
+    "SKILL.md": "74987fa 2026-07-09 docs(skills): [AI] 📝 精简两条 skill description 常驻 token 约 32%",
+    "assets/schemas/spec.schema.json": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "assets/themes/academic-color.json": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "assets/themes/academic.json": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/docs/design-system/specification.md": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/docs/design-system/tokens.md": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "scripts/dsl/auto-layout.js": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "scripts/dsl/spec-to-drawio.js": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "scripts/dsl/spec-to-drawio.test.js": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/docs/drawio-aesthetic-guide.md": "fec96f8 2026-03-01 refactor(drawio): ♻️ 重构 skill 目录，将 src/ 迁移至 scripts/，docs/ 迁移至 references/",
+    "references/docs/examples.md": "da9ede7 2026-04-04 docs(drawio): 📝 重构迁移就绪文档与工作流路由"
+  },
+  "academic_history_matches": {
+    "SKILL.md": "74987fa 2026-07-09 docs(skills): [AI] 📝 精简两条 skill description 常驻 token 约 32%",
+    "references/docs/academic-export-checklist.md": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/docs/academic-figure-playbook.md": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/examples/ieee-network-paper.yaml": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/examples/max-pooling-operation-paper.yaml": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统",
+    "references/templates/multi-module-system-compact.yaml": "55a9f07 2026-07-09 feat(drawio): [AI] ✨ 统一中西文字体并引入填充式字号系统"
+  },
+  "academic_real_vs_250": [
+    "SKILL.md",
+    "references/docs/academic-export-checklist.md",
+    "references/docs/academic-figure-playbook.md",
+    "references/examples/ieee-network-paper.yaml",
+    "references/examples/max-pooling-operation-paper.yaml",
+    "references/templates/multi-module-system-compact.yaml"
+  ]
+}

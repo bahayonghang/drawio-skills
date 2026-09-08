@@ -1,0 +1,40 @@
+diff --git "a/_tmp_pause_diff\\git25\\assets\\themes\\academic.json" "b/_tmp_pause_diff\\inst\\assets\\themes\\academic.json"
+index 74dd414..1c97332 100644
+--- "a/_tmp_pause_diff\\git25\\assets\\themes\\academic.json"
++++ "b/_tmp_pause_diff\\inst\\assets\\themes\\academic.json"
+@@ -45,14 +45,15 @@
+     "fontFamily": {
+       "primary": "Times New Roman, Georgia, serif",
++      "cjk": "Times New Roman, SimSun",
+       "monospace": "Courier New, Courier, monospace",
+       "formula": "Latin Modern, STIX Two Math, Times New Roman, serif"
+     },
+     "fontSize": {
+-      "xs": 9,
+-      "sm": 10,
+-      "md": 11,
+-      "lg": 12,
+-      "xl": 14,
+-      "2xl": 16
++      "xs": 12,
++      "sm": 14,
++      "md": 16,
++      "lg": 18,
++      "xl": 20,
++      "2xl": 22
+     },
+     "fontWeight": {
+@@ -82,5 +83,5 @@
+       "strokeWidth": 1,
+       "fontColor": "#1E1E1E",
+-      "fontSize": 11,
++      "fontSize": 20,
+       "fontFamily": "Times New Roman, Georgia, serif",
+       "rounded": 0
+@@ -169,5 +170,5 @@
+     "rounded": 0,
+     "padding": 24,
+-    "labelFontSize": 12,
++    "labelFontSize": 22,
+     "labelFontWeight": 700,
+     "labelFontColor": "#1E1E1E"

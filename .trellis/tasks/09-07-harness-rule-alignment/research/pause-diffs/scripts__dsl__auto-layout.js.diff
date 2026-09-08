@@ -1,0 +1,21 @@
+diff --git "a/_tmp_pause_diff\\git25\\scripts\\dsl\\auto-layout.js" "b/_tmp_pause_diff\\inst\\scripts\\dsl\\auto-layout.js"
+index c95fe50..9f05991 100644
+--- "a/_tmp_pause_diff\\git25\\scripts\\dsl\\auto-layout.js"
++++ "b/_tmp_pause_diff\\inst\\scripts\\dsl\\auto-layout.js"
+@@ -11,5 +11,5 @@
+ 
+ import { createRequire } from 'node:module'
+-import { detectSemanticType, getNodeSize } from './spec-to-drawio.js'
++import { detectSemanticType, deriveNodeIcon, getNodeSize } from './spec-to-drawio.js'
+ 
+ const require = createRequire(import.meta.url)
+@@ -78,5 +78,8 @@ export function buildElkGraph(spec) {
+     nodeIds.add(node.id)
+     const semanticType = detectSemanticType(node.label, node.type, node.network)
+-    const size = getNodeSize(node.size, semanticType, node.label)
++    const size = getNodeSize(node.size, semanticType, node.label, {
++      fontSize: node.style?.fontSize,
++      contentAware: !(node.icon || deriveNodeIcon(node))
++    })
+     const elkNode = { id: node.id, width: size.width, height: size.height }
+     const container = node.module ? moduleContainers.get(node.module) : null

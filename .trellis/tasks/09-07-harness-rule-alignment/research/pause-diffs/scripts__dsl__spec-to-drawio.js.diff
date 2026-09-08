@@ -1,0 +1,161 @@
+diff --git "a/_tmp_pause_diff\\git25\\scripts\\dsl\\spec-to-drawio.js" "b/_tmp_pause_diff\\inst\\scripts\\dsl\\spec-to-drawio.js"
+index c8ccb29..f6fa7f6 100644
+--- "a/_tmp_pause_diff\\git25\\scripts\\dsl\\spec-to-drawio.js"
++++ "b/_tmp_pause_diff\\inst\\scripts\\dsl\\spec-to-drawio.js"
+@@ -44,5 +44,5 @@ try {
+         monospace: 'JetBrains Mono, Fira Code, Consolas, monospace'
+       },
+-      fontSize: { md: 13, sm: 11 }
++      fontSize: { md: 20, sm: 18 }
+     },
+     borderRadius: { md: 8, lg: 12 },
+@@ -53,5 +53,5 @@ try {
+         strokeWidth: 1.5,
+         fontColor: '#1E293B',
+-        fontSize: 13,
++        fontSize: 20,
+         rounded: 8
+       },
+@@ -351,4 +351,20 @@ export function detectSemanticType(label, explicitType, network = null) {
+ // ============================================================================
+ 
++// Font-size ladder: create-flow defaults per text class. Labels should fill
++// their boxes (paper-readable) instead of floating in oversized containers.
++// Explicit style.fontSize always wins; explicit-bounds boxes (replicate flow)
++// shrink a class uniformly, never below FONT_SIZE_FLOOR.
++export const FONT_LADDER = {
++  moduleTitle: 22,
++  node: 20,
++  edgeLabel: 18,
++  text: 16
++}
++export const FONT_SIZE_FLOOR = 12
++
++// Shapes whose size encodes meaning (operators, 3D tensors) or whose label is
++// not plain text (formula) keep preset sizes instead of growing with content.
++const CONTENT_SIZE_EXEMPT_TYPES = new Set(['operator', 'tensor3d', 'formula'])
++
+ const SIZE_PRESETS = {
+   tiny: { width: 32, height: 32 }, // For operators (⊕⊗)
+@@ -390,5 +406,5 @@ const TYPE_DEFAULT_SIZES = {
+  * label wraps via whiteSpace=wrap instead of overflowing the canvas.
+  */
+-function estimateTextSize(label, fontSize = 13) {
++function estimateTextSize(label, fontSize = FONT_LADDER.text) {
+   const lines = String(label).split(/\n|<br\s*\/?>/i)
+   let maxLineWidth = 0
+@@ -409,5 +425,5 @@ function estimateTextSize(label, fontSize = 13) {
+  * lint passes that compare declared bounds or label boxes against content.
+  */
+-function measureLabelExtent(label, fontSize = 13, padding = 8) {
++function measureLabelExtent(label, fontSize = FONT_LADDER.text, padding = 8) {
+   const lines = String(label).split(/\n|<br\s*\/?>/i)
+   let maxLineWidth = 0
+@@ -428,20 +444,37 @@ function measureLabelExtent(label, fontSize = 13, padding = 8) {
+  * Get node dimensions based on size preset or node type
+  */
+-export function getNodeSize(size, nodeType = null, label = null) {
+-  // If explicit size is provided and valid, use it
+-  if (size && SIZE_PRESETS[size]) {
+-    return SIZE_PRESETS[size]
+-  }
++export function getNodeSize(size, nodeType = null, label = null, options = null) {
+   // Text nodes without an explicit size fit their content so the box stays just
+   // wider than the text and remains easy to select, move, and transform.
+-  if (nodeType === 'text' && label) {
+-    return estimateTextSize(label)
++  if (!(size && SIZE_PRESETS[size]) && nodeType === 'text' && label) {
++    return estimateTextSize(label, options?.fontSize ?? FONT_LADDER.text)
+   }
+-  // If node type has a default size, use it
+-  if (nodeType && TYPE_DEFAULT_SIZES[nodeType]) {
+-    return SIZE_PRESETS[TYPE_DEFAULT_SIZES[nodeType]]
++
++  const preset =
++    size && SIZE_PRESETS[size]
++      ? SIZE_PRESETS[size]
++      : nodeType && TYPE_DEFAULT_SIZES[nodeType]
++        ? SIZE_PRESETS[TYPE_DEFAULT_SIZES[nodeType]]
++        : SIZE_PRESETS.medium
++
++  // Presets act as minimums once a label is present: the box grows so the
++  // label never paints outside the shape. Icon labels render below the shape,
++  // and size-coded shapes (operators, tensors, formulas) keep their preset.
++  if (
++    options?.contentAware &&
++    label &&
++    nodeType !== 'text' &&
++    !CONTENT_SIZE_EXEMPT_TYPES.has(nodeType) &&
++    !hasMathMarkers(label)
++  ) {
++    const extent = measureLabelExtent(label, options.fontSize ?? FONT_LADDER.node, 0)
++    const snapUp = (value) => Math.ceil(value / 8) * 8
++    return {
++      width: Math.max(preset.width, snapUp(extent.width + 28)),
++      height: Math.max(preset.height, snapUp(extent.height + 20))
++    }
+   }
+-  // Fallback to medium
+-  return SIZE_PRESETS.medium
++
++  return preset
+ }
+ 
+@@ -575,7 +608,12 @@ export function calculateLayout(spec, theme) {
+   const positions = new Map()
+ 
++  const sizeOptions = (node) => ({
++    fontSize: node.style?.fontSize,
++    contentAware: !(node.icon || deriveNodeIcon(node))
++  })
++
+   const placeNode = (node, x, y) => {
+     const semanticType = detectSemanticType(node.label, node.type, node.network)
+-    const size = getNodeSize(node.size, semanticType, node.label)
++    const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
+     positions.set(node.id, {
+       x: snapToGrid(x, gridSize),
+@@ -589,5 +627,5 @@ export function calculateLayout(spec, theme) {
+   const getNodeMetrics = (node) => {
+     const semanticType = detectSemanticType(node.label, node.type, node.network)
+-    const size = getNodeSize(node.size, semanticType, node.label)
++    const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
+     return { semanticType, size }
+   }
+@@ -602,5 +640,5 @@ export function calculateLayout(spec, theme) {
+     } else if (node.position && typeof node.position.x === 'number' && typeof node.position.y === 'number') {
+       const semanticType = detectSemanticType(node.label, node.type, node.network)
+-      const size = getNodeSize(node.size, semanticType, node.label)
++      const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
+       positions.set(node.id, {
+         x: snapToGrid(node.position.x - size.width / 2, gridSize),
+@@ -645,5 +683,5 @@ export function calculateLayout(spec, theme) {
+         if (manuallyPositioned.has(node.id)) continue
+         const semanticType = detectSemanticType(node.label, node.type, node.network)
+-        const size = getNodeSize(node.size, semanticType, node.label)
++        const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
+         const nodeX = snapToGrid(moduleX + containerPadding, gridSize)
+         positions.set(node.id, {
+@@ -672,5 +710,5 @@ export function calculateLayout(spec, theme) {
+         if (manuallyPositioned.has(node.id)) continue
+         const semanticType = detectSemanticType(node.label, node.type, node.network)
+-        const size = getNodeSize(node.size, semanticType, node.label)
++        const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
+         positions.set(node.id, {
+           x: snapToGrid(nodeX, gridSize),
+@@ -771,5 +809,5 @@ export function calculateLayout(spec, theme) {
+       if (manuallyPositioned.has(node.id)) continue
+       const semanticType = detectSemanticType(node.label, node.type, node.network)
+-      const size = getNodeSize(node.size, semanticType, node.label)
++      const size = getNodeSize(node.size, semanticType, node.label, sizeOptions(node))
+       positions.set(node.id, {
+         x: snapToGrid(40 + col * (size.width + nodeMargin), gridSize),
+@@ -885,16 +923,11 @@ function containsCjk(text) {
+ }
+ 
+-function getDefaultFontPolicy(spec) {
+-  if (resolveProfile(spec) === 'academic-paper') {
+-    return {
+-      primary: 'Times New Roman',
+-      cjk: 'Simsun',
+... truncated 323 more lines ...

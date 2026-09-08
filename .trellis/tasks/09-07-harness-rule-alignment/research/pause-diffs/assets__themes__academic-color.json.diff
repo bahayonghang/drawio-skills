@@ -1,0 +1,44 @@
+diff --git "a/_tmp_pause_diff\\git25\\assets\\themes\\academic-color.json" "b/_tmp_pause_diff\\inst\\assets\\themes\\academic-color.json"
+index 6a9788c..40ec18c 100644
+--- "a/_tmp_pause_diff\\git25\\assets\\themes\\academic-color.json"
++++ "b/_tmp_pause_diff\\inst\\assets\\themes\\academic-color.json"
+@@ -58,15 +58,16 @@
+   "typography": {
+     "fontFamily": {
+-      "primary": "Arial, Helvetica, sans-serif",
++      "primary": "Times New Roman, Georgia, serif",
++      "cjk": "Times New Roman, SimSun",
+       "monospace": "Courier New, Courier, monospace",
+       "formula": "Times New Roman, STIX Two Math, serif"
+     },
+     "fontSize": {
+-      "xs": 9,
+-      "sm": 10,
+-      "md": 11,
+-      "lg": 12,
+-      "xl": 14,
+-      "2xl": 16
++      "xs": 12,
++      "sm": 14,
++      "md": 16,
++      "lg": 18,
++      "xl": 20,
++      "2xl": 22
+     },
+     "fontWeight": {
+@@ -96,6 +97,6 @@
+       "strokeWidth": 1.5,
+       "fontColor": "#212121",
+-      "fontSize": 11,
+-      "fontFamily": "Arial, Helvetica, sans-serif",
++      "fontSize": 20,
++      "fontFamily": "Times New Roman, Georgia, serif",
+       "rounded": 6
+     },
+@@ -285,5 +286,5 @@
+     "rounded": 8,
+     "padding": 24,
+-    "labelFontSize": 12,
++    "labelFontSize": 22,
+     "labelFontWeight": 700,
+     "labelFontColor": "#212121",

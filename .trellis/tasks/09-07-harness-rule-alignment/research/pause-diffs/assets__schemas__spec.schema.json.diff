@@ -1,0 +1,161 @@
+diff --git "a/_tmp_pause_diff\\git25\\assets\\schemas\\spec.schema.json" "b/_tmp_pause_diff\\inst\\assets\\schemas\\spec.schema.json"
+index a97b178..3a4bfe1 100644
+--- "a/_tmp_pause_diff\\git25\\assets\\schemas\\spec.schema.json"
++++ "b/_tmp_pause_diff\\inst\\assets\\schemas\\spec.schema.json"
+@@ -16,46 +16,25 @@
+         "layout": {
+           "type": "string",
+-          "enum": [
+-            "horizontal",
+-            "vertical",
+-            "hierarchical",
+-            "star",
+-            "mesh"
+-          ],
++          "enum": ["horizontal", "vertical", "hierarchical", "star", "mesh"],
+           "description": "Layout direction or topology intent for automatic positioning"
+         },
+         "routing": {
+           "type": "string",
+-          "enum": [
+-            "orthogonal",
+-            "rounded"
+-          ],
++          "enum": ["orthogonal", "rounded"],
+           "description": "Connector routing style"
+         },
+         "profile": {
+           "type": "string",
+-          "enum": [
+-            "default",
+-            "academic-paper",
+-            "engineering-review"
+-          ],
++          "enum": ["default", "academic-paper", "engineering-review"],
+           "description": "Workflow profile that enables domain-specific validation and defaults"
+         },
+         "figureType": {
+           "type": "string",
+-          "enum": [
+-            "architecture",
+-            "roadmap",
+-            "workflow"
+-          ],
++          "enum": ["architecture", "roadmap", "workflow"],
+           "description": "Academic figure intent used for paper-mode guidance and validation"
+         },
+         "source": {
+           "type": "string",
+-          "enum": [
+-            "generated",
+-            "replicated",
+-            "edited"
+-          ],
++          "enum": ["generated", "replicated", "edited"],
+           "description": "How this spec was produced"
+         },
+@@ -105,9 +84,28 @@
+             }
+           },
+-          "required": [
+-            "primary",
+-            "cjk",
+-            "formula"
+-          ],
++          "required": ["primary", "cjk", "formula"],
++          "additionalProperties": false
++        },
++        "print": {
++          "type": "object",
++          "description": "Optional print-readability target: effective pt = fontSize x widthPt / canvas-width-px must stay at or above minPt",
++          "properties": {
++            "target": {
++              "type": "string",
++              "enum": ["cn-thesis", "ieee-single", "ieee-double"],
++              "description": "Named print-width preset (cn-thesis 440pt/9pt, ieee-single 252pt/8pt, ieee-double 516pt/8pt)"
++            },
++            "widthPt": {
++              "type": "number",
++              "exclusiveMinimum": 0,
++              "description": "Custom final print width in pt; overrides the preset width"
++            },
++            "minPt": {
++              "type": "number",
++              "exclusiveMinimum": 0,
++              "description": "Custom minimum label size in pt after scaling; overrides the preset floor"
++            }
++          },
++          "anyOf": [{ "required": ["target"] }, { "required": ["widthPt"] }],
+           "additionalProperties": false
+         },
+@@ -118,8 +116,5 @@
+             "colorMode": {
+               "type": "string",
+-              "enum": [
+-                "preserve-original",
+-                "theme-first"
+-              ],
++              "enum": ["preserve-original", "theme-first"],
+               "description": "Whether to preserve extracted source colors or normalize them to the selected theme"
+             },
+@@ -142,19 +137,9 @@
+                   "appliesTo": {
+                     "type": "string",
+-                    "enum": [
+-                      "canvas",
+-                      "nodes",
+-                      "edges",
+-                      "modules",
+-                      "mixed"
+-                    ]
++                    "enum": ["canvas", "nodes", "edges", "modules", "mixed"]
+                   },
+                   "confidence": {
+                     "type": "string",
+-                    "enum": [
+-                      "low",
+-                      "medium",
+-                      "high"
+-                    ]
++                    "enum": ["low", "medium", "high"]
+                   },
+                   "notes": {
+@@ -181,8 +166,5 @@
+       "items": {
+         "type": "object",
+-        "required": [
+-          "id",
+-          "label"
+-        ],
++        "required": ["id", "label"],
+         "properties": {
+           "id": {
+@@ -243,10 +225,5 @@
+           "size": {
+             "type": "string",
+-            "enum": [
+-              "small",
+-              "medium",
+-              "large",
+-              "xl"
+-            ],
++            "enum": ["small", "medium", "large", "xl"],
+             "description": "Size preset"
+           },
+@@ -285,8 +262,5 @@
+             "type": "object",
+             "description": "Manual position override",
+-            "required": [
+-              "x",
+-              "y"
+-            ],
++            "required": ["x", "y"],
+             "properties": {
+               "x": {
+@@ -339,17 +313,9 @@
+               "align": {
+                 "type": "string",
+-                "enum": [
+-                  "left",
+-                  "center",
+... truncated 90 more lines ...

@@ -1,0 +1,91 @@
+{
+  "exact_match": 1,
+  "newline_only": 84,
+  "real_diff": [
+    {
+      "path": "SKILL.md",
+      "local_sha": "be933a0b9895",
+      "git_sha": "5e3d7e2b6c04",
+      "local_lines": 196,
+      "git_lines": 196,
+      "local_size": 17774,
+      "git_size": 17760
+    },
+    {
+      "path": "assets/schemas/spec.schema.json",
+      "local_sha": "e434ec1f0b52",
+      "git_sha": "0bde351927eb",
+      "local_lines": 541,
+      "git_lines": 602,
+      "local_size": 17073,
+      "git_size": 16716
+    },
+    {
+      "path": "assets/themes/academic-color.json",
+      "local_sha": "cbd9364a1726",
+      "git_sha": "c70650ceb07c",
+      "local_lines": 299,
+      "git_lines": 298,
+      "local_size": 6903,
+      "git_size": 6557
+    },
+    {
+      "path": "assets/themes/academic.json",
+      "local_sha": "3d6d42fba0ab",
+      "git_sha": "47e86c1ec44a",
+      "local_lines": 181,
+      "git_lines": 180,
+      "local_size": 4107,
+      "git_size": 3885
+    },
+    {
+      "path": "references/docs/design-system/specification.md",
+      "local_sha": "02d3cdda8d76",
+      "git_sha": "9fbf4b268334",
+      "local_lines": 722,
+      "git_lines": 720,
+      "local_size": 21644,
+      "git_size": 20316
+    },
+    {
+      "path": "references/docs/design-system/tokens.md",
+      "local_sha": "9a6cf7824d02",
+      "git_sha": "2880b0c4a89f",
+      "local_lines": 232,
+      "git_lines": 225,
+      "local_size": 10703,
+      "git_size": 9322
+    },
+    {
+      "path": "scripts/dsl/auto-layout.js",
+      "local_sha": "24b88e684c2b",
+      "git_sha": "435ab65e95f8",
+      "local_lines": 206,
+      "git_lines": 203,
+      "local_size": 6825,
+      "git_size": 6499
+    },
+    {
+      "path": "scripts/dsl/spec-to-drawio.js",
+      "local_sha": "7473162f4189",
+      "git_sha": "1d382bb708b6",
+      "local_lines": 3485,
+      "git_lines": 3311,
+      "local_size": 133535,
+      "git_size": 122034
+    },
+    {
+      "path": "scripts/dsl/spec-to-drawio.test.js",
+      "local_sha": "aa8590314d4d",
+      "git_sha": "42113be9be92",
+      "local_lines": 2887,
+      "git_lines": 2745,
+      "local_size": 114414,
+      "git_size": 105309
+    }
+  ],
+  "only_install_vs_source": [
+    "references/docs/drawio-aesthetic-guide.md",
+    "references/docs/examples.md"
+  ]
+}

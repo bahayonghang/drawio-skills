@@ -1,0 +1,16 @@
+{
+  "missing_required_files": [],
+  "claude_line_count": 5,
+  "claude_nonempty_line_count": 3,
+  "claude_has_agents_import": true,
+  "claude_mentions_skill_discovery": true,
+  "claude_does_not_repeat_ci_gate": true,
+  "agents_names_read_only_ci": true,
+  "agents_does_not_claim_lint_plus_tests_only": true,
+  "agents_does_not_claim_node_20_ci": true,
+  "agents_marks_node_24_unverified": true,
+  "agents_omits_parent_harness_matrix_path": true,
+  "agents_has_inline_harness_facts": true,
+  "agents_skills_source_boundary": true,
+  "ok": true
+}
